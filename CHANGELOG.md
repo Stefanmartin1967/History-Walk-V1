@@ -6,6 +6,15 @@
 
 ---
 
+- GIST DE SYNCHRO : UNE SECTION PAR DESTINATION (v3.7.458) — Demandé par Stefan le 29/10/2026, avant de curer Charleroi pendant que Djerba est en pause. Le Gist ne portait qu'une destination (`mapId` à la racine) : chaque envoi depuis une autre destination en remplaçait tout le contenu (visités, incontournables, circuits faits, lieux et circuits masqués, photos de travail). Les données Djerba restaient sur chaque appareil, mais un changement pas encore récupéré ailleurs pouvait se perdre.
+  - **Format 2** (`src/gist-sync.js`) : `{ format: 2, maps: { djerba: {...}, charleroi: {...} } }`. La lecture ne fusionne que la section de la destination active ; l'envoi **relit d'abord** le Gist et recopie telles quelles les sections des autres destinations. Si cette lecture échoue, rien n'est envoyé (l'envoi reste en attente) : écrire sans avoir lu effacerait les autres destinations. Un Gist sans fichier n'a rien à préserver.
+  - **Format 1** : lu comme la section de son `mapId` (ou de la destination active s'il n'en a pas, comme avant). Au premier envoi, il est converti : un format 1 d'une autre destination devient sa section, sans perte.
+  - Aucune synchro sans destination active (la section n'aurait pas de clé).
+  - **Vérifié avant livraison** : le Gist réel (lecture seule) porte toujours Djerba seul — 384 lieux, 81 visités, 73 incontournables, 15 circuits faits, 39 masqués ; copie datée gardée.
+  - ⚠️ Un appareil resté sur une version antérieure réécrit le Gist au format 1 de sa destination : mettre à jour chaque appareil avant d'alterner entre destinations.
+
+  Tests : `gist_sync` (+13, 78) — `sectionFor` (format 2, format 1, invalide) ; `buildPayload` recopie les autres destinations, convertit un format 1 sans perte, remplace la même destination ; envoi Djerba qui laisse Charleroi intact ; Gist format 1 Djerba conservé lors d'un envoi Charleroi ; lecture 5xx → aucun envoi ; Gist sans fichier ; lecture qui ne fusionne que la destination active. Les tests de contenu passent par `buildSection`.
+
 - OVERPASS : CLÉ OVERPASS.CH, SERVEUR MORT RETIRÉ, PAUSES ET CONTRÔLE DE FRAÎCHEUR (v3.7.457) — Demandé par Stefan le 28/10/2026 : le Scout et la récupération des zones d'une nouvelle destination ne passaient plus. Mesuré depuis heripia.com le même jour : overpass-api.de saturé (502 « at capacity » immédiat, ou 33 s pour une mini-requête, au-delà des 25 s du Scout) ; kumi.systems et private.coffee muets (aucune réponse en 35 s). D'après le wiki OSM, c'est un seul et même serveur sous deux noms.
   - **Chaîne de serveurs** (`src/osm-overpass.js`) : api.overpass.ch en premier si une clé est enregistrée sur l'appareil, puis overpass-api.de. Les deux miroirs morts sont retirés (ils coûtaient un timeout entier à chaque échec), ainsi que l'alternance entre serveurs.
   - **Clé par appareil** (`src/overpass-key.js`, Configuration > « Serveur Overpass ») : stockée dans IndexedDB comme le jeton GitHub, jamais dans le code (dépôt public). Vérifiée par une requête minuscule avant d'être retenue ; un champ vide la supprime.

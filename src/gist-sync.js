@@ -2,6 +2,13 @@
 // Synchronisation du userData personnel via GitHub Gist.
 // Chaque utilisateur stocke son propre Gist ID dans localStorage.
 // Le token PAT (scope "gist") est partagé avec github-sync.js.
+//
+// Format 2 (29/10/2026) : UNE SECTION PAR DESTINATION, `{ format: 2, maps: {
+// djerba: {...}, charleroi: {...} } }`. Le format 1 ne portait qu'une
+// destination (`mapId` à la racine) : chaque envoi depuis une autre destination
+// remplaçait tout le contenu du Gist. Désormais l'envoi RELIT le Gist et ne
+// réécrit que la section de la destination active ; les autres sont recopiées
+// telles quelles. Un Gist au format 1 est lu comme la section de son `mapId`.
 
 import { state, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
 import { getStoredToken } from './github-sync.js';
@@ -43,7 +50,53 @@ function getHeaders(token) {
 
 // ─── SÉRIALISATION ────────────────────────────────────────────────────────────
 
-export function buildPayload() {
+const GIST_FORMAT = 2;
+
+/**
+ * Section du document Gist qui concerne `mapId`, ou null s'il n'y en a pas.
+ * Format 1 (une seule destination) : le document lui-même si son `mapId` est
+ * absent (Gists les plus anciens, lus comme avant) ou égal à `mapId`.
+ */
+export function sectionFor(doc, mapId) {
+    if (!doc || typeof doc !== 'object') return null;
+    if (doc.maps && typeof doc.maps === 'object') return doc.maps[mapId] || null;
+    if (!doc.mapId || doc.mapId === mapId) return doc;
+    return null;
+}
+
+/** Sections des AUTRES destinations, à recopier telles quelles à l'envoi. */
+function otherSections(doc, mapId) {
+    if (!doc || typeof doc !== 'object') return {};
+    if (doc.maps && typeof doc.maps === 'object') {
+        const others = { ...doc.maps };
+        delete others[mapId];
+        return others;
+    }
+    // Format 1 d'une autre destination : il devient sa section, sans perte.
+    if (doc.mapId && doc.mapId !== mapId) {
+        const { mapId: legacyMapId, appVersion, ...section } = doc;
+        return { [legacyMapId]: section };
+    }
+    return {};
+}
+
+/**
+ * Document complet à écrire dans le Gist : la section de la destination active
+ * (buildSection) + celles des autres destinations reprises de `remote`, le
+ * contenu lu juste avant l'envoi (null pour un Gist neuf).
+ */
+export function buildPayload(remote = null) {
+    const mapId = state.currentMapId;
+    return {
+        format: GIST_FORMAT,
+        maps: { ...otherSections(remote, mapId), [mapId]: buildSection() },
+        lastSync: new Date().toISOString(),
+        appVersion: '2.0'
+    };
+}
+
+/** Section de la destination active (contenu synchronisé de cette destination). */
+export function buildSection() {
     // On ne sync que les champs utiles (pas les blobs photos).
     // 'planifie' retiré 14/05/2026 (refonte Mon Espace V2) : valeur calculée à
     // la volée via computePlanifieCounter, plus stockée dans userData depuis
@@ -68,7 +121,6 @@ export function buildPayload() {
         if (Object.keys(slim).length > 0) filtered[poiId] = slim;
     }
     return {
-        mapId: state.currentMapId,
         userData: filtered,
         circuitsStatus: state.officialCircuitsStatus || {},
         // Dates des changements de statut « fait », par circuit (même règle).
@@ -85,8 +137,7 @@ export function buildPayload() {
         // cachés via le bouton "Cacher ce circuit". Stratégie merge : UNION
         // (cohérent avec hiddenPoiIds, validé Stefan).
         hiddenCircuitIds: state.hiddenCircuitIds || [],
-        lastSync: new Date().toISOString(),
-        appVersion: '1.0'
+        lastSync: new Date().toISOString()
     };
 }
 
@@ -231,8 +282,27 @@ async function fetchGist(token, gistId) {
     if (!res.ok) throw new Error(`Gist fetch failed: ${res.status}`);
     const data = await res.json();
     const content = data.files?.[GIST_FILE_NAME]?.content;
-    if (!content) throw new Error('Fichier introuvable dans le Gist');
+    if (!content) {
+        const err = new Error('Fichier introuvable dans le Gist');
+        err.noFile = true;
+        throw err;
+    }
     return JSON.parse(content);
+}
+
+/**
+ * Lecture avant envoi : le contenu actuel du Gist, dont l'envoi recopiera les
+ * sections des autres destinations. Un Gist sans fichier n'a rien à préserver
+ * (null). Toute autre erreur remonte : écrire sans avoir lu effacerait les
+ * autres destinations.
+ */
+async function fetchGistForPush(token, gistId) {
+    try {
+        return await fetchGist(token, gistId);
+    } catch (e) {
+        if (e.noFile) return null;
+        throw e;
+    }
 }
 
 /**
@@ -263,8 +333,9 @@ async function discoverGistId(token) {
 
 /**
  * Retrouve le Gist existant et FUSIONNE son contenu dans l'état local, puis
- * seulement le mémorise. Renvoie son id, ou null si GitHub confirme qu'il n'y en
- * a aucun. Jette si la recherche ou la lecture échoue : l'id n'est alors PAS
+ * seulement le mémorise. Renvoie `{ id, remote }` (le contenu lu, dont l'envoi
+ * recopie les autres destinations), ou null si GitHub confirme qu'il n'y en a
+ * aucun. Jette si la recherche ou la lecture échoue : l'id n'est alors PAS
  * mémorisé et l'appelant ne pousse rien. Pousser un état local non fusionné
  * (appareil neuf, presque vide) écraserait le vrai Gist ; et un id mémorisé sans
  * fusion ferait sauter la lecture au push suivant, avec le même résultat.
@@ -273,12 +344,11 @@ async function adoptExistingGist(token) {
     const found = await discoverGistId(token);
     if (!found) return null;
     const remote = await fetchGist(token, found);
-    if (!remote.mapId || remote.mapId === state.currentMapId) {
-        await applyRemoteMerge(remote);
-    }
+    const section = sectionFor(remote, state.currentMapId);
+    if (section) await applyRemoteMerge(section);
     setGistId(found);
     showToast('Gist existant retrouvé, sync réactivée.', 'info', 4000);
-    return found;
+    return { id: found, remote };
 }
 
 async function createGist(token, payload) {
@@ -377,6 +447,7 @@ function httpStatusOf(err) {
 export async function pullFromGist() {
     const token = getStoredToken();
     if (!token) return; // Pas de token → silencieux
+    if (!state.currentMapId) return; // aucune section à lire sans destination active
 
     // Hors-ligne : inutile (et bruyant, cf. plus bas) de tenter un fetch voué à
     // l'échec au boot. Silencieux — un boot hors-ligne est un cas normal, pas
@@ -393,14 +464,15 @@ export async function pullFromGist() {
             showToast(adoptToast, 'info', 3000);
         };
 
-        // Guard : ne pas merger une carte différente (rien à fusionner pour
-        // celle-ci : le Gist est lisible, on peut le retenir).
-        if (remote.mapId && remote.mapId !== state.currentMapId) {
+        // Pas de section pour cette destination (rien à fusionner : le Gist est
+        // lisible, on peut le retenir).
+        const section = sectionFor(remote, state.currentMapId);
+        if (!section) {
             adopt();
             return;
         }
 
-        const { updates, circuitsChanged, hiddenChanged } = await applyRemoteMerge(remote);
+        const { updates, circuitsChanged, hiddenChanged } = await applyRemoteMerge(section);
         adopt();
         if (updates.length > 0 || circuitsChanged || hiddenChanged) {
             const parts = [];
@@ -437,6 +509,8 @@ export async function pullFromGist() {
 export async function pushToGist() {
     const token = getStoredToken();
     if (!token) return;
+    // Sans destination active, la section n'aurait pas de clé (format 2).
+    if (!state.currentMapId) return;
 
     // Hors-ligne : inutile de lancer un fetch voué à l'échec. On mémorise que la
     // sync est en attente — le retour du réseau la rejouera (initGistReconnectSync).
@@ -459,33 +533,38 @@ export async function pushToGist() {
         // Si la recherche ou la lecture échoue, adoptExistingGist jette : on ne
         // pousse RIEN (fix 25/09/2026 — avant, on poussait quand même l'état
         // local, qui sur un appareil neuf est presque vide).
+        let remote = null;
         if (!gistId) {
-            gistId = await adoptExistingGist(token);
-            if (!gistId) {
+            const adopted = await adoptExistingGist(token);
+            if (!adopted) {
                 await createFreshGist(token, 'Gist créé ! Sync activée.');
                 return;
+            }
+            ({ id: gistId, remote } = adopted);
+        } else {
+            // Format 2 : relire AVANT d'écrire, pour recopier les sections des
+            // autres destinations (sinon un envoi depuis Charleroi effaçait Djerba).
+            try {
+                remote = await fetchGistForPush(token, gistId);
+            } catch (readErr) {
+                if (!/\b404\b/.test(readErr.message)) throw readErr;
+                // Gist mémorisé supprimé sur github.com : même démarche qu'un appareil
+                // neuf — chercher (et fusionner) AVANT de créer. Avant le 25/09/2026,
+                // ce chemin créait directement : un vieil ID resté dans un navigateur
+                // suffisait à fabriquer un Gist vide à côté du vrai.
+                localStorage.removeItem(GIST_ID_KEY);
+                const adopted = await adoptExistingGist(token);
+                if (!adopted) {
+                    await createFreshGist(token, 'Gist re-créé après suppression côté GitHub.');
+                    return;
+                }
+                ({ id: gistId, remote } = adopted);
             }
         }
 
         // Reconstruit APRÈS une éventuelle fusion ci-dessus : le payload doit
         // refléter l'état local à jour, pas celui d'avant la fusion.
-        try {
-            await updateGist(token, gistId, buildPayload());
-        } catch (updateErr) {
-            if (!/\b404\b/.test(updateErr.message)) throw updateErr;
-            // Gist mémorisé supprimé sur github.com : même démarche qu'un appareil
-            // neuf — chercher (et fusionner) AVANT de créer. Avant le 25/09/2026,
-            // ce chemin créait directement : un vieil ID resté dans un navigateur
-            // suffisait à fabriquer un Gist vide à côté du vrai.
-            localStorage.removeItem(GIST_ID_KEY);
-            const adopted = await adoptExistingGist(token);
-            if (adopted) {
-                await updateGist(token, adopted, buildPayload());
-            } else {
-                await createFreshGist(token, 'Gist re-créé après suppression côté GitHub.');
-                return;
-            }
-        }
+        await updateGist(token, gistId, buildPayload(remote));
 
         _pendingPush = false; // push confirmé → plus rien en attente
 
