@@ -221,24 +221,60 @@ export async function routeOneSegment(features, i, waypointsBySeg = {}, profile 
     return routeSegment(segmentVias(anchors, waypointsBySeg, i), profile);
 }
 
-// Trouve l'index du point de `track` ([[lat, lon], …]) le plus proche de
-// l'ancre [lon, lat]. Sert à re-découper un realTrack sauvegardé en segments.
-function nearestIndex(track, anchorLonLat, from = 0) {
+// Distance approchée (m) entre un point de tracé [lat, lon] et une ancre
+// [lon, lat]. Projection équirectangulaire : largement assez précise à l'échelle
+// d'un circuit, et bien plus légère que haversine sur des milliers de points.
+function metersTo(pt, anchorLonLat) {
+    const [lat, lon] = pt;
     const [alon, alat] = anchorLonLat;
-    let best = from, bestD = Infinity;
-    for (let k = from; k < track.length; k++) {
-        const [lat, lon] = track[k];
-        const d = (lat - alat) ** 2 + (lon - alon) ** 2;
-        if (d < bestD) { bestD = d; best = k; }
+    const dx = (lon - alon) * Math.cos(((lat + alat) / 2) * Math.PI / 180) * 111320;
+    const dy = (lat - alat) * 110540;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+// Index de coupe du tracé pour chaque ancre : 0 pour la 1ʳᵉ, la fin pour la
+// dernière, et pour les ancres intermédiaires la suite CROISSANTE d'index qui
+// minimise la somme des distances ancre ↔ point (programmation dynamique).
+// Un choix glouton (« le point le plus proche après la coupe précédente ») se
+// trompe dès que le tracé repasse près d'un lieu (aller-retour, boucle) : il
+// prend le second passage et fausse toutes les coupes suivantes.
+function cutIndices(track, anchors) {
+    const n = anchors.length, m = track.length;
+    const cut = new Array(n);
+    cut[0] = 0;
+    cut[n - 1] = m - 1;
+    if (n <= 2) return cut;
+
+    // prevMin[k] = coût minimal des ancres déjà placées, la dernière coupée en ≤ k.
+    // argMin[i][k] = index (≤ k) où couper l'ancre i pour atteindre ce minimum.
+    let prevMin = new Float64Array(m); // ancre 0 coupée en 0 : coût nul pour tout k
+    const argMin = [];
+    for (let i = 1; i < n - 1; i++) {
+        const curMin = new Float64Array(m);
+        const arg = new Int32Array(m);
+        let best = Infinity, bestK = 0;
+        for (let k = 0; k < m; k++) {
+            const c = metersTo(track[k], anchors[i]) + prevMin[k];
+            if (c < best) { best = c; bestK = k; }
+            curMin[k] = best;
+            arg[k] = bestK;
+        }
+        argMin[i] = arg;
+        prevMin = curMin;
     }
-    return best;
+    // Remontée : la dernière ancre intermédiaire au mieux avant la fin, puis
+    // chaque ancre au mieux avant la coupe de la suivante.
+    cut[n - 2] = argMin[n - 2][m - 1];
+    for (let i = n - 3; i >= 1; i--) cut[i] = argMin[i][cut[i + 1]];
+    return cut;
 }
 
 /**
  * Re-découpe un realTrack DÉJÀ sauvegardé ([[lat, lon], …]) en segments POI→POI,
  * sans re-router — préserve la géométrie sauvegardée (y compris d'éventuels
  * ajustements GPX Studio ou points de passage d'une session précédente).
- * Utilisé à l'entrée du focus mode sur un circuit chargé.
+ * Utilisé à l'entrée du focus mode sur un circuit chargé, et par le re-tracé
+ * partiel (routeChangedSegments).
  * @returns {{coords:number[][], ok:boolean, distanceKm:number}[]} (length = nPOIs - 1)
  */
 export function splitTrackByAnchors(realTrack, features) {
@@ -246,12 +282,7 @@ export function splitTrackByAnchors(realTrack, features) {
     const n = anchors.length;
     if (n < 2 || !Array.isArray(realTrack) || realTrack.length < 2) return [];
 
-    // Index sur le tracé le plus proche de chaque ancre, monotone croissant.
-    const cut = [0];
-    for (let i = 1; i < n - 1; i++) {
-        cut.push(nearestIndex(realTrack, anchors[i], cut[i - 1]));
-    }
-    cut.push(realTrack.length - 1);
+    const cut = cutIndices(realTrack, anchors);
 
     const segments = [];
     for (let i = 0; i < n - 1; i++) {
@@ -259,4 +290,92 @@ export function splitTrackByAnchors(realTrack, features) {
         segments.push({ coords, ok: true, distanceKm: polylineKm(coords) });
     }
     return segments;
+}
+
+// Au-delà de cette distance entre un lieu (son ancre) et le bout d'un passage
+// conservé, on ne s'y fie plus : drapeau déplacé depuis le tracé, ou découpe
+// douteuse. Le passage est alors recalculé — au pire, on re-route un passage
+// qui n'en avait pas besoin.
+export const KEEP_MAX_M = 50;
+
+// Les segments de la session (Tracer / Éditer l'itinéraire) correspondent-ils
+// EXACTEMENT au tracé enregistré ? Seulement alors on les préfère à un
+// re-découpage : bornes exactes et état d'échec connu.
+function segmentsMatchTrack(segments, realTrack, nAnchors) {
+    if (!Array.isArray(segments) || segments.length !== nAnchors - 1) return false;
+    const rebuilt = buildRealTrack(segments);
+    if (rebuilt.length !== realTrack.length) return false;
+    return rebuilt.every((p, k) => p[0] === realTrack[k][0] && p[1] === realTrack[k][1]);
+}
+
+/**
+ * Re-tracé PARTIEL : ne recalcule que les passages dont la paire de lieux a
+ * changé depuis le tracé précédent. Un passage dont les deux lieux se suivent
+ * toujours garde sa géométrie telle quelle — points de passage posés en
+ * « Éditer l'itinéraire » et retouches GPX Studio compris. Ajouter B entre A et
+ * C recalcule A→B et B→C ; retirer B recalcule A→C.
+ * Un passage en échec (ligne droite) ou dont un bout s'est éloigné de son lieu
+ * de plus de KEEP_MAX_M est recalculé lui aussi.
+ * @param {Object[]} features  Nouvelle séquence des POIs.
+ * @param {string[]} ids       Leurs poiIds, dans le même ordre.
+ * @param {{ids:string[], features:Object[], realTrack:number[][], segments?:Object[]}} prev
+ *   Tracé précédent : séquence routée, son realTrack enregistré et, si la session
+ *   les connaît, ses segments.
+ * @param {string} [profile]
+ * @returns {Promise<Object>} Même forme que routeCircuit, plus `keptCount` et
+ *   `reroutedCount`. `ascend` est null si un passage conservé n'a pas d'altitude.
+ */
+export async function routeChangedSegments(features, ids, prev, profile = DEFAULT_PROFILE) {
+    const anchors = (features || []).map(anchorOf);
+    if (anchors.length < 2 || !anchors.every(isValidLonLat) || !Array.isArray(ids) || ids.length !== anchors.length) {
+        const full = await routeCircuit(features, {}, profile);
+        return { ...full, keptCount: 0, reroutedCount: full.segments.length };
+    }
+
+    // Passages du tracé précédent, rangés par paire de lieux « idA|idB ».
+    const pool = new Map();
+    const prevFeatures = prev?.features || [];
+    const prevUsable = Array.isArray(prev?.realTrack) && prev.realTrack.length >= 2
+        && prevFeatures.length >= 2 && prevFeatures.map(anchorOf).every(isValidLonLat)
+        && Array.isArray(prev.ids) && prev.ids.length === prevFeatures.length;
+    if (prevUsable) {
+        const prevSegs = segmentsMatchTrack(prev.segments, prev.realTrack, prevFeatures.length)
+            ? prev.segments : splitTrackByAnchors(prev.realTrack, prevFeatures);
+        prevSegs.forEach((seg, j) => {
+            const key = `${prev.ids[j]}|${prev.ids[j + 1]}`;
+            if (!pool.has(key)) pool.set(key, []);
+            pool.get(key).push(seg);
+        });
+    }
+
+    const reusable = (seg, i) => !!seg && seg.ok !== false
+        && Array.isArray(seg.coords) && seg.coords.length >= 2
+        && metersTo(seg.coords[0], anchors[i]) <= KEEP_MAX_M
+        && metersTo(seg.coords[seg.coords.length - 1], anchors[i + 1]) <= KEEP_MAX_M;
+
+    const tasks = [];
+    let keptCount = 0;
+    for (let i = 0; i < anchors.length - 1; i++) {
+        const seg = (pool.get(`${ids[i]}|${ids[i + 1]}`) || []).shift();
+        if (reusable(seg, i)) {
+            keptCount++;
+            tasks.push(Promise.resolve({ ...seg }));
+        } else {
+            tasks.push(routeSegment(segmentVias(anchors, {}, i), profile));
+        }
+    }
+    const segments = await Promise.all(tasks);
+    const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
+    return {
+        realTrack: buildRealTrack(segments),
+        distanceKm: segmentsDistanceKm(segments),
+        durationMin: segments.reduce((sum, s) => sum + (s.durationMin || 0), 0),
+        // Un passage re-découpé n'a pas d'altitude : une somme partielle serait
+        // fausse → null, l'appelant garde le D+ existant (même règle que finish()).
+        ascend: segments.every(s => Number.isFinite(s.ascend)) ? segmentsAscend(segments) : null,
+        segments,
+        failedSegments,
+        keptCount,
+        reroutedCount: segments.length - keptCount,
+    };
 }

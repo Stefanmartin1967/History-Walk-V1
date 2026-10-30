@@ -7,7 +7,9 @@
 //   • ≥ 2 POIs, pas tracé → CTA « Tracer l'itinéraire » (auto-route BRouter)
 //   • tracé réel présent  → carte d'état + « Éditer l'itinéraire » (focus mode)
 //   • tracé PÉRIMÉ        → la séquence de POIs a changé → « Re-tracer » (le tracé
-//                           est conservé mais signalé « à mettre à jour »)
+//                           est conservé mais signalé « à mettre à jour ») ; ce
+//                           re-tracé est PARTIEL (routeChangedSegments), « Tout
+//                           re-tracer » (menu ⋮) repart de zéro
 //
 // « Tracer » route le circuit SEGMENT PAR SEGMENT (circuit-routing.js), pose le
 // realTrack et sauvegarde (en restant en création). Un segment non routable
@@ -15,7 +17,7 @@
 // « Éditer l'itinéraire » ouvre le focus mode niveau 2 (circuit-focus.js).
 // Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026.
 import { state } from './state.js';
-import { routeCircuit } from './circuit-routing.js';
+import { routeCircuit, routeChangedSegments } from './circuit-routing.js';
 import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
 import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
@@ -29,6 +31,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { configureHelp, helpInline } from './help-popover.js';
 import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-content.js';
 import { getActiveCircuit } from './circuit-lookup.js';
+import { getPoiId } from './data.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -162,6 +165,9 @@ const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'F
 // Variante pré-tracé : sans realTrack, l'export retombe sur le vol d'oiseau
 // (lignes droites entre les lieux) — cf. ui-circuit-editor 'request-export-gpx'.
 const MP_EXPORT_RAW = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: "Vol d'oiseau (avant le tracé BRouter)" };
+// Re-tracé COMPLET (avec confirmation) : repart de zéro sur tous les passages,
+// là où « Re-tracer l'itinéraire » (tracé périmé) ne recalcule que les modifiés.
+const MP_RETRACE_ALL = { act: 'retrace', icon: 'repeat', t: 'Tout re-tracer', d: 'Recalcule tous les passages, sans garder vos ajustements' };
 
 const escHtml = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -188,7 +194,7 @@ function traceStatusHtml() {
                 <div class="trace-status-ico"><i data-lucide="alert-triangle"></i></div>
                 <div class="trace-status-txt">
                     <h4>Tracé à mettre à jour <span class="trace-pill">séquence modifiée</span></h4>
-                    <p>La liste des lieux a changé — re-tracez pour mettre l'itinéraire à jour.</p>
+                    <p>La liste des lieux a changé — re-tracez : seuls les passages modifiés seront recalculés.</p>
                 </div>
             </div>
             <div class="trace-status-actions">
@@ -197,6 +203,7 @@ function traceStatusHtml() {
                 </button>
                 ${morePopHtml([
                     { act: 'edit', icon: 'move', t: "Éditer l'itinéraire", d: 'Ajuster le tracé actuel sans re-tracer' },
+                    MP_RETRACE_ALL,
                     { sep: true }, MP_GPX, MP_EXPORT,
                 ])}
             </div>
@@ -222,10 +229,7 @@ function traceStatusHtml() {
                 <button class="btn-adjust" id="btn-adjust" type="button">
                     <i data-lucide="move"></i> Éditer l'itinéraire
                 </button>
-                ${morePopHtml([
-                    { act: 'retrace', icon: 'repeat', t: "Re-tracer l'itinéraire", d: 'Recalcule depuis la séquence des lieux' },
-                    { sep: true }, MP_GPX, MP_EXPORT,
-                ])}
+                ${morePopHtml([MP_RETRACE_ALL, { sep: true }, MP_GPX, MP_EXPORT])}
             </div>
         </div>
         ${warn ? failNote() : ''}`;
@@ -247,7 +251,22 @@ function failNote() {
         </div>`;
 }
 
-async function runTrace() {
+// Tracé précédent exploitable par le re-tracé partiel : la séquence qu'il a
+// routée (state.routeBasisKey, posé au Tracer / à Terminer / à l'entrée en
+// édition), ses lieux, le realTrack enregistré et les segments de la session.
+// null si inconnu (1ᵉʳ tracé) ou si un lieu de cette séquence n'existe plus.
+function previousRoute(prevTrack) {
+    if (!prevTrack || !state.routeBasisKey) return null;
+    const ids = state.routeBasisKey.split('|');
+    const features = ids.map(id => state.loadedFeatures.find(f => getPoiId(f) === id));
+    if (features.some(f => !f)) return null;
+    return { ids, features, realTrack: prevTrack, segments: state.routeSegments };
+}
+
+// keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
+// paire de lieux a changé sont recalculés, les autres gardent leurs ajustements.
+// Sans lui : tous les passages sont recalculés (1ᵉʳ tracé, « Tout re-tracer »).
+async function runTrace({ keepUnchanged = false } = {}) {
     if (tracing) return;
     if (!state.currentCircuit || state.currentCircuit.length < 2) {
         showToast('Ajoutez au moins 2 lieux pour tracer un itinéraire.', 'warning');
@@ -262,7 +281,16 @@ async function runTrace() {
     updateTraceBlock(); // spinner
 
     try {
-        const { realTrack, segments, ascend } = await routeCircuit(state.currentCircuit);
+        const prev = keepUnchanged ? previousRoute(prevTrack) : null;
+        const result = prev
+            ? await routeChangedSegments(state.currentCircuit, state.currentCircuit.map(getPoiId), prev)
+            : await routeCircuit(state.currentCircuit);
+        const { realTrack, segments } = result;
+        // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
+        // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
+        // partielle, comme « Terminer » en édition du tracé (circuit-focus.js).
+        const ascend = (prev && !Number.isFinite(result.ascend) && Number.isFinite(prevCircuit?.ascend))
+            ? prevCircuit.ascend : result.ascend;
         state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
         // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
         await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
@@ -281,7 +309,9 @@ async function runTrace() {
         refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
         renderCircuitPanel(); // breadcrumb (distance réelle) + déclenche updateTraceBlock via 'circuit:updated'
         const nFail = failedCount();
+        const kept = result.keptCount || 0;
         if (nFail > 0) showToast(`Tracé calculé — ${nFail > 1 ? nFail + ' passages' : '1 passage'} en ligne droite`, 'info');
+        else if (kept > 0) showToast(`Tracé mis à jour ✓ — ${plural(result.reroutedCount, 'passage recalculé', 'passages recalculés')}, ${plural(kept, 'conservé', 'conservés')}`, 'success');
         else showToast('Itinéraire tracé ✓', 'success');
     } catch (e) {
         tracing = false;
@@ -291,11 +321,15 @@ async function runTrace() {
     }
 }
 
+function plural(n, one, many) {
+    return `${n} ${n > 1 ? many : one}`;
+}
+
 async function confirmRetrace() {
     const ok = await showConfirm(
-        'Remplacer le tracé ?',
-        'Ce circuit a déjà un tracé. Le re-tracer avec BRouter remplacera le tracé actuel.',
-        'Remplacer', 'Conserver'
+        'Tout re-tracer ?',
+        'Tous les passages seront recalculés par BRouter. Les points de passage et les retouches GPX Studio seront perdus.',
+        'Tout re-tracer', 'Annuler'
     );
     if (ok) runTrace();
 }
@@ -319,9 +353,9 @@ export function initCircuitRoutingUI() {
         el.addEventListener('click', (e) => {
             if (e.target.closest('#btn-trace')) { runTrace(); return; }
             if (e.target.closest('#btn-adjust')) { enterCircuitFocus(); return; }
-            // Tracé périmé : re-tracer directement (mise à jour attendue, pas de
-            // confirmation « Remplacer ? » qui n'aurait pas de sens ici).
-            if (e.target.closest('#btn-retrace-stale')) { runTrace(); return; }
+            // Tracé périmé : re-tracé PARTIEL direct (mise à jour attendue, rien
+            // de ce qui n'a pas changé n'est perdu → pas de confirmation).
+            if (e.target.closest('#btn-retrace-stale')) { runTrace({ keepUnchanged: true }); return; }
             if (e.target.closest('#btn-more')) {
                 e.stopPropagation();
                 document.getElementById('more-pop')?.classList.toggle('open');
