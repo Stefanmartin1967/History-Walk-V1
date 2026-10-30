@@ -6,6 +6,7 @@ import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
 import { stripCircuitSignature } from './circuit-description.js';
+import { trackFingerprint, fingerprintPointCount, publishedTrackFingerprint, rememberPublishedTrack, parseGpxTrack } from './track-fingerprint.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -99,6 +100,30 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
     }
 
     return changed;
+}
+
+// Empreinte du tracé PUBLIÉ d'un circuit de l'index, ou null si inconnue.
+// Ordre : ce que la session sait du publié (GPX lu au chargement, ou notre propre
+// publication — plus sûr qu'une relecture en retard), puis `trackHash` de
+// l'index, puis, pour un circuit publié avant ce champ, son GPX relu sur le
+// serveur. Ce dernier cas ne concerne qu'une copie locale d'officiel (sinon le
+// tracé local vient lui-même du GPX publié et l'empreinte est déjà connue).
+async function publishedFingerprintFor(remote) {
+    const known = publishedTrackFingerprint(remote.id) || remote.trackHash;
+    if (known) return known;
+    if (!remote.file) return null;
+    try {
+        const path = `public/circuits/${String(remote.file).split('/').map(encodeURIComponent).join('/')}`;
+        const resp = await fetchWithTimeout(`${RAW_BASE}/${path}?t=${Date.now()}`);
+        if (!resp.ok) return null;
+        const coords = parseGpxTrack(await resp.text());
+        rememberPublishedTrack(remote.id, coords);
+        return trackFingerprint(coords);
+    } catch (e) {
+        // GPX illisible : pas de comparaison plutôt qu'un faux « modifié ».
+        console.warn('[Diff] GPX publié illisible :', remote.file, e);
+        return null;
+    }
 }
 
 /**
@@ -340,10 +365,10 @@ export async function prepareDiffData(adminDraft) {
     const localCircuits = getAllCircuits();
 
     // 1. Nouveaux & Modifiés
-    localCircuits.forEach(local => {
+    for (const local of localCircuits) {
         // --- FILTRE STRICT : PAS DE PUBLICATION SANS TRACE RÉELLE NI POUR LES SUPPRIMÉS ---
-        if (local.isDeleted) return; // Ignorer la corbeille locale
-        if (!local.realTrack || local.realTrack.length === 0) return; // Ignorer les brouillons orthodromiques
+        if (local.isDeleted) continue; // Ignorer la corbeille locale
+        if (!local.realTrack || local.realTrack.length === 0) continue; // Ignorer les brouillons orthodromiques
 
         // On normalise l'ID (parfois string vs number)
         const remote = remoteCircuits.find(r => String(r.id) === String(local.id));
@@ -357,7 +382,7 @@ export async function prepareDiffData(adminDraft) {
             // que sur un id déjà présent parmi les officiels.
             if (local.isOfficial) {
                 console.info('[Diff] copie officielle absente de l\'index ignorée (pas « NOUVEAU ») :', local.id);
-                return;
+                continue;
             }
             // Cas : Nouveau Circuit (Validé avec trace réelle)
             diffData.circuits.push({
@@ -407,24 +432,17 @@ export async function prepareDiffData(adminDraft) {
                 });
             }
 
-            // Comparaison de la trace : on ne diff que si remote a publié sa trace.
-            // Le fichier circuits/<map>.json publié sur GitHub ne contient AUCUN
-            // realTrack (les GPX sont des fichiers séparés, chargés lazy côté admin
-            // via loadCircuitById). Sans ce garde, on aurait un faux positif
-            // "0 pts → N pts" sur TOUS les circuits que l'admin a ouverts dans la
-            // session : leur realTrack est rempli en local, alors que remote reste
-            // undefined. Bug pré-existant découvert 15/05/2026.
-            if (remote.realTrack !== undefined) {
-                const localLen = local.realTrack.length; // garanti par le filtre l.279
-                const remoteLen = remote.realTrack.length;
-                // On tolère une petite différence (compression ou arrondi), mais si écart > 5 points c'est une modif
-                if (Math.abs(localLen - remoteLen) > 5) {
-                    changes.push({
-                        key: 'Trace GPS',
-                        old: `${remoteLen} pts`,
-                        new: `${localLen} pts`
-                    });
-                }
+            // Tracé : comparé par EMPREINTE à celui du GPX publié. L'index ne
+            // contient aucun tracé ; l'ancienne comparaison attendait un
+            // `remote.realTrack` qui n'existe jamais → une retouche du seul tracé
+            // (points de passage) n'était ni publiable ni annulable (30/10/2026).
+            const publishedFp = await publishedFingerprintFor(remote);
+            if (publishedFp && trackFingerprint(local.realTrack) !== publishedFp) {
+                changes.push({
+                    key: 'Tracé',
+                    old: `${fingerprintPointCount(publishedFp)} pts`,
+                    new: `${local.realTrack.length} pts`
+                });
             }
 
             if (changes.length > 0) {
@@ -435,7 +453,7 @@ export async function prepareDiffData(adminDraft) {
                 });
             }
         }
-    });
+    }
 
     // 2. Supprimés
     remoteCircuits.forEach(remote => {

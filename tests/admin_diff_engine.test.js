@@ -51,6 +51,7 @@ import {
     purgeOrphanPendingCircuits,
     diffData
 } from '../src/admin-diff-engine.js';
+import { trackFingerprint, rememberPublishedTrack } from '../src/track-fingerprint.js';
 
 // ----------------------------------------------------------------------------
 // Helper : mock fetch par défaut (geojson vide, circuits vides, tested vide).
@@ -688,33 +689,86 @@ describe('Admin Diff Engine', () => {
             expect(etapesChange).toBeDefined();
         });
 
-        it('détecte une modification de realTrack au-delà du seuil de tolérance (> 5 points)', async () => {
-            const makeTrack = (n) => Array.from({ length: n }, (_, i) => [10 + i * 0.01, 11 + i * 0.01]);
-            state.myCircuits = [{
-                id: 'c1', name: 'Circuit',
-                realTrack: makeTrack(20),
-                poiIds: ['p1']
-            }];
-            global.fetch.mockImplementation((url) => {
-                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
-                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
-                if (url.includes('.json')) return Promise.resolve({
-                    ok: true,
-                    json: async () => ([{
-                        id: 'c1', name: 'Circuit',
-                        realTrack: makeTrack(10), // écart 10 pts > seuil 5
-                        poiIds: ['p1']
-                    }])
-                });
-            });
-            const draft = { pendingPois: {}, pendingCircuits: {} };
+        // Tracé comparé par EMPREINTE au tracé publié (30/10/2026) : l'index
+        // ne contient aucun tracé, une retouche du seul tracé (points de
+        // passage) n'était ni publiable ni annulable.
+        const makeTrack = (n, shift = 0) => Array.from({ length: n }, (_, i) => [10 + i * 0.01 + shift, 11 + i * 0.01]);
+        const withRemote = (remote, gpx = null) => global.fetch.mockImplementation((url) => {
+            if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+            if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+            if (url.includes('.gpx')) return Promise.resolve(gpx == null
+                ? { ok: false, status: 404, text: async () => '' }
+                : { ok: true, text: async () => gpx });
+            if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([remote]) });
+        });
+        const toGpx = (track) => `<gpx><trk><trkseg>${track.map(([la, lo]) => `<trkpt lat="${la}" lon="${lo}"><ele>0</ele></trkpt>`).join('')}</trkseg></trk></gpx>`;
 
-            const r = await prepareDiffData(draft);
+        it("signale un tracé différent de l'empreinte publiée (trackHash)", async () => {
+            state.myCircuits = [{ id: 'tr1', name: 'Circuit', realTrack: makeTrack(20), poiIds: ['p1'] }];
+            withRemote({ id: 'tr1', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)) });
 
-            const traceChange = r.circuits[0].changes.find(c => c.key === 'Trace GPS');
-            expect(traceChange).toBeDefined();
-            expect(traceChange.old).toBe('10 pts');
-            expect(traceChange.new).toBe('20 pts');
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            const traceChange = r.circuits[0].changes.find(c => c.key === 'Tracé');
+            expect(traceChange).toEqual({ key: 'Tracé', old: '10 pts', new: '20 pts' });
+        });
+
+        it('un tracé retouché au même nombre de points est bien signalé', async () => {
+            state.myCircuits = [{ id: 'tr2', name: 'Circuit', realTrack: makeTrack(10, 0.001), poiIds: ['p1'] }];
+            withRemote({ id: 'tr2', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)) });
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits[0].changes.map(c => c.key)).toEqual(['Tracé']);
+        });
+
+        it("même tracé que l'empreinte publiée : rien à publier", async () => {
+            state.myCircuits = [{ id: 'tr3', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'] }];
+            withRemote({ id: 'tr3', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)) });
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits.find(c => c.id === 'tr3')).toBeUndefined();
+        });
+
+        it('circuit publié sans empreinte : compare au GPX publié relu sur le serveur', async () => {
+            state.myCircuits = [{ id: 'tr4', name: 'Circuit', realTrack: makeTrack(12), poiIds: ['p1'] }];
+            withRemote({ id: 'tr4', name: 'Circuit', poiIds: ['p1'], file: 'djerba/Circuit.gpx' }, toGpx(makeTrack(10)));
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits[0].changes).toEqual([{ key: 'Tracé', old: '10 pts', new: '12 pts' }]);
+            expect(global.fetch.mock.calls.some(([u]) => u.includes('public/circuits/djerba/Circuit.gpx'))).toBe(true);
+        });
+
+        it('GPX publié identique au tracé local : rien à publier', async () => {
+            state.myCircuits = [{ id: 'tr5', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'] }];
+            withRemote({ id: 'tr5', name: 'Circuit', poiIds: ['p1'], file: 'djerba/Circuit.gpx' }, toGpx(makeTrack(10)));
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits.find(c => c.id === 'tr5')).toBeUndefined();
+        });
+
+        it('GPX publié introuvable : pas de faux « Tracé »', async () => {
+            state.myCircuits = [{ id: 'tr6', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'] }];
+            withRemote({ id: 'tr6', name: 'Circuit', poiIds: ['p1'], file: 'djerba/Circuit.gpx' }, null);
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits.find(c => c.id === 'tr6')).toBeUndefined();
+        });
+
+        it('le tracé publié connu de la session prime sur un index relu en retard', async () => {
+            // Juste après notre publication, l'index relu peut porter l'ANCIENNE
+            // empreinte : se fier à sa propre écriture évite un « Tracé » fantôme.
+            state.myCircuits = [{ id: 'tr7', name: 'Circuit', realTrack: makeTrack(15), poiIds: ['p1'] }];
+            rememberPublishedTrack('tr7', makeTrack(15));
+            withRemote({ id: 'tr7', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)) });
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits.find(c => c.id === 'tr7')).toBeUndefined();
         });
 
         // Bug pré-existant fixé 15/05/2026 : circuits/<map>.json publié sur
@@ -722,7 +776,7 @@ describe('Admin Diff Engine', () => {
         // admin). Avant le fix, le diff comparait local.realTrack (rempli après
         // ouverture de la fiche) à remote.realTrack=undefined (=0 pts) et
         // générait "0 pts → N pts" comme fausse modification.
-        it("n'émet pas de diff Trace GPS si remote.realTrack est undefined (cas djerba.json publié)", async () => {
+        it("n'émet pas de « Tracé » sans référence publiée (ni empreinte ni GPX)", async () => {
             const makeTrack = (n) => Array.from({ length: n }, (_, i) => [10 + i * 0.01, 11 + i * 0.01]);
             state.myCircuits = [{
                 id: 'c1', name: 'Circuit',
@@ -745,42 +799,10 @@ describe('Admin Diff Engine', () => {
 
             const r = await prepareDiffData(draft);
 
-            // Aucun diff Trace GPS, et donc aucun circuit modifié remonté
+            // Aucun « Tracé », et donc aucun circuit modifié remonté
             // (puisque les autres champs sont identiques : name, poiIds).
             const entry = r.circuits.find(c => c.id === 'c1');
             expect(entry).toBeUndefined();
-        });
-
-        it("garde le diff si remote.realTrack est présent (cas suppression admin réelle)", async () => {
-            // Scenario : remote.realTrack = [...10 pts] est dans le JSON publié
-            // (cas théorique futur ou autre destination). Local a 20 pts.
-            // → diff doit être détecté normalement.
-            const makeTrack = (n) => Array.from({ length: n }, (_, i) => [10 + i * 0.01, 11 + i * 0.01]);
-            state.myCircuits = [{
-                id: 'c1', name: 'Circuit',
-                realTrack: makeTrack(20),
-                poiIds: ['p1']
-            }];
-            global.fetch.mockImplementation((url) => {
-                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
-                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
-                if (url.includes('.json')) return Promise.resolve({
-                    ok: true,
-                    json: async () => ([{
-                        id: 'c1', name: 'Circuit',
-                        realTrack: makeTrack(10),
-                        poiIds: ['p1']
-                    }])
-                });
-            });
-            const draft = { pendingPois: {}, pendingCircuits: {} };
-
-            const r = await prepareDiffData(draft);
-
-            const traceChange = r.circuits[0].changes.find(c => c.key === 'Trace GPS');
-            expect(traceChange).toBeDefined();
-            expect(traceChange.old).toBe('10 pts');
-            expect(traceChange.new).toBe('20 pts');
         });
     });
 

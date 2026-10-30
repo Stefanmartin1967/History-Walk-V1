@@ -26,6 +26,7 @@ import { markEditingStart, getDirtyCount } from './circuit-flags.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
+import { rememberPublishedTrack } from './track-fingerprint.js';
 import { stampVisited } from './visited-state.js';
 
 export function isCircuitTested(circuitId) {
@@ -878,6 +879,8 @@ async function loadOfficialTrace(source) {
         //    sur l'index publié au boot. Seule une vraie modification
         //    écrit (circuit-store).
         source.realTrack = coordinates;
+        // Référence du diff (Centre de contrôle) : c'est le tracé PUBLIÉ.
+        rememberPublishedTrack(source.id, coordinates);
     }
 
     // Description : un index ancien ne portait qu'une constante, le texte
