@@ -6,6 +6,17 @@
 
 ---
 
+- CIRCUITS : RE-TRACER NE RECALCULE QUE LES PASSAGES MODIFIÉS (v3.7.460) — Demandé par Stefan le 30/10/2026. Ajouter ou retirer un lieu puis re-tracer effaçait tous les points de passage : le bouton recalculait le circuit entier avec BRouter, et les points de passage ne sont jamais enregistrés (seul le tracé final l'est).
+  - **Re-tracé partiel** (`routeChangedSegments`, `src/circuit-routing.js`) : quand le tracé est « à mettre à jour », « Re-tracer l'itinéraire » ne recalcule que les passages dont la paire de lieux a changé. Les autres gardent leur géométrie telle quelle, points de passage et retouches GPX Studio compris. Ajouter B entre A et C recalcule A→B et B→C ; retirer B recalcule A→C. Un passage resté en ligne droite est retenté.
+  - **Garde-fou** : un passage dont un bout est à plus de 50 m de son lieu (drapeau déplacé depuis le tracé, découpe douteuse) est recalculé.
+  - **D'où viennent les passages conservés** : les segments de la session s'ils correspondent exactement au tracé enregistré, sinon le tracé enregistré re-découpé par lieux. Sans altitude pour ces derniers, le D+ existant est gardé (même règle que « Terminer » en édition du tracé).
+  - **Découpe d'un tracé enregistré** (`splitTrackByAnchors`, aussi utilisée à l'entrée d'« Éditer l'itinéraire ») : choix global des points de coupe au lieu du « plus proche après la coupe précédente », qui se trompait quand le tracé repasse près d'un lieu (aller-retour) et faussait toutes les coupes suivantes.
+  - **« Tout re-tracer »** (menu ⋮, avec confirmation) recalcule tous les passages et prévient que les ajustements seront perdus. Il remplace l'ancien « Re-tracer l'itinéraire » du menu, et s'ajoute au menu du tracé à mettre à jour.
+  - Aide « Tracé à mettre à jour » et guide « Créer un circuit » mis à jour.
+  - **Vérifié dans l'app locale** (BRouter simulé, injoignable depuis l'environnement de Claude) : circuit Braa → Hadher Bach, un lieu inséré entre la 2ᵉ et la 3ᵉ étape → 2 appels BRouter, 3 passages repris à l'identique, toast « 2 passages recalculés, 3 conservés ».
+
+  Tests : `circuit_routing_partial_retrace` (nouveau, 8) — ajout au milieu, retrait, re-découpage sans segments de session, segments de session périmés ignorés, passage en échec retenté, drapeau déplacé, sans tracé précédent ; aller-retour découpé au bon passage.
+
 - ZONES : « SUBDIVISER UN QUARTIER » (v3.7.459) — Demandé par Stefan le 29/10/2026. À Charleroi, les zones sont les communes belges (niveau 8) : la ville entière ne fait qu'une zone, avec 124 lieux, alors que les autres communes ont un nombre de lieux correct. L'idéal : découper Charleroi en ses 15 anciennes communes (niveau 9 dans OSM).
   - **Nouvel outil du Centre de contrôle** : « Subdiviser un quartier ». Liste des quartiers triés du plus peuplé au moins peuplé (`zonesWithCounts`), choix (nouvelle boîte `hwSelect`), confirmation, puis la zone est remplacée **à sa place** par ses subdivisions et `{dest}-zones.geojson` est poussé (commit « subdivise « X » »). Seule la zone choisie est découpée.
   - **OSM** (`fetchSubZones`, `src/osm-zones.js`) : relations du niveau juste en dessous à l'intérieur de la zone (`map_to_area`), puis le niveau suivant si le premier est vide. Les voisines qui ne font que toucher la limite sont écartées (leur centre est dehors). Moins de deux sous-zones = pas de subdivision, message explicite. Une erreur réseau remonte (l'action est demandée, l'échec doit se voir).

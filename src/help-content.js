@@ -269,7 +269,10 @@ export const HELP_STALE = {
         <p>Vous avez <strong>changé les lieux</strong> <span class="help-muted">(ajout,
         retrait ou ordre)</span> depuis le dernier tracé.</p>
         <p>Le tracé affiché ne correspond donc <strong>plus</strong> à la liste actuelle.
-        Cliquez <strong>« Re-tracer l'itinéraire »</strong> pour le recalculer.</p>`,
+        Cliquez <strong>« Re-tracer l'itinéraire »</strong> pour le recalculer.</p>
+        <p>Seuls les <strong>passages modifiés</strong> sont recalculés : les autres gardent
+        leurs ajustements <span class="help-muted">(points de passage, retouches GPX
+        Studio)</span>.</p>`,
 };
 
 /* === ANCRE — « ? » sur la note « Un passage est resté en ligne droite » === */
@@ -367,7 +370,10 @@ export const GUIDE_CIRCUIT = {
                     <li><strong>« Re-tracer l'itinéraire »</strong> : si vous changez les lieux après
                         coup, le tracé est signalé <strong>« séquence modifiée »</strong>
                         <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
-                        le remettre à jour.</li>
+                        le remettre à jour : seuls les passages modifiés sont recalculés, les
+                        autres gardent leurs ajustements.</li>
+                    <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
+                        recalcule <strong>tous</strong> les passages et efface vos ajustements.</li>
                 </ul>`,
         },
         {
