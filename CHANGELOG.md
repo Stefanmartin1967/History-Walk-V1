@@ -6,6 +6,18 @@
 
 ---
 
+- CIRCUITS : UNE RETOUCHE DU TRACÉ SE PUBLIE ET S'ANNULE, « REVENIR AU TRACÉ PRÉCÉDENT » (v3.7.461) — Demandé par Stefan le 30/10/2026, après un « Tout re-tracer » sur un circuit publié retouché par points de passage : le nouveau tracé s'était enregistré, sans retour possible.
+  - **Le Centre de contrôle ne voyait jamais un changement de tracé seul.** Il ne compare que le nom, les étapes et la description ; la comparaison du tracé attendait un `remote.realTrack` que l'index ne contient jamais (les tracés sont dans les GPX). Une retouche par points de passage, sans autre changement, n'était donc ni publiée ni annulable.
+  - **Empreinte du tracé** (`src/track-fingerprint.js`) : `trackHash` (nombre de points + hash des coordonnées) est écrit dans l'entrée d'index à chaque publication. Le diff le compare au tracé local et affiche « Tracé : 273 pts → 5 pts ». Le circuit devient publiable, et « Annuler » rétablit la version publiée.
+  - **Circuits publiés avant ce champ** : la référence est le GPX publié, retenu au chargement du tracé officiel, sinon relu sur GitHub (seulement pour une copie locale d'officiel). GPX illisible = pas de comparaison, jamais un faux « modifié ». Le tracé qu'on vient de publier fait foi plutôt qu'un index relu en retard.
+  - **« Revenir au tracé précédent »** (menu ⋮, juste après un re-tracé) : rétablit le tracé d'avant tel quel, avec son D+, sa séquence de référence et son découpage. Disparaît si le tracé est modifié ensuite ou si un autre circuit est chargé.
+  - `scripts/generate-circuit-index.js` n'écrit pas `trackHash` : après une régénération manuelle, le diff compare au GPX publié (même résultat).
+  - Aide « Créer un circuit » mise à jour.
+  - **Vérifié dans l'app locale** (BRouter simulé) sur Braa → Hadher Bach : « Tout re-tracer » → le circuit apparaît au Centre de contrôle « Tracé 273 pts → 5 pts » ; « Revenir au tracé précédent » → tracé identique à l'original, plus rien à publier ; re-tracé + F5 → GPX relu sur GitHub, circuit signalé ; « Annuler » → copie locale supprimée, tracé publié de 273 points rétabli.
+  - ⚠️ **À la première ouverture du Centre de contrôle**, des circuits peuvent apparaître en « Tracé » : retouches jamais publiées, ou copie locale plus ancienne qu'une publication faite depuis l'autre PC. Les revoir un par un avant « Tout publier ».
+
+  Tests : `track_fingerprint` (nouveau, 8) ; `admin_diff_engine` — les 2 tests de l'ancienne comparaison remplacés par 7 (empreinte différente, même nombre de points, identique, GPX publié relu, GPX identique, GPX introuvable, publication de la session prioritaire) ; `circuit-index-entry` (+1, `trackHash`).
+
 - CIRCUITS : RE-TRACER NE RECALCULE QUE LES PASSAGES MODIFIÉS (v3.7.460) — Demandé par Stefan le 30/10/2026. Ajouter ou retirer un lieu puis re-tracer effaçait tous les points de passage : le bouton recalculait le circuit entier avec BRouter, et les points de passage ne sont jamais enregistrés (seul le tracé final l'est).
   - **Re-tracé partiel** (`routeChangedSegments`, `src/circuit-routing.js`) : quand le tracé est « à mettre à jour », « Re-tracer l'itinéraire » ne recalcule que les passages dont la paire de lieux a changé. Les autres gardent leur géométrie telle quelle, points de passage et retouches GPX Studio compris. Ajouter B entre A et C recalcule A→B et B→C ; retirer B recalcule A→C. Un passage resté en ligne droite est retenté.
   - **Garde-fou** : un passage dont un bout est à plus de 50 m de son lieu (drapeau déplacé depuis le tracé, découpe douteuse) est recalculé.

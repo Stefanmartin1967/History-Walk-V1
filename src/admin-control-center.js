@@ -3,6 +3,7 @@ import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDelet
 import { getAllCircuits } from './circuit-lookup.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
+import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
 import { fetchWithTimeout } from './net.js';
 import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
@@ -35,6 +36,8 @@ import { openControlCenterModal, renderTab, closeCCModal, syncFooterAndNavCount 
  *  - distance : Haversine sur realTrack /1000, "X.X km" (getRealDistance = même calcul)
  *  - zone : Zone du 1er POI (le script fait pareil en priorité 1)
  *  - description : constante (le script lit le <desc> de metadata, hardcodé par generateGPXString)
+ * Seul écart : `trackHash` (empreinte du tracé, track-fingerprint.js), que le
+ * script n'écrit pas. Sans lui, le diff compare au GPX publié — même résultat.
  * Exporté pour test unitaire.
  */
 export function buildCircuitIndexEntry(circuit, features, mapId) {
@@ -55,8 +58,12 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         hasRealTrack: true,
         zone: (features[0] && getDerivedZone(features[0])) || undefined,
         poiIds,
+        // Empreinte du tracé publié : le diff y compare le tracé local, pour
+        // qu'une retouche du seul tracé soit publiable et annulable.
+        trackHash: trackFingerprint(circuit.realTrack) || undefined,
     };
     if (!entry.zone) delete entry.zone;
+    if (!entry.trackHash) delete entry.trackHash;
     return entry;
 }
 
@@ -825,6 +832,9 @@ async function publishChanges() {
                     const gpxFile = new File([gpxStr], `${local.name}.gpx`, { type: 'application/gpx+xml' });
                     const gpxPath = `public/circuits/${mapId}/${local.name}.gpx`;
                     await uploadFileToGitHub(gpxFile, token, GITHUB_OWNER, GITHUB_REPO, gpxPath, `feat(circuit): ${isNew ? 'Ajout' : 'MAJ'} "${local.name}"`);
+                    // Ce tracé EST désormais le publié : on se fie à notre écriture
+                    // plutôt qu'à une relecture du GPX (en retard de quelques secondes).
+                    rememberPublishedTrack(local.id, local.realTrack);
 
                     // 2. Renommage → supprimer l'ancien fichier GPX (sinon doublon dans l'index régénéré).
                     if (oldEntry?.file && oldEntry.file !== `${mapId}/${local.name}.gpx`) {

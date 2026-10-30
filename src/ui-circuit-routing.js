@@ -32,6 +32,7 @@ import { configureHelp, helpInline } from './help-popover.js';
 import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-content.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
+import { trackFingerprint } from './track-fingerprint.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -39,6 +40,10 @@ configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) })
 
 const BLOCK_ID = 'circuit-trace-block';
 let tracing = false; // calcul BRouter en cours (évite les doubles clics)
+// Dernier re-tracé, pour « Revenir au tracé précédent » : un re-tracé s'enregistre
+// aussitôt, ceci est le seul retour en arrière hors Centre de contrôle. Session
+// seulement. { circuitId, prevTrack, prevAscend, prevBasisKey, prevSegments, newFp }
+let lastRetrace = null;
 
 function inCreation() {
     return state.isCircuitCreationMode || state.editingMode;
@@ -58,6 +63,15 @@ function hasRealTrack() {
 function failedCount() {
     const segs = state.routeSegments;
     return Array.isArray(segs) ? segs.filter(s => s && !s.ok).length : 0;
+}
+// « Revenir au tracé précédent » n'a de sens que tant que le circuit affiché
+// porte encore le tracé issu du dernier re-tracé (pas d'édition du tracé, pas
+// d'autre circuit chargé entre-temps).
+function canUndoRetrace() {
+    const c = activeCircuit();
+    return !!(lastRetrace && c && !state.circuitFocusActive
+        && String(state.activeCircuitId) === lastRetrace.circuitId
+        && trackFingerprint(c.realTrack) === lastRetrace.newFp);
 }
 // Tracé PÉRIMÉ : il existe mais la séquence de POIs a changé depuis qu'il a été
 // posé (state.routeBasisKey, posé au Tracer / à l'entrée en édition).
@@ -168,6 +182,11 @@ const MP_EXPORT_RAW = { act: 'export', icon: 'download', t: 'Exporter le GPX', d
 // Re-tracé COMPLET (avec confirmation) : repart de zéro sur tous les passages,
 // là où « Re-tracer l'itinéraire » (tracé périmé) ne recalcule que les modifiés.
 const MP_RETRACE_ALL = { act: 'retrace', icon: 'repeat', t: 'Tout re-tracer', d: 'Recalcule tous les passages, sans garder vos ajustements' };
+const MP_UNDO = { act: 'undo', icon: 'rotate-ccw', t: 'Revenir au tracé précédent', d: 'Annule le dernier re-tracé' };
+// En tête du menu, seulement juste après un re-tracé.
+function undoItems() {
+    return canUndoRetrace() ? [MP_UNDO, { sep: true }] : [];
+}
 
 const escHtml = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
@@ -202,6 +221,7 @@ function traceStatusHtml() {
                     <i data-lucide="repeat"></i> Re-tracer l'itinéraire
                 </button>
                 ${morePopHtml([
+                    ...undoItems(),
                     { act: 'edit', icon: 'move', t: "Éditer l'itinéraire", d: 'Ajuster le tracé actuel sans re-tracer' },
                     MP_RETRACE_ALL,
                     { sep: true }, MP_GPX, MP_EXPORT,
@@ -229,7 +249,7 @@ function traceStatusHtml() {
                 <button class="btn-adjust" id="btn-adjust" type="button">
                     <i data-lucide="move"></i> Éditer l'itinéraire
                 </button>
-                ${morePopHtml([MP_RETRACE_ALL, { sep: true }, MP_GPX, MP_EXPORT])}
+                ${morePopHtml([...undoItems(), MP_RETRACE_ALL, { sep: true }, MP_GPX, MP_EXPORT])}
             </div>
         </div>
         ${warn ? failNote() : ''}`;
@@ -277,6 +297,15 @@ async function runTrace({ keepUnchanged = false } = {}) {
     const prevCircuit = activeCircuit();
     const prevTrack = (prevCircuit && Array.isArray(prevCircuit.realTrack) && prevCircuit.realTrack.length >= 2)
         ? prevCircuit.realTrack.slice() : null;
+    // De quoi revenir en arrière (« Revenir au tracé précédent ») si ce re-tracé
+    // ne convient pas : il s'enregistre dès qu'il est calculé.
+    const undo = prevTrack ? {
+        circuitId: String(state.activeCircuitId),
+        prevTrack,
+        prevAscend: Number.isFinite(prevCircuit.ascend) ? prevCircuit.ascend : null,
+        prevBasisKey: state.routeBasisKey,
+        prevSegments: state.routeSegments,
+    } : null;
     tracing = true;
     updateTraceBlock(); // spinner
 
@@ -304,6 +333,7 @@ async function runTrace({ keepUnchanged = false } = {}) {
         // jamais quand on changeait les lieux après coup. Même ordre que
         // circuit-focus.js (pose après l'édition du tracé).
         state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
+        lastRetrace = undo ? { ...undo, newFp: trackFingerprint(realTrack) } : null;
         tracing = false;
         updatePolylines();    // dessine le tracé bleu (real-track-polyline)
         refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
@@ -319,6 +349,30 @@ async function runTrace({ keepUnchanged = false } = {}) {
         showToast(e && e.message ? e.message : "BRouter n'a pas pu tracer l'itinéraire.", 'error');
         updateTraceBlock(); // restaure le bouton
     }
+}
+
+// Rétablit le tracé d'avant le dernier re-tracé, tel quel (points de passage et
+// retouches compris), avec son D+, sa séquence de référence et son découpage.
+async function undoRetrace() {
+    if (!canUndoRetrace()) return;
+    const u = lastRetrace;
+    lastRetrace = null;
+    try {
+        await saveAndExportCircuit(u.prevTrack, { stayInCreation: true, ascend: u.prevAscend });
+    } catch (e) {
+        console.error('[routing] retour au tracé précédent échoué :', e);
+        showToast("Impossible de rétablir le tracé précédent.", 'error');
+        return;
+    }
+    state.routeBasisKey = u.prevBasisKey;
+    state.routeSegments = u.prevSegments;
+    // Le calque « Tracé précédent » montrait justement ce tracé : il n'a plus
+    // lieu d'être. Un calque importé à la main, lui, reste.
+    if (state.referenceLayer?.autoPrevious) removeReferenceLayer();
+    updatePolylines();
+    refreshFailOverlay();
+    renderCircuitPanel();
+    showToast('Tracé précédent rétabli', 'success');
 }
 
 function plural(n, one, many) {
@@ -367,6 +421,7 @@ export function initCircuitRoutingUI() {
                 closeMorePop();
                 const act = mp.dataset.act;
                 if (act === 'retrace') confirmRetrace();
+                else if (act === 'undo') undoRetrace();
                 else if (act === 'edit') enterCircuitFocus();
                 else if (act === 'export') handleExportWithContribution('gpx', () => eventBus.emit('request-export-gpx'));
                 else if (act === 'gpx') openGpxStudio();

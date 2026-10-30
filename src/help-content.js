@@ -374,6 +374,9 @@ export const GUIDE_CIRCUIT = {
                         autres gardent leurs ajustements.</li>
                     <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
                         recalcule <strong>tous</strong> les passages et efface vos ajustements.</li>
+                    <li><strong>« Revenir au tracé précédent »</strong> <span class="help-muted">(menu ⋮,
+                        juste après un re-tracé)</span> : un re-tracé est enregistré aussitôt ; ce
+                        bouton rétablit le tracé d'avant, ajustements compris.</li>
                 </ul>`,
         },
         {

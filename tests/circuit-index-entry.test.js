@@ -51,6 +51,7 @@ vi.mock('../src/admin-diff-engine.js', () => ({
 vi.mock('../src/admin-control-ui.js', () => ({ openControlCenterModal: vi.fn(), renderTab: vi.fn() }));
 
 import { buildCircuitIndexEntry } from '../src/admin-control-center.js';
+import { trackFingerprint } from '../src/track-fingerprint.js';
 
 describe('buildCircuitIndexEntry — format index circuit', () => {
     beforeEach(() => { h.realDistance = 7200; });
@@ -70,6 +71,13 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(e.poiIds).toEqual(['p1', 'p2']);
         // Depuis le 14/09/2026 : la description de l'auteur (plus la constante).
         expect(e.description).toBe('desc perso');
+    });
+
+    it("porte l'empreinte du tracé publié (trackHash), comparée par le diff", () => {
+        const circuit = { id: 'HW-X', name: 'C', realTrack: [[1, 2], [3, 4]], poiIds: ['p1'] };
+        const e = buildCircuitIndexEntry(circuit, [], 'djerba');
+        expect(e.trackHash).toBe(trackFingerprint([[1, 2], [3, 4]]));
+        expect(buildCircuitIndexEntry({ ...circuit, realTrack: [] }, [], 'djerba')).not.toHaveProperty('trackHash');
     });
 
     it("publie la description SANS signature, et '' s'il n'y a pas de texte", () => {
