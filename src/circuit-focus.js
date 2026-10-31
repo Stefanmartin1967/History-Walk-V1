@@ -19,7 +19,7 @@
 // en ligne droite pointillée (.route-fail-segment) = échec partiel.
 import L from 'leaflet';
 import { state } from './state.js';
-import { map, updatePolylines, clearMapLines } from './map.js';
+import { map, updatePolylines, clearMapLines, trackRenderer } from './map.js';
 import {
     anchorOf, routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm, segmentsAscend,
 } from './circuit-routing.js';
@@ -33,6 +33,7 @@ import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
 import { getActiveCircuit } from './circuit-lookup.js';
+import { paintTrackParts } from './circuit-way-types.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -97,13 +98,12 @@ function drawSegments() {
     if (_segLayer) _segLayer.clearLayers();
     else _segLayer = L.layerGroup().addTo(map);
 
-    (state.routeSegments || []).forEach((seg) => {
-        if (!Array.isArray(seg.coords) || seg.coords.length < 2) return;
-        const cls = seg.ok ? 'real-track-polyline' : 'route-fail-segment';
-        // Non interactif : l'ajout d'un point passe par le clic carte (onAddClick),
-        // pas par un clic sur le tracé (une polyligne transparente ne capte pas les
-        // events SVG — pointer-events: visiblePainted). Plus robuste + plus tolérant.
-        _segLayer.addLayer(L.polyline(seg.coords, { className: cls, interactive: false }));
+    // Passages colorés par type de voie (bleu tant que les voies d'une zone ne
+    // sont pas connues), passages en échec en pointillé. Non interactif : l'ajout
+    // d'un point passe par le clic carte (onAddClick), pas par un clic sur le
+    // tracé — plus robuste et plus tolérant.
+    paintTrackParts(_segLayer, state.routeSegments || [], () => {
+        if (state.circuitFocusActive) drawSegments();
     });
 }
 
@@ -117,7 +117,7 @@ function drawGhosts() {
     _editedSegs.forEach((i) => {
         const seg = snap[i];
         if (seg && Array.isArray(seg.coords) && seg.coords.length >= 2) {
-            _ghostLayer.addLayer(L.polyline(seg.coords, { className: 'route-ghost-segment', interactive: false }));
+            _ghostLayer.addLayer(L.polyline(seg.coords, { className: 'route-ghost-segment', interactive: false, renderer: trackRenderer() }));
         }
     });
 }
@@ -367,7 +367,7 @@ export function refreshFailOverlay() {
     _failLayer = L.layerGroup().addTo(map);
     segs.forEach(s => {
         if (s && !s.ok && Array.isArray(s.coords) && s.coords.length >= 2) {
-            _failLayer.addLayer(L.polyline(s.coords, { className: 'route-fail-segment', interactive: false }));
+            _failLayer.addLayer(L.polyline(s.coords, { className: 'route-fail-segment', interactive: false, renderer: trackRenderer() }));
         }
     });
 }

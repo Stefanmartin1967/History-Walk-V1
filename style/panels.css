@@ -2804,6 +2804,66 @@
 }
 .trace-status-actions { display: flex; align-items: center; gap: 8px; padding: 0 14px 13px; }
 
+/* Ligne de résumé des types de voie (création, PC) */
+.trace-ways {
+    margin-top: var(--space-sm);
+    font-size: var(--font-size-xs);
+    line-height: var(--leading-snug);
+    color: var(--ink-soft);
+}
+.trace-ways-list {
+    margin: 0; padding: 0; list-style: none;
+    display: flex; flex-wrap: wrap;
+    gap: var(--space-xs) var(--space-md);
+}
+.trace-way {
+    display: inline-flex; align-items: center;
+    gap: var(--space-xs); white-space: nowrap;
+}
+.trace-way b {
+    font-weight: var(--weight-semibold); color: var(--ink);
+    font-variant-numeric: tabular-nums;
+}
+/* Pastille = un bout de trait avec son liseré : lisible sur papier clair comme sur Nuit. */
+.trace-way-sw {
+    flex-shrink: 0; box-sizing: border-box;
+    width: var(--space-md);
+    height: calc(var(--way-width) + 2 * var(--way-halo-width));
+    border-radius: var(--radius-pill);
+    border: var(--way-halo-width) solid var(--way-halo-light);
+}
+.trace-way-sw--route      { background: var(--way-route); }
+.trace-way-sw--rue        { background: var(--way-rue); }
+.trace-way-sw--piste      { background: var(--way-piste);   border-color: var(--way-halo-dark); }
+.trace-way-sw--sentier    { background: var(--way-sentier); border-color: var(--way-halo-dark); }
+.trace-way-sw--non-classe { background: var(--way-non-classe); }
+/* Passage resté en ligne droite : même pointillé que sur la carte. */
+.trace-way-sw--droite {
+    border: 0; border-radius: 0; height: var(--space-2xs);
+    background: repeating-linear-gradient(90deg,
+        var(--ink-soft) 0 var(--space-xs),
+        transparent var(--space-xs) calc(var(--space-xs) + var(--space-2xs)));
+}
+/* .trace-ways devant : passe avant .trace-status-txt p (marge, couleur). */
+.trace-ways .trace-ways-msg {
+    margin: 0; display: flex; flex-wrap: wrap; align-items: center;
+    gap: var(--space-xs) var(--space-sm); color: var(--ink-faint);
+}
+.trace-ways-list + .trace-ways-msg { margin-top: var(--space-xs); }
+.trace-ways-msg svg { width: 1em; height: 1em; flex-shrink: 0; }
+.trace-ways-spin { animation: brouterSpin 0.7s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+    .trace-ways-spin { animation: none; }
+}
+.trace-ways-retry {
+    border: 0; background: transparent; padding: 0; font: inherit;
+    font-weight: var(--weight-semibold); color: var(--brand-ink);
+    display: inline-flex; align-items: center; gap: var(--space-xs);
+    cursor: pointer; border-radius: var(--radius-xs);
+}
+.trace-ways-retry:hover { text-decoration: underline; }
+.trace-ways-retry:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+
 /* Action primaire « Ajuster le tracé » (ouvre le focus mode / niveau 2) */
 .btn-adjust {
     flex: 1; border: 1px solid color-mix(in oklab, var(--brand) 35%, var(--line));
