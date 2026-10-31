@@ -134,5 +134,21 @@ body.circuit-focus-active.circuit-focus-add .way-line { cursor: crosshair; }
 .way-line--sentier    { stroke: var(--way-sentier); }
 .way-line--non-classe { stroke: var(--way-non-classe); }
 
+/* — Voies de la zone (« Éditer l'itinéraire », bouton « Voies ») : mêmes couleurs
+   et liserés, en traits fins, dans un pane sous le tracé. La transparence porte
+   sur le pane entier : liseré et trait ne se cumulent pas. — */
+.leaflet-pane.leaflet-way-zone-pane { /* bat `.leaflet-pane { z-index: 400 }` */
+    z-index: 390; /* sous overlayPane (400), où sont le tracé et les calques */
+    opacity: var(--way-zone-opacity);
+    pointer-events: none;
+}
+.way-zone-halo, .way-zone-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+.way-zone-halo { stroke-width: calc(var(--way-zone-width) + 2 * var(--way-zone-halo-width)); }
+.way-zone-line { stroke-width: var(--way-zone-width); }
+
 /* Tracé bleu recouvert par le calque coloré. */
 .real-track-polyline.is-way-typed { display: none; }

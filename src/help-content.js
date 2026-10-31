@@ -368,6 +368,10 @@ export const GUIDE_CIRCUIT = {
                     <li><strong>« Éditer l'itinéraire »</strong> : ajoutez des <strong>points de
                         passage</strong> <span class="help-muted">(cliquez sur la carte)</span> pour
                         guider le tracé ; déplacez-les. Seul le segment touché est recalculé.</li>
+                    <li><strong>« Voies »</strong> <span class="help-muted">(barre d'édition)</span> :
+                        montre en traits fins <strong>toutes les voies</strong> autour du circuit, avec
+                        les couleurs du tracé, pour repérer un sentier à côté d'une route et y faire
+                        passer le circuit. Affichées par défaut ; le bouton les masque.</li>
                     <li><strong>« Tracé presque complet »</strong> : un <strong>segment droit</strong>
                         est un passage que BRouter n'a pas su tracer — il reste en ligne droite.
                         Ajoutez-y un <strong>point de passage</strong> pour le guider.</li>

@@ -10,10 +10,12 @@
 //     ('circuit:realtrack-drawn') ; on pose par-dessus un calque coloré et on
 //     masque le bleu. Le calque suit la vie du tracé bleu (retiré avec lui).
 //   • dans « Éditer l'itinéraire » : circuit-focus dessine ses passages via
-//     paintTrackParts.
-// Les voies viennent d'Overpass, dans un couloir autour du tracé. Tant qu'un
-// tronçon n'est pas couvert, il reste bleu ; si Overpass échoue, la carte du
-// tracé l'indique (« Réessayer ») et rien n'est bloqué.
+//     paintTrackParts, et toutes les voies de la zone en fond via paintZoneWays
+//     (bouton « Voies »), pour repérer une alternative au tracé.
+// Les voies viennent d'Overpass, sur un rectangle autour du tracé (une requête
+// sert aux deux). Tant qu'un tronçon n'est pas couvert, il reste bleu ; si
+// Overpass échoue, la carte du tracé l'indique (« Réessayer ») et rien n'est
+// bloqué.
 import L from 'leaflet';
 import { state } from './state.js';
 import { map, trackRenderer } from './map.js';
@@ -23,19 +25,22 @@ import { getActiveCircuit } from './circuit-lookup.js';
 import { buildRealTrack } from './circuit-routing.js';
 import { trackFingerprint } from './track-fingerprint.js';
 import {
-    WAY_CATEGORIES, createSegmentIndex, addOverpassWays, addPolyline,
-    classifyParts, pendingCorridors, corridorQuery,
+    WAY_CATEGORIES, ZONE_MARGIN_M, createSegmentIndex, addOverpassWays,
+    classifyParts, pendingZone, zoneQuery, boundsOf, boxesIntersect,
 } from './way-types.js';
 
 const WAY_KEYS = new Set(WAY_CATEGORIES.map(c => c.key));
 
-// Voies et couloirs déjà interrogés, par destination (la projection d'un index
+// Voies et rectangles déjà interrogés, par destination (la projection d'un index
 // est calée sur sa première latitude) : gardés pour la session — un passage
 // recalculé dans la même zone se recolore sans nouvelle requête.
+//   ways  : index spatial (classement des tronçons)
+//   list  : les mêmes voies, à dessiner en fond ({ll, t, box})
+//   cover : rectangles interrogés
 const _indexes = new Map();
 function indexes() {
     const key = String(state.currentMapId);
-    if (!_indexes.has(key)) _indexes.set(key, { ways: createSegmentIndex(), cover: createSegmentIndex() });
+    if (!_indexes.has(key)) _indexes.set(key, { ways: createSegmentIndex(), list: [], cover: [] });
     return _indexes.get(key);
 }
 
@@ -78,13 +83,15 @@ function paint(group, parts, { drawFail = false, onRefresh = null } = {}) {
 function requestCoverage(runs, onRefresh) {
     const cid = String(state.activeCircuitId);
     if (_inflight || _failedFor === cid) return;
-    const corridors = pendingCorridors(runs).filter(ll => ll.length >= 2);
-    if (!corridors.length) return;
-    const { ways, cover } = indexes();
-    _inflight = fetchOverpassJson(corridorQuery(corridors), { timeoutMs: 15000, retries: 0 })
+    const box = pendingZone(runs);
+    if (!box) return;
+    const { ways, list, cover } = indexes();
+    // Une zone de circuit à Djerba ≈ 800 voies, ~900 Ko : laisser au serveur
+    // ses 25 s ([timeout:25]) plus le transfert, sans nouvelle tentative.
+    _inflight = fetchOverpassJson(zoneQuery(box), { timeoutMs: 30000, retries: 0 })
         .then(json => {
-            addOverpassWays(ways, json);
-            corridors.forEach(ll => addPolyline(cover, ll, true));
+            list.push(...addOverpassWays(ways, json));
+            cover.push(box);
             _failedFor = null;
         })
         .catch(err => {
@@ -140,6 +147,34 @@ function onRealTrackDrawn(polyline) {
  */
 export function paintTrackParts(group, parts, onRefresh) {
     paint(group, parts, { drawFail: true, onRefresh });
+}
+
+// Pane sous le tracé (z-index en CSS) : les voies de la zone restent dessous
+// quel que soit l'ordre de dessin, et leur transparence s'applique au pane entier
+// (liseré et trait ne se cumulent pas).
+const ZONE_PANE = 'way-zone';
+let _zoneRenderer = null;
+function zoneRenderer() {
+    if (!_zoneRenderer) {
+        if (!map.getPane(ZONE_PANE)) map.createPane(ZONE_PANE);
+        _zoneRenderer = L.svg({ pane: ZONE_PANE, padding: 0.5 });
+    }
+    return _zoneRenderer;
+}
+
+/**
+ * « Éditer l'itinéraire », bouton « Voies » : dessine dans `group` toutes les
+ * voies connues autour des passages (rectangle du tracé élargi de ZONE_MARGIN_M),
+ * en traits fins des cinq couleurs.
+ */
+export function paintZoneWays(group, parts) {
+    const zone = boundsOf((parts || []).flatMap(p => p?.coords || []), ZONE_MARGIN_M);
+    if (!zone) return;
+    const renderer = zoneRenderer();
+    const shown = indexes().list.filter(w => boxesIntersect(w.box, zone));
+    const line = (ll, className) => L.polyline(ll, { className, interactive: false, pane: ZONE_PANE, renderer });
+    shown.forEach(w => group.addLayer(line(w.ll, `way-zone-halo way-halo--${w.t}`)));
+    shown.forEach(w => group.addLayer(line(w.ll, `way-zone-line way-line--${w.t}`)));
 }
 
 /**

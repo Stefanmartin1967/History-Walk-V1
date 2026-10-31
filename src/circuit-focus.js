@@ -33,7 +33,7 @@ import { showConfirm } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
 import { getActiveCircuit } from './circuit-lookup.js';
-import { paintTrackParts } from './circuit-way-types.js';
+import { paintTrackParts, paintZoneWays } from './circuit-way-types.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -45,6 +45,8 @@ let _rerouting = 0;    // nb de re-routes BRouter en cours (spinner barre)
 let _snapshot = null;  // copie de routeSegments à l'entrée (annulation « Quitter »)
 let _ghostLayer = null;      // L.layerGroup des fantômes (segments d'origine modifiés)
 let _editedSegs = new Set(); // index des segments modifiés dans la session → fantôme
+let _zoneLayer = null;       // L.layerGroup des voies de la zone (bouton « Voies »)
+let _zoneVisible = true;     // choix « Voies » gardé d'une édition à l'autre (session)
 
 // ---------- Helpers ----------
 function features() { return state.currentCircuit || []; }
@@ -103,8 +105,25 @@ function drawSegments() {
     // d'un point passe par le clic carte (onAddClick), pas par un clic sur le
     // tracé — plus robuste et plus tolérant.
     paintTrackParts(_segLayer, state.routeSegments || [], () => {
-        if (state.circuitFocusActive) drawSegments();
+        if (!state.circuitFocusActive) return;
+        drawSegments();
+        drawZone(); // les voies d'une zone nouvelle sont arrivées
     });
+}
+
+// Voies de la zone en fond (pane dédié, sous le tracé). Redessinées à l'entrée,
+// au bouton « Voies » et à l'arrivée de nouvelles voies — pas à chaque passage
+// recalculé : la zone autour du tracé ne change presque pas.
+function drawZone() {
+    if (_zoneLayer) _zoneLayer.clearLayers();
+    else _zoneLayer = L.layerGroup().addTo(map);
+    if (_zoneVisible) paintZoneWays(_zoneLayer, state.routeSegments || []);
+}
+
+function toggleZone() {
+    _zoneVisible = !_zoneVisible;
+    drawZone();
+    renderBar();
 }
 
 // Fantôme du segment remplacé (item 3) : pour chaque segment MODIFIÉ dans la
@@ -231,6 +250,9 @@ function renderBar() {
             <button class="fb-btn ${_addMode ? 'is-active' : ''}" type="button" id="fb-add">
                 <i data-lucide="waypoints"></i> ${_addMode ? 'Clic carte actif' : 'Ajouter un point'}
             </button>
+            <button class="fb-btn ${_zoneVisible ? 'is-active' : ''}" type="button" id="fb-ways">
+                <i data-lucide="route"></i> Voies
+            </button>
             <button class="fb-btn ${isReferenceVisible() ? 'is-active' : ''}" type="button" id="fb-layer">
                 <i data-lucide="layers"></i> Calque
             </button>
@@ -239,6 +261,7 @@ function renderBar() {
             <button class="fb-btn fb-cta" type="button" id="fb-done"><i data-lucide="check"></i> Terminer</button>
         </div>`;
     bar.querySelector('#fb-add').addEventListener('click', toggleAdd);
+    bar.querySelector('#fb-ways').addEventListener('click', toggleZone);
     bar.querySelector('#fb-layer').addEventListener('click', () => toggleReferenceLayer(renderBar));
     bar.querySelector('#fb-done').addEventListener('click', finish);
     bar.querySelector('#fb-quit').addEventListener('click', requestQuit);
@@ -289,6 +312,7 @@ export function enterCircuitFocus() {
 
     _ghostLayer = L.layerGroup().addTo(map); // fantômes SOUS les segments (ajouté avant eux)
     drawSegments();
+    drawZone();
     drawGhosts();
     drawWaypoints();
     resyncFlags(); // re-rend les drapeaux d'accès DÉVERROUILLÉS pour l'édition en focus
@@ -348,6 +372,7 @@ function teardown({ keepSegments = false } = {}) {
     if (_segLayer) { _segLayer.remove(); _segLayer = null; }
     if (_wpLayer) { _wpLayer.remove(); _wpLayer = null; }
     if (_ghostLayer) { _ghostLayer.remove(); _ghostLayer = null; }
+    if (_zoneLayer) { _zoneLayer.remove(); _zoneLayer = null; }
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
     _overlay = null;
 
