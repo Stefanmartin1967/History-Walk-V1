@@ -355,6 +355,10 @@ export const GUIDE_CIRCUIT = {
                 chemins piétons</strong> : il transforme le trait « à vol d'oiseau » en
                 <strong>trace réellement marchable</strong>. Résultat : <strong>« Itinéraire
                 tracé »</strong> et la <strong>distance réelle</strong>.</p>
+                <p>Le tracé se colore selon le <strong>type de voie</strong> : route, rue, piste,
+                sentier ou non classé <span class="help-muted">(voies d'OpenStreetMap)</span>. La
+                carte du tracé donne les kilomètres de chacun. Ces couleurs ne servent qu'à la
+                création : en consultation, le tracé reste bleu.</p>
                 <p class="help-muted">C'est « Tracer l'itinéraire » qui enregistre le circuit avec
                 son tracé.</p>`,
         },

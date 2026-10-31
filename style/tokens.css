@@ -160,6 +160,18 @@
   --trace-stale-color: var(--terracotta-500);
   --trace-stale-width: 4px;
   --trace-ref-color:   var(--sepia-500);
+  /* Types de voie — tracé en création / édition (PC). Fixes : le fond de carte
+     ne change pas avec le moment. Liseré de luminosité opposée au trait : tient
+     sur Voyager (clair) comme sur Satellite. */
+  --way-route:      #1F1D24;  /* encre — à éviter */
+  --way-rue:        #7C2D6B;  /* prune — neutre */
+  --way-piste:      #FFFFFF;  /* blanc creux — praticable */
+  --way-sentier:    #C6F03C;  /* chartreuse — recherché */
+  --way-non-classe: #A8A4B4;  /* gris — inconnu */
+  --way-halo-light: rgba(255, 255, 255, 0.92);
+  --way-halo-dark:  rgba(26, 22, 17, 0.78);
+  --way-width:      var(--trace-width);
+  --way-halo-width: 1.5px;
   --gps-dot:  var(--azur-500);
   --gps-ring: #FFFFFF;
   --marker-stroke: 2px;

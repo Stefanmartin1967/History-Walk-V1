@@ -433,6 +433,13 @@ function isRouteStale(features) {
     return key !== state.routeBasisKey;
 }
 
+// Renderer SVG des tracés : la carte est en preferCanvas, et un tracé dessiné en
+// canvas ignore sa classe CSS (couleur, pointillé). Tout tracé stylé en CSS
+// doit passer par lui.
+export function trackRenderer() {
+    return svgRenderer;
+}
+
 export function clearMapLines() {
     if (currentDrawnLine) {
         currentDrawnLine.remove();
@@ -473,6 +480,7 @@ export function drawLineOnMap(coordinates, isRealTrack = false, isCompleted = fa
     
     if (isRealTrack) {
         setRealTrackPolyline(polyline);
+        eventBus.emit('circuit:realtrack-drawn', polyline); // types de voie (création)
     } else {
         setOrthodromicPolyline(polyline);
     }
@@ -495,6 +503,7 @@ export function updatePolylines() {
             className: className,
             renderer: svgRenderer
         }).addTo(map));
+        eventBus.emit('circuit:realtrack-drawn', state.realTrackPolyline); // types de voie (création)
     }
     else {
         const latLngs = state.currentCircuit.map(feature => {

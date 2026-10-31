@@ -33,6 +33,8 @@ import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-cont
 import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
 import { trackFingerprint } from './track-fingerprint.js';
+import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
+import { WAY_CATEGORIES, formatKm } from './way-types.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -100,6 +102,7 @@ export function updateTraceBlock() {
                     <div class="trace-status-txt">
                         <h4>Édition du tracé en cours</h4>
                         <p>Ajustez l'itinéraire sur la carte ; terminez ou annulez depuis la barre en bas.</p>
+                        ${wayTypesHtml()}
                     </div>
                 </div>
             </div>` + chip;
@@ -234,7 +237,6 @@ function traceStatusHtml() {
     const nFail = failedCount();
     const warn = nFail > 0;
     const failTxt = nFail > 1 ? `${nFail} segments droits` : '1 segment droit';
-    const subFail = nFail > 1 ? ` — sauf ${nFail} passages` : ' — sauf un passage';
     return `
         <div class="trace-status${warn ? ' is-warn' : ''}">
             <div class="trace-status-head">
@@ -242,7 +244,8 @@ function traceStatusHtml() {
                 <div class="trace-status-txt">
                     <h4>${warn ? 'Tracé presque complet' : 'Itinéraire tracé'}
                         <span class="trace-pill">${warn ? failTxt : 'Tracé réel'}</span></h4>
-                    <p>${distTxt ? distTxt + ' · ' : ''}suit les chemins piétons${warn ? subFail : ''}</p>
+                    ${distTxt ? `<p>${distTxt}</p>` : ''}
+                    ${wayTypesHtml()}
                 </div>
             </div>
             <div class="trace-status-actions">
@@ -253,6 +256,35 @@ function traceStatusHtml() {
             </div>
         </div>
         ${warn ? failNote() : ''}`;
+}
+
+// Ligne de résumé des types de voie (création, PC) : une entrée par catégorie
+// présente, puis l'état de la requête Overpass. Les passages restés en ligne
+// droite ont leur propre entrée. Vide tant qu'aucun tracé n'est coloré.
+const WAY_SUMMARY = [...WAY_CATEGORIES, { key: 'droite', label: 'Ligne droite' }];
+const WAY_MIN_M = 50; // en dessous, « 0,0 km » : on n'affiche pas
+
+function wayTypesHtml() {
+    const v = wayTypesView();
+    if (!v) return '';
+    const m = v.meters;
+    const typed = WAY_CATEGORIES.some(c => (m[c.key] || 0) > 0);
+    const items = typed ? WAY_SUMMARY.filter(c => (m[c.key] || 0) >= WAY_MIN_M) : [];
+    const list = items.length
+        ? `<ul class="trace-ways-list" aria-label="Types de voie">${items.map(c => `
+            <li class="trace-way"><span class="trace-way-sw trace-way-sw--${c.key}" aria-hidden="true"></span>${c.label} <b>${formatKm(m[c.key])}</b></li>`).join('')}
+        </ul>`
+        : '';
+    let msg = '';
+    if (v.loading) {
+        msg = `<p class="trace-ways-msg"><i data-lucide="loader-circle" class="trace-ways-spin"></i>
+            ${typed ? 'Types du passage modifié en cours de chargement…' : 'Types de voie en cours de chargement…'}</p>`;
+    } else if (v.error) {
+        msg = `<p class="trace-ways-msg"><i data-lucide="cloud-off"></i>
+            ${typed ? 'Types du passage modifié indisponibles' : 'Types de voie indisponibles'}
+            <button class="trace-ways-retry" id="btn-ways-retry" type="button"><i data-lucide="rotate-cw"></i> Réessayer</button></p>`;
+    }
+    return list || msg ? `<div class="trace-ways" aria-live="polite">${list}${msg}</div>` : '';
 }
 
 // Note furet « un passage est resté en ligne droite » (échec partiel).
@@ -410,6 +442,7 @@ export function initCircuitRoutingUI() {
             // Tracé périmé : re-tracé PARTIEL direct (mise à jour attendue, rien
             // de ce qui n'a pas changé n'est perdu → pas de confirmation).
             if (e.target.closest('#btn-retrace-stale')) { runTrace({ keepUnchanged: true }); return; }
+            if (e.target.closest('#btn-ways-retry')) { retryWayTypes(); return; }
             if (e.target.closest('#btn-more')) {
                 e.stopPropagation();
                 document.getElementById('more-pop')?.classList.toggle('open');
@@ -447,5 +480,6 @@ export function initCircuitRoutingUI() {
     // Re-render à chaque changement du circuit (ajout/retrait POI, chargement,
     // tracé). notifyCircuitChanged() émet 'circuit:updated' sur window.
     window.addEventListener('circuit:updated', updateTraceBlock);
+    window.addEventListener('circuit:way-types', updateTraceBlock); // types de voie arrivés / échec
     updateTraceBlock();
 }

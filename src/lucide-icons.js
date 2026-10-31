@@ -12,7 +12,7 @@ import {
     // Navigation & actions
     ArrowLeft, ArrowLeftToLine, ArrowDown01, ArrowDown10, ArrowUp01, ArrowUp10,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp,
-    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate, Home,
+    RotateCcw, RotateCw, RefreshCw, Repeat, LocateFixed, Locate, Home,
 
     // Interface
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
@@ -43,7 +43,7 @@ import {
     Loader2, LoaderCircle,
 
     // Communication
-    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
+    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff, CloudOff,
 
     // Badges & gamification
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
@@ -87,7 +87,7 @@ export { createIcons };
 export const appIcons = {
     ArrowLeft, ArrowLeftToLine, ArrowDown01, ArrowDown10, ArrowUp01, ArrowUp10,
     ChevronDown, ChevronLeft, ChevronRight, ChevronUp,
-    RotateCcw, RefreshCw, Repeat, LocateFixed, Locate, Home,
+    RotateCcw, RotateCw, RefreshCw, Repeat, LocateFixed, Locate, Home,
 
     X, XCircle, Check, CheckCircle, CheckCircle2, Circle,
     Plus, PlusCircle, Minus, Move, Maximize, Maximize2, Minimize, Minimize2, ZoomIn, ZoomOut, Link,
@@ -110,7 +110,7 @@ export const appIcons = {
     AlertTriangle, AlertCircle, Info, Bug, Key, KeyRound,
     Loader2, LoaderCircle,
 
-    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff,
+    Mail, Github, Facebook, QrCode, ScanLine, ScanEye, Smartphone, WifiOff, CloudOff,
 
     Award, Trophy, Star, StarOff, Rocket, Sparkles, Zap, Crown,
     Bird, Flame, Snowflake, PawPrint, Mountain, Dog, Sprout, Feather, Footprints,

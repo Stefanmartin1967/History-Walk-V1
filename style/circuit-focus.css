@@ -109,3 +109,30 @@
 /* Curseur « ajouter un point » quand le mode est actif (sur la zone carte) */
 body.circuit-focus-active.circuit-focus-add .leaflet-container { cursor: crosshair; }
 body.circuit-focus-active.circuit-focus-add .real-track-polyline { cursor: crosshair; }
+body.circuit-focus-active.circuit-focus-add .way-line { cursor: crosshair; }
+
+/* — Types de voie (circuit-way-types.js) : deux polylignes par tronçon, liseré
+   dessous, trait dessus. Opacité 1 (le 0,8 du bleu laisse passer le fond). — */
+.way-halo, .way-line {
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: none;
+}
+.way-halo { stroke-width: calc(var(--way-width) + 2 * var(--way-halo-width)); }
+.way-line { stroke-width: var(--way-width); }
+
+.way-halo--route,
+.way-halo--rue,
+.way-halo--non-classe { stroke: var(--way-halo-light); }
+.way-halo--piste,
+.way-halo--sentier    { stroke: var(--way-halo-dark); }
+
+.way-line--route      { stroke: var(--way-route); }
+.way-line--rue        { stroke: var(--way-rue); }
+.way-line--piste      { stroke: var(--way-piste); }
+.way-line--sentier    { stroke: var(--way-sentier); }
+.way-line--non-classe { stroke: var(--way-non-classe); }
+
+/* Tracé bleu recouvert par le calque coloré. */
+.real-track-polyline.is-way-typed { display: none; }
