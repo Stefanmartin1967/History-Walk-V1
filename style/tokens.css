@@ -172,6 +172,9 @@
   --way-halo-dark:  rgba(26, 22, 17, 0.78);
   --way-width:      var(--trace-width);
   --way-halo-width: 1.5px;
+  --way-zone-width:      2px;   /* voies de la zone, sous le tracé */
+  --way-zone-halo-width: 1px;
+  --way-zone-opacity:    0.6;
   --gps-dot:  var(--azur-500);
   --gps-ring: #FFFFFF;
   --marker-stroke: 2px;

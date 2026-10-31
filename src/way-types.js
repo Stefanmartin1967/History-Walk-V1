@@ -11,10 +11,12 @@
 // tronçon ; au-delà de MATCH_M, le tronçon est « Non classé » (retouche GPX
 // Studio hors voie, voie absente d'OSM…).
 //
-// Couverture : on n'interroge Overpass que dans un couloir autour du tracé
-// (CORRIDOR_M). Un tronçon hors des couloirs déjà interrogés est « en attente »
-// (dessiné en bleu) jusqu'à la requête suivante. Un passage recalculé dans la
-// même zone se recolore donc sans requête.
+// Couverture : on interroge Overpass sur un rectangle autour du tracé, élargi de
+// ZONE_MARGIN_M (31/10/2026 : la même réponse sert à colorer le tracé et à
+// montrer toutes les voies de la zone dans « Éditer l'itinéraire », pour repérer
+// un sentier à côté d'une route). Un tronçon hors des rectangles déjà interrogés
+// est « en attente » (dessiné en bleu) jusqu'à la requête suivante. Un passage
+// recalculé dans la même zone se recolore donc sans requête.
 
 export const WAY_CATEGORIES = [
     { key: 'route', label: 'Route' },
@@ -43,10 +45,9 @@ export function categoryOfHighway(highway) {
     return HIGHWAY_CATEGORY[highway] || 'non-classe';
 }
 
-export const MATCH_M = 10;     // tronçon ↔ voie : au-delà, « Non classé »
-export const CORRIDOR_M = 40;  // rayon du couloir interrogé autour du tracé
-const COVER_MARGIN_M = 10;     // un point est couvert à moins de CORRIDOR_M − marge
-const SIMPLIFY_M = 5;          // tolérance de simplification du couloir
+export const MATCH_M = 10;        // tronçon ↔ voie : au-delà, « Non classé »
+export const ZONE_MARGIN_M = 500; // marge du rectangle interrogé autour du tracé
+const COVER_INSET_M = 150;        // un point est couvert à cette distance du bord
 const CELL_M = 50;             // maille de l'index spatial
 const M_PER_DEG_LAT = 110574;
 const M_PER_DEG_LON = 111320;  // × cos(latitude)
@@ -112,9 +113,11 @@ export function nearestPayload(index, lat, lon, maxM) {
 
 /**
  * Ajoute à l'index les voies d'une réponse Overpass (`out geom`). Une voie déjà
- * indexée (même id) est ignorée : les couloirs successifs se recouvrent.
+ * indexée (même id) est ignorée : les rectangles successifs se recouvrent.
+ * @returns {Array<{ll: number[][], t: string, box: object}>} les voies ajoutées
  */
 export function addOverpassWays(index, json) {
+    const added = [];
     for (const el of (json && json.elements) || []) {
         if (el.type !== 'way' || !Array.isArray(el.geometry) || !el.tags?.highway) continue;
         if (el.id != null) {
@@ -124,8 +127,42 @@ export function addOverpassWays(index, json) {
         const ll = el.geometry
             .filter(p => Number.isFinite(p?.lat) && Number.isFinite(p?.lon))
             .map(p => [p.lat, p.lon]);
-        if (ll.length >= 2) addPolyline(index, ll, categoryOfHighway(el.tags.highway));
+        if (ll.length < 2) continue;
+        const t = categoryOfHighway(el.tags.highway);
+        addPolyline(index, ll, t);
+        added.push({ ll, t, box: boundsOf(ll) });
     }
+    return added;
+}
+
+// ---------- Rectangles (zone interrogée, zone affichée) ----------
+// Rectangle {s, w, n, e} en degrés.
+
+/** Rectangle englobant des points [[lat, lon], …], élargi de marginM ; null si vide. */
+export function boundsOf(latlngs, marginM = 0) {
+    let s = Infinity, w = Infinity, n = -Infinity, e = -Infinity;
+    for (const p of latlngs || []) {
+        if (!Number.isFinite(p?.[0]) || !Number.isFinite(p?.[1])) continue;
+        if (p[0] < s) s = p[0];
+        if (p[0] > n) n = p[0];
+        if (p[1] < w) w = p[1];
+        if (p[1] > e) e = p[1];
+    }
+    if (s === Infinity) return null;
+    const dLat = marginM / M_PER_DEG_LAT;
+    const dLon = marginM / (M_PER_DEG_LON * Math.cos(((s + n) / 2) * Math.PI / 180));
+    return { s: s - dLat, w: w - dLon, n: n + dLat, e: e + dLon };
+}
+
+export function boxesIntersect(a, b) {
+    return a.s <= b.n && b.s <= a.n && a.w <= b.e && b.w <= a.e;
+}
+
+// (lat, lon) à au moins COVER_INSET_M à l'intérieur d'un des rectangles.
+function isCovered(boxes, lat, lon) {
+    const dLat = COVER_INSET_M / M_PER_DEG_LAT;
+    const dLon = COVER_INSET_M / (M_PER_DEG_LON * Math.cos(lat * Math.PI / 180));
+    return (boxes || []).some(b => lat >= b.s + dLat && lat <= b.n - dLat && lon >= b.w + dLon && lon <= b.e - dLon);
 }
 
 // ---------- Classement d'un tracé ----------
@@ -141,15 +178,14 @@ function edgeMeters(a, b) {
  * @param {Array<{coords: number[][], ok?: boolean}>} parts - passages [[lat, lon], …]
  *        (`ok === false` : passage resté en ligne droite → « droite »)
  * @param {object} wayIndex  - index des voies (addOverpassWays)
- * @param {object} coverIndex - index des couloirs déjà interrogés
+ * @param {Array<object>} coverBoxes - rectangles déjà interrogés
  * @returns {{runs: Array<{t: string, ll: number[][]}>, meters: Object<string, number>}}
  *          runs : suites de tronçons de même type, `t` ∈ catégories + 'droite' +
- *          'pending' (hors couloir interrogé) ; meters : longueur par type.
+ *          'pending' (hors zone interrogée) ; meters : longueur par type.
  */
-export function classifyParts(parts, wayIndex, coverIndex) {
+export function classifyParts(parts, wayIndex, coverBoxes) {
     const runs = [];
     const meters = {};
-    const coverMax = CORRIDOR_M - COVER_MARGIN_M;
     for (const part of parts || []) {
         const c = part && part.coords;
         if (!Array.isArray(c) || c.length < 2) continue;
@@ -160,7 +196,7 @@ export function classifyParts(parts, wayIndex, coverIndex) {
             if (part.ok === false) t = 'droite';
             else {
                 const mLat = (a[0] + b[0]) / 2, mLon = (a[1] + b[1]) / 2;
-                if (nearestPayload(coverIndex, mLat, mLon, coverMax) === null) t = 'pending';
+                if (!isCovered(coverBoxes, mLat, mLon)) t = 'pending';
                 else t = nearestPayload(wayIndex, mLat, mLon, MATCH_M) || 'non-classe';
             }
             meters[t] = (meters[t] || 0) + edgeMeters(a, b);
@@ -171,44 +207,17 @@ export function classifyParts(parts, wayIndex, coverIndex) {
     return { runs, meters };
 }
 
-// ---------- Requête Overpass du couloir ----------
+// ---------- Requête Overpass de la zone ----------
 
-// Douglas-Peucker en mètres (projection locale) : allège la requête sans
-// déplacer le couloir de plus de SIMPLIFY_M.
-export function simplifyLatLngs(ll, tolM = SIMPLIFY_M) {
-    if (!Array.isArray(ll) || ll.length < 3) return ll ? ll.slice() : [];
-    const idx = createSegmentIndex();
-    const pts = ll.map(p => project(idx, p[0], p[1]));
-    const keep = new Uint8Array(ll.length);
-    keep[0] = keep[ll.length - 1] = 1;
-    const stack = [[0, ll.length - 1]];
-    while (stack.length) {
-        const [s, e] = stack.pop();
-        const seg = { ax: pts[s][0], ay: pts[s][1], bx: pts[e][0], by: pts[e][1] };
-        let maxD = -1, maxI = -1;
-        for (let i = s + 1; i < e; i++) {
-            const d = distToSeg(pts[i][0], pts[i][1], seg);
-            if (d > maxD) { maxD = d; maxI = i; }
-        }
-        if (maxD > tolM) { keep[maxI] = 1; stack.push([s, maxI], [maxI, e]); }
-    }
-    return ll.filter((_, i) => keep[i]);
+/** Zone à interroger : rectangle des tronçons « pending », élargi de ZONE_MARGIN_M. */
+export function pendingZone(runs) {
+    return boundsOf((runs || []).filter(r => r.t === 'pending').flatMap(r => r.ll), ZONE_MARGIN_M);
 }
 
-/**
- * Polylignes du couloir à interroger : les suites « pending », simplifiées.
- * @returns {number[][][]} liste de polylignes [[lat, lon], …]
- */
-export function pendingCorridors(runs) {
-    return (runs || []).filter(r => r.t === 'pending').map(r => simplifyLatLngs(r.ll));
-}
-
-/** Requête Overpass des voies `highway` à CORRIDOR_M des polylignes données. */
-export function corridorQuery(corridors) {
-    const parts = corridors
-        .filter(ll => ll.length >= 2)
-        .map(ll => `way["highway"](around:${CORRIDOR_M},${ll.map(p => `${p[0].toFixed(6)},${p[1].toFixed(6)}`).join(',')});`);
-    return `[out:json][timeout:25];(${parts.join('')});out geom;`;
+/** Requête Overpass de toutes les voies `highway` du rectangle. */
+export function zoneQuery(box) {
+    const f = v => v.toFixed(6);
+    return `[out:json][timeout:25];way["highway"](${f(box.s)},${f(box.w)},${f(box.n)},${f(box.e)});out geom;`;
 }
 
 /** Longueur affichée « 4,1 km » (une décimale, virgule). */
