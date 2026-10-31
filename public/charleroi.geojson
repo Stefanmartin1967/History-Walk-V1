@@ -1,4 +1,4173 @@
 {
   "type": "FeatureCollection",
-  "features": []
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4436711,
+          50.3812758
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Le Bois du Cazier",
+        "Catégorie": "A définir",
+        "osm_ref": "node/505009326",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMSG09BHZ24S7BEB4HMJ",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4472258,
+          50.4144896
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument aux Martyrs",
+        "Catégorie": "A définir",
+        "osm_ref": "node/1392880410",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMT0WVS0MA2RAVJMWM45",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5419867,
+          50.428653
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Église",
+        "osm_ref": "node/1756205008",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMTBJFT6SQWJGWA2ZHK1",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3258543,
+          50.4099111
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2178221016",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMTPAZD2075YYRF87WCM",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3777365,
+          50.3777395
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2258305216",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMV483YRV3SP977W9GM3",
+        "Zone": "Montigny-le-Tilleul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5232301,
+          50.4078921
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Maison Magritte",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2264426777",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMVE6NB0DYH519HKC3KR",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5390165,
+          50.430305
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/2360237499",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMVXBVFSZ0DR5PBWMTXP",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.458753,
+          50.3604067
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Clairière des résistants",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2590496040",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMWMN6G8EK4FWJHFASM2",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4433019,
+          50.4101432
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Statue de Jules Destrée",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2656447316",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMX945K93TF5ZQQDASBJ",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4160966,
+          50.3564743
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre Dame de Hal",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2656939245",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMXJEJSWK3CQWH025CNM",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4140756,
+          50.3577435
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte Barbe",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2656939251",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMXWA4TJ47D9RKCECD2F",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4899492,
+          50.4256035
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2677426020",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMY7ENEK2CPRTMX9DQYN",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3816992,
+          50.411681
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/2702960978",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMYKCNWPMKKRQ5CD5022",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3701074,
+          50.4540089
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Congrégation des Témoins de Jéhovah",
+        "Catégorie": "Église",
+        "osm_ref": "node/3506819048",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMZ05NBC29415YCQ930F",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5318573,
+          50.4001629
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument Franco-Belge",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3604628931",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMZAW5GJ52YBNN7X1K17",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.330072,
+          50.4696865
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "node/3659503893",
+        "candidate": true,
+        "HW_ID": "HW-01M616BMZPJSN8WDT9KR2NKZD1",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3317107,
+          50.4661861
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3710786801",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN04AKDMMS18SX8S5EXN",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3726771,
+          50.4589419
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Square Salvador Allende",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3714120118",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN0K3GG0510MMFDH1ZWX",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3289084,
+          50.4713982
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3736515057",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN0XGT9N8XV9T8AAJ3CS",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3149499,
+          50.4376691
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3739509753",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN18B7ZJNX99CFZ5PC9B",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3254914,
+          50.4721953
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3740612244",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN1QP41Q5GRYMXQKQ6QG",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3341369,
+          50.4622018
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3760159509",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN22R0AA4X1ZNS4A6K64",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3346469,
+          50.4729975
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3760159512",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN2DT65803Z6W14PZY9R",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3461449,
+          50.4731003
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3760159513",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN2SHZK45QC1XY042GBE",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3381395,
+          50.4643892
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/3768944016",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN38NW7B89H0PRFC62R6",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4511576,
+          50.4111272
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée des chasseurs à pieds",
+        "Catégorie": "Musée",
+        "osm_ref": "node/3846539320",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN3K13BABRTGB3HYS0KZ",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3103479,
+          50.4123207
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument du 5 septembre 1944",
+        "Catégorie": "A définir",
+        "osm_ref": "node/4223549565",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN3ZSHAZHK6YCJP9ZDGB",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3965805,
+          50.4438766
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument pour l'arbre de la liberté",
+        "Catégorie": "A définir",
+        "osm_ref": "node/4461828793",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN4BWSFY5NEXG5WKH5QR",
+        "Zone": "Roux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3827564,
+          50.412162
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Yvonne Vieslet",
+        "Catégorie": "A définir",
+        "osm_ref": "node/4843262675",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN4SQX38SGZ10QJAVGVG",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4432432,
+          50.4112272
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/5011237584",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN55AZFWV07KY7QGRGXW",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5215633,
+          50.4272967
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/5329051700",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN5J68DH2XY89RMQXVS7",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4548243,
+          50.4564192
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument",
+        "Catégorie": "A définir",
+        "osm_ref": "node/5914369009",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN5ZBMNS6B0GYNP3RRHF",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4745761,
+          50.4402489
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Lambert",
+        "Catégorie": "Église",
+        "osm_ref": "node/6234241620",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN6FZDB6BQ5Q79XX8MXJ",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3769688,
+          50.4307494
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Puits 11 Charbonnage de Monceau Fontaine",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6376422608",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN6VZJ3DX3G9AR19JY1R",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5080628,
+          50.4428359
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Charbonnages du Nord de Gilly",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6518667497",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN7ERDHEAGTDJFY488C4",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3515437,
+          50.4269532
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Charbonnage n°14 de Monceau Fontaine",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6520970133",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN7VNWDXNJ55HB6AGYVP",
+        "Zone": "Goutroux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5379369,
+          50.4336825
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sainte-Cathérine",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6521384219",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN8BQ2TNGXGBJQP4T02A",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5383817,
+          50.445288
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Fosse des Aulniats",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6521958618",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN8RQ9ERR7W9EF9ZRX14",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4204004,
+          50.447599
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancien puits de mines Saint-Louis",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6939817214",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN9560XS3FFZ1G78KY7G",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.396616,
+          50.442049
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument pour 13 mineurs tué en 1886",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6939970462",
+        "candidate": true,
+        "HW_ID": "HW-01M616BN9NQHNQH8A8R8Q8DRSH",
+        "Zone": "Roux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4037309,
+          50.4451658
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancien charbonnage Puits Saint-Quentin",
+        "Catégorie": "A définir",
+        "osm_ref": "node/6940021706",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNA9DM09402ZCX6AQ6HP",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4592714,
+          50.3627415
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Grotte des Sarrasins",
+        "Catégorie": "A définir",
+        "osm_ref": "node/8119180917",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNAR8FA2THSPYGTF9HF6",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3992207,
+          50.4382622
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/8281256433",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNB6Q2B2B274GFJTWV02",
+        "Zone": "Roux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4465533,
+          50.4098503
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/8618152347",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNBSR2572V57W6XRVQEG",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4471388,
+          50.4102558
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/8618152352",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNC9X19N7F03ZS9ENPJP",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.442534,
+          50.4367051
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/8993709176",
+        "candidate": true,
+        "HW_ID": "HW-01M616BND1WARJ5H3F8VX9D8FK",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4694667,
+          50.4877052
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/9025129346",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNDFFAGB6RZ380CDCD82",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4733482,
+          50.489709
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Joseph",
+        "Catégorie": "A définir",
+        "osm_ref": "node/9025129463",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNDY14Q9MABVQ4PWZ433",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4899143,
+          50.45255
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/9760184936",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNEE2DAJYSX8RJ30K3DA",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.388399,
+          50.4091412
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Santa Maria Goretti",
+        "Catégorie": "Église",
+        "osm_ref": "node/9911498188",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNEXBQ1FVAH99HQX9S72",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5218541,
+          50.3844217
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La Brockmanne",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/10223675836",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNFG8S4YM96V95ZS5RZC",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4629642,
+          50.467085
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Jean",
+        "Catégorie": "Église",
+        "osm_ref": "node/10614091500",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNFYVGPE3R3NM3RN0KAZ",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4434181,
+          50.3806369
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée du Verre",
+        "Catégorie": "Musée",
+        "osm_ref": "node/11444701180",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNGF8NWFZ2JRT5F82Y4N",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4443569,
+          50.3815092
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Stèle en marbre de Carrare",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11444701188",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNGXXEBCV4YYQH2NTC3R",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4427784,
+          50.3803885
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Cloche Maria Mater Orphanorum",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11444701193",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNHDP4VTNYDYXSNDX60P",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5318822,
+          50.3545162
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Octave Pirmez",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11543271730",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNHXYCHA93S2VN1BEY6C",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4291188,
+          50.4892027
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11860315463",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNJFRZ9K7ZG37ZF7CRPG",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4258694,
+          50.4138062
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/11885073933",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNK2AM5CXYE3JEPHWR6X",
+        "Zone": "Dampremy"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4523147,
+          50.4209219
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Al-Hidaya",
+        "Nom du site arabe": "مسجد الهداية شارلروا",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/12125484839",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNKJBQTBSX4SVTKSNTVN",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5088507,
+          50.451811
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/12187858846",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNM29DT5R59140BKV5BM",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5108637,
+          50.4517335
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Lieu de cérémonie",
+        "Catégorie": "A définir",
+        "osm_ref": "node/12191002481",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNMPNPXMY7XX2KBBQ1R2",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4492448,
+          50.4005321
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/12604564038",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNN8SP14QM1A0X740ZD9",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3302672,
+          50.3653874
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/12896275464",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNPNW4CG9KMHYNP7BMAE",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4813973,
+          50.4596949
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/12909273898",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNQMWHEM3G118NVCCA24",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5216353,
+          50.3589316
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tour carrée",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "node/14020680901",
+        "HW_ID": "HW-01M616BNR9WQKMB7JS6GVFN98J",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "maps_ref": "https://maps.app.goo.gl/4NDKij8MWYuCZSPv9",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4334179,
+          50.4416141
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/14022834829",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNRSYFSZJCYZ6ZKA14P6",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4108255,
+          50.4267134
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "node/14168960381",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNSCBB9V05XV6XJFFB16",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4737758,
+          50.3743746
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancien château de Loverval",
+        "Catégorie": "Fortification",
+        "osm_ref": "node/14293364453",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNSX5CT2BSAF20F51XFX",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4719279,
+          50.4143435
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/65854290",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNTFFAXJ1ARBHP40C3Q4",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5145403,
+          50.3893597
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Géry",
+        "Catégorie": "Église",
+        "osm_ref": "way/66172556",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNV35JSRQFCTXDNM29ZB",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4408775,
+          50.3953164
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Voie de la Fosse n°5 Blanchisserie",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/72509228",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNVPNTJ6AC4672ZMYPSW",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5231459,
+          50.40387
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saints-Pierre-et-Paul",
+        "Catégorie": "Église",
+        "osm_ref": "way/86567966",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNW7BV0NT6QFZ43Z16J9",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4297559,
+          50.4652979
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Jean-Baptiste",
+        "Catégorie": "Église",
+        "osm_ref": "way/88722482",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNWYPP8J8HKFYQYD5A9F",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4334955,
+          50.4737815
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Joseph",
+        "Catégorie": "Église",
+        "osm_ref": "way/89515133",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNXRA9SYTRND9AXVYAGK",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3637386,
+          50.4612507
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Lambert",
+        "Catégorie": "Église",
+        "osm_ref": "way/91156283",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNYHS5G8ZNZVC9N3WP44",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5382045,
+          50.4382581
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/108176620",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNZ733WCZ7GXJF7KFBR5",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3314046,
+          50.3656732
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Abbaye d'Aulne",
+        "Catégorie": "A définir",
+        "osm_ref": "way/114981554",
+        "candidate": true,
+        "HW_ID": "HW-01M616BNZX45KNDPMDQJA3E96N",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4139206,
+          50.3542925
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-André",
+        "Catégorie": "Église",
+        "osm_ref": "way/115877775",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP1ZSN7SZ3QKKAGZGGFP",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4463994,
+          50.3807266
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Louis",
+        "Catégorie": "Église",
+        "osm_ref": "way/115979160",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP2PY4Z2KVQS0KE05DSB",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5311337,
+          50.3548706
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/116306046",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP38EP4VX8H4DPVKHW9F",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4054955,
+          50.3881044
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée de la photographie",
+        "Catégorie": "Musée",
+        "osm_ref": "way/117219967",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP3WX31VG4KWYM2KMZMN",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5435326,
+          50.4171226
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Clet",
+        "Catégorie": "Église",
+        "osm_ref": "way/117470196",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP4GR1S0BZED3D65GWG7",
+        "Zone": "Aiseau-Presles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4260782,
+          50.4508545
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Sulpice",
+        "Catégorie": "Église",
+        "osm_ref": "way/122953474",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP55SCFCHZATXEMZW9B4",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3192417,
+          50.4383184
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Sainte-Vierge",
+        "Catégorie": "Église",
+        "osm_ref": "way/123342812",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP64DEBG8JAMS5XM0CT5",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4868499,
+          50.4235826
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Remy",
+        "Catégorie": "Église",
+        "osm_ref": "way/131500809",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP6Z4P3TVJEVQS86KNR5",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4060475,
+          50.3904363
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Paul",
+        "Catégorie": "Église",
+        "osm_ref": "way/131905228",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP7RK29BCW4QE7QX61D8",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4326183,
+          50.3983482
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Rue de la Belle-Vue",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/136699522",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP8DTNZMY1BKN8X2YH3R",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3317858,
+          50.3973457
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/141398706",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP921RKB4H5F86F2K7RX",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4837264,
+          50.4469067
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Pierre",
+        "Catégorie": "Église",
+        "osm_ref": "way/150038653",
+        "candidate": true,
+        "HW_ID": "HW-01M616BP9RKAEFXTR209REP4JS",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4888324,
+          50.4519576
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Foyer Emmanuel",
+        "Catégorie": "Église",
+        "osm_ref": "way/150041280",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPAC6X4C7H27F2B6JK7D",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4483941,
+          50.4001723
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/160065604",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPB75GCKMC4TDCBBCA5W",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4344487,
+          50.3873763
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église du Sacré-Cœur",
+        "Catégorie": "Église",
+        "osm_ref": "way/160066095",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPBVS7NRP0N4HWGDWG2R",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4811017,
+          50.3979238
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Remy",
+        "Catégorie": "Église",
+        "osm_ref": "way/164417418",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPCCTWK9501TZ9D8YYA9",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5347167,
+          50.3559031
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château d'Acoz",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/172162441",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPD104MDEG4GHYPCBVA3",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5143166,
+          50.436556
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Antoine",
+        "Catégorie": "Église",
+        "osm_ref": "way/181399059",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPDN0A507BNBVEFRT8BH",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3630526,
+          50.3671026
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame au Bois",
+        "Catégorie": "Église",
+        "osm_ref": "way/183317527",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPENEX3649ZRVAC26KKF",
+        "Zone": "Montigny-le-Tilleul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3795968,
+          50.3786974
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/183821712",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPF8X2JNZ8B7W9T1Q12D",
+        "Zone": "Montigny-le-Tilleul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4803981,
+          50.3876625
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée des Sciences de Parenville (ULB)",
+        "Catégorie": "Musée",
+        "osm_ref": "way/184133624",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPFW45P890TDCNPEBHM4",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4061867,
+          50.4459772
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame d'Heigne",
+        "Catégorie": "Église",
+        "osm_ref": "way/195535110",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPGJJV697CNSRZ0F8NWJ",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4685956,
+          50.3912842
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Basile",
+        "Catégorie": "Église",
+        "osm_ref": "way/199100940",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPH6W8C0SKZ5MCFJYB7E",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4509106,
+          50.4412434
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Joseph",
+        "Catégorie": "Église",
+        "osm_ref": "way/204408757",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPJ1M2VQN1QA2W73Z8P7",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.313048,
+          50.4042293
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Vaast",
+        "Catégorie": "Église",
+        "osm_ref": "way/207010890",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPJQXXNMGC8ZM6A427DR",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3238356,
+          50.4110995
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée du gazomètre",
+        "Catégorie": "A définir",
+        "osm_ref": "way/207153057",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPK781ZR1V9M66S9YNV7",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.324656,
+          50.409662
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Vaast",
+        "Catégorie": "Église",
+        "osm_ref": "way/207161026",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPKXFYQGKM6JR8M59B2M",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3284201,
+          50.4131153
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/207578613",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPMM6K525YTXST5V07YX",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4280874,
+          50.45462
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame des Affligés",
+        "Catégorie": "Église",
+        "osm_ref": "way/207698071",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPN42QNETFCMC27PD5W3",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4469337,
+          50.4708782
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame des Sept Douleurs",
+        "Catégorie": "Église",
+        "osm_ref": "way/208577253",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPNTKF8HS2QGS4EXRF6V",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3959055,
+          50.4118764
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sanctuaire de Sainte-Rita (Notre-Dame de Bon secours)",
+        "Catégorie": "Église",
+        "osm_ref": "way/208922152",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPPN64K9PV5ZGJZETPQT",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3978137,
+          50.4122081
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Al Aadin Cami",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/208922993",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPQBEKWE0SG6M840Q8A0",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4008253,
+          50.4079382
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Arrahama",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/208925423",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPR72EF85YH4T0M6NQ64",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3803744,
+          50.4091288
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Monceau",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/217337810",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPRY9600BW5DYDB6CMMH",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4567579,
+          50.4234186
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Éloi",
+        "Catégorie": "Église",
+        "osm_ref": "way/217765838",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPSMDMHH1XK4E1TDXQF1",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4621114,
+          50.4154891
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Pierre",
+        "Catégorie": "Église",
+        "osm_ref": "way/218273125",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPTAFCEQFANX8N44P62T",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3551631,
+          50.3788891
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/219307238",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPV1P9R0ZEY10910F7BS",
+        "Zone": "Montigny-le-Tilleul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3299339,
+          50.4614619
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Trazegnies",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/220663325",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPVKWGT9GYV1Y79HAR70",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4886527,
+          50.4324948
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame de Lourdes",
+        "Catégorie": "Église",
+        "osm_ref": "way/222631799",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPW6YVYXG7GZQDKX298H",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4076641,
+          50.3730235
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église du Sacré-Cœur",
+        "Catégorie": "Église",
+        "osm_ref": "way/229393946",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPWXE8XJ1JZTFQW8MXXV",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3285344,
+          50.4865394
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/229968203",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPXM7TBKHT3JRKZ41AV9",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4054996,
+          50.425382
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Pierre",
+        "Catégorie": "Église",
+        "osm_ref": "way/238965573",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPYE7HFP2X856RFJAN1J",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5190524,
+          50.4778273
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Lambert",
+        "Catégorie": "Église",
+        "osm_ref": "way/242832872",
+        "candidate": true,
+        "HW_ID": "HW-01M616BPZFNJH6BSYHF3DW33FS",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4286022,
+          50.4903982
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Martin",
+        "Catégorie": "Église",
+        "osm_ref": "way/242870371",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ07Q82FEHD8QTP6PVZP",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4927597,
+          50.4849473
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Barthélemy",
+        "Catégorie": "Église",
+        "osm_ref": "way/242976281",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ0Y8NSH14MQX388FCJ6",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4273684,
+          50.3882449
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tumulus de Marcinelle",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/246499301",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ1R8G7ZT4P5PR81SMME",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4352127,
+          50.4400107
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Sacré-Cœur",
+        "Catégorie": "Église",
+        "osm_ref": "way/248702276",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ2A594MY3HVCFAMXBR4",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4267647,
+          50.4281235
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Roch",
+        "Catégorie": "Église",
+        "osm_ref": "way/250509476",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ32V84Z3Y62PF2770J4",
+        "Zone": "Lodelinsart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4055798,
+          50.4810313
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sacré-Cœur",
+        "Catégorie": "Église",
+        "osm_ref": "way/251329280",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ3WXQQ3T0V6XRNBA8Z8",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4453504,
+          50.4210066
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Joseph",
+        "Catégorie": "Église",
+        "osm_ref": "way/252360717",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ4G2H7R604KKX7AAWKW",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4069569,
+          50.3903797
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Halloint",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/253693853",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ5E3FVWQD4C7RT1KT69",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4713082,
+          50.4270449
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Sainte-Barbe",
+        "Catégorie": "Église",
+        "osm_ref": "way/254881326",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ69RVAEVPDRH423NAKH",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4407148,
+          50.4075811
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Antoine",
+        "Catégorie": "Église",
+        "osm_ref": "way/255950599",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ72DMZK225MWPD7JAKJ",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4194153,
+          50.3549721
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre Dame de Grâce",
+        "Catégorie": "A définir",
+        "osm_ref": "way/260209394",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ7SN7PSEVB6DQSGGRM5",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4115481,
+          50.3561738
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Lourdes",
+        "Catégorie": "Église",
+        "osm_ref": "way/260209395",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ8GYH3R61C5PY1TS04Y",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.413165,
+          50.3542599
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mémorial de Jamioulx",
+        "Catégorie": "A définir",
+        "osm_ref": "way/260209397",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ99X7BX48AX709KPQMP",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5023013,
+          50.4293313
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église du Sacré-Coeur",
+        "Catégorie": "Église",
+        "osm_ref": "way/262098796",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQ9W0EHQ27RGGETFE8J6",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.468542,
+          50.4183656
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-François d'Assise",
+        "Catégorie": "Église",
+        "osm_ref": "way/262449221",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQARAHSKCWV2AJ1WFY3T",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3804986,
+          50.4563371
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-François d'Assise",
+        "Catégorie": "Église",
+        "osm_ref": "way/262602380",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQBHF17YZM62XBBA8Q8S",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.351479,
+          50.4507932
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Barthélemy",
+        "Catégorie": "Église",
+        "osm_ref": "way/262651994",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQCQABYSBDE6EAW6VJ3C",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4057188,
+          50.3909827
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Paul",
+        "Catégorie": "Église",
+        "osm_ref": "way/306851880",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQDEYVWQFY21PRFHS0FS",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4639719,
+          50.381443
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame du Rosaire",
+        "Catégorie": "Église",
+        "osm_ref": "way/321829166",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQE84H6N4KY1180HTF54",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4302329,
+          50.4006705
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame des VII Douleurs",
+        "Catégorie": "Église",
+        "osm_ref": "way/323401249",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQF48G6YNX4G1WZG1H8C",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3321312,
+          50.4284155
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église du Sacré-Coeur",
+        "Catégorie": "Église",
+        "osm_ref": "way/326078797",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQG755BHN0NAX4H1HR6V",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4533458,
+          50.4122383
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée des Beaux-Arts de Charleroi",
+        "Catégorie": "Musée",
+        "osm_ref": "way/330912908",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQH5TDAW10E5SW5YFE1N",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5329752,
+          50.4008826
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église de l'Immaculée Conception",
+        "Catégorie": "Église",
+        "osm_ref": "way/354789140",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQJ1E085E9QCMGH6ZDHV",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3313964,
+          50.4694133
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Église",
+        "osm_ref": "way/361371603",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQK0Q8AC5F12R8FCREQ0",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.324312,
+          50.4122909
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Fontaine-l'Évêque",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/366295242",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQKSGDPQ584H5Y5T3QQT",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3240349,
+          50.4117654
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/366295246",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQMNWSAW0XA19Y0SJZCD",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3288987,
+          50.4605578
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame De Lourdes",
+        "Catégorie": "Église",
+        "osm_ref": "way/372460393",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQNM95WKB5AZFZRAFTV1",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3339122,
+          50.4586824
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Antoine",
+        "Catégorie": "Église",
+        "osm_ref": "way/372460394",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQPDZ191X21B5WM7ZAB3",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3327012,
+          50.4643003
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/374160955",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQQ8P8PDY3Y6VGM9TTM8",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4427724,
+          50.3931505
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Temple protestant de Marcinelle",
+        "Catégorie": "Église",
+        "osm_ref": "way/374262386",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQR8HWAQ5MDPXEZBH6ZS",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5363461,
+          50.4660763
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/377001441",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQS5VZQQ6Y5T8DFHXMKF",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4143682,
+          50.4209382
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Paroisse des Saints Jean le Valaque et Piat le Romain",
+        "Catégorie": "Église",
+        "osm_ref": "way/408246107",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQT3APXG44FQ4XSZ1JRE",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3198076,
+          50.4165998
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Témoins de Jéhovah",
+        "Catégorie": "Église",
+        "osm_ref": "way/421824321",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQVC4Z0A7MAGNYTC8TD6",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3215959,
+          50.4118038
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Christophe",
+        "Catégorie": "Église",
+        "osm_ref": "way/422006633",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQW9WHBRH5ZWVMFSSXNQ",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3256302,
+          50.4275033
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/422198119",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQX50QBKXZ4ZXWVH05KH",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3273681,
+          50.4081963
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/422386646",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQXZK6CBZEVJP7FHX7JF",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5037233,
+          50.3995855
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Evangélique Pentecôtiste de Châtelet",
+        "Catégorie": "Église",
+        "osm_ref": "way/437063627",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQYV5RCJKBQW7QTWVPEY",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4286761,
+          50.4652804
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tour de l'ancien château",
+        "Catégorie": "A définir",
+        "osm_ref": "way/445429443",
+        "candidate": true,
+        "HW_ID": "HW-01M616BQZW58P6PS5QDWTZ5SK0",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3904398,
+          50.3932767
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Sainte-Bernadette",
+        "Catégorie": "Église",
+        "osm_ref": "way/452386112",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR0T9VQDCMKV51F1MJ8C",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4495841,
+          50.4656275
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château du Bois-Lombut",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/472120845",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR24H9ZY917BMVKJR18Q",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4291244,
+          50.3993196
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tir de Marcinelle",
+        "Catégorie": "A définir",
+        "osm_ref": "way/491546913",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR310PJVJGREYRCHWW05",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.425148,
+          50.4753256
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église de Jésus-Christ des saints des derniers jours",
+        "Catégorie": "Église",
+        "osm_ref": "way/496685296",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR3R5JGKP9NTT7BT0B5Y",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.513889,
+          50.3906027
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Maison de la Poterie",
+        "Catégorie": "Musée",
+        "osm_ref": "way/502318712",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR4JP7293DX530G5MT0T",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4276203,
+          50.4645962
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Grâce",
+        "Catégorie": "Église",
+        "osm_ref": "way/549724067",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR578CGNSBY3ANYJSTQC",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4441829,
+          50.4128278
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église de la Dormition",
+        "Catégorie": "Église",
+        "osm_ref": "way/574674597",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR65D8YBDMH18F2M2ZR8",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4462,
+          50.4081159
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle du Sacré-Cœur",
+        "Catégorie": "Église",
+        "osm_ref": "way/575735788",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR71ED150ZM8QFWJ0VQR",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4449823,
+          50.4095324
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Protestante de Charleroi",
+        "Catégorie": "Église",
+        "osm_ref": "way/575735833",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR7X43SN571RV51DKBV3",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4517011,
+          50.4157307
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Maison Mattot",
+        "Catégorie": "A définir",
+        "osm_ref": "way/575743771",
+        "candidate": true,
+        "HW_ID": "HW-01M616BR98326G65D6Z2R942JM",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4438787,
+          50.4057825
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Maison Regniers",
+        "Catégorie": "A définir",
+        "osm_ref": "way/576670500",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRA2D99WFW44GHD3XZ3G",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.364291,
+          50.4475065
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Luc",
+        "Catégorie": "Église",
+        "osm_ref": "way/576918356",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRATQS9QC7W5W9XS1WW9",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4421526,
+          50.4101828
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame au Rempart",
+        "Catégorie": "Église",
+        "osm_ref": "way/576985148",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRBPJ9NS0F50TM0GEBWT",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5197186,
+          50.4142757
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Barthélemy",
+        "Catégorie": "Église",
+        "osm_ref": "way/577345242",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRCHZ4MYVG0FGVMRCZBB",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3947901,
+          50.4003086
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/609272372",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRD8NW5QWVRMV6N1AAHG",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4668044,
+          50.3947125
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Laurent",
+        "Catégorie": "Église",
+        "osm_ref": "way/619179861",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRE71S09BSDFYQS3J9F2",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4911816,
+          50.4575847
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle des Raspes (Paroisse Saint-Martin)",
+        "Catégorie": "Église",
+        "osm_ref": "way/665938668",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRF487CWEH96AB9C8GBK",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4281426,
+          50.4187869
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Remy",
+        "Catégorie": "Église",
+        "osm_ref": "way/666024304",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRJ6YYWDJB9RMF6AJ8BJ",
+        "Zone": "Dampremy"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3932593,
+          50.4073649
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Bateau-Chapelle Spes Nostra",
+        "Catégorie": "Église",
+        "osm_ref": "way/674244555",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRKF12DSY4A7QJQYTXG4",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4126556,
+          50.3856034
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Musée de la mine d'Aldino Soloperto",
+        "Catégorie": "Musée",
+        "osm_ref": "way/737276475",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRMBXA6EMA5PHXR1HV4N",
+        "Zone": "Mont-sur-Marchienne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4546564,
+          50.416583
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ligne 140A",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/795037394",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRN51ZYVTM371ZHRMPMP",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4642987,
+          50.4044032
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame de Lourdes",
+        "Catégorie": "Église",
+        "osm_ref": "way/804764085",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRP6QH2H1FQ6AG0KQWZB",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5303585,
+          50.4001751
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Église",
+        "osm_ref": "way/812609376",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRQ6KCD2PB7Q79PFVFJ6",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.485002,
+          50.40101
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Salle du Royaume des Témoins de Jéhovah",
+        "Catégorie": "Église",
+        "osm_ref": "way/821172131",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRQZ7WBDY5CT4JE7EX5W",
+        "Zone": "Montignies-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4844016,
+          50.4159825
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre-Dame de Grace",
+        "Catégorie": "Église",
+        "osm_ref": "way/821241195",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRS0JS6SX4V2S5EWK0VV",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4727644,
+          50.38672
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église du Sacré-Coeur",
+        "Catégorie": "Église",
+        "osm_ref": "way/834014061",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRSY807GGKS2AED63E4X",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4175588,
+          50.4381552
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Temple Protestant de Jumet",
+        "Catégorie": "Église",
+        "osm_ref": "way/834802819",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRTX8P1Y23N27650285D",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5098608,
+          50.4007924
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame de Patience",
+        "Catégorie": "Église",
+        "osm_ref": "way/836105577",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRVS8TA08HNTFYG7RTDN",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4436331,
+          50.4124927
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Beffroi",
+        "Catégorie": "A définir",
+        "osm_ref": "way/845814299",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRWS5WR93VM1BQWVN5GX",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5162734,
+          50.3654676
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Léon",
+        "Catégorie": "Église",
+        "osm_ref": "way/849573369",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRXQYRYT6CDH70BDMD2M",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.386591,
+          50.418934
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle du Ruau",
+        "Catégorie": "Église",
+        "osm_ref": "way/854575763",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRYTSVRAB9F7ETB4GND2",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4154723,
+          50.443191
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Témoins de Jéovah",
+        "Catégorie": "Église",
+        "osm_ref": "way/856141160",
+        "candidate": true,
+        "HW_ID": "HW-01M616BRZMTQBF3A1FNG0MG431",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.445672,
+          50.4314529
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/857345642",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS0KS04ZHPHQ01M3MX3E",
+        "Zone": "Lodelinsart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5315871,
+          50.4396538
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-François-Xavier",
+        "Catégorie": "Église",
+        "osm_ref": "way/857743750",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS2219HW7WNCGR9A6SGM",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.527949,
+          50.436642
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Assakina",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/857743779",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS32X8NB7DQR9JGHP5EH",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5248497,
+          50.4522351
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Joseph",
+        "Catégorie": "Église",
+        "osm_ref": "way/858562523",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS3WVJRTDW3NMNEZDX0F",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4733269,
+          50.3753059
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Hubert",
+        "Catégorie": "Église",
+        "osm_ref": "way/931922125",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS4YAPB7HKMDTRGHW86M",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3982691,
+          50.4643762
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame du Rosaire",
+        "Catégorie": "Église",
+        "osm_ref": "way/936512172",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS5TAB96E7NF2MGBP2DD",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4831359,
+          50.483959
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle du Bosquet Chènoi",
+        "Catégorie": "Église",
+        "osm_ref": "way/975266536",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS6GCWPHRMYAH497BX80",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4723876,
+          50.48996
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Sainte-Vierge",
+        "Catégorie": "Église",
+        "osm_ref": "way/975266540",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS7E0W9PBYD1SB1RVWTC",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4761173,
+          50.4907235
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/975266544",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS8976B9ZKRFPKW2HBMF",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4648313,
+          50.368729
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame du Try d'Haies",
+        "Catégorie": "Église",
+        "osm_ref": "way/1002076838",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS8YXE9J3GSSV4TMEWAN",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4642181,
+          50.3675723
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1002077077",
+        "candidate": true,
+        "HW_ID": "HW-01M616BS9W0T1B3JXCNWN8WTH6",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3733323,
+          50.3996537
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte-Anne",
+        "Catégorie": "Église",
+        "osm_ref": "way/1013142033",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSAKH1WAM57MDBGXYEEF",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5349898,
+          50.4456838
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Salle du Royaume des Témoins de Jéhovah",
+        "Catégorie": "Église",
+        "osm_ref": "way/1017376719",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSBHG42D8CV5BDZXAE4B",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4508466,
+          50.4020261
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Jardin Mémorial Entre Terre et Ciel",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1075189544",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSCVRS4H9T2V771B3KQP",
+        "Zone": "Marcinelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4761121,
+          50.4622303
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1155782105",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSDHM0C720DDK7T1A2R6",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4829236,
+          50.4640958
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1160421467",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSEDDARVQ5ZP5CD8YS3C",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.445471,
+          50.412066
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1167109896",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSF5BT9VJD3JTD75HCCM",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3924258,
+          50.4410833
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame de l'Assomption",
+        "Catégorie": "Église",
+        "osm_ref": "way/1227176569",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSG01R79MGZ390DVYGVP",
+        "Zone": "Roux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.43213,
+          50.4687088
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Albert Ier",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1229774427",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSGP5S4TSF1ZMYKC6KR6",
+        "Zone": "Gosselies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4816616,
+          50.4499934
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Centre Evangélique Vie Nouvelle",
+        "Catégorie": "Église",
+        "osm_ref": "way/1239398805",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSHP533V2TNGE35C8T9C",
+        "Zone": "Ransart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.430256,
+          50.4893984
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1277611279",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSJJPHGRAZYD234BJ0QW",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4313382,
+          50.4847768
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1277611304",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSK7XBTSR7NCFYHJ53XY",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5269431,
+          50.4032622
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Pirmez",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/1334347516",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSM7J5VAS0D5BAYHT19A",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4772675,
+          50.3854625
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "A définir",
+        "osm_ref": "way/1347979240",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSMY3GD6REJWEJF43NKY",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3251519,
+          50.4100777
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Haussy",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/1357607282",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSNV84C4GH78X5VDR5Y1",
+        "Zone": "Fontaine-l'Évêque"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3575261,
+          50.4128527
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Saint-Benoît Labre",
+        "Catégorie": "Église",
+        "osm_ref": "way/1358336551",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSQ7DR5KNJZ99WM84S2D",
+        "Zone": "Goutroux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3475969,
+          50.4500543
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre-Dame des Bons Secours",
+        "Catégorie": "Église",
+        "osm_ref": "way/1359683160",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSR1XAZCV53F1GNBH97J",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3960365,
+          50.4064455
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame de Miséricorde",
+        "Catégorie": "Église",
+        "osm_ref": "way/1378690651",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSRX23NRK6GJ43461X30",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3938423,
+          50.406649
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Bilquin-de Cartier",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/1378690676",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSSPQ5E74MN9QKSBARHB",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5238024,
+          50.3694594
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Lausprelle",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/1413331934",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSTCF6E5XDJ5HS509VPP",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5240162,
+          50.4303484
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame-de-Fátima de Pironchamps",
+        "Catégorie": "Église",
+        "osm_ref": "way/1414858884",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSV8W2738HPQEG1EAMH5",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5428762,
+          50.4734221
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1414995104",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSW2XD6KCXM0V3S8HJJS",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4643176,
+          50.3963301
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Haci Bayram - Culture Dernegi",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1416368021",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSX0QDEGQPX13A5K1DQR",
+        "Zone": "Couillet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4460349,
+          50.4167394
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "BPS22",
+        "Catégorie": "Musée",
+        "osm_ref": "way/1416817983",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSXVYMP31W02FSQHVXA9",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4456096,
+          50.4184046
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Mosquée",
+        "osm_ref": "way/1416817990",
+        "candidate": true,
+        "HW_ID": "HW-01M616BSYSJVCPGFBNXFPWRBTT",
+        "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4666296,
+          50.4414751
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Église",
+        "osm_ref": "way/1418087609",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT0RD7X6E46HMMQC889H",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5329571,
+          50.4232862
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église de l'Immaculée Conception",
+        "Catégorie": "Église",
+        "osm_ref": "way/1418977020",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT1P0PK9AW5ZMB52KBFG",
+        "Zone": "Farciennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.414027,
+          50.4292253
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame au Bois",
+        "Catégorie": "Église",
+        "osm_ref": "way/1419011199",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT2RHF77SP30963CSKP6",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4673381,
+          50.428377
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Assemblée évangelique de Réveil",
+        "Catégorie": "Église",
+        "osm_ref": "way/1419268030",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT3NZW8K3FEAHS8SJEXF",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3727928,
+          50.452964
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Rianwelz",
+        "Catégorie": "Fortification",
+        "osm_ref": "way/1569109848",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT4HSCRQGMGQGJC1C373",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4145258,
+          50.4343488
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église de l'Immaculée Conception",
+        "Catégorie": "Église",
+        "osm_ref": "relation/19542632",
+        "candidate": true,
+        "HW_ID": "HW-01M616BT5M9QN447MSD14AFGFF",
+        "Zone": "Jumet"
+      }
+    }
+  ]
 }
