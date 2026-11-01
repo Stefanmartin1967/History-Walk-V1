@@ -27,8 +27,8 @@ describe('sous-type « Générique » retiré', () => {
         expect(all).not.toContain('Générique');
     });
 
-    it('légende : 30 icônes distinctes (handoff #22 + voûtes en berceau + 2 chapelles)', () => {
+    it('légende : 31 icônes distinctes (handoff #22 + voûtes en berceau + 2 chapelles + potale)', () => {
         const total = getLegendGroups().reduce((n, g) => n + g.variants.length, 0);
-        expect(total).toBe(30);
+        expect(total).toBe(31);
     });
 });

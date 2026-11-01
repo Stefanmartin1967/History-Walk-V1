@@ -6,6 +6,13 @@
 
 ---
 
+- TAXONOMIE : NOUVELLE CATÉGORIE « POTALE » (v3.7.465) — Demandée par Stefan le 01/11/2026 pour la « Potale de Notre-Dame des Sept Douleurs » (Thuin), que son panneau présente comme une « borne-potale » (un socle portant une niche) et non comme une chapelle.
+  - **Groupe Lieux de culte**, sans sous-type, une icône dessinée d'après la potale de Thuin (variante D choisie par Stefan, sans croix) : socle, fût avec son tronc, boudin, niche à grille carrée, corniche, disque de pierre au sommet. Légende : 31 icônes.
+  - États « En activité / Désaffecté / Ruine » ; accès limité à « Extérieur seulement » (défaut) et « Non visitable », puisqu'on n'entre pas dans une potale.
+  - **Scout inchangé** : `historic=wayside_shrine` couvre aussi croix et oratoires, il reste en « A définir » (triage manuel).
+
+  Tests : `taxonomie_icones_sync` (chaque catégorie a son icône ; celle de la potale est distincte), comptes de la légende (31 icônes).
+
 - TAXONOMIE : NOUVELLE CATÉGORIE « CHAPELLE » (v3.7.464) — Demandée par Stefan le 01/11/2026 pour Charleroi, après une marche à Thuin : aucune catégorie ne convenait aux chapelles (rangées jusqu'ici en « Église » par le Scout, ou en attente).
   - **Groupe Lieux de culte**, deux sous-types qui choisissent l'icône : **« À porte »** (on peut y entrer, ex. Chapelle Saint-Léonard) et **« À grille »** (ouverture grillagée, on regarde depuis le chemin). Icônes dessinées dans le style des 28 existantes, sans tour pour ne pas se confondre avec l'Église ; variantes A et C choisies par Stefan. Sans sous-type, la fiche prend l'icône « À porte ». Légende : 30 icônes.
   - États « En activité / Désaffecté / Ruine » ; accès par défaut **« Extérieur seulement »** (ces chapelles sont le plus souvent fermées).

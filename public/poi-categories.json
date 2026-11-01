@@ -53,6 +53,14 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
+      "label": "Potale",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
       "label": "Synagogue",
       "groupe": "Lieux de culte",
       "libelleDerive": false,

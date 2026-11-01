@@ -22,6 +22,7 @@ const FALLBACK = {
         { label: "Mosquée", groupe: "Lieux de culte" },
         { label: "Musée", groupe: "Culture & découvertes" },
         { label: "Pâtisserie", groupe: "Manger & boire" },
+        { label: "Potale", groupe: "Lieux de culte" },
         { label: "Puits", groupe: "Architecture traditionnelle", libelleDerive: true },
         { label: "Restaurant", groupe: "Manger & boire" },
         { label: "Salon de thé", groupe: "Manger & boire" },

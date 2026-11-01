@@ -35,4 +35,15 @@ describe('taxonomie ↔ icônes', () => {
         // Sans sous-type : l'icône « À porte » (comme l'Église prend « Catholique »).
         expect(getIconHtml('Chapelle', '')).toBe(getIconHtml('Chapelle', 'À porte'));
     });
+
+    it('chaque catégorie de poi-categories.json a sa propre icône (Potale comprise)', () => {
+        const legend = new Set(getLegendGroups().map(g => g.category));
+        for (const cat of taxonomy.categories) {
+            if (cat.label === 'A définir') continue;
+            expect(legend.has(cat.label), cat.label).toBe(true);
+        }
+        const potale = getLegendGroups().find(g => g.category === 'Potale');
+        const autres = getLegendGroups().filter(g => g.category !== 'Potale').flatMap(g => g.variants.map(v => v.svg));
+        expect(autres).not.toContain(potale.variants[0].svg);
+    });
 });
