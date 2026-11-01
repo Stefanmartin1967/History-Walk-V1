@@ -4425,6 +4425,41 @@
         ],
         "Zone": "Thuin"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2918738,
+          50.33153109972223
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Potale de Notre-Dame des Sept Douleurs",
+        "Catégorie": "Potale",
+        "Accès": "Non visitable",
+        "description": "Borne-potale au bord de l'allée du Calvaire, dans le Bois du Grand Bon Dieu, à Thuin.\nSelon le panneau d'information, ce petit édifice, connu à Thuin sous le nom de « chapelle Notre-Dame des Sept Douleurs », est une « borne-potale », comme on en trouve en Wallonie et dans le nord de la France : un socle portant une niche, ici en pierre de taille. La niche abrite d'ordinaire la statue d'un saint populaire ou une image de la Vierge ; celle de cette potale n'a laissé aucune trace.\nElle est dédiée à Notre-Dame des Sept Douleurs ; le panneau rappelle que ce titre de Marie renvoie aux sept douleurs que, selon les Évangiles, lui valut l'accompagnement de son Fils.\nDétruite en grande partie par des vandales à la fin du 20ᵉ siècle, elle a été reconstruite et restaurée en 2025 à l'initiative de l'asbl Thuin Petit Patrimoine (ThuPePa), avec le concours du Pôle de la pierre, à Soignies.\nSur place, une statuette occupe aujourd'hui la niche, derrière une grille.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Panneau d'information de la potale (ThuPePa) et observation sur place, le 1er novembre 2026 | https://qrco.de/bgKIb5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": false,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6C1B2C5J3BCCSWR1M7E7Q03",
+        "accessPoint": [
+          4.2922492,
+          50.3315857
+        ],
+        "photos": [
+          "photos/poi_HW-01M6C1B2C5J3BCCSWR1M7E7Q03_1793552920463.jpg"
+        ],
+        "Zone": "Thuin"
+      }
     }
   ]
 }
