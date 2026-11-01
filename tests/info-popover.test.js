@@ -70,23 +70,23 @@ describe('showInfoPopover — contenu légende', () => {
 });
 
 describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
-    it('contient une section "Catégories de lieux" avec les 28 icônes (sous-types inclus)', () => {
+    it('contient une section "Catégories de lieux" avec les 30 icônes (sous-types inclus)', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Catégories de lieux');
         // Légende exhaustive (chantier 21/05/2026) : chaque icône distincte est
         // affichée, sous-types inclus. 17 catégories mono + Mosquée (5) +
-        // Église (2) + Artisanat (4) = 28 entrées (27 du handoff #22 + voûtes
-        // en berceau, 24/10/2026).
+        // Église (2) + Chapelle (2) + Artisanat (4) = 30 entrées (27 du handoff
+        // #22 + voûtes en berceau, 24/10/2026 + chapelles, 01/11/2026).
         const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(28);
-        // Les 3 catégories à sous-types ont un en-tête de sous-groupe dédié.
+        expect(items).toHaveLength(30);
+        // Les 4 catégories à sous-types ont un en-tête de sous-groupe dédié.
         const subgroups = document.querySelectorAll('.info-popover-cat-subgroup');
-        expect(subgroups).toHaveLength(3);
+        expect(subgroups).toHaveLength(4);
         const subgroupTitles = Array.from(
             document.querySelectorAll('.info-popover-cat-subgroup-title')
         ).map(el => el.textContent);
-        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Artisanat']);
+        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Chapelle', 'Artisanat']);
         // Variantes de sous-types représentatives présentes.
         expect(txt).toContain('À minaret');
         expect(txt).toContain('Catholique');

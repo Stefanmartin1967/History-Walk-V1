@@ -61,7 +61,8 @@ export function getHwCategory(tags = {}) {
     // Lieux de culte — on dérive la catégorie v2 du bâtiment puis de la religion.
     if (tags.building === 'mosque') return 'Mosquée';
     if (tags.building === 'synagogue') return 'Synagogue';
-    if (tags.building === 'church' || tags.building === 'chapel' || tags.building === 'cathedral') return 'Église';
+    if (tags.building === 'chapel') return 'Chapelle';   // sans sous-type : porte ou grille se voit sur place
+    if (tags.building === 'church' || tags.building === 'cathedral') return 'Église';
     if (tags.amenity === 'place_of_worship') {
         if (tags.religion === 'muslim') return 'Mosquée';
         if (tags.religion === 'christian') return 'Église';

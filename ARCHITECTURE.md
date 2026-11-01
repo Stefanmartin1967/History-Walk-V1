@@ -84,7 +84,7 @@ Côté CSS : `style.css` (statique, hors HMR Vite) importe des partiels par doma
 - **CSS** : classes uniquement, jamais de `style="…"` inline (bloqué par la CSP en
   production — voir pièges). Les écritures CSSOM (`el.style.x = …`) restent permises.
 - **Icônes** : Lucide est consommé via le pack `appIcons` (`src/lucide-icons.js`) ; les
-  icônes de catégories de lieux via `poi-icons.js` (28 icônes dédiées).
+  icônes de catégories de lieux via `poi-icons.js` (30 icônes dédiées).
 - **Livraison** : chaque PR bump `APP_VERSION` (`src/state.js`) et ajoute son entrée en
   tête de `CHANGELOG.md`. CI sur chaque PR : Vitest (~950 tests) + knip (code mort, à
   garder à zéro). Merge en squash.

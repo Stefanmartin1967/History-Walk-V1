@@ -201,7 +201,7 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
     // --- BOUTON LÉGENDE (déplacé depuis la topbar — PR harmonisation PC) ---
     // Bouton LIBELLÉ « Légende », détaché de la pile de carrés (handoff Claude
     // Design « retouches testeurs », sujet 3, 11/10/2026) : la légende est
-    // indispensable (28 icônes faites maison), mais un livre sans texte au
+    // indispensable (30 icônes faites maison), mais un livre sans texte au
     // milieu de quatre carrés ne se repérait pas. Conteneur sans .leaflet-bar,
     // pour ne pas hériter du carré 44 px de la pile. aria-expanded suit la
     // légende (info-popover.js).

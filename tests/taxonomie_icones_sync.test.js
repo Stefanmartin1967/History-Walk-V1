@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { getLegendGroups } from '../src/poi-icons.js';
+import { getLegendGroups, getIconHtml } from '../src/poi-icons.js';
 
 const taxonomy = JSON.parse(readFileSync(resolve(import.meta.dirname, '../public/poi-categories.json'), 'utf8'));
 
@@ -23,5 +23,16 @@ describe('taxonomie ↔ icônes', () => {
         const mosquee = getLegendGroups().find(g => g.category === 'Mosquée');
         const svgs = mosquee.variants.map(v => v.svg);
         expect(new Set(svgs).size).toBe(svgs.length);
+    });
+
+    it('Chapelle : « À porte » et « À grille » ont deux icônes, distinctes de l\'Église', () => {
+        const chapelle = getLegendGroups().find(g => g.category === 'Chapelle');
+        expect(chapelle.variants.map(v => v.label)).toEqual(['À porte', 'À grille']);
+        const svgs = chapelle.variants.map(v => v.svg);
+        expect(new Set(svgs).size).toBe(2);
+        const eglise = getLegendGroups().find(g => g.category === 'Église').variants.map(v => v.svg);
+        for (const svg of svgs) expect(eglise).not.toContain(svg);
+        // Sans sous-type : l'icône « À porte » (comme l'Église prend « Catholique »).
+        expect(getIconHtml('Chapelle', '')).toBe(getIconHtml('Chapelle', 'À porte'));
     });
 });
