@@ -4392,6 +4392,39 @@
         "Zone": "Thuin",
         "osmCheckedDate": "2026-11-01"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.291903699722222,
+          50.331146099722226
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Calvaire du Bois du Grand Bon Dieu",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À grille",
+        "Accès": "Extérieur seulement",
+        "description": "Calvaire à Thuin, au bout de l'allée forestière qui porte son nom.\nSelon le panneau d'information du calvaire, l'édifice a la forme traditionnelle d'une chapelle ouverte en façade, sur deux niveaux, qui correspondent aux deux dernières stations d'un chemin de croix aujourd'hui disparu : la Crucifixion et la Mise au tombeau. La date inscrite au centre du fronton est 1725.\nLa Crucifixion comptait à l'origine quatre personnages : le Christ en croix, la Vierge Marie, saint Jean et sainte Marie-Madeleine ; seul le Christ, de style baroque et du 18ᵉ siècle, est encore en place. La Mise au tombeau réunit le Christ étendu sur un socle, la Vierge soutenue par saint Jean, trois saintes femmes, Nicodème et Joseph d'Arimathie ; le panneau date ces œuvres du 16ᵉ siècle et les rattache à une production populaire régionale inspirée du maniérisme.\nL'ensemble a été entièrement restauré en 2024-2025 à l'initiative de l'asbl Thuin Petit Patrimoine (ThuPePa).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Panneau d'information du calvaire (ThuPePa), relevé sur place le 1er novembre 2026 | https://qrco.de/bgMM9W",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": false,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6C03E77FMBC6G6CD4G5W31A",
+        "photos": [
+          "photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551643346.jpg",
+          "photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551645289.jpg"
+        ],
+        "Zone": "Thuin"
+      }
     }
   ]
 }
