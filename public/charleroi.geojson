@@ -30,10 +30,19 @@
       },
       "properties": {
         "Nom du site FR": "Monument aux Martyrs",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "node/1392880410",
-        "candidate": true,
         "HW_ID": "HW-01M616BMT0WVS0MA2RAVJMWM45",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/cWuHVK4RLNKqyQeN6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -156,10 +165,19 @@
       },
       "properties": {
         "Nom du site FR": "Statue de Jules Destrée",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "node/2656447316",
-        "candidate": true,
         "HW_ID": "HW-01M616BMX945K93TF5ZQQDASBJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/VDwoTe68Hxgz4nAu5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -464,8 +482,18 @@
         "Nom du site FR": "Musée des chasseurs à pieds",
         "Catégorie": "Musée",
         "osm_ref": "node/3846539320",
-        "candidate": true,
         "HW_ID": "HW-01M616BN3K13BABRTGB3HYS0KZ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "description": "Situé dans le hall de la caserne Caporal Trésignies\nLe lien Maps porte sur la caserne, OSM vers le musée",
+        "maps_ref": "https://maps.app.goo.gl/9wXX4Sr4Pt5m3i8Z6",
         "Zone": "Charleroi"
       }
     },
@@ -533,11 +561,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Mémorial (Rue de France)",
+        "Catégorie": "Taxi",
         "osm_ref": "node/5011237584",
-        "candidate": true,
         "HW_ID": "HW-01M616BN55AZFWV07KY7QGRGXW",
+        "description": "Mémorial sur OSM, à vérifier\nNon trouvé sur Maps\nUne photo d'un \"bloc de bêton\" visible de la rue sur Street Maps",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -785,11 +822,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Monument au pigeon soldat",
+        "Catégorie": "Taxi",
         "osm_ref": "node/8618152347",
-        "candidate": true,
         "HW_ID": "HW-01M616BNBSR2572V57W6XRVQEG",
+        "description": "Attention, OSM renseigne deux mémoriaux, tous deux ajoutés par robfr\nA vérifier\nUn seul est visible sur Maps",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -803,11 +849,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Monument aux 1er et 4ème régiments de Chasseurs à pied",
+        "Catégorie": "Taxi",
         "osm_ref": "node/8618152352",
-        "candidate": true,
         "HW_ID": "HW-01M616BNC9X19N7F03ZS9ENPJP",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/M8BLfUuurLYGroaq9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -1482,8 +1537,18 @@
         "Nom du site FR": "Église Saint-Clet",
         "Catégorie": "Église",
         "osm_ref": "way/117470196",
-        "candidate": true,
         "HW_ID": "HW-01M616BP4GR1S0BZED3D65GWG7",
+        "Sous-type": "Catholique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/fHcCRyqvXYyt9G5X6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Aiseau-Presles"
       }
     },
@@ -2343,11 +2408,21 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Antoine",
+        "Nom du site FR": "Église Saint-Antoine de Padoue",
         "Catégorie": "Église",
         "osm_ref": "way/255950599",
-        "candidate": true,
         "HW_ID": "HW-01M616BQ72DMZK225MWPD7JAKJ",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/vTFqDrcX243JgFK77",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "Sous-type": "Catholique",
         "Zone": "Charleroi"
       }
     },
@@ -2562,8 +2637,18 @@
         "Nom du site FR": "Musée des Beaux-Arts de Charleroi",
         "Catégorie": "Musée",
         "osm_ref": "way/330912908",
-        "candidate": true,
         "HW_ID": "HW-01M616BQH5TDAW10E5SW5YFE1N",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/cnTtnwcgcTaLUXrs6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Charleroi",
         "Zone": "Charleroi"
       }
     },
@@ -2976,8 +3061,18 @@
         "Nom du site FR": "Église de la Dormition",
         "Catégorie": "Église",
         "osm_ref": "way/574674597",
-        "candidate": true,
         "HW_ID": "HW-01M616BR65D8YBDMH18F2M2ZR8",
+        "Sous-type": "Orthodoxe",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/rbFFm8tEk9mdrGKv5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -2992,10 +3087,19 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle du Sacré-Cœur",
-        "Catégorie": "Église",
+        "Catégorie": "Taxi",
         "osm_ref": "way/575735788",
-        "candidate": true,
         "HW_ID": "HW-01M616BR71ED150ZM8QFWJ0VQR",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "maps_ref": "https://maps.app.goo.gl/WxfnzqgUc9h3GDwW8",
         "Zone": "Charleroi"
       }
     },
@@ -3012,8 +3116,17 @@
         "Nom du site FR": "Église Protestante de Charleroi",
         "Catégorie": "Église",
         "osm_ref": "way/575735833",
-        "candidate": true,
         "HW_ID": "HW-01M616BR7X43SN571RV51DKBV3",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "maps_ref": "https://maps.app.goo.gl/qmMv8ki7YUNHPywg7",
         "Zone": "Charleroi"
       }
     },
@@ -3028,10 +3141,19 @@
       },
       "properties": {
         "Nom du site FR": "Maison Mattot",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "way/575743771",
-        "candidate": true,
         "HW_ID": "HW-01M616BR98326G65D6Z2R942JM",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "https://fr.wikipedia.org/wiki/Maison_Mattot",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -3046,10 +3168,18 @@
       },
       "properties": {
         "Nom du site FR": "Maison Regniers",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "way/576670500",
-        "candidate": true,
         "HW_ID": "HW-01M616BRA2D99WFW44GHD3XZ3G",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -3082,10 +3212,19 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame au Rempart",
-        "Catégorie": "Église",
+        "Catégorie": "Taxi",
         "osm_ref": "way/576985148",
-        "candidate": true,
         "HW_ID": "HW-01M616BRBPJ9NS0F50TM0GEBWT",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/RBqCQgZGdreSyUfT9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -3370,10 +3509,19 @@
       },
       "properties": {
         "Nom du site FR": "Beffroi",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "way/845814299",
-        "candidate": true,
         "HW_ID": "HW-01M616BRWS5WR93VM1BQWVN5GX",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/bxmUT5ZznCsf9yvr8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -3729,11 +3877,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Église Saint-Christophe",
         "Catégorie": "Église",
-        "osm_ref": "way/1167109896",
-        "candidate": true,
+        "osm_ref": "relation/15780121",
         "HW_ID": "HW-01M616BSF5BT9VJD3JTD75HCCM",
+        "Sous-type": "Catholique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/DcgegWZFNP21KdoX7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-01",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Charleroi"
       }
     },
@@ -4167,6 +4326,33 @@
         "candidate": true,
         "HW_ID": "HW-01M616BT5M9QN447MSD14AFGFF",
         "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.447001902059753,
+          50.41430477239438
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Monument au Prisonniers Politiques",
+        "Catégorie": "Taxi",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/EhXQmCJnufhALPhG8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-01",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6B70SY3K8NKFJTEAH828SSC",
+        "Zone": "Charleroi"
       }
     }
   ]
