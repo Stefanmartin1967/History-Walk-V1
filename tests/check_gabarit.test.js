@@ -112,11 +112,14 @@ describe('check-gabarit — description', () => {
         expect(regles({ description: 'Appelée «Ben Tanfouss» sur OSM.' })).toEqual(['guillemets']);
     });
 
-    it('première personne, hors citation et hors « notre ère »', () => {
+    it('première personne, hors citation, hors « notre ère » et « Notre-Dame »', () => {
         expect(regles({ description: 'Lors de notre passage, la porte était fermée.' })).toEqual(['premiere-personne']);
         expect(regles({ description: 'J\'ai pu descendre dans la partie souterraine.' })).toEqual(['premiere-personne']);
         expect(regles({ description: 'Elle daterait du 10ᵉ siècle de notre ère.' })).toEqual([]);
         expect(regles({ description: 'La plaque indique « Nous rendons hommage ».' })).toEqual([]);
+        // Faux positif du 01/11/2026 (Potale de Notre-Dame des Sept Douleurs, Thuin).
+        expect(regles({ description: 'Elle est dédiée à Notre-Dame des Sept Douleurs.' })).toEqual([]);
+        expect(regles({ description: 'Une chapelle Notre Dame, à notre connaissance la plus ancienne.' })).toEqual(['premiere-personne']);
     });
 
     it('frontières de mot Unicode : « mêmes » ne contient pas « mes » (faux positif du 23/10/2026)', () => {

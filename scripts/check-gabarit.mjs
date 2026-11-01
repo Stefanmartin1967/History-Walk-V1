@@ -167,7 +167,7 @@ export const REGLES = [
         id: 'premiere-personne', gabarit: '§2, §3 ter',
         titre: 'Forme impersonnelle : pas de « nous », « vous », « je »',
         trouver: (p) => lignes(p.description).filter(l =>
-            mots(/\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['\u2019]/i).test(horsGuillemets(l).replace(mots(/\bnotre ère\b/gi), ''))),
+            mots(/\b(?:nous|notre|nos|vous|votre|vos|je|mon|mes)\b|\bj['\u2019]/i).test(horsGuillemets(l).replace(mots(/\bnotre ère\b|\bnotre[- ]dame\b/gi), ''))),
     },
     {
         id: 'intensif', gabarit: '§2',
