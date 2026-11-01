@@ -6,6 +6,14 @@
 
 ---
 
+- TAXONOMIE : NOUVELLE CATÉGORIE « CHAPELLE » (v3.7.464) — Demandée par Stefan le 01/11/2026 pour Charleroi, après une marche à Thuin : aucune catégorie ne convenait aux chapelles (rangées jusqu'ici en « Église » par le Scout, ou en attente).
+  - **Groupe Lieux de culte**, deux sous-types qui choisissent l'icône : **« À porte »** (on peut y entrer, ex. Chapelle Saint-Léonard) et **« À grille »** (ouverture grillagée, on regarde depuis le chemin). Icônes dessinées dans le style des 28 existantes, sans tour pour ne pas se confondre avec l'Église ; variantes A et C choisies par Stefan. Sans sous-type, la fiche prend l'icône « À porte ». Légende : 30 icônes.
+  - États « En activité / Désaffecté / Ruine » ; accès par défaut **« Extérieur seulement »** (ces chapelles sont le plus souvent fermées).
+  - **Scout** : un objet OSM `building=chapel` est désormais rangé en « Chapelle » (sans sous-type) au lieu d'« Église ». Les candidats déjà capturés ne changent pas.
+  - Aide (« ? » Catégorie, « Créer ou modifier un lieu » §4) et doc mises à jour.
+
+  Tests : `taxonomie_icones_sync` (deux icônes de chapelle, distinctes de l'Église ; icône par défaut), `scout_category_mapping` (`building=chapel` → Chapelle), comptes de la légende (30 icônes, 4 catégories à sous-types).
+
 - CIRCUITS : « ÉDITER L'ITINÉRAIRE » MONTRE LES VOIES DE TOUTE LA ZONE (v3.7.463) — Demandé par Stefan le 31/10/2026, après la v3.7.462 : voir le type de toutes les voies autour du circuit, pas seulement celles du tracé, pour repérer une alternative (« 800 m de route, mais un sentier un peu plus loin »). Extension du design validé (mêmes couleurs, en traits fins), sans repasser par Claude Design.
   - **Bouton « Voies »** dans la barre d'« Éditer l'itinéraire », à côté de « Calque », actif par défaut ; le choix est gardé d'une édition à l'autre pendant la session. Les voies sont dessinées sous le tracé, dans un pane Leaflet dédié (`way-zone`, z-index 390, sous les tracés), en traits de 2 px avec liseré de 1 px, transparence 0,6 sur le pane entier (tokens `--way-zone-*`).
   - **Une seule requête par circuit** : Overpass est interrogé sur le rectangle du tracé élargi de 500 m (`way["highway"](s,w,n,e)`), au lieu du couloir de 40 m. La même réponse colore le tracé et remplit la zone. Un tronçon est « couvert » à 150 m au moins du bord d'un rectangle déjà interrogé ; sinon, une nouvelle requête porte sur le rectangle des tronçons en attente.

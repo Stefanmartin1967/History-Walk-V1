@@ -443,8 +443,8 @@ export const HELP_LIEU_CATEGORIE = {
         <p>La catégorie <strong>classe</strong> le lieu et choisit son <strong>icône</strong>
         sur la carte. Elle débloque aussi <strong>Sous-type</strong>, <strong>État</strong> et
         <strong>Accès</strong>.</p>
-        <p class="help-muted">Pour quelques catégories (Mosquée, Église, Artisanat), le
-        sous-type précise l'icône : à minaret, à coupoles…</p>`,
+        <p class="help-muted">Pour quelques catégories (Mosquée, Église, Chapelle, Artisanat),
+        le sous-type précise l'icône : à minaret, à coupoles…</p>`,
 };
 
 /* === ANCRE — « ? » sur le label « Description Courte » === */
@@ -532,9 +532,10 @@ export const GUIDE_LIEU = {
                 lieu, jusqu'à trois précisions :</p>
                 <ul class="help-list">
                     <li><strong>Sous-type</strong> — la variante du lieu. <span class="help-muted">Quand
-                        la catégorie en propose (Mosquée, Église, Artisanat), il choisit aussi
+                        la catégorie en propose (Mosquée, Église, Chapelle, Artisanat), il choisit aussi
                         l'icône sur la carte : une mosquée à minaret, à coupoles, à voûtes en
-                        berceau ou fortifiée n'a pas le même pictogramme.</span></li>
+                        berceau ou fortifiée n'a pas le même pictogramme, ni une chapelle à porte
+                        et une chapelle à grille.</span></li>
                     <li><strong>État</strong> — par exemple <em>En activité</em>,
                         <em>Désaffecté</em>, <em>Ruine</em>.</li>
                     <li><strong>Accès</strong> — <em>Intérieur visitable</em>, <em>Extérieur

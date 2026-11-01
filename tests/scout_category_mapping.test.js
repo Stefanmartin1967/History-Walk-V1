@@ -74,6 +74,8 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
         expect(getHwCategory({ building: 'mosque' })).toBe('Mosquée');
         expect(getHwCategory({ building: 'synagogue' })).toBe('Synagogue');
         expect(getHwCategory({ building: 'church' })).toBe('Église');
+        expect(getHwCategory({ building: 'chapel' })).toBe('Chapelle');
+        expect(getHwCategory({ building: 'chapel', amenity: 'place_of_worship', religion: 'christian' })).toBe('Chapelle');
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'muslim' })).toBe('Mosquée');
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'christian' })).toBe('Église');
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'jewish' })).toBe('Synagogue');

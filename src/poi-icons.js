@@ -1,5 +1,6 @@
 // poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre,
-// + « À voûtes en berceau » le 24/10/2026 = 28).
+// + « À voûtes en berceau » le 24/10/2026 = 28 ; + Chapelle « À porte » et
+// « À grille » le 01/11/2026 = 30).
 // Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
 // legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
@@ -9,6 +10,7 @@
 //   Fortifiée) + icône
 //   « Mosquée » sans sous-type (forme indéterminée ou pas encore classée).
 // - Église : 2 sous-types (Catholique / Orthodoxe).
+// - Chapelle : 2 sous-types (À porte / À grille).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
 //   « Atelier » comme générique de la catégorie (sans sous-type).
 // - Les autres catégories sont mono-niveau.
@@ -35,7 +37,7 @@ function svgFor(paths, raw) {
         paths + '</g></svg>';
 }
 
-// ───── Les 28 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+// ───── Les 30 icônes (paths inline, wrapper appliqué dynamiquement) ─────
 
 // Lieux de culte — Mosquée (4 sous-types + icône sans sous-type)
 const I_MOSQUEE_MINARET = svgFor(G +
@@ -144,6 +146,31 @@ const I_EGLISE_ORTHO = svgFor(G +
     '<line x1="76" y1="18" x2="76" y2="24" stroke-width="2"/>' +
     '<line x1="74" y1="21" x2="78" y2="21" stroke-width="2"/>' +
     door('M42 82 L42 64 Q42 60 48 60 Q54 60 54 64 L54 82 Z')
+);
+
+// Lieux de culte — Chapelle (2 sous-types, 01/11/2026, variantes A et C choisies
+// par Stefan). Sans tour, pour ne pas se confondre avec l'Église à 44 px.
+// « À porte » : on peut y entrer (Chapelle Saint-Léonard, Thuin).
+const I_CHAPELLE_PORTE = svgFor(G +
+    '<path d="M26 82 L26 50 L48 30 L70 50 L70 82 Z"/>' +
+    '<line x1="48" y1="14" x2="48" y2="30" stroke-width="2"/>' +
+    '<line x1="43" y1="19" x2="53" y2="19" stroke-width="2"/>' +
+    '<circle cx="48" cy="47" r="4" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M42 82 L42 66 Q42 61 48 61 Q54 61 54 66 L54 82 Z')
+);
+
+// « À grille » : ouverture grillagée, on regarde depuis le chemin (chapelles de
+// bord de chemin). Toit sombre débordant, niche cintrée barrée de la grille.
+const I_CHAPELLE_GRILLE = svgFor(G +
+    '<path d="M32 82 L32 48 L48 33 L64 48 L64 82 Z"/>' +
+    '<polygon points="27,50 48,28 69,50 64,50 48,34 32,50" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<line x1="48" y1="14" x2="48" y2="28" stroke-width="2"/>' +
+    '<line x1="43.5" y1="18.5" x2="52.5" y2="18.5" stroke-width="2"/>' +
+    door('M40 68 L40 56 Q40 50 48 50 Q56 50 56 56 L56 68 Z') +
+    '<line x1="44" y1="52" x2="44" y2="68" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="48" y1="50.5" x2="48" y2="68" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="52" y1="52" x2="52" y2="68" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="40.5" y1="60" x2="55.5" y2="60" stroke="#C99A5C" stroke-width="1.5"/>'
 );
 
 // Synagogue
@@ -375,6 +402,12 @@ const POI_ICONS = {
         // Par défaut Catholique : la taxonomie n'a pas de « générique » pour Église.
         _default: I_EGLISE_CATHO,
     },
+    'Chapelle': {
+        'À porte': I_CHAPELLE_PORTE,
+        'À grille': I_CHAPELLE_GRILLE,
+        // Sans sous-type : « À porte », comme l'Église prend « Catholique ».
+        _default: I_CHAPELLE_PORTE,
+    },
     'Synagogue': I_SYNAGOGUE,
     'Fortification': I_FORTIFICATION,
     'Site funéraire': I_SITE_FUNERAIRE,
@@ -485,7 +518,8 @@ const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
  *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
  *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
  *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
- * Total des variants sur l'ensemble = 28 (27 du handoff #22 + voûtes en berceau).
+ * Total des variants sur l'ensemble = 30 (27 du handoff #22 + voûtes en berceau
+ * + les deux chapelles).
  */
 export function getLegendGroups() {
     return Object.entries(POI_ICONS).map(([category, entry]) => {

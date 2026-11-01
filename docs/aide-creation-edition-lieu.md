@@ -55,9 +55,9 @@ position — non modifiable.
 ### 4 · Catégorie et précisions
 Choisir la **Catégorie** fait apparaître, selon le type de lieu, jusqu'à trois précisions :
 - **Sous-type** — la variante du lieu. **Quand la catégorie en propose** *(Mosquée,
-  Église, Artisanat)*, le sous-type **choisit aussi l'icône** sur la carte : une mosquée
+  Église, Chapelle, Artisanat)*, le sous-type **choisit aussi l'icône** sur la carte : une mosquée
   *à minaret*, *à coupoles*, *à voûtes en berceau* ou *fortifiée* n'a pas le même
-  pictogramme.
+  pictogramme, ni une chapelle *à porte* et une chapelle *à grille*.
 - **État** — par exemple *En activité*, *Désaffecté*, *Ruine*.
 - **Accès** — *Intérieur visitable*, *Extérieur seulement* ou *Non visitable*.
 
@@ -102,7 +102,7 @@ Petits « ? » inline (`attachFieldHelp`, `richEditor.js`) à côté de 4 labels
 c'est le **secteur** où il se trouve. **Non modifiable.** *Découpage d'après OpenStreetMap.*
 
 **« ? » Catégorie** — Classe le lieu et choisit son **icône**. Débloque **Sous-type /
-État / Accès**. *Pour Mosquée, Église, Artisanat, le sous-type précise l'icône (à minaret,
+État / Accès**. *Pour Mosquée, Église, Chapelle, Artisanat, le sous-type précise l'icône (à minaret,
 à coupoles…).*
 
 **« ? » Description courte** — Ce texte s'affiche dans les **applications de marche**
@@ -145,7 +145,7 @@ valeurs PAR catégorie. Ex. **Mosquée** → sous-types « À minaret / À coupo
 berceau / Fortifiée » (vide = icône « Mosquée »), états « En activité / Désaffecté / Ruine /
 Disparu », accès « Intérieur visitable /
 Extérieur seulement / Non visitable ». Le **sous-type pilote l'icône** pour les catégories
-multi-icônes (Mosquée, Église, Artisanat) : `getIconForFeature` → `getIconHtml(catégorie,
+multi-icônes (Mosquée, Église, Chapelle, Artisanat) : `getIconForFeature` → `getIconHtml(catégorie,
 sous-type)` (lookup hiérarchique). Catégories sans sous-type → 1 icône.
 
 **Validation** (`updateSaveButtonState`) : « Enregistrer » désactivé tant que Nom vide

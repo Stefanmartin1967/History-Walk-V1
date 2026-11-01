@@ -10,6 +10,7 @@ const FALLBACK = {
         { label: "A définir", groupe: null },
         { label: "Artisanat", groupe: "Culture & découvertes" },
         { label: "Café", groupe: "Manger & boire" },
+        { label: "Chapelle", groupe: "Lieux de culte" },
         { label: "Commerce", groupe: "Services & commodités" },
         { label: "Curiosité", groupe: "Culture & découvertes" },
         { label: "Église", groupe: "Lieux de culte" },

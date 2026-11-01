@@ -42,6 +42,17 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
+      "label": "Chapelle",
+      "groupe": "Lieux de culte",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "À porte", "portee": "générique" },
+        { "label": "À grille", "portee": "générique" }
+      ],
+      "etats": ["En activité", "Désaffecté", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
       "label": "Synagogue",
       "groupe": "Lieux de culte",
       "libelleDerive": false,
