@@ -1,6 +1,6 @@
 // poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre,
 // + « À voûtes en berceau » le 24/10/2026 = 28 ; + Chapelle « À porte » et
-// « À grille » le 01/11/2026 = 30).
+// « À grille » le 01/11/2026 = 30 ; + Potale le 01/11/2026 = 31).
 // Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
 // legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
@@ -37,7 +37,7 @@ function svgFor(paths, raw) {
         paths + '</g></svg>';
 }
 
-// ───── Les 30 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+// ───── Les 31 icônes (paths inline, wrapper appliqué dynamiquement) ─────
 
 // Lieux de culte — Mosquée (4 sous-types + icône sans sous-type)
 const I_MOSQUEE_MINARET = svgFor(G +
@@ -171,6 +171,25 @@ const I_CHAPELLE_GRILLE = svgFor(G +
     '<line x1="48" y1="50.5" x2="48" y2="68" stroke="#C99A5C" stroke-width="1.5"/>' +
     '<line x1="52" y1="52" x2="52" y2="68" stroke="#C99A5C" stroke-width="1.5"/>' +
     '<line x1="40.5" y1="60" x2="55.5" y2="60" stroke="#C99A5C" stroke-width="1.5"/>'
+);
+
+// Lieux de culte — Potale (01/11/2026, variante D choisie par Stefan, dessinée
+// d'après la borne-potale du Bois du Grand Bon Dieu à Thuin) : socle, fût avec
+// son tronc, boudin, niche à grille carrée, corniche, disque de pierre au sommet.
+const I_POTALE = svgFor(G +
+    '<rect x="34" y="76" width="28" height="6"/>' +
+    '<path d="M38 76 L39 51 L57 51 L58 76 Z"/>' +
+    '<rect x="43" y="55" width="10" height="5" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<rect x="33" y="45" width="30" height="6" rx="3"/>' +
+    '<rect x="36" y="27" width="24" height="18"/>' +
+    '<rect x="39" y="29" width="18" height="16" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<line x1="45" y1="29.5" x2="45" y2="44.5" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="51" y1="29.5" x2="51" y2="44.5" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="39.5" y1="34.5" x2="56.5" y2="34.5" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<line x1="39.5" y1="39.5" x2="56.5" y2="39.5" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<rect x="31" y="22" width="34" height="5"/>' +
+    '<path d="M40 22 L40 18 L44 16 L52 16 L56 18 L56 22 Z"/>' +
+    '<circle cx="48" cy="10" r="6.5"/>'
 );
 
 // Synagogue
@@ -408,6 +427,7 @@ const POI_ICONS = {
         // Sans sous-type : « À porte », comme l'Église prend « Catholique ».
         _default: I_CHAPELLE_PORTE,
     },
+    'Potale': I_POTALE,
     'Synagogue': I_SYNAGOGUE,
     'Fortification': I_FORTIFICATION,
     'Site funéraire': I_SITE_FUNERAIRE,
@@ -518,8 +538,8 @@ const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
  *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
  *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
  *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
- * Total des variants sur l'ensemble = 30 (27 du handoff #22 + voûtes en berceau
- * + les deux chapelles).
+ * Total des variants sur l'ensemble = 31 (27 du handoff #22 + voûtes en berceau
+ * + les deux chapelles + potale).
  */
 export function getLegendGroups() {
     return Object.entries(POI_ICONS).map(([category, entry]) => {

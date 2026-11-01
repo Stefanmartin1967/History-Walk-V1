@@ -70,16 +70,16 @@ describe('showInfoPopover — contenu légende', () => {
 });
 
 describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
-    it('contient une section "Catégories de lieux" avec les 30 icônes (sous-types inclus)', () => {
+    it('contient une section "Catégories de lieux" avec les 31 icônes (sous-types inclus)', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Catégories de lieux');
         // Légende exhaustive (chantier 21/05/2026) : chaque icône distincte est
-        // affichée, sous-types inclus. 17 catégories mono + Mosquée (5) +
-        // Église (2) + Chapelle (2) + Artisanat (4) = 30 entrées (27 du handoff
-        // #22 + voûtes en berceau, 24/10/2026 + chapelles, 01/11/2026).
+        // affichée, sous-types inclus. 18 catégories mono + Mosquée (5) +
+        // Église (2) + Chapelle (2) + Artisanat (4) = 31 entrées (27 du handoff
+        // #22 + voûtes en berceau, 24/10/2026 + chapelles et potale, 01/11/2026).
         const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(30);
+        expect(items).toHaveLength(31);
         // Les 4 catégories à sous-types ont un en-tête de sous-groupe dédié.
         const subgroups = document.querySelectorAll('.info-popover-cat-subgroup');
         expect(subgroups).toHaveLength(4);
