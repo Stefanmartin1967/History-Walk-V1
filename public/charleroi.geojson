@@ -4354,6 +4354,43 @@
         "HW_ID": "HW-01M6B70SY3K8NKFJTEAH828SSC",
         "Zone": "Charleroi"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.291923299722222,
+          50.33223459972223
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Léonard",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle dédiée à saint Léonard, à Thuin.\nSelon le panneau d'information de la chapelle, une pierre gravée de son fronton la date de 1688 et l'attribue au frère Jacques Thomas, ermite de l'ermitage Saint-Antoine, établi en contrebas du Bois du Grand Bon Dieu, probablement au 16ᵉ siècle, et disparu en 1867. Ces ermites auraient largement contribué à la création de nombreux oratoires du bois et au pèlerinage à saint Léonard, très suivi des années 1700 jusqu'aux lendemains de la Seconde Guerre mondiale.\nSaint Léonard, qui aurait vécu vers l'an 500 selon ses hagiographes, est le patron des prisonniers. Le panneau rapporte qu'il était aussi invoqué contre les rhumatismes et les névralgies, par les femmes enceintes, par les enfants de santé fragile et, jusqu'au début du 20ᵉ siècle, par les mineurs de fond ; la chapelle était remplie d'ex-voto, béquilles, cannes ou chaussures.\nVandalisée en 2015, elle a été entièrement restaurée en 2024-2025 à l'initiative de l'asbl Thuin Petit Patrimoine (ThuPePa).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Panneau d'information de la chapelle (ThuPePa), relevé sur place le 1er novembre 2026 | https://qrco.de/bgMMBt",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": false,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6BYCTA4FVYKT3MHQ4CZ34TP",
+        "accessPoint": [
+          4.292462,
+          50.33234
+        ],
+        "photos": [
+          "photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549837431.jpg",
+          "photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549839232.jpg"
+        ],
+        "Zone": "Thuin"
+      }
     }
   ]
 }
