@@ -113,6 +113,7 @@ import { publishChanges } from '../src/admin-control-center.js';
 import { diffData } from '../src/admin-diff-engine.js';
 import { state } from '../src/state.js';
 import { getPoiId } from '../src/utils.js';
+import { uploadPhotoForPoi } from '../src/photo-service.js';
 
 beforeEach(() => {
     vi.clearAllMocks();
@@ -162,6 +163,8 @@ describe('publishChanges — synchronisation photos (régression)', () => {
         const publishedFeature = published.features.find(f => f.properties.HW_ID === poiId);
 
         expect(publishedFeature.properties.photos).toContain('photos/poi_TEST_123.jpg');
+        // La destination est transmise : elle choisit le dépôt de photos.
+        expect(uploadPhotoForPoi).toHaveBeenCalledWith(expect.any(File), poiId, 'djerba');
 
         // Le message de commit doit lui aussi refléter la réalité désormais.
         expect(geojsonUpload.message).toContain('1 photo(s)');

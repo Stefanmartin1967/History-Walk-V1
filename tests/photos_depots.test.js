@@ -3,6 +3,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { photoStorage } from '../src/config.js';
 
 // ============================================================================
 // Photos servies par un dépôt de photos par destination (heripia-photos-<id>,
@@ -41,9 +42,22 @@ describe('service worker — route des dépôts de photos', () => {
         expect(route).toMatch(/handler:\s*'CacheFirst'/);
     });
 
+    it("reconnaît l'adresse qu'enregistre l'envoi d'une photo (photoStorage)", () => {
+        expect(pattern.test(photoStorage('poi_HW-1_2.jpg', 'heripia-photos-charleroi').url)).toBe(true);
+    });
+
     it('même motif que circuit-photos-offline.js', () => {
         const offline = readFileSync(resolve(root, 'src/circuit-photos-offline.js'), 'utf8');
         expect(offline).toContain(pattern.toString());
+    });
+});
+
+describe('destinations.json', () => {
+    it('chaque photosRepo suit le motif heripia-photos-… (sinon envoi refusé)', () => {
+        const { maps } = JSON.parse(readFileSync(resolve(root, 'public/destinations.json'), 'utf8'));
+        for (const [id, dest] of Object.entries(maps)) {
+            if (dest.photosRepo) expect(() => photoStorage('x.jpg', dest.photosRepo), id).not.toThrow();
+        }
     });
 });
 

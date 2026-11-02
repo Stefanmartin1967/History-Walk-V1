@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 vi.mock('../src/database.js', () => ({
     getPoiPhotos: vi.fn(),
@@ -19,8 +19,10 @@ vi.mock('../src/ui-dom.js', () => ({
 
 import {
     validatePhotoFile, MAX_PHOTO_SIZE_BYTES, compressImage, ADMIN_WATERMARK_TEXT, applyWatermark,
-    PUBLISH_COMPRESSION, ADMIN_COMPRESSION, USER_COMPRESSION,
+    PUBLISH_COMPRESSION, ADMIN_COMPRESSION, USER_COMPRESSION, uploadPhotoForPoi,
 } from '../src/photo-service.js';
+import { uploadFileToGitHub, getStoredToken } from '../src/github-sync.js';
+import { state } from '../src/state.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Profils de compression — décision du 11/06/2026 (comparateur sur vraies photos).
@@ -202,5 +204,56 @@ describe('applyWatermark', () => {
         expect(ctx.restore).toHaveBeenCalledTimes(1);
         expect(ctx.fillText).toHaveBeenCalledTimes(2);
         expect(ctx.fillText).toHaveBeenCalledWith(ADMIN_WATERMARK_TEXT, expect.any(Number), expect.any(Number));
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Envoi d'une photo publiée — dépôt de photos par destination (02/11/2026).
+// Une destination avec `photosRepo` publie dans son dépôt et enregistre
+// l'adresse complète ; sans ce champ, rien ne change (dépôt principal).
+// ─────────────────────────────────────────────────────────────────────────────
+describe('uploadPhotoForPoi — dépôt de la destination', () => {
+    const photo = () => new Blob(['jpg'], { type: 'image/jpeg' });
+    const sent = () => uploadFileToGitHub.mock.calls.at(-1);
+
+    beforeEach(() => {
+        uploadFileToGitHub.mockClear();
+        getStoredToken.mockReturnValue('jeton');
+        state.destinations = { maps: {
+            djerba: { name: 'Djerba' },
+            charleroi: { name: 'Charleroi', photosRepo: 'heripia-photos-charleroi' },
+            mauvais: { name: 'Mauvais', photosRepo: 'History-Walk-V1' },
+        } };
+    });
+    afterEach(() => {
+        getStoredToken.mockReturnValue(null);
+        state.destinations = null;
+    });
+
+    it('Charleroi : dépôt heripia-photos-charleroi, adresse complète', async () => {
+        const url = await uploadPhotoForPoi(photo(), 'HW-01ABC', 'charleroi');
+        const [file, token, owner, repo, path] = sent();
+        expect([token, owner, repo]).toEqual(['jeton', 'Stefanmartin1967', 'heripia-photos-charleroi']);
+        expect(path).toMatch(/^photos\/poi_HW-01ABC_\d+\.jpg$/);
+        expect(file.name).toBe(path.slice('photos/'.length));
+        expect(url).toBe(`https://stefanmartin1967.github.io/heripia-photos-charleroi/${path}`);
+    });
+
+    it('Djerba (sans photosRepo) : dépôt principal, chemin court comme avant', async () => {
+        const url = await uploadPhotoForPoi(photo(), 'HW-01ABC', 'djerba');
+        const [, , , repo, path] = sent();
+        expect(repo).toBe('History-Walk-V1');
+        expect(path).toMatch(/^public\/photos\/poi_HW-01ABC_\d+\.jpg$/);
+        expect(url).toBe(path.slice('public/'.length));
+    });
+
+    it('destination inconnue : dépôt principal', async () => {
+        await uploadPhotoForPoi(photo(), 'HW-01ABC', 'inconnue');
+        expect(sent()[3]).toBe('History-Walk-V1');
+    });
+
+    it('photosRepo hors du motif heripia-photos-… : refus, rien envoyé', async () => {
+        await expect(uploadPhotoForPoi(photo(), 'HW-01ABC', 'mauvais')).rejects.toThrow(/Dépôt de photos invalide/);
+        expect(uploadFileToGitHub).not.toHaveBeenCalled();
     });
 });

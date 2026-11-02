@@ -45,6 +45,39 @@ export const GITHUB_PATHS = {
     destinations: ()        => `public/destinations.json`,
 };
 
+/**
+ * Dépôts de photos par destination (chantier du 02/11/2026).
+ *
+ * Chaque site GitHub Pages est limité à 1 Go, sans offre payante pour relever
+ * la limite. Une destination peut donc publier ses photos dans son propre dépôt
+ * public, servi par GitHub Pages : champ `photosRepo` de son entrée dans
+ * destinations.json. Sans ce champ, elles restent dans public/photos/ du dépôt
+ * principal. Le data garde l'adresse COMPLÈTE de chaque photo d'un dépôt :
+ * l'affichage n'a rien à calculer, et les deux formes coexistent.
+ *
+ * Nom imposé `heripia-photos-…` : le service worker (vite.config.js) et le
+ * hors-ligne (circuit-photos-offline.js) ne reconnaissent que ce motif.
+ */
+const PHOTOS_REPO_NAME = /^heripia-photos-[a-z0-9-]+$/;
+
+/**
+ * Où publier une photo : dépôt, chemin dans le dépôt, adresse à enregistrer
+ * dans le data.
+ * @param {string} filename    ex. "poi_HW-xxx_1234567890.jpg"
+ * @param {string} [photosRepo] champ `photosRepo` de la destination
+ * @returns {{repo: string, path: string, url: string}}
+ */
+export function photoStorage(filename, photosRepo) {
+    if (!photosRepo) {
+        return { repo: GITHUB_REPO, path: GITHUB_PATHS.photo(filename), url: `photos/${filename}` };
+    }
+    if (!PHOTOS_REPO_NAME.test(photosRepo)) {
+        throw new Error(`Dépôt de photos invalide : « ${photosRepo} » (attendu : heripia-photos-…).`);
+    }
+    const path = `photos/${filename}`;
+    return { repo: photosRepo, path, url: `https://${GITHUB_OWNER.toLowerCase()}.github.io/${photosRepo}/${path}` };
+}
+
 /** Chemins dans le dépôt privé des photos de travail (cf. GITHUB_WORK_REPO). */
 export const WORK_PATHS = {
     photo: (mapId, filename) => `${mapId}/${filename}`,

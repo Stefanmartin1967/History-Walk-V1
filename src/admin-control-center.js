@@ -656,7 +656,7 @@ async function publishChanges() {
                     }
                     try {
                         const file = new File([item.blob], 'photo.jpg', { type: 'image/jpeg' });
-                        const url = await uploadPhotoForPoi(file, poiId);
+                        const url = await uploadPhotoForPoi(file, poiId, mapId);
                         newUrls.push(url);
                         successIds.push(item.id);
                         uploadedPhotoCount++;
