@@ -6,6 +6,13 @@
 
 ---
 
+- PHOTOS : CHARLEROI ENTIÈREMENT DANS SON DÉPÔT — ANCIENS FICHIERS RETIRÉS (v3.7.470) — 4ᵉ et dernière PR du chantier « photos de Charleroi dans un dépôt séparé ». Déménagement fait par Stefan le 02/11/2026 avec l'outil de la v3.7.469 (4 photos copiées, 1 déjà présente), puis publié : les 7 photos de Charleroi (4 lieux) pointent vers `heripia-photos-charleroi`, ordre conservé, toutes en ligne.
+  - **5 fichiers retirés de `public/photos/`** (2,0 Mo), après vérification : chaque copie du dépôt de photos est identique à l'original, octet pour octet, et plus aucune donnée ne pointe vers les anciens chemins. Ils restent dans l'historique Git.
+  - **Message d'attente de l'outil** : pendant la mise en ligne, le toast affichait « Mise en ligne des photos 1/5 » à chaque relance. Il restait bloqué à 1 (la photo déjà présente) jusqu'à la fin du déploiement, où tout arrive d'un coup, et ressemblait à un compteur en panne (remarque de Stefan). Il dit maintenant « Photos copiées. Attente de leur mise en ligne (déploiement GitHub, environ une minute)… ». La copie reste comptée photo par photo.
+  - Non vérifié dans l'app : le nouveau message (il faut un vrai déménagement, donc le jeton) ; couvert par le test.
+
+  Tests : `photos_move` (messages de progression : copie comptée, attente sans compteur).
+
 - PHOTOS : OUTIL « DÉMÉNAGER LES PHOTOS » (v3.7.469) — 3ᵉ PR du chantier « photos de Charleroi dans un dépôt séparé ». Les photos publiées avant la v3.7.468 sont encore dans le dépôt principal (`photos/…`) ; cet outil les déménage vers le dépôt de photos de la destination. Il resservira tel quel pour Djerba, le jour où elle aura son `photosRepo`.
   - **Carte « Déménager les photos »** dans le Centre de Contrôle (Outils), visible seulement si la destination active a un `photosRepo` et des photos encore dans le dépôt principal ; elle indique leur nombre.
   - **Trois temps** (`src/photos-move.js`) : (1) chaque fichier est relu sur le site et copié **tel quel** dans le dépôt de photos, sous le même nom : mêmes octets, ni recompression, ni second filigrane. Un fichier déjà présent avec le même contenu est sauté (comparaison par l'empreinte Git) ; un fichier **différent** sous le même nom n'est jamais remplacé. (2) Attente que la nouvelle adresse réponde : déploiement du dépôt de photos, 4 min au plus, requêtes HEAD hors service worker. (3) La liste de photos du lieu est réécrite dans les données locales, ordre conservé, et le lieu passe dans les modifications.

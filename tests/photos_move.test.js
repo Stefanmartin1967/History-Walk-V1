@@ -127,9 +127,16 @@ describe('movePhotosToRepo', () => {
     it('attend la mise en ligne tant que le délai le permet', async () => {
         h.online.delete(`${BASE}c.jpg`);
         setTimeout(() => h.online.add(`${BASE}c.jpg`), 20);
-        const res = await run({ pollMs: 10, deadlineMs: 2000 });
+        const messages = [];
+        const res = await movePhotosToRepo('charleroi', (m) => messages.push(m), { pollMs: 10, deadlineMs: 2000 });
         expect(res.notOnline).toEqual([]);
         expect(state.userData.p2.photos).toEqual([`${BASE}c.jpg`]);
+        // Copie comptée photo par photo ; attente sans compteur (un « 2/3 »
+        // répété ressemblait à un compteur bloqué).
+        expect(messages.slice(0, 3)).toEqual(['Copie des photos 1/3…', 'Copie des photos 2/3…', 'Copie des photos 3/3…']);
+        const waiting = messages.slice(3);
+        expect(waiting.length).toBeGreaterThan(0);
+        for (const m of waiting) expect(m).toBe('Photos copiées. Attente de leur mise en ligne (déploiement GitHub, environ une minute)…');
     });
 
     it('photo absente du site : signalée, rien envoyé pour elle', async () => {
