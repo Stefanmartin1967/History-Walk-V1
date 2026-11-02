@@ -148,6 +148,8 @@ async function gitBlobSha(blob) {
     return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+const WAITING_MESSAGE = 'Photos copiées. Attente de leur mise en ligne (déploiement GitHub, environ une minute)…';
+
 // Attend que chaque adresse réponde. HEAD : hors service worker (ses routes ne
 // prennent que GET), sans cache.
 async function waitOnline(urls, onProgress, pollMs, deadlineMs) {
@@ -164,7 +166,10 @@ async function waitOnline(urls, onProgress, pollMs, deadlineMs) {
             }
         }
         if (online.size === urls.length || Date.now() >= deadline) break;
-        onProgress(`Mise en ligne des photos ${online.size}/${urls.length}…`);
+        // Sans compteur : les photos arrivent en ligne toutes ensemble, à la fin
+        // du déploiement. Un « 1/5 » répété (photo déjà présente) ressemblait à
+        // un compteur bloqué (essai de Stefan, 02/11/2026).
+        onProgress(WAITING_MESSAGE);
         await new Promise((resolve) => setTimeout(resolve, pollMs));
     }
     return online;
