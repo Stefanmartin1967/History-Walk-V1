@@ -6,6 +6,7 @@
 // admin_level), donc consommable tel quel par getZoneFromCoords/loadZonesForActive.
 import { fetchOverpassJson } from './osm-overpass.js';
 import { isPointInPolygon } from './utils.js';
+import { lightenZones } from './zones-lighten.mjs';
 
 // admin_level par défaut selon le pays (code ISO Nominatim). La Tunisie utilise 6
 // (délégations/communes) ; la plupart des autres pays = 8. On tente d'abord ce
@@ -61,10 +62,12 @@ async function fetchZonesForBBox(bbox, adminLevel) {
     } catch (e) {
         return { type: 'FeatureCollection', features: [] };
     }
-    return { type: 'FeatureCollection', features: relationsToFeatures(data) };
+    return lightenZones({ features: relationsToFeatures(data) });
 }
 
 // Relations admin OSM (`out geom`) → features zones (même forme que {dest}-zones.geojson).
+// Contours BRUTS (tous les points OSM) : les deux appelants les allègent
+// (lightenZones) avant de les rendre, fetchSubZones après son tri sur la forme brute.
 function relationsToFeatures(data) {
     const features = [];
     for (const rel of (data.elements || [])) {
@@ -143,7 +146,7 @@ export async function fetchSubZones(parent) {
         const subs = relationsToFeatures(data)
             .filter(f => f.properties.osm_id !== id && isMostlyInside(f, parent))
             .map(f => ({ ...f, properties: { ...f.properties, parent_osm_id: id } }));
-        if (subs.length >= 2) return subs;
+        if (subs.length >= 2) return lightenZones({ features: subs }).features;
     }
     return [];
 }

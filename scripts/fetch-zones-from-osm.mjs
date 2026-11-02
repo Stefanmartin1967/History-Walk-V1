@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { lightenZones, zonesFileText } from '../src/zones-lighten.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -150,7 +151,8 @@ if (skippedNoGeometry > 0) {
 
 const geojson = { type: 'FeatureCollection', features };
 const outPath = resolve(ROOT, 'public', `${destId}-zones.geojson`);
-writeFileSync(outPath, JSON.stringify(geojson, null, 2) + '\n', 'utf8');
+// Contours allégés, sans indentation : comme l'app (zones-lighten.mjs).
+writeFileSync(outPath, zonesFileText(lightenZones(geojson)), 'utf8');
 
 console.log('');
 console.log(`✓ ${features.length} zones extraites → ${outPath}`);
