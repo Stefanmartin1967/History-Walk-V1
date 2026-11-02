@@ -54,12 +54,13 @@
       }
     },
     "charleroi": {
-      "name": "Charleroi",
+      "name": "Wallonie",
       "status": "draft",
       "file": "charleroi.geojson",
       "circuitsFile": "circuits/charleroi.json",
       "zonesFile": "charleroi-zones.geojson",
       "photosRepo": "heripia-photos-charleroi",
+      "territoryOsmId": 90348,
       "bounds": [
         [
           50.30997323738739,
