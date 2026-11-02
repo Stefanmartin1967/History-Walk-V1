@@ -3,6 +3,7 @@ import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCirc
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
+import { loadPendingRejected } from './rejected-store.js';
 import { mergeOfficialWithLocal } from './circuit-lookup.js';
 import { getAppState, saveAppState, deleteAppState, getAllPoiDataForMap, getAllCircuitsForMap, countCircuitsWithoutMapId, deleteCircuitById, clearModificationLog } from './database.js';
 import { initMap } from './map.js';
@@ -224,7 +225,11 @@ export async function loadZonesForActive(mapId, dest) {
 // frais si brouillon admin). Absence du fichier (dest jamais curée) → 404 → rejets
 // vides (sûr : rien n'est masqué au scan). Sert au dédup du Scout et à la corbeille.
 // Exporté pour les tests, même raison que loadZonesForActive ci-dessus.
+// Rejets EN ATTENTE (pas encore poussés, rejected-store.js) relus en parallèle de la
+// requête, et attendus avant setRejectedData qui les ajoute aux rejets publiés : sinon
+// un rejet du jour ressortirait au prochain scan. loadPendingRejected ne lève jamais.
 export async function loadRejectedForActive(mapId, dest) {
+    const pendingLoaded = loadPendingRejected(mapId);
     try {
         const baseUrl = import.meta.env?.BASE_URL || './';
         const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
@@ -233,6 +238,7 @@ export async function loadRejectedForActive(mapId, dest) {
             : await fetchWithTimeout(`${baseUrl}${mapId}-rejected.json`, { cache: 'reload' });
         if (resp.ok) {
             const r = await resp.json();
+            await pendingLoaded;
             setRejectedData(r);
             try {
                 const etag = resp.headers?.get?.('etag') || null;
@@ -249,6 +255,7 @@ export async function loadRejectedForActive(mapId, dest) {
         // Rejets vides = sûr (rien n'est masqué au scan Scout).
         let cached = null;
         try { cached = await getAppState(`lastRejected_${mapId}`); } catch (_) {}
+        await pendingLoaded;
         setRejectedData(cached || {});
     }
 }

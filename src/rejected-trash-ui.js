@@ -8,7 +8,8 @@
 // Cycle : un candidat supprimé (data.js deletePoi) est tombstoné (osm_ref) → ici on
 // le restaure (removeRejected + addPoiFeature candidate:true) ou on vide tout.
 import { state } from './state.js';
-import { rejectedData, setRejectedData, removeRejected, rejectedCount } from './rejected.js';
+import { rejectedData, clearRejected, removeRejected, rejectedCount } from './rejected.js';
+import { savePendingRejected, pushRejected } from './rejected-store.js';
 import { addPoiFeature } from './data.js';
 import { showToast } from './toast.js';
 import { openHwModal } from './modal.js';
@@ -113,13 +114,14 @@ function attachListeners() {
     if (clearBtn) clearBtn.addEventListener('click', openClearConfirm);
 }
 
-// Pousse le fichier rejets (best-effort). Sans token → gardé en mémoire (le fichier
-// reste inchangé ; ré-aligné au prochain rejet/restauration avec token).
-function pushRejected() {
+// Enregistre l'état sur l'appareil puis pousse le fichier rejets entier tout de suite
+// (best-effort) : les rejets en attente partent avec (rejected-store.js). Sans token
+// → seulement enregistré ; les rejets en attente partiront à « Tout publier ».
+async function saveAndPushRejected() {
+    const mapId = state.currentMapId;
+    try { await savePendingRejected(mapId); } catch (e) { console.warn('[rejets] enregistrement local échoué :', e); }
     if (!getStoredToken()) return;
-    import('./publish-destination.js')
-        .then(({ pushDestinationRejected }) => pushDestinationRejected(state.currentMapId, rejectedData))
-        .catch(e => console.warn('[rejets] push échoué (gardé en mémoire) :', e));
+    pushRejected(mapId).catch(e => console.warn('[rejets] push échoué (gardé en attente) :', e));
 }
 
 // Restaure UN rejet : re-crée le candidat depuis l'instantané (pas de re-scan) puis
@@ -146,7 +148,7 @@ async function restoreRejected(osmRef) {
     }
     removeRejected(osmRef);
     showToast(`« ${rec.name || 'Sans nom'} » restauré comme candidat à curer.`, 'success', 3200);
-    pushRejected();
+    await saveAndPushRejected();
 }
 
 // ─── Confirm « Tout vider » (surcouche dans la modale — stacking openHwModal interdit) ──
@@ -185,9 +187,9 @@ function openClearConfirm() {
     overlay.querySelector('[data-confirm="cancel"]')?.addEventListener('click', close);
     overlay.querySelector('[data-confirm="ok"]')?.addEventListener('click', () => {
         close();
-        setRejectedData({});
+        clearRejected();
         showToast('Rejets vidés.', 'info', 2800);
-        pushRejected();
+        saveAndPushRejected();
         rerender();
     });
 }

@@ -81,11 +81,16 @@ vi.mock('../src/utils.js', () => ({
     isMapsChecked: vi.fn(p => !!p?.mapsChecked || /^https?:\/\//i.test((p?.maps_ref || '').trim()))
 }));
 
-// Tombstones de curation : on espionne addRejected sans toucher au vrai store, et on
-// neutralise le push GitHub (import dynamique fire-and-forget dans deletePoi).
+// Tombstones de curation : on espionne addRejected sans toucher au vrai store. Depuis
+// le 02/11/2026, un rejet n'est plus poussé : il est gardé sur l'appareil
+// (savePendingRejected) et part à « Tout publier ». Le push reste espionné pour le
+// vérifier.
 vi.mock('../src/rejected.js', () => ({
     addRejected: vi.fn(),
     rejectedData: {},
+}));
+vi.mock('../src/rejected-store.js', () => ({
+    savePendingRejected: vi.fn(() => Promise.resolve()),
 }));
 vi.mock('../src/publish-destination.js', () => ({
     pushDestinationRejected: vi.fn(() => Promise.resolve()),
@@ -116,6 +121,8 @@ import { eventBus } from '../src/events.js';
 import { deleteZoneCacheEntry } from '../src/zones.js';
 import { isCandidate } from '../src/utils.js';
 import { addRejected } from '../src/rejected.js';
+import { savePendingRejected } from '../src/rejected-store.js';
+import { pushDestinationRejected } from '../src/publish-destination.js';
 import {
     recomputeVu,
     applyFilters,
@@ -1043,6 +1050,10 @@ describe('deletePoi', () => {
         await deletePoi('p1');
 
         expect(addRejected).toHaveBeenCalledWith(expect.objectContaining({ osm_ref: 'way/386328373' }));
+        // Gardé sur l'appareil, PAS poussé (un commit par rejet, intenable à ~3000 candidats).
+        expect(savePendingRejected).toHaveBeenCalledWith(state.currentMapId);
+        await new Promise((r) => setTimeout(r, 0));
+        expect(pushDestinationRejected).not.toHaveBeenCalled();
     });
 
     it('lit l\'osm_ref via l\'overlay userData (report de fusion non encore publié)', async () => {

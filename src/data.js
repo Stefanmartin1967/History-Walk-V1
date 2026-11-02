@@ -18,7 +18,8 @@ import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked } from './utils.js';
-import { addRejected, rejectedData } from './rejected.js';
+import { addRejected } from './rejected.js';
+import { savePendingRejected } from './rejected-store.js';
 import { deleteZoneCacheEntry } from './zones.js';
 import { addToDraft, getMigrationId, getAdminDraft } from './admin-control-center.js';
 import { getDomainFromUrl } from './url-utils.js';
@@ -927,13 +928,15 @@ export async function deletePoi(poiId, { tombstone = true } = {}) {
                 lat: Number(coords[1]),
                 rejectedAt: Date.now(),
             });
-            // Push best-effort du fichier rejets (full-file idempotent). Token requis :
-            // pushDestinationRejected le vérifie et jette sinon → .catch garde le rejet
-            // EN MÉMOIRE (dédup de la session) ; il partira au prochain rejet/restauration
-            // ou via la corbeille. Fire-and-forget : la suppression reste instantanée.
-            import('./publish-destination.js')
-                .then(({ pushDestinationRejected }) => pushDestinationRejected(state.currentMapId, rejectedData))
-                .catch(e => console.warn('[data] push des rejets échoué (gardé en mémoire) :', e));
+            // Rejet EN ATTENTE, gardé sur l'appareil (02/11/2026) : plus de push par
+            // rejet (un commit et un déploiement chacun, intenable avec ~3000
+            // candidats). Il part en un commit avec « Tout publier » ou la corbeille
+            // (rejected-store.js).
+            try {
+                await savePendingRejected(state.currentMapId);
+            } catch (e) {
+                console.warn('[data] rejet non enregistré sur cet appareil (gardé en mémoire) :', e);
+            }
         }
 
         // Un CANDIDAT (scout non curé) n'est JAMAIS publié → il n'existe pas sur
