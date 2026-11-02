@@ -20,6 +20,7 @@ vi.mock('../src/state.js', () => {
     // pour qu'un test qui change currentMapId change aussi la cle resolue.
     mod.DEFAULT_MAP_ID = 'djerba';
     mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
+    mod.getDestinationLabel = (id) => id;
     return mod;
 });
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));

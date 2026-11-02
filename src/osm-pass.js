@@ -14,7 +14,7 @@
 // sidebar HW V2 le temps de la session). Sortie restaure la sidebar V2.
 import L from 'leaflet';
 import { map } from './map.js';
-import { state } from './state.js';
+import { state, getDestinationLabel } from './state.js';
 import { getPoiId, getPoiName, updatePoiData } from './data.js';
 import { getAccessPoint, escapeXml } from './utils.js';
 import { foldForSearch } from './text-search.js';
@@ -507,8 +507,7 @@ function stopOsmPass() {
 }
 
 function stateLabel() {
-    const id = state.currentMapId || '';
-    return id ? id.charAt(0).toUpperCase() + id.slice(1) : 'Carte courante';
+    return getDestinationLabel(state.currentMapId || '') || 'Carte courante';
 }
 
 // === Point d'entrée publique ===================================================

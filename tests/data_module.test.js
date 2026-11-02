@@ -33,7 +33,8 @@ vi.mock('../src/state.js', () => {
         setCustomFeatures: vi.fn(arr => { state.customFeatures = arr; }),
         setHiddenPoiIds: vi.fn(arr => { state.hiddenPoiIds = arr; }),
         setUserData: vi.fn(d => { state.userData = d; }),
-        setActiveFilter: vi.fn((k, v) => { state.activeFilters[k] = v; })
+        setActiveFilter: vi.fn((k, v) => { state.activeFilters[k] = v; }),
+        getDestinationLabel: vi.fn((id) => id)
     };
 });
 
