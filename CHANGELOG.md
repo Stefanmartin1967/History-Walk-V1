@@ -6,6 +6,10 @@
 
 ---
 
+- OUTILS : CONTRÔLE DU GABARIT — « NOTRE-DAME » N'EST PAS UNE PREMIÈRE PERSONNE (v3.7.466) — La règle « Forme impersonnelle » signalait « Elle est dédiée à Notre-Dame des Sept Douleurs » (Potale, Thuin, 01/11/2026). « Notre-Dame » (ou « Notre Dame ») est désormais écarté avant la recherche, comme « notre ère » ; un autre « notre » dans la même ligne reste signalé.
+
+  Tests : `check_gabarit` (Notre-Dame accepté, « à notre connaissance » toujours refusé).
+
 - TAXONOMIE : NOUVELLE CATÉGORIE « POTALE » (v3.7.465) — Demandée par Stefan le 01/11/2026 pour la « Potale de Notre-Dame des Sept Douleurs » (Thuin), que son panneau présente comme une « borne-potale » (un socle portant une niche) et non comme une chapelle.
   - **Groupe Lieux de culte**, sans sous-type, une icône dessinée d'après la potale de Thuin (variante D choisie par Stefan, sans croix) : socle, fût avec son tronc, boudin, niche à grille carrée, corniche, disque de pierre au sommet. Légende : 31 icônes.
   - États « En activité / Désaffecté / Ruine » ; accès limité à « Extérieur seulement » (défaut) et « Non visitable », puisqu'on n'entre pas dans une potale.
