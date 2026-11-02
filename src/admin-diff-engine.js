@@ -306,6 +306,19 @@ export async function prepareDiffData(adminDraft) {
                         new: `${newLen} photo(s)`,
                     });
                     if (newLen > oldLen) diffData.stats.photosAdded += (newLen - oldLen);
+                } else if (JSON.stringify(oldVal || []) !== JSON.stringify(newVal || [])) {
+                    // Même nombre, adresses ou ordre différents : photos déménagées
+                    // vers un dépôt de photos (photos-move.js), ou réordonnées. Sans
+                    // ce cas, le changement était invisible et purgeOrphanPendingPois
+                    // retirait le lieu des modifications en attente.
+                    const changed = (newVal || []).filter((p) => !(oldVal || []).includes(p)).length;
+                    changes.push({
+                        key: 'Photos',
+                        old: `${oldLen} photo(s)`,
+                        new: changed > 0
+                            ? `${newLen} photo(s), ${changed} adresse(s) changée(s)`
+                            : `${newLen} photo(s), ordre changé`,
+                    });
                 }
                 return;
             }

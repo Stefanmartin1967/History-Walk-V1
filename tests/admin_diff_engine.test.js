@@ -562,6 +562,49 @@ describe('Admin Diff Engine', () => {
             expect(photoChange.new).toBe('3 photo(s)');
         });
 
+        // Chantier dépôt de photos (02/11/2026) : déménager une photo change son
+        // adresse sans changer leur nombre. Avant, rien n'était signalé et le lieu
+        // sortait des modifications en attente.
+        describe('photos de même nombre', () => {
+            const diffPhotos = async (published, local) => {
+                const remotePoi = {
+                    type: 'Feature',
+                    properties: { HW_ID: 'p1', Nom: 'Chapelle', photos: published },
+                    geometry: { type: 'Point', coordinates: [10, 20] }
+                };
+                state.loadedFeatures = [{
+                    type: 'Feature',
+                    properties: { HW_ID: 'p1', Nom: 'Chapelle', photos: published, userData: { photos: local } },
+                    geometry: { type: 'Point', coordinates: [10, 20] }
+                }];
+                global.fetch.mockImplementation((url) => {
+                    if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [remotePoi] }) });
+                    if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                    if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([]) });
+                });
+                const r = await prepareDiffData({ pendingPois: { p1: { type: 'update' } }, pendingCircuits: {} });
+                return { r, change: r.pois[0]?.changes.find(c => c.key === 'Photos') };
+            };
+            const depot = 'https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/a.jpg';
+
+            it('adresse déménagée : signalée, sans compter de photo ajoutée', async () => {
+                const { r, change } = await diffPhotos(['photos/a.jpg', 'photos/b.jpg'], [depot, 'photos/b.jpg']);
+                expect(change).toEqual({ key: 'Photos', old: '2 photo(s)', new: '2 photo(s), 1 adresse(s) changée(s)' });
+                expect(r.stats.poisModified).toBe(1);
+                expect(r.stats.photosAdded).toBe(0);
+            });
+
+            it('ordre changé : signalé', async () => {
+                const { change } = await diffPhotos(['photos/a.jpg', 'photos/b.jpg'], ['photos/b.jpg', 'photos/a.jpg']);
+                expect(change.new).toBe('2 photo(s), ordre changé');
+            });
+
+            it('listes identiques : rien', async () => {
+                const { change } = await diffPhotos(['photos/a.jpg'], ['photos/a.jpg']);
+                expect(change).toBeUndefined();
+            });
+        });
+
         it('gère la migration d\'ID (type=migration, oldId → newId)', async () => {
             state.loadedFeatures = [{
                 type: 'Feature',

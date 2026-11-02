@@ -11,6 +11,7 @@ import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { escapeXml } from './utils.js';
 import { migrateExistingNotes } from './private-notes.js';
+import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
 // handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
 // admin-control-center → admin-control-ui → admin → admin-control-center.
@@ -670,9 +671,26 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // Dépôt de photos par destination (chantier 02/11/2026) : visible tant que la
+        // destination active a un `photosRepo` ET des photos encore dans le dépôt
+        // principal (photos-move.js). Disparaît une fois tout déménagé et publié.
+        const photosToMove = activeDest?.photosRepo
+            ? listPhotosToMove().reduce((n, p) => n + p.paths.length, 0)
+            : 0;
+        const movePhotosCardHtml = photosToMove > 0 ? `
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-move-photos" aria-label="Déménager les photos de cette destination vers son dépôt de photos">
+                <div class="cc-card-ico"><i data-lucide="image-up"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Déménager les photos</div>
+                    <div class="cc-card-sub">${photosToMove} photo(s) encore dans le dépôt principal → ${escapeXml(activeDest.photosRepo)}</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>` : '';
+
         const toolsHtml = `
             <h4 class="cc-section-title">Outils</h4>
             ${makePublicCardHtml}
+            ${movePhotosCardHtml}
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
                 <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
                 <div class="cc-card-text">
@@ -1023,6 +1041,52 @@ export function renderTab(tab, diffData, callbacks) {
                         title: 'Échec de la publication',
                         body: `<p>La publication n'a pas abouti :</p><p><em>${escapeXml(e.message)}</em></p>`
                             + `<p>Rien n'a changé — tu peux réessayer.</p>`,
+                    });
+                }
+            });
+
+            // Outils — « Déménager les photos » (dépôt de photos par destination) :
+            // copie les photos encore dans le dépôt principal vers le dépôt de la
+            // destination, puis change leurs adresses dans les données locales. La
+            // publication reste celle de « Tout publier », relue par l'admin.
+            bindCardAction('btn-cc-tool-move-photos', async () => {
+                const mapId = state.currentMapId;
+                const dest = state.destinations?.maps?.[mapId];
+                const places = listPhotosToMove();
+                const count = places.reduce((n, p) => n + p.paths.length, 0);
+                if (!dest?.photosRepo || count === 0) {
+                    showToast('Aucune photo à déménager.', 'info', 3500);
+                    return;
+                }
+                const { hwConfirm, hwAlert } = await import('./modal.js');
+                closeCCModal();
+                const ok = await hwConfirm({
+                    title: 'Déménager les photos',
+                    body: `<p>Copier <strong>${count} photo(s)</strong> de ${places.length} lieu(x) dans <strong>${escapeXml(dest.photosRepo)}</strong>, puis changer leurs adresses.</p>`
+                        + `<p>Les fichiers sont copiés tels quels. Rien n'est effacé du dépôt principal.</p>`
+                        + `<p>Compter une à deux minutes : il faut attendre que les photos soient en ligne. Ensuite, relis les lieux modifiés et fais « Tout publier ».</p>`,
+                    confirmLabel: 'Déménager',
+                    cancelLabel: 'Annuler',
+                });
+                if (!ok) return;
+                try {
+                    const res = await movePhotosToRepo(mapId, (msg) => showToast(msg, 'info', 2500));
+                    const problems = [
+                        ...res.failed.map((f) => `<li>${escapeXml(f.path)} : ${escapeXml(f.error)}</li>`),
+                        ...res.notOnline.map((url) => `<li>${escapeXml(url.split('/').pop())} : pas encore en ligne</li>`),
+                    ];
+                    await hwAlert({
+                        title: problems.length ? 'Déménagement incomplet' : 'Photos déménagées ✓',
+                        body: `<p>${res.copied} photo(s) copiée(s)${res.alreadyThere ? `, ${res.alreadyThere} déjà présente(s)` : ''}. Adresses changées pour ${res.places} lieu(x).</p>`
+                            + (problems.length
+                                ? `<p>Restées à leur ancienne adresse :</p><ul>${problems.join('')}</ul><p>Tu peux relancer l'outil : ce qui est fait ne sera pas refait.</p>`
+                                : '')
+                            + (res.places ? `<p>Ouvre le Centre de Contrôle, relis les lieux modifiés et fais « Tout publier ».</p>` : ''),
+                    });
+                } catch (e) {
+                    await hwAlert({
+                        title: 'Échec du déménagement',
+                        body: `<p>${escapeXml(e.message)}</p><p>Aucune adresse n'a changé.</p>`,
                     });
                 }
             });
