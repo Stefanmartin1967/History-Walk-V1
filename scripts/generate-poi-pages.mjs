@@ -152,6 +152,8 @@ dt{color:var(--ink-soft);font-weight:600}dd{margin:0}
 footer{text-align:center;color:var(--ink-soft);font-size:.85rem;padding:24px 20px}
 `.trim();
 
+const isFullUrl = (photo) => /^https:\/\//i.test(photo);
+
 export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELAUNCH, photoExists = () => true }) {
     const p = feature.properties;
     const name = p['Nom du site FR'] || p.HW_ID;
@@ -174,8 +176,13 @@ export function renderPoiPage({ feature, slug, mapId, mapName, prelaunch = PRELA
     const osmUrl = osmObjectUrl(p.osm_ref);
 
     const pageUrl = `${SITE_ORIGIN}/lieux/${mapId}/${slug}/`;
-    const photoRel = (p.photos || []).find(ph => photoExists(ph));
-    const imageUrl = photoRel ? `${SITE_ORIGIN}/${photoRel}` : `${SITE_ORIGIN}/og-image.png`;
+    // Photo d'un dépôt de photos par destination : adresse complète, gardée
+    // telle quelle (elle n'est pas sur le disque du build). Sinon chemin du site.
+    const photo = (p.photos || []).find(ph => isFullUrl(ph) || photoExists(ph));
+    const photoSrc = photo && (isFullUrl(photo) ? photo : `/${photo}`);
+    const imageUrl = photo
+        ? (isFullUrl(photo) ? photo : `${SITE_ORIGIN}/${photo}`)
+        : `${SITE_ORIGIN}/og-image.png`;
     const metaDesc = metaDescription(desc);
 
     const jsonLd = {
@@ -233,7 +240,7 @@ ${prelaunch ? '  <meta name="robots" content="noindex, nofollow">\n' : ''}  <tit
   <main>
     <p class="eyebrow">${escapeHtml(eyebrow)}</p>
     <h1>${escapeHtml(name)}</h1>
-${nameAr ? `    <p class="name-ar" dir="rtl" lang="ar">${escapeHtml(nameAr)}</p>\n` : ''}${photoRel ? `    <img class="photo" src="/${escapeHtml(photoRel)}" alt="${escapeHtml(name)}" loading="lazy">\n` : ''}    <div class="desc">
+${nameAr ? `    <p class="name-ar" dir="rtl" lang="ar">${escapeHtml(nameAr)}</p>\n` : ''}${photo ? `    <img class="photo" src="${escapeHtml(photoSrc)}" alt="${escapeHtml(name)}" loading="lazy">\n` : ''}    <div class="desc">
       ${descHtml}
     </div>
 ${infos.length ? `    <dl>\n${infos.map(([k, v]) => `      <dt>${escapeHtml(k)}</dt><dd>${escapeHtml(v)}</dd>`).join('\n')}\n    </dl>\n` : ''}    <a class="cta" href="/?poi=${encodeURIComponent(p.HW_ID)}">Voir sur la carte Heripia</a>

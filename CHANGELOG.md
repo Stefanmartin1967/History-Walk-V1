@@ -6,6 +6,17 @@
 
 ---
 
+- PHOTOS : L'APP SAIT LIRE LES PHOTOS D'UN DÉPÔT DE PHOTOS PAR DESTINATION (v3.7.467) — 1re PR du chantier « photos de Charleroi dans un dépôt séparé », plan validé par Stefan le 02/11/2026 : chaque site GitHub Pages est limité à 1 Go, sans offre payante pour relever la limite ; chaque destination pourra donc avoir son dépôt de photos (`heripia-photos-<id>`), avec un seul code. **Rien ne change pour personne** dans cette PR : aucune photo n'a encore d'adresse externe.
+  - **Dépôt `heripia-photos-charleroi`** créé (public), publié par un workflow GitHub Actions sans construction (la limite souple de 10 constructions par heure ne s'applique pas à un workflow, alors que « Tout publier » fait un commit par photo). Une photo de Charleroi y est copiée, mêmes octets, pour les essais.
+  - **Service worker** : nouvelle route `poi-photos-depots`, ancrée sur `https://stefanmartin1967.github.io/heripia-photos-…/photos/….jpg` (Workbox n'applique une route à une autre origine que si le motif correspond dès le début de l'adresse). Elle redemande la photo en CORS (`fetchOptions`) et ne garde que les réponses 200 : sans ça, une photo affichée par `<img>` ou en fond CSS arriverait en réponse opaque, comptée ~7,8 Mo dans le stockage (piège des tuiles du 18/10).
+  - **Politique de sécurité** : `connect-src` laisse passer `https://stefanmartin1967.github.io` (ZIP des photos, photos des étapes gardées hors-ligne) ; `img-src` le faisait déjà.
+  - **Photos des étapes gardées hors-ligne** (`circuit-photos-offline.js`) : accepte aussi une photo de dépôt.
+  - **Pages SEO** : une adresse complète est gardée telle quelle (image de partage et photo de la page), au lieu d'être cherchée sur le disque du build.
+  - **CORS** : la doc officielle de GitHub Pages n'en parle pas ; `Access-Control-Allow-Origin: *` mesuré le 02/11/2026 sur heripia.com et sur le nouveau dépôt.
+  - **Vérifié sur la version construite** (`vite preview`, service worker actif) avec la photo du nouveau dépôt : affichée par `<img>` sans `crossorigin` puis en fond CSS, elle est gardée dans `poi-photos-depots` en réponse CORS 200 de 470 756 octets (pas opaque) ; un `fetch` depuis la page (chemin du ZIP) répond 200 ; aucune erreur en console. **Non vérifié dans l'app** : une vraie fiche avec une photo de dépôt (aucune n'existe encore, ce sera la PR suivante) ; la visionneuse, qui fait `img.src = url` comme l'essai, n'a pas été modifiée.
+
+  Tests : `photos_depots` (motif de la route, ancrage, CORS et 200 seulement, même motif que le hors-ligne, politique de sécurité), `circuit_photos_offline` (photo de dépôt gardée, autres adresses github.io refusées), `generate_poi_pages` (adresse complète gardée).
+
 - OUTILS : CONTRÔLE DU GABARIT — « NOTRE-DAME » N'EST PAS UNE PREMIÈRE PERSONNE (v3.7.466) — La règle « Forme impersonnelle » signalait « Elle est dédiée à Notre-Dame des Sept Douleurs » (Potale, Thuin, 01/11/2026). « Notre-Dame » (ou « Notre Dame ») est désormais écarté avant la recherche, comme « notre ère » ; un autre « notre » dans la même ligne reste signalé.
 
   Tests : `check_gabarit` (Notre-Dame accepté, « à notre connaissance » toujours refusé).
