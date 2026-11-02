@@ -28,11 +28,18 @@ import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub, githubHttpErr
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { isCandidate, getPoiId } from './utils.js';
 import { saveAppState } from './database.js';
+import { zonesFileText } from './zones-lighten.mjs';
 
 // Emballe un objet en File JSON indenté (uploadFileToGitHub lit un File → base64
 // UTF-8 via FileReader, donc les accents passent correctement).
 function jsonFile(obj, name) {
     return new File([JSON.stringify(obj, null, 2) + '\n'], name, { type: 'application/json' });
+}
+
+// Fichier {id}-zones.geojson, sans indentation (zonesFileText, zones-lighten.mjs).
+// Les contours y arrivent déjà allégés (osm-zones.js, à l'arrivée depuis OSM).
+function zonesFile(zones, id) {
+    return new File([zonesFileText(zones)], `${id}-zones.geojson`, { type: 'application/json' });
 }
 
 // Lit le destinations.json ACTUEL sur GitHub (contenu frais via la Contents API,
@@ -70,7 +77,7 @@ export async function pushDestinationZones(id, zones, onProgress = () => {}, mes
     const cleanZones = { type: 'FeatureCollection', features: zones?.features || [] };
 
     onProgress('Publication des zones…');
-    await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+    await uploadFileToGitHub(zonesFile(cleanZones, id), token, GITHUB_OWNER, GITHUB_REPO,
         GITHUB_PATHS.zones(id), message);
 
     return { id, zones: cleanZones.features.length };
@@ -156,7 +163,7 @@ export async function registerDraftDestinationOnGitHub(id, entry, zones, onProgr
         GITHUB_PATHS.geojson(id), `feat(dest): brouillon « ${label} » — lieux (vide)`);
 
     onProgress('Création des quartiers…');
-    await uploadFileToGitHub(jsonFile(cleanZones, `${id}-zones.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
+    await uploadFileToGitHub(zonesFile(cleanZones, id), token, GITHUB_OWNER, GITHUB_REPO,
         GITHUB_PATHS.zones(id), `feat(dest): brouillon « ${label} » — zones`);
 
     onProgress('Création de l\'index des circuits…');

@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { zonesFileText } from '../src/zones-lighten.mjs';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
@@ -44,7 +45,7 @@ zonesGeo.features = zonesGeo.features.filter(f => {
 });
 
 // 3. Sauvegarder
-writeFileSync(zonesPath, JSON.stringify(zonesGeo, null, 2) + '\n', 'utf8');
+writeFileSync(zonesPath, zonesFileText(zonesGeo), 'utf8');
 
 console.log(`Cleanup ${destId}-zones.geojson :`);
 console.log(`  Zones avant : ${before}`);
