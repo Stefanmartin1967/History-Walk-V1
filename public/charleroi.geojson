@@ -4460,6 +4460,39 @@
         ],
         "Zone": "Thuin"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.275947949722222,
+          50.311181749861106
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Donat",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À grille",
+        "Accès": "Extérieur seulement",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/1046317426",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-02",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6EDV5WTA1TMRVKKW2FRDERG",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EDV5WTA1TMRVKKW2FRDERG_1793633141579.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EDV5WTA1TMRVKKW2FRDERG_1793633143215.jpg"
+        ],
+        "Zone": "Thuin"
+      }
     }
   ]
 }
