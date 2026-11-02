@@ -218,6 +218,32 @@ export default defineConfig({
               },
             },
           },
+          {
+            // Photos d'un dépôt de photos par destination (heripia-photos-<id>,
+            // chantier du 02/11/2026 : chaque site GitHub Pages a sa propre limite
+            // de 1 Go). Autre origine que le site : Workbox n'applique une route à
+            // une autre origine que si le motif correspond dès le début de
+            // l'adresse (RegExpRoute), la route `poi-photos` ne les voit donc pas.
+            //
+            // Les <img> et les fonds CSS demandent une photo SANS CORS : réponse
+            // opaque, que Chrome compte ~7,8 Mo dans le stockage du site (piège
+            // des tuiles, map.js, 18/10/2026). `fetchOptions` refait la demande
+            // en CORS — GitHub Pages renvoie `Access-Control-Allow-Origin: *`
+            // (mesuré le 02/11/2026, la doc ne le promet pas) — : réponse 200
+            // lisible, comptée à son poids réel ; seules les 200 sont gardées.
+            // Même motif dans circuit-photos-offline.js.
+            urlPattern: /^https:\/\/stefanmartin1967\.github\.io\/heripia-photos-[a-z0-9-]+\/photos\/[^/?]+\.jpg(\?.*)?$/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'poi-photos-depots',
+              fetchOptions: { mode: 'cors', credentials: 'omit' },
+              cacheableResponse: { statuses: [200] },
+              expiration: {
+                maxEntries: 200,
+                purgeOnQuotaError: true,
+              },
+            },
+          },
         ],
       }
     })

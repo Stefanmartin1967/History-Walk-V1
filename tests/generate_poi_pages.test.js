@@ -187,6 +187,15 @@ describe('renderPoiPage', () => {
         expect(stale).not.toContain('<img class="photo"');
     });
 
+    it("photo d'un dépôt de photos : adresse complète gardée telle quelle", () => {
+        const url = 'https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01TEST_1.jpg';
+        // Pas sur le disque du build : photoExists ne doit pas l'écarter.
+        const html = render({ photos: [url] }, { photoExists: () => false });
+        expect(html).toContain(`<img class="photo" src="${url}"`);
+        expect(html).toContain(`og:image" content="${url}"`);
+        expect(JSON.parse(html.match(/<script type="application\/ld\+json">(.*?)<\/script>/)[1]).image).toBe(url);
+    });
+
     it('source : domaine affiché (pas l\'URL brute), jamais de lien hors http(s)', () => {
         // Une source non-URL n'est plus escamotée : elle s'affiche en TEXTE,
         // comme dans l'app — mais sans href, donc sans schéma exotique.

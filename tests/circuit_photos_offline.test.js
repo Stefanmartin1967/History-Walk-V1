@@ -70,6 +70,19 @@ describe('photos publiées', () => {
         expect(fetched()).toEqual(['photos/c.jpg?v=2']);
     });
 
+    it("garde aussi une photo d'un dépôt de photos par destination", async () => {
+        const depot = 'https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-1_2.jpg';
+        await keepCircuitPhotosOffline([
+            step('a', [depot]),
+            // Autre site de github.io, ou hors du dossier photos/ : pas gardé.
+            step('b', ['https://stefanmartin1967.github.io/Photo-Manager/photos/b.jpg']),
+            step('c', ['https://stefanmartin1967.github.io/heripia-photos-charleroi/c.jpg']),
+            step('d', ['https://exemple.org/heripia-photos-charleroi/photos/d.jpg']),
+        ]);
+
+        expect(fetched()).toEqual([depot]);
+    });
+
     it('une photo à la fois', async () => {
         let release;
         globalThis.fetch = vi.fn()

@@ -27,13 +27,17 @@ import { getWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
 
 let generation = 0;
 
-// Seules les photos du site, sous /photos/, sont gardées par le service worker
-// (même motif que sa route) : en télécharger une autre ne servirait à rien.
+// Seules les photos gardées par le service worker valent d'être téléchargées
+// (mêmes motifs que ses routes, vite.config.js) : celles du site, sous
+// /photos/, et celles d'un dépôt de photos par destination (heripia-photos-…).
 const KEPT_BY_SERVICE_WORKER = /\/photos\/[^?]+\.jpg(\?.*)?$/i;
+const KEPT_FROM_PHOTOS_REPO = /^https:\/\/stefanmartin1967\.github\.io\/heripia-photos-[a-z0-9-]+\/photos\/[^/?]+\.jpg(\?.*)?$/i;
 function isKeptByServiceWorker(path) {
     try {
         const url = new URL(path, document.baseURI);
-        return url.origin === location.origin && KEPT_BY_SERVICE_WORKER.test(url.href);
+        return url.origin === location.origin
+            ? KEPT_BY_SERVICE_WORKER.test(url.href)
+            : KEPT_FROM_PHOTOS_REPO.test(url.href);
     } catch {
         return false;
     }
