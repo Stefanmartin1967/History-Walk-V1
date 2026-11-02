@@ -59,6 +59,7 @@
       "file": "charleroi.geojson",
       "circuitsFile": "circuits/charleroi.json",
       "zonesFile": "charleroi-zones.geojson",
+      "photosRepo": "heripia-photos-charleroi",
       "bounds": [
         [
           50.30997323738739,

@@ -284,6 +284,8 @@ export async function deleteDraftFromGitHub(id, onProgress = () => {}) {
     //    photos à plat (public/photos/poi_*.jpg, non namespacées par mapId) ne sont PAS
     //    supprimés ici — ils deviennent des orphelins INERTES (aucun pointeur après
     //    retrait de l'entrée + index, boot sûr). Nettoyage repo complet prévu en 4b-2.
+    //    Une destination à dépôt de photos (`photosRepo`, cf. photoStorage) garde aussi
+    //    son dépôt : l'app ne supprime jamais de dépôt, c'est un geste de l'admin.
     onProgress('Suppression des fichiers de la destination…');
     for (const path of [GITHUB_PATHS.geojson(id), GITHUB_PATHS.zones(id), GITHUB_PATHS.circuits(id), GITHUB_PATHS.tested(id)]) {
         try {

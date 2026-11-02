@@ -9,7 +9,7 @@
 
 import { state } from './state.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
-import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
+import { GITHUB_OWNER, photoStorage } from './config.js';
 import { fileReadError, imageDecodeError } from './utils.js';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -192,12 +192,16 @@ export function generatePhotoId() {
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
- * Uploade un fichier photo sur GitHub et retourne l'URL publique relative.
+ * Uploade un fichier photo sur GitHub et retourne l'adresse à enregistrer dans
+ * le data : dans le dépôt de photos de la destination s'il en a un (champ
+ * `photosRepo`, cf. photoStorage dans config.js), sinon dans le dépôt principal.
  * @param {File|Blob} file  Fichier image à uploader (déjà compressé).
  * @param {string} poiId   ID du POI associé (utilisé pour le nom de fichier).
- * @returns {Promise<string>} URL publique relative, ex. "photos/poi_HW-xxx_1234567890.jpg"
+ * @param {string} mapId   destination du POI.
+ * @returns {Promise<string>} ex. "photos/poi_HW-xxx_1234567890.jpg" (dépôt principal)
+ *   ou "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-xxx_1234567890.jpg"
  */
-export async function uploadPhotoForPoi(file, poiId) {
+export async function uploadPhotoForPoi(file, poiId, mapId) {
     const token = getStoredToken();
     if (!token) {
         throw new Error("Token GitHub introuvable. Configurez-le dans les Outils Admin.");
@@ -207,10 +211,10 @@ export async function uploadPhotoForPoi(file, poiId) {
     const filename = `poi_${safePoiId}_${Date.now()}.jpg`;
     const uploadFile = new File([file], filename, { type: 'image/jpeg' });
 
-    const path = GITHUB_PATHS.photo(filename);
+    const target = photoStorage(filename, state.destinations?.maps?.[mapId]?.photosRepo);
     const commitMessage = `feat(photo): Ajout photo pour POI ${poiId}`;
 
-    await uploadFileToGitHub(uploadFile, token, GITHUB_OWNER, GITHUB_REPO, path, commitMessage);
+    await uploadFileToGitHub(uploadFile, token, GITHUB_OWNER, target.repo, target.path, commitMessage);
 
-    return `photos/${filename}`;
+    return target.url;
 }
