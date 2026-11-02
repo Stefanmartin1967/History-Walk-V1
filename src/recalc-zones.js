@@ -15,7 +15,7 @@
 // Héritage PR C (#856/#857) : la moitié « ré-affecter la Zone de chaque POI +
 // overlay + Tout publier » a été RETIRÉE par le dégel — elle est devenue inutile.
 import { state } from './state.js';
-import { fetchZonesAuto, fetchSubZones, replaceZoneWithSubZones, coveredZoneIds } from './osm-zones.js';
+import { fetchZonesAuto, fetchTerritoryZones, fetchSubZones, replaceZoneWithSubZones, coveredZoneIds } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { applyFilters } from './data.js';
 import { getDerivedZone } from './utils.js';
@@ -46,38 +46,57 @@ function poiBoundingBox(features) {
 }
 
 /**
- * Complète le jeu de quartiers de la destination ACTIVE sur l'étendue réelle de ses
- * POIs. NE pousse RIEN sur GitHub : un brouillon LOCAL persiste ses zones ici
- * (saveDraftZones) ; pour une dest GitHub / publiée, l'appelant pousse
- * {dest}-zones.geojson (pushDestinationZones, token requis). Ne mute aucun POI.
+ * Complète le jeu de quartiers de la destination ACTIVE. NE pousse RIEN sur GitHub :
+ * un brouillon LOCAL persiste ses zones ici (saveDraftZones) ; pour une dest GitHub
+ * / publiée, l'appelant pousse {dest}-zones.geojson (pushDestinationZones, token
+ * requis). Ne mute aucun POI.
+ *
+ * Deux cas :
+ *  - destination à TERRITOIRE (`territoryOsmId`, 02/11/2026, la Wallonie) : les
+ *    quartiers SONT le territoire. Toutes ses communes sont récupérées
+ *    (fetchTerritoryZones), et les quartiers déjà connus HORS du territoire sont
+ *    retirés (Charleroi avait 12 communes françaises, sans aucun lieu : « Hors
+ *    zone » doit vouloir dire « hors Wallonie », et le Scout ne capture que ce qui
+ *    tombe dans un quartier). Une subdivision reste si sa commune d'origine est
+ *    dans le territoire ;
+ *  - sinon : quartiers sur l'étendue réelle des lieux, on n'en perd jamais.
  *
  * @returns {Promise<{mapId:string, name:string, zonesTotal:number, zonesAdded:number,
- *   isLocalDraft:boolean, zones:{type:string, features:Array}}>}
+ *   zonesRemoved:number, isLocalDraft:boolean, zones:{type:string, features:Array}}>}
  */
 export async function completeDestinationZones() {
     const mapId = state.currentMapId;
     const dest = state.destinations?.maps?.[mapId];
     if (!mapId || !dest) throw new Error('Aucune destination active.');
 
-    const features = state.loadedFeatures || [];
-    if (!features.length) throw new Error('Cette destination ne contient aucun lieu.');
+    let fc;
+    let kept = zonesData.features || [];
+    if (dest.territoryOsmId) {
+        fc = await fetchTerritoryZones(dest.territoryOsmId, dest.country || '');
+        if (!fc.features.length) throw new Error('OpenStreetMap ne renvoie aucun quartier pour ce territoire.');
+        const inside = new Set(fc.features.map(f => f.properties.osm_id));
+        kept = kept.filter(f => inside.has(f.properties?.osm_id) || inside.has(f.properties?.parent_osm_id));
+    } else {
+        const features = state.loadedFeatures || [];
+        if (!features.length) throw new Error('Cette destination ne contient aucun lieu.');
 
-    // bbox RÉELLE des POIs (déborde souvent les bounds de la destination — c'est la
-    // cause des « Hors zone » : les zones n'avaient été récupérées que pour la bbox
-    // serrée de la destination à la création).
-    const bbox = poiBoundingBox(features);
-    if (!bbox) throw new Error('Aucune coordonnée exploitable sur les lieux chargés.');
+        // bbox RÉELLE des POIs (déborde souvent les bounds de la destination — c'est la
+        // cause des « Hors zone » : les zones n'avaient été récupérées que pour la bbox
+        // serrée de la destination à la création).
+        const bbox = poiBoundingBox(features);
+        if (!bbox) throw new Error('Aucune coordonnée exploitable sur les lieux chargés.');
 
-    // Quartiers admin OSM sur cette bbox (niveau selon le pays : TN = délégations 6).
-    const fc = await fetchZonesAuto(bbox, dest.country || '');
+        // Quartiers admin OSM sur cette bbox (niveau selon le pays : TN = délégations 6).
+        fc = await fetchZonesAuto(bbox, dest.country || '');
+    }
+    const zonesRemoved = (zonesData.features || []).length - kept.length;
 
-    // MERGE dédupliqué par osm_id dans le binding live zonesData — on ne PERD jamais
-    // un quartier déjà connu, on COMPLÈTE ceux qui manquaient (miroir du Scout).
-    // Une zone subdivisée (« Subdiviser un quartier ») compte comme connue : elle ne
-    // revient pas recouvrir ses sous-zones.
-    const seen = coveredZoneIds(zonesData);
+    // MERGE dédupliqué par osm_id dans le binding live zonesData — on COMPLÈTE les
+    // quartiers qui manquaient (miroir du Scout). Une zone subdivisée (« Subdiviser un
+    // quartier ») compte comme connue : elle ne revient pas recouvrir ses sous-zones.
+    const seen = coveredZoneIds({ features: kept });
     const added = (fc.features || []).filter(f => f.properties?.osm_id == null || !seen.has(f.properties.osm_id));
-    const merged = { type: 'FeatureCollection', features: [...(zonesData.features || []), ...added] };
+    const merged = { type: 'FeatureCollection', features: [...kept, ...added] };
     setZonesData(merged); // vide le cache de zones dérivées → les POIs se re-dérivent
 
     // Brouillon LOCAL → persister le fichier en IndexedDB ; dest GitHub / publiée → le
@@ -94,6 +113,7 @@ export async function completeDestinationZones() {
         name: dest.name || mapId,
         zonesTotal: merged.features.length,
         zonesAdded: added.length,
+        zonesRemoved,
         isLocalDraft,
         zones: merged,
     };

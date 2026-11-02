@@ -1,6 +1,6 @@
 // data.js
 // --- 1. IMPORTS ---
-import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData, setActiveFilter } from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setCustomFeatures, setHiddenPoiIds, setUserData, setActiveFilter, getDestinationLabel } from './state.js';
 import { eventBus } from './events.js';
 import {
     getAllPoiDataForMap,
@@ -231,8 +231,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
 
     // 0. Mise à jour de l'Identité (Titre de la page)
     if (mapId) {
-        const formattedName = mapId.charAt(0).toUpperCase() + mapId.slice(1);
-        document.title = `Heripia - ${formattedName}`;
+        document.title = `Heripia - ${getDestinationLabel(mapId)}`;
     }
     
     // 1. Récupération des données sauvegardées (Cachés, Notes, Ajouts manuels)

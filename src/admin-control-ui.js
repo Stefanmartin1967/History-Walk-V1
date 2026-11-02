@@ -1,4 +1,4 @@
-import { state, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
+import { state, getActiveMapId, getDestinationLabel, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getStoredToken, getStoredUsername, saveToken, validateToken, uploadFileToGitHub } from './github-sync.js';
 import { hasOverpassKey, testOverpassKey } from './osm-overpass.js';
@@ -552,7 +552,7 @@ export function renderTab(tab, diffData, callbacks) {
         const totalCount = computePublishCount(stats);
         const hasToken = !!getStoredToken();
         const mapId = getActiveMapId();
-        const mapLabel = mapId.charAt(0).toUpperCase() + mapId.slice(1);
+        const mapLabel = getDestinationLabel(mapId);
 
         // — Hero variant —
         let heroHtml = '';
@@ -845,10 +845,15 @@ export function renderTab(tab, diffData, callbacks) {
                 const pushNote = isLocalDraft
                     ? '<p>Les quartiers seront enregistrés sur cet appareil (brouillon local).</p>'
                     : '<p>Le fichier des quartiers sera poussé sur GitHub. Au prochain chargement, les lieux retrouveront leur quartier <strong>automatiquement</strong> (plus besoin de « Tout publier »).</p>';
+                // Destination à territoire : les quartiers = les communes du territoire
+                // (les autres sont retirés), requête plus longue (~1 min pour la Wallonie).
+                const sourceNote = dest.territoryOsmId
+                    ? '<p>Heripia récupère toutes les communes OpenStreetMap du territoire de la destination (environ une minute) et retire les quartiers qui sont en dehors. La zone de chaque lieu se recalcule alors toute seule.</p>'
+                    : '<p>Heripia récupère les quartiers OpenStreetMap sur l\'étendue réelle des lieux et complète ceux qui manquaient. La zone de chaque lieu se recalcule alors toute seule.</p>';
                 const ok = await hwConfirm({
                     title: 'Compléter les quartiers',
                     body: `<p>Compléter les quartiers de <strong>${escapeXml(dest.name || mapId)}</strong> ?</p>`
-                        + '<p>Heripia récupère les quartiers OpenStreetMap sur l\'étendue réelle des lieux et complète ceux qui manquaient. La zone de chaque lieu se recalcule alors toute seule.</p>'
+                        + sourceNote
                         + pushNote,
                     confirmLabel: 'Compléter',
                     cancelLabel: 'Annuler',
@@ -859,13 +864,15 @@ export function renderTab(tab, diffData, callbacks) {
                     const { completeDestinationZones } = await import('./recalc-zones.js');
                     const res = await completeDestinationZones();
 
-                    // Push du fichier de zones UNIQUEMENT si le jeu a changé (zonesAdded > 0) :
-                    // re-compléter une dest déjà complète ne doit pas créer un commit identique.
+                    // Push du fichier de zones UNIQUEMENT si le jeu a changé (quartiers ajoutés,
+                    // ou retirés hors territoire) : re-compléter une dest déjà complète ne doit
+                    // pas créer un commit identique.
                     // Un brouillon LOCAL a déjà persisté ses zones dans completeDestinationZones.
+                    const changed = res.zonesAdded > 0 || res.zonesRemoved > 0;
                     let pushedNote = '';
                     if (res.isLocalDraft) {
                         pushedNote = '<p>Quartiers enregistrés sur cet appareil ✓</p>';
-                    } else if (res.zonesAdded > 0) {
+                    } else if (changed) {
                         const { pushDestinationZones } = await import('./publish-destination.js');
                         await pushDestinationZones(res.mapId, res.zones, (msg) => showToast(msg, 'info', 2500));
                         pushedNote = '<p>Fichier des quartiers poussé sur GitHub ✓</p>';
@@ -875,12 +882,15 @@ export function renderTab(tab, diffData, callbacks) {
 
                     const finalNote = res.isLocalDraft
                         ? ''
-                        : (res.zonesAdded > 0
+                        : (changed
                             ? '<p>Recharge l\'app après le déploiement GitHub Pages (~1-2 min) pour voir le re-zonage.</p>'
                             : '');
+                    const removedNote = res.zonesRemoved > 0
+                        ? ` ; <strong>${res.zonesRemoved}</strong> retiré(s), hors du territoire`
+                        : '';
                     await hwAlert({
                         title: 'Quartiers complétés ✓',
-                        body: `<p><strong>${res.zonesAdded}</strong> quartier(s) ajouté(s) (${res.zonesTotal} au total).</p>`
+                        body: `<p><strong>${res.zonesAdded}</strong> quartier(s) ajouté(s)${removedNote} (${res.zonesTotal} au total).</p>`
                             + '<p>La zone des lieux est recalculée à la volée — carte et filtre sont déjà à jour ici.</p>'
                             + pushedNote
                             + finalNote,

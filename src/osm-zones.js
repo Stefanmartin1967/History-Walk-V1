@@ -16,6 +16,11 @@ function levelChainForCountry(cc) {
     return LEVEL_CHAIN[(cc || '').toLowerCase()] || [8, 6];
 }
 
+// Délai (s) de la requête des communes d'un territoire : la Wallonie entière =
+// 261 communes, 14 Mo, 45 s sur overpass-api.de (mesuré le 02/11/2026), au-delà
+// des 40 s des autres requêtes. Même valeur côté serveur ([timeout:…]) et client.
+const TERRITORY_TIMEOUT_S = 180;
+
 // Assemble N ways "outer" (qui se touchent par leurs extrémités) en anneaux
 // fermés. Les boundaries OSM sont rarement un seul way. (Porté du CLI.)
 function assembleRings(outerWays) {
@@ -149,6 +154,34 @@ export async function fetchSubZones(parent) {
         if (subs.length >= 2) return lightenZones({ features: subs }).features;
     }
     return [];
+}
+
+/**
+ * Quartiers d'une destination à TERRITOIRE (02/11/2026, la Wallonie) : les zones
+ * admin à l'intérieur de la relation OSM `territoryOsmId` (champ de l'entrée de
+ * destinations.json), au lieu de celles d'un rectangle qui déborde sur les
+ * régions et pays voisins. Même requête que fetchSubZones (map_to_area), même tri
+ * des voisines qui ne font que toucher la limite ; la relation elle-même est
+ * demandée dans la même requête pour servir de référence au tri. Niveau selon le
+ * pays (BE : communes, niveau 8). Une erreur réseau REMONTE (action admin).
+ *
+ * @param {number} territoryOsmId - identifiant de la relation OSM du territoire
+ * @param {string} countryCode - code ISO du pays (destinations.json `country`)
+ * @returns {Promise<{type:string, features:Array}>} zones allégées (vide si aucune)
+ */
+export async function fetchTerritoryZones(territoryOsmId, countryCode) {
+    const id = Number(territoryOsmId);
+    if (!Number.isInteger(id) || id <= 0) throw new Error('Territoire invalide : identifiant de relation OSM attendu.');
+    for (const level of levelChainForCountry(countryCode)) {
+        const query = `[out:json][timeout:${TERRITORY_TIMEOUT_S}];rel(${id})->.t;.t out geom;.t map_to_area->.p;relation["boundary"="administrative"]["admin_level"="${level}"](area.p);out geom;`;
+        const data = await fetchOverpassJson(query, { timeoutMs: TERRITORY_TIMEOUT_S * 1000, retries: 1 });
+        const features = relationsToFeatures(data);
+        const territory = features.find(f => f.properties.osm_id === id);
+        if (!territory) throw new Error(`Territoire introuvable sur OpenStreetMap (relation ${id}).`);
+        const zones = features.filter(f => f.properties.osm_id !== id && isMostlyInside(f, territory));
+        if (zones.length) return lightenZones({ features: zones });
+    }
+    return { type: 'FeatureCollection', features: [] };
 }
 
 /**

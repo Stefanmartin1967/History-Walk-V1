@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.471'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.472'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 export const MAX_CIRCUIT_POINTS = 15;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
@@ -193,6 +193,20 @@ export function getActiveMapId() {
 export function getActiveDestinationName() {
     const id = state.currentMapId || state.destinations?.activeMapId;
     return state.destinations?.maps?.[id]?.name || '';
+}
+
+/**
+ * Libellé d'une destination pour l'interface (titre de la page, sélecteur de
+ * destination, Centre de Contrôle) : son `name` dans destinations.json, sinon son
+ * identifiant avec une majuscule. Ces libellés affichaient l'identifiant seul,
+ * donc « Charleroi » pour la destination renommée « Wallonie » (02/11/2026).
+ * @param {string} mapId
+ * @returns {string}
+ */
+export function getDestinationLabel(mapId) {
+    const name = state.destinations?.maps?.[mapId]?.name;
+    if (name) return name;
+    return mapId ? mapId.charAt(0).toUpperCase() + mapId.slice(1) : '';
 }
 
 /**

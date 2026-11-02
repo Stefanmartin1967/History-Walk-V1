@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, getDestinationLabel, DEFAULT_MAP_ID} from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
@@ -30,7 +30,7 @@ import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, inva
 
 export function updateAppTitle(mapId) {
     if (!mapId) return;
-    const mapName = mapId.charAt(0).toUpperCase() + mapId.slice(1);
+    const mapName = getDestinationLabel(mapId);
     document.title = `Heripia - ${mapName}`;
     // PR 3 (refonte topbar) : le titre #app-title a été remplacé par le
     // sélecteur de destination. Le nom de la destination active y figure.

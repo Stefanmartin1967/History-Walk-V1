@@ -39,6 +39,7 @@ import { zonesData, setZonesData } from './zones.js';
 import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
 import { collectKnownOsmRefs, isDuplicateCandidate } from './scout-dedup.js';
+import { hasTerritory, inTerritory, zonesExtent } from './scout-territory.js';
 import { getStoredToken } from './github-sync.js';
 import { registerDraftDestinationOnGitHub, pushDestinationZones } from './publish-destination.js';
 
@@ -524,10 +525,23 @@ async function scan() {
     // destination active = cible quasi sûrement erronée (leçon du test Hammamet :
     // 50 lieux capturés à 400 km injectés dans Djerba). On bloque en indiquant
     // le bon geste — le chevauchement partiel reste accepté.
-    const destBounds = state.destinations?.maps?.[state.currentMapId]?.bounds;
-    if (!boxIntersectsBounds(_box, destBounds)) {
-        showToast(`La boîte est hors de « ${destName()} ». Pour scouter un autre endroit, crée d'abord sa destination (« Nouvelle destination… »).`, 'warning', 6000);
-        return;
+    const territory = hasTerritory(state.destinations?.maps?.[state.currentMapId]);
+    if (territory) {
+        const extent = zonesExtent(zonesData);
+        if (!extent) {
+            showToast(`« ${destName()} » n'a pas encore de quartiers. Complète d'abord les quartiers (Centre de Contrôle → Outils).`, 'warning', 6000);
+            return;
+        }
+        if (!boxIntersectsBounds(_box, extent)) {
+            showToast(`La boîte est hors du territoire de « ${destName()} ».`, 'warning', 5000);
+            return;
+        }
+    } else {
+        const destBounds = state.destinations?.maps?.[state.currentMapId]?.bounds;
+        if (!boxIntersectsBounds(_box, destBounds)) {
+            showToast(`La boîte est hors de « ${destName()} ». Pour scouter un autre endroit, crée d'abord sa destination (« Nouvelle destination… »).`, 'warning', 6000);
+            return;
+        }
     }
     const tiles = computeTiles(_box);
     if (tiles.length > MAX_TILES) {
@@ -544,6 +558,7 @@ async function scan() {
     // pendant la moisson) et reconstruit à chaque scan pour refléter les curations.
     const knownOsmRefs = collectKnownOsmRefs(state.loadedFeatures || []);
     let rejectedSkipped = 0;  // objets déjà rejetés (corbeille) ignorés — transparence au récap
+    let outsideSkipped = 0;   // destination à territoire : objets hors de ses quartiers, ignorés
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
     let attempt = 0;
@@ -582,6 +597,8 @@ async function scan() {
                     // re-scan le ressort comme neuf). Compté pour le dire au récap
                     // (pas de masquage silencieux ; restauration via la corbeille).
                     if (isRejected(key)) { rejectedSkipped++; continue; }
+                    // Hors territoire (voisins du rectangle) : ni tracé, ni capturé ; compté.
+                    if (territory && !inTerritory(lat, lon)) { outsideSkipped++; continue; }
                     const tags = el.tags || {};
                     const cat = getHwCategory(tags);
                     // Doublon si l'objet OSM est DÉJÀ porté par un POI chargé (identité
@@ -613,9 +630,10 @@ async function scan() {
         const failed = pending.length;
         // Transparence : on dit combien d'objets déjà rejetés (corbeille) ont été
         // ignorés, pour que l'admin ne se demande pas pourquoi un lieu attendu manque.
-        const rej = rejectedSkipped
+        const rej = (rejectedSkipped
             ? ` · ${rejectedSkipped} déjà rejeté${rejectedSkipped > 1 ? 's' : ''} ignoré${rejectedSkipped > 1 ? 's' : ''}`
-            : '';
+            : '')
+            + (outsideSkipped ? ` · ${outsideSkipped} hors territoire ignoré${outsideSkipped > 1 ? 's' : ''}` : '');
         if (failed === tiles.length) {
             // Sans clé, seul le serveur public (souvent saturé) est interrogé : on le dit.
             const keyHint = hasOverpassKey() ? '' : ' Une clé overpass.ch (Configuration) évite le serveur public saturé.';
@@ -648,7 +666,9 @@ async function capture() {
     // hors de la bbox (souvent plus serrée que le cadre scouté) ne tombent pas « Hors
     // zone ». try/catch SÉPARÉ et NON bloquant : un échec réseau Overpass ne doit pas
     // empêcher la capture.
-    if (_box) {
+    // Destination à territoire : pas d'extension, ses quartiers sont déjà ceux du
+    // territoire (la boîte ramènerait les communes des régions et pays voisins).
+    if (_box && !hasTerritory(state.destinations?.maps?.[state.currentMapId])) {
         try {
             const bbox = [[_box.south, _box.west], [_box.north, _box.east]];
             const country = _geoCountry || state.destinations?.maps?.[state.currentMapId]?.country || '';
