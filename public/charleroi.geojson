@@ -4386,8 +4386,8 @@
           50.33234
         ],
         "photos": [
-          "photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549837431.jpg",
-          "photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549839232.jpg"
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549837431.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6BYCTA4FVYKT3MHQ4CZ34TP_1793549839232.jpg"
         ],
         "Zone": "Thuin",
         "osmCheckedDate": "2026-11-01"
@@ -4420,8 +4420,8 @@
         "jalelChecked": false,
         "HW_ID": "HW-01M6C03E77FMBC6G6CD4G5W31A",
         "photos": [
-          "photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551643346.jpg",
-          "photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551645289.jpg"
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551643346.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6C03E77FMBC6G6CD4G5W31A_1793551645289.jpg"
         ],
         "Zone": "Thuin"
       }
@@ -4456,7 +4456,7 @@
           50.3315857
         ],
         "photos": [
-          "photos/poi_HW-01M6C1B2C5J3BCCSWR1M7E7Q03_1793552920463.jpg"
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6C1B2C5J3BCCSWR1M7E7Q03_1793552920463.jpg"
         ],
         "Zone": "Thuin"
       }
