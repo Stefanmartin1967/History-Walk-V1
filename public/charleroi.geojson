@@ -44674,11 +44674,11 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle (Rue de la Rochelle",
+        "Nom du site FR": "Chapelle (Rue de la Rochelle)",
         "Catégorie": "Chapelle",
         "Sous-type": "À grille",
         "Accès": "Extérieur seulement",
-        "description": "La niche du fond abrite une statue de saint Roch",
+        "description": "Chapelle de la rue de la Rochelle, à Aiseau-Presles.\nAucune dédicace n'a été trouvée : le nom de cette fiche reprend celui de la rue.\nSur place, une grille ferme l'entrée ; deux statues occupent l'intérieur.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
@@ -44696,7 +44696,8 @@
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6HCQEKFXX9G5SWTPHN00W9V_1793733482554.jpg"
         ],
-        "Zone": "Aiseau-Presles"
+        "Zone": "Aiseau-Presles",
+        "Source": "Observation sur place, le 16 mars 2025"
       }
     }
   ]
