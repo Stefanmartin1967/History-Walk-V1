@@ -13360,11 +13360,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Remi",
+        "Nom du site FR": "Église Saint-Remi (Presles)",
         "Catégorie": "Église",
         "osm_ref": "way/215104775",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4VDSQH5Z6H27Q4YR26MX",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/kqpWgXvEGEKd161cA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "description": "Église paroissiale de Presles, à Aiseau-Presles, attenante au château des comtes d'Oultremont.\nSelon le site de l'unité pastorale de Châtelet, une charte de 1202 mentionne déjà un curé à Presles. L'église actuelle a été bâtie à l'emplacement de l'ancienne, lors de la construction du nouveau château peu après 1851, avec une participation du comte Charles d'Oultremont ; son porche porte la date de 1864, qui serait celle de la fin des travaux.\nD'inspiration néo-classique, elle compte une nef de cinq travées bordée de bas-côtés ; une tribune, dans le chœur, permet à la famille d'Oultremont d'assister aux offices. À gauche de la nef, la chapelle funéraire de la famille, dédiée à Notre-Dame de la Salette, a été construite d'après des plans approuvés en 1869.\nLe même site signale des fonts baptismaux du 16ᵉ siècle, une statue de saint Roch du 17ᵉ siècle et un ostensoir en argent de Charles de Nalinnes, de Dinant, offert en 1742 par le baron de Lierneux et la population.",
+        "Source": "Unité pastorale de Châtelet, « Eglise Saint-Remi, Presles » | https://upch.e-monsite.com/pages/eglise-saint-remi-presles.html",
         "Zone": "Aiseau-Presles"
       }
     },
