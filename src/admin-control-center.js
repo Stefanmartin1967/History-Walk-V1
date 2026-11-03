@@ -17,6 +17,8 @@ import { getTestedSteps, rememberTestedSteps, stepsInvalidateVerified, pushTeste
 import { showConfirm } from './modal.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData, savePoiData, removePoiDataKeys } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
+import { pendingRejectedCount } from './rejected.js';
+import { pushRejected } from './rejected-store.js';
 
 // Nouveaux imports suite au découpage
 import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, purgeOrphanPendingCircuits, diffData } from './admin-diff-engine.js';
@@ -585,6 +587,12 @@ async function publishChanges() {
     // (registerDraftDestinationOnGitHub à la création) → le {id}.geojson poussé n'est
     // jamais orphelin. L'ancien garde « brouillon local » (Option A) est retiré.
 
+    // Rejets de candidats en attente (02/11/2026) : ils partent avec cette publication.
+    const rejectedToSend = pendingRejectedCount();
+    const rejectedNote = rejectedToSend > 0
+        ? `${rejectedToSend} rejet${rejectedToSend > 1 ? 's' : ''} de candidats ${rejectedToSend > 1 ? 'seront aussi publiés' : 'sera aussi publié'} (corbeille des rejets).\n\n`
+        : '';
+
     // Garde-fou perte de contenu : le diff affiche fidèlement les champs modifiés,
     // mais un champ vidé ou raccourci par mégarde (état local périmé, saisie
     // écrasée) y ressemble à une correction voulue — perte constatée le 26/07 sur
@@ -592,7 +600,7 @@ async function publishChanges() {
     // en les nommant. Pas de blocage : l'effacement peut être volontaire.
     const ok = await showConfirm(
         "Publication GitHub",
-        buildPublishWarning() + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
+        buildPublishWarning() + rejectedNote + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
         "Publier",
         "Annuler"
     );
@@ -720,6 +728,7 @@ async function publishChanges() {
         if (stats.poisModified > 0) msgParts.push(`${stats.poisModified} POI(s)`);
         const totalPhotos = (stats.photosAdded || 0) + uploadedPhotoCount;
         if (totalPhotos > 0) msgParts.push(`${totalPhotos} photo(s)`);
+        if (rejectedToSend > 0) msgParts.push(`${rejectedToSend} rejet(s)`);
         const commitMessage = msgParts.join(' — ');
 
         await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(mapId), commitMessage);
@@ -741,6 +750,19 @@ async function publishChanges() {
             } catch (err) {
                 console.warn('[Admin] Échec publication tested.json:', err);
                 showToast("Statut vérifié non publié (géojson OK)", "warning", 5000);
+            }
+        }
+
+        // Rejets de candidats en attente (02/11/2026) : le fichier entier en UN commit,
+        // au lieu d'un commit par rejet. Échec → ils restent en attente, repartiront
+        // au prochain « Tout publier » (le geojson, lui, est déjà publié).
+        if (pendingRejectedCount() > 0) {
+            setBtnLabel('Rejets…');
+            try {
+                await pushRejected(mapId);
+            } catch (err) {
+                console.warn('[Admin] Échec publication des rejets :', err);
+                showToast("Rejets non publiés, gardés pour la prochaine fois (géojson OK)", "warning", 5000);
             }
         }
 

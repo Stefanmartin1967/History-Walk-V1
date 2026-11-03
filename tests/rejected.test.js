@@ -1,10 +1,11 @@
 import { describe, it, expect, beforeEach } from 'vitest';
-import { rejectedData, setRejectedData, isRejected, addRejected, removeRejected, rejectedCount } from '../src/rejected.js';
+import { rejectedData, setRejectedData, isRejected, addRejected, removeRejected, rejectedCount, clearRejected } from '../src/rejected.js';
 
 const rec = (ref, extra = {}) => ({ osm_ref: ref, name: 'X', category: 'Y', lat: 1, lng: 2, rejectedAt: 0, ...extra });
 
 describe('rejected — store des tombstones de curation Scout', () => {
-    beforeEach(() => setRejectedData({}));
+    // clearRejected : vide aussi les rejets EN ATTENTE (02/11/2026), que setRejectedData garde.
+    beforeEach(() => clearRejected());
 
     describe('setRejectedData', () => {
         it('accepte un objet indexé par osm_ref', () => {

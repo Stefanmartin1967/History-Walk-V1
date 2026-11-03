@@ -18,15 +18,17 @@ import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
-// Compteur de publication (source UNIQUE) — somme des 4 deltas du diff : POI modifiés
-// + circuits modifiés + photos admin en attente + circuits « Fait » non publiés. Pilote
+// Compteur de publication (source UNIQUE) — somme des 5 deltas du diff : POI modifiés
+// + circuits modifiés + photos admin en attente + circuits « Fait » non publiés + rejets
+// de candidats en attente (02/11/2026, plus poussés un par un). Pilote
 // le badge nav ET l'état actif/inactif du bouton « Tout publier ». Factorisé pour éviter
 // la dérive badge↔bouton (formule auparavant copiée à 3 endroits).
 function computePublishCount(stats = {}) {
     return (stats.poisModified || 0)
          + (stats.circuitsModified || 0)
          + (stats.pendingPhotoCount || 0)
-         + (stats.testedChanged || 0);
+         + (stats.testedChanged || 0)
+         + (stats.rejectedPending || 0);
 }
 
 // B2 — État du sub-router de l'onglet Modifications.
@@ -545,6 +547,7 @@ export function renderTab(tab, diffData, callbacks) {
         const circuitsModified  = stats.circuitsModified  || 0;
         const pendingPhotoCount = stats.pendingPhotoCount || 0;
         const testedChanged     = stats.testedChanged     || 0;
+        const rejectedPending   = stats.rejectedPending   || 0;
         // testedChanged compte les CIRCUITS officiels coché "Fait" en attente
         // de publication serveur. Avec l'auto-publish (tested-sync.js), normalement
         // toujours 0 — n'apparaît que si le push auto a échoué (filet de sécurité).
@@ -592,6 +595,7 @@ export function renderTab(tab, diffData, callbacks) {
             if (pendingPhotoCount > 0) breakdown.push(`${pendingPhotoCount} photo${pendingPhotoCount > 1 ? 's' : ''}`);
             if (circuitsModified > 0)  breakdown.push(`${circuitsModified} circuit${circuitsModified > 1 ? 's' : ''}`);
             if (testedChanged > 0)     breakdown.push(`${testedChanged} statut${testedChanged > 1 ? 's' : ''} testé${testedChanged > 1 ? 's' : ''}`);
+            if (rejectedPending > 0)   breakdown.push(`${rejectedPending} rejet${rejectedPending > 1 ? 's' : ''} de candidats`);
             const subText = breakdown.join(' · ') || 'Modifications locales';
             // Pas de CTA inline dans le hero pending : doublon avec le bouton
             // "Tout publier" du footer (canonique, visible sur les 3 écrans).
@@ -1197,8 +1201,29 @@ export function renderTab(tab, diffData, callbacks) {
         const subviewItems = computeChangesSubviewItems(diffData);
         const totalCount = subviewItems.lieux.length + subviewItems.photos.length + subviewItems.circuits.length;
 
+        // Rejets de candidats en attente (02/11/2026) : comptés dans le badge et dans
+        // « Tout publier », mais sans sous-vue (leur liste est la corbeille des rejets).
+        // On les nomme ici, sinon le badge disait 1 et l'onglet « Aucune modification ».
+        const rejectedPending = diffData?.stats?.rejectedPending || 0;
+        const rejectedLabel = `${rejectedPending} rejet${rejectedPending > 1 ? 's' : ''} de candidats`;
+
         // Topbar title : indique le total à publier
-        updateTopbarTitle('changes', { subOverride: totalCount > 0 ? `${totalCount} en attente` : '' });
+        const subParts = [];
+        if (totalCount > 0) subParts.push(`${totalCount} en attente`);
+        if (rejectedPending > 0) subParts.push(rejectedLabel);
+        updateTopbarTitle('changes', { subOverride: subParts.join(' · ') });
+
+        if (totalCount === 0 && rejectedPending > 0) {
+            container.innerHTML = `
+                <div class="cc-empty">
+                    <div class="cc-empty-mark"><i data-lucide="trash-2"></i></div>
+                    <h3 class="cc-empty-title">${rejectedLabel} en attente.</h3>
+                    <p class="cc-empty-sub">${rejectedPending > 1 ? 'Ils partiront' : 'Il partira'} avec « Tout publier », en une fois. La liste est dans Outils → Corbeille des rejets.</p>
+                </div>
+            `;
+            createIcons({ icons: appIcons, root: container });
+            return;
+        }
 
         if (totalCount === 0) {
             container.innerHTML = `

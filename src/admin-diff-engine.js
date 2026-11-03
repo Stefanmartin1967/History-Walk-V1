@@ -6,6 +6,7 @@ import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
 import { stripCircuitSignature } from './circuit-description.js';
+import { pendingRejectedCount } from './rejected.js';
 import { trackFingerprint, fingerprintPointCount, publishedTrackFingerprint, rememberPublishedTrack, parseGpxTrack } from './track-fingerprint.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
@@ -175,7 +176,7 @@ export async function prepareDiffData(adminDraft) {
     diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
     diffData.pendingPhotos = {};
     diffData.originalFeatures = originalFeatures;
-    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0 };
+    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0, rejectedPending: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
@@ -519,6 +520,12 @@ export async function prepareDiffData(adminDraft) {
 
     diffData.stats.testedChanged =
         diffData.testedChanges.additions.length + diffData.testedChanges.removals.length;
+
+    // --- C bis. REJETS DE CANDIDATS EN ATTENTE (02/11/2026) ---
+    // Plus poussés un par un (rejected-store.js) : ils partent à « Tout publier » et
+    // comptent donc comme une modification. Un candidat n'est jamais dans `pois` ;
+    // sans ce compteur, rejeter seul laissait « Tout est synchronisé ».
+    diffData.stats.rejectedPending = pendingRejectedCount();
 
     // --- D. PHOTOS EN ATTENTE (blobs locaux admin, pas encore uploadés) ---
     // Chaque entrée pendingAdminPhotos[poiId] = [{id, blob, skipPublish?}, ...].
