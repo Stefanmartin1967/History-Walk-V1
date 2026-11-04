@@ -13391,11 +13391,21 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Moulin",
+        "Nom du site FR": "Moulin du Parc",
         "Catégorie": "Curiosité",
         "osm_ref": "way/215104798",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4VFFC0Y4AHT23ZPQ9NJE",
+        "description": "Ancien moulin à eau du parc du château de Presles, à Aiseau-Presles.\nSelon la base de données des moulins Molenecho's, ce moulin à grain, aussi appelé moulin de Presles, a été bâti vers 1850 par le comte Charles d'Oultremont, après la démolition de l'ancien moulin banal du village. OpenStreetMap le date pour sa part du 18ᵉ siècle. Les datations varient selon les sources.\nToujours selon Molenecho's, il a cessé de moudre peu avant la Première Guerre mondiale. Ses bâtiments ont ensuite été transformés en scierie, et sa roue a entraîné une turbine qui fournissait l'électricité de la scierie et l'éclairage du château ; la roue a depuis été retirée.\nLe bâtiment n'est pas accessible au public, selon la même source.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Molenecho's, « Moulin du Parc, Moulin de Presles » | https://www.molenechos.org/molen.php?nummer=1986",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Aiseau-Presles"
       }
     },
