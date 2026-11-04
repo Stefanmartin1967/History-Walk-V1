@@ -1541,15 +1541,18 @@
         "Sous-type": "Catholique",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "maps_ref": "https://maps.app.goo.gl/fHcCRyqvXYyt9G5X6",
+        "maps_ref": "https://maps.app.goo.gl/TdSFLhx3XPKKAF6D7",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Aiseau-Presles"
+        "Zone": "Aiseau-Presles",
+        "Accès": "Intérieur visitable",
+        "description": "Église paroissiale de Pont-de-Loup, à Aiseau-Presles.\nSelon l'article Wikipédia consacré à Pont-de-Loup, elle a été construite en 1861 dans le style néo-gothique. Le même article indique que la tour romane du village est celle de l'ancienne église paroissiale, elle aussi dédiée à saint Clet.",
+        "Source": "Wikipédia, « Pont-de-Loup » | https://fr.wikipedia.org/wiki/Pont-de-Loup"
       }
     },
     {
@@ -13024,11 +13027,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Joseph",
+        "Nom du site FR": "Église Saint-Joseph (Roselies)",
         "Catégorie": "Église",
         "osm_ref": "way/117511949",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4TEZWA8B519W9XHK6BBD",
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "description": "Église du village de Roselies, à Aiseau-Presles.\nSelon l'article Wikipédia consacré à Roselies, elle a été bâtie de 1872 à 1873, puis restaurée au début du 20ᵉ siècle par l'architecte Simon, dans le style néo-roman.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Wikipédia, « Roselies » | https://fr.wikipedia.org/wiki/Roselies",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Aiseau-Presles"
       }
     },
@@ -44762,6 +44777,35 @@
         ],
         "Zone": "Aiseau-Presles",
         "Source": "Observation sur place, le 16 mars 2025"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.571947526163386,
+          50.42290849020998
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle (Rue Jules Destrée)",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de la rue Jules Destrée, à Aiseau-Presles.\nAucune dédicace n'a été trouvée : le nom de cette fiche reprend celui de la rue.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-04",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6KQ1MY4XSVKFZJCVQG5NWST",
+        "Zone": "Aiseau-Presles"
       }
     }
   ]
