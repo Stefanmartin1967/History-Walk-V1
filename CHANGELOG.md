@@ -6,6 +6,14 @@
 
 ---
 
+- FICHE : BOUTON GOOGLE, LA COMMUNE AU LIEU DE « WALLONIE » (v3.7.474) — demandé et validé par Stefan le 04/11/2026. Le bouton cherchait « nom du lieu + nom de la destination ». Parfait pour Djerba (« Mosquée … Djerba »), trop vague pour la Wallonie : des chapelles Saint-Roch, il y en a dans toute la région.
+  - **Destination à territoire** (`territoryOsmId`, la Wallonie) : le bouton ajoute le quartier du lieu, qui est sa commune ou, à Charleroi, son ancienne commune (« Chapelle Saint-Roch Mettet », « Château de Hanzinelle Florennes »). Quartier inutilisable (« Hors zone », « A définir ») → repli sur le nom de la destination.
+  - **Djerba et Hammamet** : rien ne change.
+  - Nouveau `src/web-search.js` (`webSearchTerms`, fonction pure), appelé par la fiche (`ui-details.js`, même bouton sur PC et mobile).
+  - **Vérifié dans l'app** (serveur de dev, sans jeton) : en Wallonie, « Château de Hanzinelle Florennes » et « Chapelle Saint-Roch Mettet » ; à Djerba, « Jamaa El Benna Djerba ».
+
+  Tests : `web_search_terms` (destination ordinaire, territoire, quartier inutilisable, contexte inconnu).
+
 - SCOUT : REJETS DE CANDIDATS REGROUPÉS (v3.7.473) — plan validé par Stefan le 02/11/2026, après son scan de 75 km de côté (près de 3000 candidats). Supprimer un candidat le mettait dans la corbeille des rejets ET poussait aussitôt `{dest}-rejected.json` : un commit sur main et un déploiement du site par rejet. Intenable à cette échelle.
   - **Rejeter ne pousse plus rien** (`data.js`). Le rejet est EN ATTENTE (`rejected.js` : `pendingRejected`), gardé sur l'appareil (IndexedDB `pendingRejected_{dest}`, nouveau `rejected-store.js`). Au démarrage, rejets publiés + rejets en attente (relus en parallèle de la requête, `app-startup.js`). Avant : sans jeton ou en cas d'échec, le rejet n'existait qu'en mémoire et se perdait au rechargement.
   - **« Tout publier » les envoie en une fois** (`admin-control-center.js`), après le geojson : un seul commit pour le fichier entier, compté dans le message du commit et annoncé dans la confirmation. Sortent de l'attente seulement les rejets envoyés, et seulement si l'envoi réussit ; sinon avertissement, ils repartent la fois suivante.
