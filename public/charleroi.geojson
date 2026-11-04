@@ -12856,11 +12856,25 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Martin",
+        "Nom du site FR": "Église Saint-Martin (Aiseau)",
         "Catégorie": "Église",
         "osm_ref": "way/86989715",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4T3EPAA1TAW1TQCH7DYN",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/YCgqkSLYqWQuyqBDA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "description": "Église paroissiale d'Aiseau, à Aiseau-Presles.\nSelon l'article Wikipédia consacré à Aiseau, le culte se tenait d'abord dans une chapelle dédiée à saint Martin, bâtie dans la cour du château ; démolie en 1729, elle a été remplacée par une église élevée en face du château et inaugurée en 1732, aux frais du prieuré et de la communauté.\nFermée au culte en novembre 1954, cette église a été entièrement démolie après l'effondrement de son clocher en octobre 1970. L'église actuelle, en brique, béton et bois, a été construite en 1991 par l'architecte H. Moonen.",
+        "Source": "Wikipédia, « Aiseau » | https://fr.wikipedia.org/wiki/Aiseau",
+        "Sous-type": "Catholique",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
         "Zone": "Aiseau-Presles"
       }
     },
