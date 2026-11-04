@@ -1,4 +1,4 @@
-import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch, getActiveDestinationName } from './state.js';
+import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch, getActiveDestinationName, getActiveMapId } from './state.js';
 import { getPoiId, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
@@ -6,7 +6,7 @@ import { isMobileView, pushMobileLevel, animateContainer, setMobileHeaderSlot, s
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { buildDetailsPanelHtml as buildHTML } from './templates.js';
-import { sanitizeHTML, openPoiOnMap, commonsCategoryUrl, getPoiProp } from './utils.js';
+import { sanitizeHTML, openPoiOnMap, commonsCategoryUrl, getPoiProp, getDerivedZone } from './utils.js';
 import { openPhotoGrid, downloadAllPhotos } from './ui-photo-grid.js';
 import { showConfirm } from './modal.js';
 import { switchSidebarTab } from './ui-sidebar.js';
@@ -18,6 +18,8 @@ import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
+import { hasTerritory } from './scout-territory.js';
+import { webSearchTerms } from './web-search.js';
 
 // Aide « ? » général de la fiche d'un lieu : le patron rend l'icône via createIcons.
 // Idempotent (configureHelp est déjà appelé par ui-photo-batch et ui-circuit-list ;
@@ -696,13 +698,14 @@ function setupDetailsEventListeners(poiId) {
         btn.addEventListener('click', () => {
              const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
              if (feature) {
-                 // Contextualisé par la DESTINATION ACTIVE (jamais un nom en dur) :
-                 // « Mosquée Sidi Yati » seul ramène des homonymes ailleurs dans le
-                 // monde arabe ; « … Djerba » cible le bon lieu. Repli sans suffixe
-                 // si la destination est inconnue — mieux vaut une recherche large
-                 // qu'une requête polluée par un mot parasite.
-                 const terms = [getPatrimonialName(feature), getActiveDestinationName()]
-                     .filter(Boolean).join(' ');
+                 // Nom + destination (« … Djerba »), ou nom + commune pour une
+                 // destination à territoire (« … Aiseau-Presles ») : cf. web-search.js.
+                 const terms = webSearchTerms({
+                     name: getPatrimonialName(feature),
+                     zone: getDerivedZone(feature),
+                     destinationName: getActiveDestinationName(),
+                     territory: hasTerritory(state.destinations?.maps?.[getActiveMapId()]),
+                 });
                  const query = encodeURIComponent(terms);
                  window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
              }
