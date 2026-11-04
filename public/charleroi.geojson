@@ -12191,10 +12191,20 @@
       },
       "properties": {
         "Nom du site FR": "Ancien puits de mine Saint-Henry",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "node/6958907673",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4RD4CZYJMMBPMGX0CCVK",
+        "description": "Ancien puits de charbonnage du quartier d'Oignies, à Aiseau-Presles.\nSelon l'article Wikipédia consacré à Aiseau, le charbon y était extrait par deux puits, l'un à Oignies, le puits Saint-Henry, l'autre à Ménonry ; ces puits, bétonnés, restent visibles.\nOpenStreetMap le donne pour le siège n° 5 d'Oignies, exploité de 1890 à 1955.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Wikipédia, « Aiseau » | https://fr.wikipedia.org/wiki/Aiseau",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Aiseau-Presles"
       }
     },
@@ -13032,11 +13042,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Sainte-Marie",
+        "Nom du site FR": "Église Sainte-Marie d'Oignies",
         "Catégorie": "Église",
         "osm_ref": "way/117575803",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4TG9M3NDXCV2FSF3D3H4",
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/78zTRaMzqdgaQvsAA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "description": "Église du hameau d'Oignies, à Aiseau-Presles, à 200 m de l'ancien prieuré d'Oignies.\nSelon l'article Wikipédia consacré à Aiseau, c'est un édifice néo-roman, construit en 1909 par l'architecte Simon.\nDes photographies prises en 2024 pour Wikimedia Commons montrent, au-dessus d'une porte, une inscription latine qui dédie l'édifice à sainte Marie d'Oignies. Selon leur auteur, l'église abrite un reliquaire de la sainte, dont le socle porte « Les pèlerins et les paroissiens reconnaissants - 1914-1918 ». Elle conserve aussi le reliquaire de Jacques de Vitry, chanoine d'Oignies devenu évêque et cardinal, mort à Rome en 1240, selon la plaque qui l'accompagne.",
+        "Source": "Wikipédia, « Aiseau » | https://fr.wikipedia.org/wiki/Aiseau\nInscription au-dessus d'une porte, photographie de Jmh2o, 8 septembre 2024 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Oignies_(Aiseau-Presles)_-_%C3%A9glise_Sainte-Marie-d%27Oignies_-_2024-09-08_-_03.jpg\nReliquaire de Marie d'Oignies, photographie de Jmh2o, 8 septembre 2024 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Oignies_(Aiseau-Presles)_-_%C3%A9glise_Sainte-Marie-d%27Oignies_-_reliquaire_de_Marie_d%27Oignies_-_2024-09-08_-_01.jpg\nReliquaire et plaque de Jacques de Vitry, photographie de Jmh2o, 8 septembre 2024 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Oignies_(Aiseau-Presles)_-_%C3%A9glise_Sainte-Marie-d%27Oignies_-_reliquaire_de_Jacques_de_Vitry_-_2024-09-08_-_01.jpg",
         "Zone": "Aiseau-Presles"
       }
     },
@@ -14544,24 +14567,6 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.595909,
-          50.4227374
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Fortification",
-        "osm_ref": "way/684885003",
-        "candidate": true,
-        "HW_ID": "HW-01M6EV4YYTMSY3XKDKPN65XHGE",
-        "Zone": "Aiseau-Presles"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
           4.6967019,
           50.4661852
         ]
@@ -14676,10 +14681,21 @@
       },
       "properties": {
         "Nom du site FR": "Prieuré d'Oignies",
-        "Catégorie": "A définir",
+        "Catégorie": "Taxi",
         "osm_ref": "way/737342421",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4Z8WDE9HT57AFM5MK0E9",
+        "description": "Ancien prieuré de chanoines réguliers de saint Augustin, au bord de la Sambre, dans le hameau d'Oignies, à Aiseau-Presles ; on l'appelle souvent abbaye d'Oignies.\nSelon l'article Wikipédia qui lui est consacré, quatre frères venus de Walcourt s'installent en 1187 avec leur mère veuve près d'une ancienne chapelle Saint-Nicolas, et leur prieuré est reconnu en 1192 par l'ordre des chanoines de saint Augustin. L'un d'eux, Hugues, resté laïc, deviendra un orfèvre renommé sous le nom d'Hugo d'Oignies. Les reliques de la béguine Marie d'Oignies, morte sur place en 1213, attirent de nombreux pèlerins.\nÀ son apogée au 17ᵉ siècle, le prieuré reconstruit certains bâtiments en style néo-classique. Il est supprimé en 1796. En 1836, le nouveau propriétaire démolit le cloître et l'église, dont le mobilier est dispersé ; une partie se trouve aujourd'hui à l'église Saint-Christophe de Charleroi. De 1838 à 1956, le site est occupé par la glacerie Sainte-Marie d'Oignies, puis transformé en logements.\nLe site est classé au patrimoine wallon depuis 1975. Selon le même article, une restauration est en cours depuis 2020 pour transformer les bâtiments, dont les façades sont classées, en maison de repos et de soins.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Wikipédia, « Prieuré d'Oignies » | https://fr.wikipedia.org/wiki/Prieur%C3%A9_d%27Oignies",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "maps_ref": "https://maps.app.goo.gl/RqhKkKL14WLL8mqZ6",
         "Zone": "Aiseau-Presles"
       }
     },
@@ -15263,11 +15279,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Chapelle Saint-Roch (Aiseau)",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1155641633",
-        "candidate": true,
         "HW_ID": "HW-01M6EV510SFM3R6MVHB11MRPF6",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de la rue du Centre, à Aiseau-Presles.\nGoogle Maps la nomme chapelle Saint-Roch ; OpenStreetMap y indique un oratoire de bord de chemin, sans nom. La dédicace reste à confirmer sur place.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Aiseau-Presles"
       }
     },
