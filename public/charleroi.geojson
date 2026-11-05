@@ -489,22 +489,25 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Musée des chasseurs à pieds",
+        "Nom du site FR": "Musée des Chasseurs à pied",
         "Catégorie": "Musée",
         "osm_ref": "node/3846539320",
         "HW_ID": "HW-01M616BN3K13BABRTGB3HYS0KZ",
         "Temps_minutes": 0,
-        "Prix_TND": 0,
+        "Prix_TND": 5,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "description": "Situé dans le hall de la caserne Caporal Trésignies\nLe lien Maps porte sur la caserne, OSM vers le musée",
+        "description": "Musée de la caserne Trésignies, avenue Général Michel, à Charleroi.\nSelon son site, il a ouvert le 14 septembre 1973 dans un local de la caserne, sous le nom de « Musée des Chasseurs à pied - Le prix de la Liberté ». D'abord consacré au régiment, il montre comment les Chasseurs à pied ont contribué à reconquérir ou à maintenir la liberté ; il s'est depuis étendu à la gendarmerie (2014), à la présence australienne dans la région de Charleroi (2019), puis à la Résistance, avec un espace annoncé pour 2024. Le musée y annonce aussi un nouveau nom : « Musée Mémorial Charleroi - Le Prix de la Liberté ».\nSelon Wikipédia, la caserne a été construite en 1887 et porte le nom du caporal Léon Trésignies, du 2ᵉ régiment de Chasseurs à pied, tué en août 1914 au Pont-Brûlé, à Vilvorde. Son porche et les deux tours de l'entrée principale sont classés depuis 1979 ; c'est dans ce porche que se trouve le musée, selon son site.\nTarifs annoncés par le musée : adulte 5 €, jeune de 12 à 18 ans 3 €, enfant jusqu'à 12 ans 2 €, groupe d'au moins 10 personnes 4 € par personne.",
         "maps_ref": "https://maps.app.goo.gl/9wXX4Sr4Pt5m3i8Z6",
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Source": "Musée des Chasseurs à pied, « Accueil » | https://www.chasseurs-a-pied-belges.be/musee/musee-accueil.htm\nHoraires et tarifs : Musée des Chasseurs à pied, « Infos pratiques », consultés le 5 novembre 2026 | https://www.chasseurs-a-pied-belges.be/musee/musee-infos_pratiques.htm\nWikipédia, « Caserne Caporal Trésignies » | https://fr.wikipedia.org/wiki/Caserne_Caporal_Tr%C3%A9signies",
+        "Horaires": "Samedi de 10h00 à 13h00 ; du lundi au vendredi sur rendez-vous (Facebook, courriel ou téléphone 071 30 07 48).",
+        "Facebook": "https://www.facebook.com/MuseeDesChasseursAPied"
       }
     },
     {
@@ -2127,8 +2130,21 @@
         "Nom du site FR": "Église Saint-Pierre",
         "Catégorie": "Église",
         "osm_ref": "way/218273125",
-        "candidate": true,
         "HW_ID": "HW-01M616BPTAFCEQFANX8N44P62T",
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "description": "Église de la place Émile Vandervelde, rue Ferrer, dans le quartier de la Neuville, à Montignies-sur-Sambre.\nSelon la légende d'une photographie publiée sur Wikimedia Commons, elle a été construite en 1880 par l'architecte A. Quinet, en brique et pierre, dans un style de tendance néo-romane.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Église Saint-Pierre, photographie de Jmh2o, 15 juillet 2011 (Wikimedia Commons, CC BY-SA 3.0) | https://commons.wikimedia.org/wiki/File:Montignies-sur-Sambre-_rue_Ferrer_-_%C3%A9glise_Saint-Pierre.jpg\nWikipédia, « Neuville (métro léger de Charleroi) » | https://fr.wikipedia.org/wiki/Neuville_(m%C3%A9tro_l%C3%A9ger_de_Charleroi)",
+        "maps_ref": "https://maps.app.goo.gl/3j5XiFrHDGHqYTyN9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Montignies-sur-Sambre"
       }
     },
@@ -2439,13 +2455,16 @@
         "maps_ref": "https://maps.app.goo.gl/vTFqDrcX243JgFK77",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
         "Sous-type": "Catholique",
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Accès": "Intérieur visitable",
+        "description": "Église de la rue de Marchienne, dans la Ville-Basse de Charleroi.\nSelon Wikipédia, elle occupe l'emplacement du couvent des Capucins, construit en 1681 et vendu comme bien national en 1796 ; l'église du couvent, devenue paroissiale en 1804, a été remplacée par l'édifice actuel de l'architecte Jean Kuypers, béni le 15 septembre 1830 et consacré le 16 avril 1835.\nToujours selon Wikipédia, cette église néoclassique, enserrée dans l'habitat, a une façade précédée d'un portique de quatre colonnes ioniques sous un fronton triangulaire, et sa toiture est marquée par un clocheton carré. À l'intérieur, la nef voûtée en berceau est bordée d'arcades sur colonnes toscanes ; le maître-autel est l'œuvre du sculpteur anversois Jean-Baptiste Van Hool, et un tableau de François-Joseph Navez, Notre-Dame des Affligés, a été offert par le peintre en 1846. Elle figure à l'inventaire du patrimoine immobilier culturel de Wallonie.",
+        "Source": "Wikipédia, « Église Saint-Antoine-de-Padoue de Charleroi » | https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Antoine-de-Padoue_de_Charleroi"
       }
     },
     {
@@ -2665,13 +2684,15 @@
         "maps_ref": "https://maps.app.goo.gl/cnTtnwcgcTaLUXrs6",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Charleroi",
-        "Zone": "Charleroi"
+        "Source": "Wikipédia, « Musée des Beaux-Arts de Charleroi » | https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Charleroi\nHoraires et tarifs : Charleroi Museum, « Tarifs, horaires et accès », consultés le 5 novembre 2026 | https://charleroi-museum.be/horaires-et-acces/",
+        "Zone": "Charleroi",
+        "description": "Musée du boulevard Pierre Mayence, dans la Ville-Haute de Charleroi.\nSelon Wikipédia, il occupe depuis le 16 décembre 2022 l'ancien bâtiment Defeld, autrefois écuries de la gendarmerie, transformé par le bureau d'architectes Goffart-Polomé ; la Tour Bleue de Jean Nouvel se dresse à côté.\nToujours selon Wikipédia, la collection de la Ville, commencée en 1889 et poursuivie à l'initiative de Jules Destrée, compte environ 4000 pièces, surtout d'artistes belges et wallons des 19ᵉ et 20ᵉ siècles, dont huit tableaux de René Magritte et des œuvres de François-Joseph Navez, Pierre Paulus et James Ensor. Quelque 120 œuvres sont exposées en permanence, selon un parcours chronologique qui va du néoclassicisme à l'art contemporain, en passant par le réalisme social et le surréalisme.\nTarifs annoncés par le musée : collections permanentes en entrée libre ; expositions temporaires 7,50 € (adulte) et 3,50 € (tarif réduit), gratuites le premier dimanche du mois.",
+        "Horaires": "Du mardi au vendredi de 9h00 à 17h00, samedi et dimanche de 10h00 à 18h00. Fermé le lundi, le 1er mai, les 25 et 26 décembre, les 1er et 2 janvier, et à midi les 24 et 31 décembre."
       }
     },
     {
