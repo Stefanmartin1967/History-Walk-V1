@@ -6,6 +6,11 @@
 
 ---
 
+- ÉDITEUR DE FICHE ET IMPORT DE PHOTOS : COORDONNÉES COPIABLES, BOUTON GOOGLE (v3.7.475) — demandé et validé par Stefan le 05/11/2026.
+  - **Éditeur de fiche, pied GPS** : un clic sur les coordonnées les copie (« lat, lng », collable tel quel dans Google Maps) ; après un « Déplacer », c'est la nouvelle position. Nouveau bouton **Google** devant Maps · OSM : il cherche le nom et le quartier **saisis** dans le formulaire (marche pendant un renommage et en création ; nom vide → avertissement).
+  - **Import de photos** : bouton **Google** devant Maps · OSM sur un groupe rattaché à un lieu ; il suit le sélecteur de lieu. Pas de bouton sur un groupe orphelin ou « Hors POI » (pas de nom à chercher).
+  - Les trois boutons Google (fiche, éditeur, import) passent par `openWebSearch` (`src/web-search.js`) : même requête partout (nom + destination, ou nom + commune pour la Wallonie).
+
 - FICHE : BOUTON GOOGLE, LA COMMUNE AU LIEU DE « WALLONIE » (v3.7.474) — demandé et validé par Stefan le 04/11/2026. Le bouton cherchait « nom du lieu + nom de la destination ». Parfait pour Djerba (« Mosquée … Djerba »), trop vague pour la Wallonie : des chapelles Saint-Roch, il y en a dans toute la région.
   - **Destination à territoire** (`territoryOsmId`, la Wallonie) : le bouton ajoute le quartier du lieu, qui est sa commune ou, à Charleroi, son ancienne commune (« Chapelle Saint-Roch Mettet », « Château de Hanzinelle Florennes »). Quartier inutilisable (« Hors zone », « A définir ») → repli sur le nom de la destination.
   - **Djerba et Hammamet** : rien ne change.

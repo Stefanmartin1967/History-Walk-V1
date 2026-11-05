@@ -23,6 +23,7 @@ import {
 } from './work-photos.js';
 import { savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
 import { getStoredToken } from './github-sync.js';
+import { openWebSearch } from './web-search.js';
 
 // Aide « ? » : le patron rend l'icône via createIcons (idempotent).
 configureHelp({ renderIcons: (root) => createIcons({ icons: appIcons, root }) });
@@ -310,8 +311,13 @@ const RICH_POI_BODY_HTML = `
         <button id="btn-rich-move-marker" class="btn btn-ghost" title="Déplacer le marqueur" aria-label="Déplacer le marqueur" type="button">
             <i data-lucide="move"></i><span>Déplacer</span>
         </button>
-        <span>📍 GPS : <span id="rich-poi-coords">...</span></span>
+        <!-- Coordonnées : un clic les copie (format « lat, lng », celui que Google
+             Maps accepte tel quel dans sa barre de recherche). -->
+        <button id="btn-rich-copy-coords" class="rich-coords-copy" type="button" title="Copier les coordonnées" aria-label="Copier les coordonnées">
+            <span>📍 GPS : <span id="rich-poi-coords">...</span></span><i data-lucide="copy"></i>
+        </button>
         <span class="rich-poi-map-links">
+            <button id="btn-rich-web-search" class="rich-maplink" type="button" title="Rechercher sur Google" aria-label="Rechercher sur Google"><i data-lucide="search"></i>Google</button>
             <button id="btn-rich-open-gmaps" class="rich-maplink" type="button" title="Voir sur Google Maps" aria-label="Voir sur Google Maps"><i data-lucide="map-pin"></i>Maps</button>
             <button id="btn-rich-open-osm" class="rich-maplink" type="button" title="Voir sur OpenStreetMap" aria-label="Voir sur OpenStreetMap"><i data-lucide="map"></i>OSM</button>
         </span>
@@ -595,6 +601,22 @@ function getCurrentEditorCoords() {
 }
 
 // Ouvre la position courante du lieu sur Google Maps / OSM (réunif A3f, parité DM).
+function copyEditorCoords() {
+    const text = (document.getElementById(DOM_IDS.COORDS)?.textContent || '').trim();
+    if (!/^-?\d+(\.\d+)?, -?\d+(\.\d+)?$/.test(text)) {
+        showToast("Position du lieu indisponible.", "warning");
+        return;
+    }
+    if (!navigator.clipboard?.writeText) {
+        showToast("Copie impossible dans ce navigateur.", "error");
+        return;
+    }
+    navigator.clipboard.writeText(text).then(
+        () => showToast(`Coordonnées copiées : ${text}`, "success", 2500),
+        () => showToast("Copie impossible.", "error")
+    );
+}
+
 function openEditorCoordsOnMap(provider) {
     // On lit l'input EN DIRECT (pas la feature) — l'admin vient peut-être de
     // coller la référence sans avoir encore enregistré, et le geste naturel
@@ -745,6 +767,17 @@ function bindModalEvents() {
 
     // Move Marker
     document.getElementById(DOM_IDS.BTNS.MOVE)?.addEventListener('click', handleMove);
+
+    // Copier les coordonnées affichées (celles du formulaire, donc la nouvelle
+    // position après un « Déplacer » pas encore enregistré).
+    document.getElementById('btn-rich-copy-coords')?.addEventListener('click', copyEditorCoords);
+
+    // Google : le nom et le quartier SAISIS (pas ceux enregistrés) — marche donc
+    // pendant un renommage et en création. Même requête que la fiche (web-search.js).
+    document.getElementById('btn-rich-web-search')?.addEventListener('click', () => {
+        const ok = openWebSearch({ name: getValue(DOM_IDS.INPUTS.NAME_FR), zone: getValue(DOM_IDS.INPUTS.ZONE) });
+        if (!ok) showToast("Donnez d'abord un nom au lieu.", "warning");
+    });
 
     // Liens carte Maps/OSM (réunif A3f) — ouvrent la position courante du lieu.
     document.getElementById('btn-rich-open-gmaps')?.addEventListener('click', () => openEditorCoordsOnMap('gmaps'));

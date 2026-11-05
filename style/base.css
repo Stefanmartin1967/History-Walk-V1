@@ -249,6 +249,19 @@ body {
     border-top: 1px dashed var(--line);
     margin-top: 4px;
 }
+/* Coordonnées cliquables (copie) : du texte au repos, un bouton au survol. */
+.rich-coords-copy {
+    display: inline-flex; align-items: center; gap: 6px;
+    height: 28px; padding: 0 8px;
+    border: 1px solid transparent; border-radius: var(--radius-md, 8px);
+    background: none; color: inherit;
+    font: inherit; font-size: 12px; cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+}
+.rich-coords-copy svg { width: 13px; height: 13px; opacity: .6; }
+.rich-coords-copy:hover { background: var(--surface-muted); border-color: var(--line); color: var(--ink); }
+.rich-coords-copy:hover svg { opacity: 1; color: var(--brand); }
+.rich-coords-copy:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
 /* Liens carte Maps/OSM du pied GPS (réunif A3f) — même langage visuel que la
    mini-barre de la fiche (.poi-quick-btn) mais compact (28px). */
 .rich-poi-map-links { display: inline-flex; align-items: center; gap: 6px; }
