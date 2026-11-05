@@ -81,6 +81,11 @@ export function getHwCategory(tags = {}) {
     if (tags.man_made === 'windmill' || tags.man_made === 'watermill') return 'Vestige industriel';   // sous-type Moulin à la curation
     if (tags.man_made === 'lighthouse') return 'Curiosité';
     if (tags.craft === 'pottery' || tags.craft === 'weaving' || tags.shop === 'pottery') return 'Artisanat';
+    // Édifice civil (05/11/2026) : beffroi reconnu à son NOM, pas à `tower:type=belfry`,
+    // qui désigne aussi les clochers d'église ; hôtel de ville via `amenity=townhall`
+    // (moissonné seulement avec la case « Services publics »). Sous-type à la curation.
+    if (/^beffroi(\s|$)/i.test((tags['name:fr'] || tags.name || '').trim())) return 'Édifice civil';
+    if (tags.amenity === 'townhall') return 'Édifice civil';
     const raw = tags.historic || tags.tourism || tags.amenity || tags.leisure;
     return HW_MAPPING[raw] || null; // null = catégorie non devinée (candidat « inconnu »)
 }

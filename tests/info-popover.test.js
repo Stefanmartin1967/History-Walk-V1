@@ -78,16 +78,17 @@ describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
         // affichée, sous-types inclus. 18 catégories mono + Mosquée (5) +
         // Église (2) + Chapelle (2) + Artisanat (4) = 31 entrées (27 du handoff
         // #22 + voûtes en berceau, 24/10/2026 + chapelles et potale, 01/11/2026)
-        // + Château (3) + Monument (3) + Vestige industriel (3) le 05/11/2026 = 40.
+        // + Château (3) + Monument (3) + Vestige industriel (3) le 05/11/2026 = 40
+        // + Édifice civil (4) = 44.
         const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(40);
-        // Les 7 catégories à sous-types ont un en-tête de sous-groupe dédié.
+        expect(items).toHaveLength(44);
+        // Les 8 catégories à sous-types ont un en-tête de sous-groupe dédié.
         const subgroups = document.querySelectorAll('.info-popover-cat-subgroup');
-        expect(subgroups).toHaveLength(7);
+        expect(subgroups).toHaveLength(8);
         const subgroupTitles = Array.from(
             document.querySelectorAll('.info-popover-cat-subgroup-title')
         ).map(el => el.textContent);
-        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Chapelle', 'Château', 'Monument', 'Vestige industriel', 'Artisanat']);
+        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Chapelle', 'Château', 'Monument', 'Vestige industriel', 'Édifice civil', 'Artisanat']);
         // Variantes de sous-types représentatives présentes.
         expect(txt).toContain('À minaret');
         expect(txt).toContain('Catholique');

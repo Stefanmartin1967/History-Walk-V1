@@ -14,6 +14,7 @@ const FALLBACK = {
         { label: "Château", groupe: "Site historique" },
         { label: "Commerce", groupe: "Services & commodités" },
         { label: "Curiosité", groupe: "Culture & découvertes" },
+        { label: "Édifice civil", groupe: "Site historique" },
         { label: "Église", groupe: "Lieux de culte" },
         { label: "Fortification", groupe: "Site historique" },
         { label: "Hôtel", groupe: "Services & commodités" },

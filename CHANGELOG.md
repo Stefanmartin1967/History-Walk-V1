@@ -6,6 +6,12 @@
 
 ---
 
+- TAXONOMIE : CATÉGORIE « ÉDIFICE CIVIL » (v3.7.477) — demandé et validé par Stefan le 05/11/2026. Le Beffroi de Charleroi et les maisons Regniers et Mattot n'avaient pas de catégorie (restés en « Taxi »).
+  - **Édifice civil** (groupe Site historique) : sous-types **Hôtel de ville** (façade et clocheton à horloge), **Beffroi isolé** (tour seule, flèche et clochetons d'angle : Tournai), **Beffroi accolé** (la tour et une aile basse : Charleroi, Binche) et **Demeure** (maison remarquable, façade cintrée Art nouveau ; « Maison remarquable » était coupé dans la légende). Sans sous-type : icône de la demeure. États « Conservé / Reconverti / Ruine », accès par défaut « Extérieur seulement ». Légende : 44 icônes.
+  - **Règle décidée avec Stefan** : un beffroi accolé à l'hôtel de ville = UNE fiche, sous-type Beffroi accolé, nom du beffroi (« Beffroi de Charleroi »), la description parle de l'hôtel de ville. Beffroi isolé = sous-type Beffroi isolé ; l'hôtel de ville, s'il mérite une fiche, a la sienne (sous-type Hôtel de ville).
+  - **Scout** (prochains scans seulement) : un nom qui commence par « Beffroi » → Édifice civil (pas `tower:type=belfry`, qui désigne aussi les clochers d'église) ; `amenity=townhall` → Édifice civil (moissonné seulement avec « Services publics »). Les candidats déjà présents ne changent pas.
+  - Aide et doc mises à jour. Tests : taxonomie_icones_sync, scout_category_mapping, comptes de la légende.
+
 - TAXONOMIE : TROIS CATÉGORIES POUR LA WALLONIE, CHÂTEAU, MONUMENT, VESTIGE INDUSTRIEL (v3.7.476) — demandé et validé par Stefan le 05/11/2026. En curant Andenne, trop de lieux finissaient en « Taxi » faute de catégorie (monuments de Charleroi, Chant d'Oiseaux, puits de mine).
   - **Château** (groupe Site historique) : sous-types **Château fort** (donjon crénelé, distinct de la muraille « Fortification »), **Château résidentiel** (manoir à tourelles d'ardoise) et **Château-ferme** (porche-tour entre deux granges). Sans sous-type : icône du résidentiel. Accès par défaut « Extérieur seulement ».
   - **Monument** : **Aux morts** (obélisque ; « Monument › Aux morts », plus court dans la légende), **Mémorial** (stèle gravée : catastrophe, résistance, régiment…) et **Statue**. Sans sous-type : la stèle. États « Conservé / Disparu », accès « Extérieur seulement / Non visitable ».
