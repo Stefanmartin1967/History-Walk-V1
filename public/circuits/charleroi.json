@@ -1,1 +1,31 @@
-[]
+[
+  {
+    "id": "HW-01M6NH9JRSZBK3GXGR4YXGKTHZ",
+    "name": "Boucle autour de Église Saint-Pierre",
+    "file": "charleroi/Boucle autour de Église Saint-Pierre.gpx",
+    "description": "",
+    "distance": "6.4 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Montignies-sur-Sambre",
+    "poiIds": [
+      "HW-01M616BPTAFCEQFANX8N44P62T",
+      "HW-01M616BQH5TDAW10E5SW5YFE1N",
+      "HW-01M616BN3K13BABRTGB3HYS0KZ",
+      "HW-01M616BR71ED150ZM8QFWJ0VQR",
+      "HW-01M616BRA2D99WFW44GHD3XZ3G",
+      "HW-01M616BQ72DMZK225MWPD7JAKJ",
+      "HW-01M616BR7X43SN571RV51DKBV3",
+      "HW-01M616BMX945K93TF5ZQQDASBJ",
+      "HW-01M616BRBPJ9NS0F50TM0GEBWT",
+      "HW-01M616BN55AZFWV07KY7QGRGXW",
+      "HW-01M616BSF5BT9VJD3JTD75HCCM",
+      "HW-01M616BRWS5WR93VM1BQWVN5GX",
+      "HW-01M616BR65D8YBDMH18F2M2ZR8",
+      "HW-01M6B70SY3K8NKFJTEAH828SSC",
+      "HW-01M616BMT0WVS0MA2RAVJMWM45",
+      "HW-01M616BR98326G65D6Z2R942JM"
+    ],
+    "trackHash": "277-43351a13"
+  }
+]
