@@ -1,4 +1,4 @@
-import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch, getActiveDestinationName, getActiveMapId } from './state.js';
+import { state, setCurrentFeatureId, setCurrentCircuitIndex, setPoiFilterFromSearch } from './state.js';
 import { getPoiId, getPatrimonialName, updatePoiData, updatePoiCoordinates, isPendingPoi, discardPendingPoi } from './data.js';
 import { eventBus } from './events.js';
 import { speakText } from './tts.js';
@@ -18,8 +18,7 @@ import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
-import { hasTerritory } from './scout-territory.js';
-import { webSearchTerms } from './web-search.js';
+import { openWebSearch } from './web-search.js';
 
 // Aide « ? » général de la fiche d'un lieu : le patron rend l'icône via createIcons.
 // Idempotent (configureHelp est déjà appelé par ui-photo-batch et ui-circuit-list ;
@@ -697,18 +696,9 @@ function setupDetailsEventListeners(poiId) {
     searchBtns.forEach(btn => {
         btn.addEventListener('click', () => {
              const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
-             if (feature) {
-                 // Nom + destination (« … Djerba »), ou nom + commune pour une
-                 // destination à territoire (« … Aiseau-Presles ») : cf. web-search.js.
-                 const terms = webSearchTerms({
-                     name: getPatrimonialName(feature),
-                     zone: getDerivedZone(feature),
-                     destinationName: getActiveDestinationName(),
-                     territory: hasTerritory(state.destinations?.maps?.[getActiveMapId()]),
-                 });
-                 const query = encodeURIComponent(terms);
-                 window.open(`https://www.google.com/search?q=${query}`, '_blank', 'noopener,noreferrer');
-             }
+             // Nom + destination (« … Djerba »), ou nom + commune pour une
+             // destination à territoire (« … Aiseau-Presles ») : cf. web-search.js.
+             if (feature) openWebSearch({ name: getPatrimonialName(feature), zone: getDerivedZone(feature) });
         });
     });
 

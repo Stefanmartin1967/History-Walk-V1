@@ -4,8 +4,9 @@
 // Les phases suivantes ajouteront la publication, le ZIP et le nouveau lieu.
 
 import Sortable from 'sortablejs';
-import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized, sha256OfFile } from './utils.js';
-import { getPoiName, getPoiId, updatePoiData } from './data.js';
+import { resizeImage, calculateDistance, openPoiOnMap, openCoordsOnMap, getPoiProp, isPoiMalCategorized, sha256OfFile, getDerivedZone } from './utils.js';
+import { getPoiName, getPoiId, updatePoiData, getPatrimonialName } from './data.js';
+import { openWebSearch } from './web-search.js';
 import { getSearchResults } from './search.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { state } from './state.js';
@@ -2220,6 +2221,24 @@ function buildClusterSection(cluster, index) {
             });
             actions.appendChild(select);
         }
+    }
+
+    // Google (par NOM — même requête que la fiche, cf. web-search.js). Seulement
+    // sur un groupe rattaché à un lieu : un orphelin n'a pas de nom à chercher.
+    // Suit le sélecteur de lieu (le re-rendu après réassignation reconstruit la barre).
+    if (hasNearbyPoi && cluster.type !== 'OUT_POI') {
+        const poiFeature = cluster.nearbyPois[0].feature;
+        const googleBtn = document.createElement('button');
+        googleBtn.className = 'pb-act is-maplink';
+        googleBtn.type = 'button';
+        googleBtn.innerHTML = '<i data-lucide="search"></i><span>Google</span>';
+        googleBtn.title = 'Rechercher ce lieu sur Google';
+        googleBtn.setAttribute('aria-label', 'Rechercher ce lieu sur Google');
+        googleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            openWebSearch({ name: getPatrimonialName(poiFeature), zone: getDerivedZone(poiFeature) });
+        });
+        actions.appendChild(googleBtn);
     }
 
     // Maps / OSM (par COORDONNÉES — jamais par nom).
