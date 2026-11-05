@@ -55,6 +55,12 @@ export function toggleCircuitCreationMode(forceValue) {
 }
 
 // --- GÉNÉRATION QR CODE ET PARTAGE (UI) ---
+
+// QR en SVG, servi en data: URL dans un <img> (même chemin que l'ancien PNG).
+function svgDataUrl(svg) {
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+
 export async function generateCircuitQR() {
     if (state.currentCircuit.length === 0) return;
 
@@ -98,7 +104,12 @@ export async function generateCircuitQR() {
         let qrApp;
         try {
             const QRCode = (await import('qrcode')).default;
-            qrApp = await QRCode.toDataURL(appDataString, { width: 300, margin: 2 });
+            // Le lien liste l'id de chaque lieu : ~1 000 caractères à 30 lieux
+            // (MAX_CIRCUIT_POINTS). Correction « L » (scan d'écran à écran, pas
+            // d'étiquette abîmée) = moins de modules (101 à 30 lieux) ; SVG =
+            // vectoriel, net à toute taille et toute densité d'écran (un PNG
+            // agrandi ou réduit par le navigateur abîme les modules).
+            qrApp = svgDataUrl(await QRCode.toString(appDataString, { type: 'svg', margin: 2, errorCorrectionLevel: 'L' }));
         } catch (e) {
             console.error("Erreur QR App", e);
             showToast("Erreur génération QR", "error");
@@ -125,7 +136,7 @@ export async function generateCircuitQR() {
             let qrGpx;
             try {
                 const QRCode = (await import('qrcode')).default;
-                qrGpx = await QRCode.toDataURL(gpxUrl, { width: 250, margin: 1 });
+                qrGpx = svgDataUrl(await QRCode.toString(gpxUrl, { type: 'svg', margin: 1 }));
             } catch (e) {
                 console.error("Erreur QR GPX", e);
                 return;

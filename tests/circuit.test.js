@@ -24,7 +24,7 @@ vi.mock('../src/state.js', () => {
     };
     return {
         state,
-        MAX_CIRCUIT_POINTS: 15,
+        MAX_CIRCUIT_POINTS: 30,
         setCircuitCreationMode: vi.fn(),
         setEditingMode: vi.fn(v => { state.editingMode = v; }),
         addPoiToCurrentCircuit: vi.fn(f => { state.currentCircuit.push(f); }),
@@ -366,9 +366,9 @@ describe('addPoiToCircuit', () => {
         expect(result).toBe(false);
     });
 
-    it('refuse au-delà de MAX_CIRCUIT_POINTS (15) + toast warning', () => {
-        // Remplir avec 15 POIs distincts
-        state.currentCircuit = Array.from({ length: 15 }, (_, i) => poi(`p${i}`));
+    it('refuse au-delà de MAX_CIRCUIT_POINTS (30) + toast warning', () => {
+        // Remplir avec 30 POIs distincts
+        state.currentCircuit = Array.from({ length: 30 }, (_, i) => poi(`p${i}`));
         const result = addPoiToCircuit(poi('p99'));
         expect(result).toBe(false);
         expect(showToast).toHaveBeenCalledWith(

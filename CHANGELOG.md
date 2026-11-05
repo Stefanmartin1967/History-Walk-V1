@@ -6,6 +6,11 @@
 
 ---
 
+- CIRCUITS : 30 LIEUX AU LIEU DE 15 (v3.7.478) — demandé et validé par Stefan le 05/11/2026. La limite de 15 lieux bloquait un circuit à Charleroi (lieux urbains serrés : 15 lieux ≈ 3 km).
+  - `MAX_CIRCUIT_POINTS` passe de 15 à 30, même valeur pour toutes les destinations. Pas de case à cocher ni de message : le compteur affiche `16/30`, la longueur de la marche se juge au km affiché.
+  - On garde un plafond pour deux raisons techniques : le QR de partage mobile (le lien liste l'id de chaque lieu) et le tracé (une requête BRouter par tronçon).
+  - QR de partage : dessiné en SVG (net à toute taille, plus d'image PNG agrandie), correction d'erreur « L », affiché en 260 px au lieu de 200. À 30 lieux, le QR a 101 modules sur 260 px, des modules un peu plus gros que l'ancien QR à 15 lieux (85 modules sur 200 px). Scan sur téléphone à confirmer.
+
 - TAXONOMIE : CATÉGORIE « ÉDIFICE CIVIL » (v3.7.477) — demandé et validé par Stefan le 05/11/2026. Le Beffroi de Charleroi et les maisons Regniers et Mattot n'avaient pas de catégorie (restés en « Taxi »).
   - **Édifice civil** (groupe Site historique) : sous-types **Hôtel de ville** (façade et clocheton à horloge), **Beffroi isolé** (tour seule, flèche et clochetons d'angle : Tournai), **Beffroi accolé** (la tour et une aile basse : Charleroi, Binche) et **Demeure** (maison remarquable, façade cintrée Art nouveau ; « Maison remarquable » était coupé dans la légende). Sans sous-type : icône de la demeure. États « Conservé / Reconverti / Ruine », accès par défaut « Extérieur seulement ». Légende : 44 icônes.
   - **Règle décidée avec Stefan** : un beffroi accolé à l'hôtel de ville = UNE fiche, sous-type Beffroi accolé, nom du beffroi (« Beffroi de Charleroi »), la description parle de l'hôtel de ville. Beffroi isolé = sous-type Beffroi isolé ; l'hôtel de ville, s'il mérite une fiche, a la sienne (sous-type Hôtel de ville).

@@ -170,7 +170,9 @@
    ================================================ */
 
 .circuit-share-container { display: flex; flex-direction: column; align-items: center; gap: 12px; width: 100%; text-align: center; }
-.circuit-qr-img { width: 200px; height: 200px; border-radius: 10px; border: 1px solid var(--line); }
+/* 260 px : un QR de circuit de 30 lieux reste lisible (SVG, cf. ui-circuit-editor.js).
+   Fond blanc explicite : le SVG du QR a son propre fond, le cadre ne doit pas le teinter. */
+.circuit-qr-img { width: min(260px, 100%); height: auto; aspect-ratio: 1; background: #fff; border-radius: 10px; border: 1px solid var(--line); }
 .circuit-share-name { font-size: 15px; font-weight: 600; color: var(--ink); word-break: break-word; text-align: center; width: 100%; margin: 0; padding: 0; line-height: 1.4; }
 .circuit-no-gpx-msg { text-align: center; padding: 20px; color: var(--ink-soft); }
 

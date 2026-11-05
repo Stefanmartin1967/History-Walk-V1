@@ -1,8 +1,13 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.477'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
-export const MAX_CIRCUIT_POINTS = 15;
+export const APP_VERSION = '3.7.478'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+// Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
+// lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
+// (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
+// BRouter par tronçon, toutes en parallèle). La longueur de la marche, elle, se
+// juge au km affiché, pas à ce plafond.
+export const MAX_CIRCUIT_POINTS = 30;
 
 // POI_CATEGORIES : liste plate des libellés de catégories, dérivée du référentiel
 // taxonomy.js (source : public/poi-categories.json, chargé async au boot). Le
