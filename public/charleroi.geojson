@@ -29,8 +29,8 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Monument aux Martyrs",
-        "Catégorie": "Taxi",
+        "Nom du site FR": "Monument aux martyrs",
+        "Catégorie": "Monument",
         "osm_ref": "node/1392880410",
         "HW_ID": "HW-01M616BMT0WVS0MA2RAVJMWM45",
         "Temps_minutes": 0,
@@ -43,7 +43,12 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "description": "Monument de l'avenue de Waterloo, à Charleroi.\nSelon Wikipédia, ce mémorial néoclassique est l'œuvre de l'architecte et bourgmestre Émile Devreux, d'après un avant-projet de son fils Gabriel, tué en 1917, et du sculpteur Jules Lagae ; il a été inauguré le 8 juillet 1923.\nToujours selon Wikipédia, le conseil communal l'avait décidé en 1919 pour honorer les victimes de la Première Guerre mondiale ; la mention 1940-1945, ajoutée plus tard sur le pilier, l'étend à celles de la Seconde. L'arrière du pilier porte 118 noms de soldats de Charleroi et des communes voisines.\nUne Victoire en bronze se dresse au sommet du pilier de marbre blanc ; à son pied, une figure de l'Histoire, en bronze elle aussi, écrit dans un livre une phrase des Annales de Tacite sur les Belges face aux peuples de Germanie, en écho à la victoire de 1918.",
+        "Source": "Wikipédia, « Monument aux martyrs à Charleroi » | https://fr.wikipedia.org/wiki/Monument_aux_martyrs_%C3%A0_Charleroi",
+        "Sous-type": "Aux morts",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -3162,12 +3167,12 @@
       },
       "properties": {
         "Nom du site FR": "Maison Mattot",
-        "Catégorie": "Taxi",
+        "Catégorie": "Édifice civil",
         "osm_ref": "way/575743771",
         "HW_ID": "HW-01M616BR98326G65D6Z2R942JM",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "https://fr.wikipedia.org/wiki/Maison_Mattot",
+        "Source": "Wikipédia, « Maison Mattot » | https://fr.wikipedia.org/wiki/Maison_Mattot",
         "verified": false,
         "introuvableCarte": false,
         "descriptionPublic": false,
@@ -3175,7 +3180,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "Demeure",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "description": "Maison du boulevard Frans Dewandre, à Charleroi.\nSelon Wikipédia, cette maison de ville moderniste a été dessinée en 1937 par l'architecte Marcel Leborgne pour le docteur Henri Mattot, gynécologue et directeur de la maternité Reine Astrid voisine : un cabinet de consultation au rez-de-chaussée, un appartement pour une personne seule au premier étage.\nToujours selon Wikipédia, ses deux premiers niveaux sont habillés de briques en grès de Guérin ; la verrière du cabinet s'incurve doucement et la grande baie du premier étage forme une légère saillie vers le boulevard, avec un garde-corps métallique en forme de bastingage.\nSelon la même source, le second étage a été agrandi en 1955, et Leborgne avait aussi dessiné tout le mobilier, dont il ne reste que des éléments encastrés. La maison jouxte l'immeuble Moreau et fait face à l'immeuble Henry, deux œuvres du même architecte. Elle figure à l'inventaire du patrimoine immobilier culturel de Wallonie."
       }
     },
     {
