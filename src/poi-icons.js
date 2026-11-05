@@ -13,7 +13,7 @@
 // - Église : 2 sous-types (Catholique / Orthodoxe).
 // - Chapelle : 2 sous-types (À porte / À grille).
 // - Château : 3 sous-types (Château fort / Château résidentiel / Château-ferme).
-// - Monument : 3 sous-types (Monument aux morts / Mémorial / Statue).
+// - Monument : 3 sous-types (Aux morts / Mémorial / Statue).
 // - Vestige industriel : 2 sous-types (Mine / Moulin) + icône « Vestige
 //   industriel » sans sous-type (usine, forge, four…).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
@@ -263,7 +263,7 @@ const I_CHATEAU_FERME = svgFor(
 );
 
 // Site historique — Monument (3 sous-types, 05/11/2026).
-// « Monument aux morts » : obélisque sur degrés, couronne.
+// « Aux morts » : obélisque sur degrés, couronne.
 const I_MONUMENT_AUX_MORTS = svgFor(G +
     '<rect x="28" y="74" width="40" height="8"/>' +
     '<rect x="34" y="67" width="28" height="7"/>' +
@@ -563,7 +563,7 @@ const POI_ICONS = {
         _default: I_CHATEAU_RESIDENTIEL,
     },
     'Monument': {
-        'Monument aux morts': I_MONUMENT_AUX_MORTS,
+        'Aux morts': I_MONUMENT_AUX_MORTS,
         'Mémorial': I_MEMORIAL,
         'Statue': I_STATUE,
         // Sans sous-type : la stèle du mémorial, la forme la plus neutre.

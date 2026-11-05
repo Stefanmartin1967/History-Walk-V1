@@ -93,7 +93,7 @@
       "groupe": "Site historique",
       "libelleDerive": false,
       "sousTypes": [
-        { "label": "Monument aux morts", "portee": "générique" },
+        { "label": "Aux morts", "portee": "générique" },
         { "label": "Mémorial", "portee": "générique" },
         { "label": "Statue", "portee": "générique" }
       ],

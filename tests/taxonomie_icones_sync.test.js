@@ -40,7 +40,7 @@ describe('taxonomie ↔ icônes', () => {
         const groups = getLegendGroups();
         const labels = cat => groups.find(g => g.category === cat).variants.map(v => v.label);
         expect(labels('Château')).toEqual(['Château fort', 'Château résidentiel', 'Château-ferme']);
-        expect(labels('Monument')).toEqual(['Monument aux morts', 'Mémorial', 'Statue']);
+        expect(labels('Monument')).toEqual(['Aux morts', 'Mémorial', 'Statue']);
         // Sans sous-type : icône propre, nommée comme la catégorie (comme Mosquée).
         expect(labels('Vestige industriel')).toEqual(['Mine', 'Moulin', 'Vestige industriel']);
         const all = groups.flatMap(g => g.variants.map(v => v.svg));
