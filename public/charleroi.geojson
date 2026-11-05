@@ -3105,18 +3105,21 @@
         "Catégorie": "Église",
         "osm_ref": "way/574674597",
         "HW_ID": "HW-01M616BR65D8YBDMH18F2M2ZR8",
-        "Sous-type": "Orthodoxe",
+        "Sous-type": "Catholique",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/rbFFm8tEk9mdrGKv5",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Accès": "Intérieur visitable",
+        "description": "Église de la rue de Castel Rodrigo, à Charleroi.\nSelon la légende de photographies publiées sur Wikimedia Commons, c'est l'ancienne chapelle dite « du Rempart », construite en 1819 ; elle a abrité la statue de Notre-Dame du Rempart jusqu'en 1908, année où celle-ci a été transférée boulevard de l'Yser. Elle est aujourd'hui un lieu de culte catholique ukrainien de rite byzantin.\nSelon la liste des rues de Charleroi sur Wikipédia, la rue de Castel Rodrigo s'appelait autrefois rue de la Chapelle.",
+        "Source": "Chapelle dite « du Rempart », photographie de Jmh2o, 20 juin 2020 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_%C3%89glise_Byzantine_Catholique_Ukrainienne_-_01.jpg\nWikipédia, « Liste des rues de Charleroi » | https://fr.wikipedia.org/wiki/Liste_des_rues_de_Charleroi"
       }
     },
     {
@@ -3160,7 +3163,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Protestante de Charleroi",
+        "Nom du site FR": "Église protestante de Charleroi",
         "Catégorie": "Église",
         "osm_ref": "way/575735833",
         "HW_ID": "HW-01M616BR7X43SN571RV51DKBV3",
@@ -3168,13 +3171,15 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
         "maps_ref": "https://maps.app.goo.gl/qmMv8ki7YUNHPywg7",
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "description": "Église protestante du boulevard Audent, à Charleroi, membre de l'Église protestante unie de Belgique.\nSelon Wikipédia, la communauté protestante de Charleroi est née en 1841-1842 ; son premier lieu de culte, inauguré place Verte en 1851, devint vite trop petit. L'édifice actuel a été élevé en 1880 par l'architecte Émile Dubois, à l'emplacement des anciennes fortifications de la ville, dans un style éclectique à dominante classique, probablement inspiré de la chapelle de l'Oratoire de Genève. Il a été inauguré le 1er novembre 1880 devant 1800 personnes.\nToujours selon Wikipédia, la chaire, l'autel et l'orgue y sont alignés sur un même axe vertical, selon la tradition calviniste. L'édifice est classé depuis 1990.",
+        "Source": "Wikipédia, « Temple protestant de Charleroi » | https://fr.wikipedia.org/wiki/Temple_protestant_de_Charleroi"
       }
     },
     {
@@ -3953,13 +3958,16 @@
         "maps_ref": "https://maps.app.goo.gl/DcgegWZFNP21KdoX7",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-11-01",
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Accès": "Intérieur visitable",
+        "description": "Église de la place Vauban, à Charleroi.\nSelon Wikipédia, elle domine la place avec l'hôtel de ville et son beffroi. Elle remonte à une chapelle de garnison dédiée à saint Louis, élevée en 1667 par les Français qui venaient de prendre la ville ; il n'en reste qu'une pierre de fondation, insérée dans le porche. Agrandie au 18ᵉ siècle et consacrée à saint Christophe, l'église baroque garde son chœur de 1723 et une partie de la nef de 1778-1781, due à l'architecte Flavion ; elle a été en partie reconstruite après le siège de 1794, et sa façade restaurée en 1863 par Auguste Cador.\nToujours selon Wikipédia, elle a été fortement transformée en 1956 par les architectes Joseph André, Robert Puttemans et Charles Malcause : un dôme de 16 mètres de diamètre, haut de 48 mètres, la domine désormais, et l'ancienne église, classée en 1942, est devenue en quelque sorte le transept de la nouvelle. Le chœur abrite une mosaïque de Jean Ransy illustrant l'Apocalypse de saint Jean.\nSelon la même source, on l'appelle aussi basilique, mais elle ne porte pas officiellement ce titre.",
+        "Source": "Wikipédia, « Église Saint-Christophe de Charleroi » | https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Christophe_de_Charleroi"
       }
     },
     {
