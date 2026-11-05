@@ -38,6 +38,7 @@ import { fetchZonesAuto, coveredZoneIds } from './osm-zones.js';
 import { zonesData, setZonesData } from './zones.js';
 import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
+import { buildQuery } from './scout-query.js';
 import { collectKnownOsmRefs, isDuplicateCandidate } from './scout-dedup.js';
 import { hasTerritory, inTerritory, zonesExtent } from './scout-territory.js';
 import { getStoredToken } from './github-sync.js';
@@ -491,25 +492,7 @@ function renderCandidates() {
 }
 
 // ── Scan (moisson Overpass) ────────────────────────────────────────────────────
-function buildQuery(b, cats) {
-    const bb = `(${b.south},${b.west},${b.north},${b.east})`;
-    const c = [];
-    if (cats.has('religion')) { c.push(`nwr["amenity"="place_of_worship"]${bb};`); c.push(`way["building"~"mosque|church|synagogue"]${bb};`); }
-    // P1 Niveau 1 : « Patrimoine historique » élargi (ouvrages défensifs, sites
-    // funéraires, palais/monastères/aqueducs…) + patrimoine technique (`man_made`).
-    if (cats.has('history')) {
-        c.push(`nwr["historic"~"fort|castle|fortress|citadel|city_gate|citywalls|bastion|tower|archaeological_site|ruins|tomb|tumulus|mausoleum|monument|memorial|aqueduct|monastery|palace|manor|wayside_shrine|heritage"]${bb};`);
-        c.push(`nwr["man_made"~"lighthouse|windmill|watermill|water_well"]${bb};`);
-    }
-    // « Musées & culture » : musées + artisanat traditionnel (poterie/tissage).
-    if (cats.has('museum')) { c.push(`nwr["tourism"="museum"]${bb};`); c.push(`nwr["craft"~"pottery|weaving"]${bb};`); c.push(`nwr["shop"="pottery"]${bb};`); }
-    if (cats.has('hotel')) c.push(`nwr["tourism"~"hotel|guest_house|hostel"]${bb};`);
-    if (cats.has('restaurant')) c.push(`nwr["amenity"~"restaurant|cafe"]${bb};`);
-    // « Tourisme & loisirs » = ex « Tourisme / Art » + ex « Loisirs / Parcs » fusionnés.
-    if (cats.has('tourism')) { c.push(`nwr["tourism"~"viewpoint|artwork|attraction|gallery|theme_park|zoo|aquarium"]${bb};`); c.push(`nwr["leisure"~"park|water_park"]${bb};`); }
-    if (cats.has('public')) c.push(`nwr["amenity"~"townhall|police|post_office|library"]${bb};`);
-    return `[out:json][timeout:60];(${c.join('')});out center;`;
-}
+// buildQuery vit dans scout-query.js (module feuille, testé face à getHwCategory).
 
 function showLoading(on, sub) {
     const el = _overlay?.querySelector('[data-scout-loading]');
