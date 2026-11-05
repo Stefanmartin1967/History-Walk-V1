@@ -44933,6 +44933,42 @@
         "HW_ID": "HW-01M6KQ1MY4XSVKFZJCVQG5NWST",
         "Zone": "Aiseau-Presles"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.439957286036975,
+          50.40897151576205
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Fiacre",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de la place Saint-Fiacre, à Charleroi.\nSelon le panneau « Histoire de la Cité » posé sur place par la Ville de Charleroi, l'édifice actuel est le troisième du nom. La première chapelle date de la période française, de 1667 à 1678 : elle se trouvait au centre de la cour d'un hôpital militaire élevé sur cette rive de l'ancienne Sambre, et accueillait les blessés et les malades ; vendue comme bien national, elle fut démolie en 1796. Une deuxième chapelle, bâtie en 1819 face à l'actuelle, servit un temps d'église à la Ville-Basse et fut très fréquentée lors des épidémies de dysenterie ; elle fut démolie pour faire place à un bassin de natation, lui-même disparu en 1931. La construction de la chapelle actuelle, sur le même plan, a débuté en 1889.\nSur place, la statue de saint Fiacre de la façade porte une plaque « 1956 - Delporte » ; selon la légende d'une photographie publiée sur Wikimedia Commons, c'est une œuvre de Charles Delporte.\nUne autre photographie publiée sur Wikimedia Commons, en 2018, montre dans la chapelle un tableau, Saint Fiacre guérissant un enfant, attribué au peintre namurois Joseph François (1759-1852).",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Panneau « Histoire de la Cité » de la Ville de Charleroi et plaque de la statue, relevés sur place le 5 novembre 2026\nStatue de saint Fiacre, photographie de Jmh2o, 27 septembre 2014 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_chapelle_Saint-Fiacre_-_04_-_statue_par_Charles_Delporte_en_1956.jpg\nSaint Fiacre guérissant un enfant, photographie de Jmh2o, 19 juillet 2018 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Joseph_Fran%C3%A7ois_-_Saint_Fiacre_gu%C3%A9rissant_un_enfant_-_01.jpg",
+        "osm_ref": "way/1167106081",
+        "maps_ref": "https://maps.app.goo.gl/kVJNtV1XuxRk1Awp6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-05",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6PBE3V86K0DHVC3GVYHKG3Z",
+        "accessPoint": [
+          4.4398301,
+          50.4090397
+        ],
+        "Zone": "Charleroi"
+      }
     }
   ]
 }
