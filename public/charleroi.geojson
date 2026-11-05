@@ -505,7 +505,7 @@
         "description": "Musée de la caserne Trésignies, avenue Général Michel, à Charleroi.\nSelon son site, il a ouvert le 14 septembre 1973 dans un local de la caserne, sous le nom de « Musée des Chasseurs à pied - Le prix de la Liberté ». D'abord consacré au régiment, il montre comment les Chasseurs à pied ont contribué à reconquérir ou à maintenir la liberté ; il s'est depuis étendu à la gendarmerie (2014), à la présence australienne dans la région de Charleroi (2019), puis à la Résistance, avec un espace annoncé pour 2024. Le musée y annonce aussi un nouveau nom : « Musée Mémorial Charleroi - Le Prix de la Liberté ».\nSelon Wikipédia, la caserne a été construite en 1887 et porte le nom du caporal Léon Trésignies, du 2ᵉ régiment de Chasseurs à pied, tué en août 1914 au Pont-Brûlé, à Vilvorde. Son porche et les deux tours de l'entrée principale sont classés depuis 1979 ; c'est dans ce porche que se trouve le musée, selon son site.\nTarifs annoncés par le musée : adulte 5 €, jeune de 12 à 18 ans 3 €, enfant jusqu'à 12 ans 2 €, groupe d'au moins 10 personnes 4 € par personne.",
         "maps_ref": "https://maps.app.goo.gl/9wXX4Sr4Pt5m3i8Z6",
         "Zone": "Charleroi",
-        "Source": "Musée des Chasseurs à pied, « Accueil » | https://www.chasseurs-a-pied-belges.be/musee/musee-accueil.htm\nHoraires et tarifs : Musée des Chasseurs à pied, « Infos pratiques », consultés le 5 novembre 2026 | https://www.chasseurs-a-pied-belges.be/musee/musee-infos_pratiques.htm\nWikipédia, « Caserne Caporal Trésignies » | https://fr.wikipedia.org/wiki/Caserne_Caporal_Tr%C3%A9signies",
+        "Source": "Musée des Chasseurs à pied, « Accueil » | https://www.chasseurs-a-pied-belges.be/musee/musee-accueil.htm\nHoraires confirmés par le musée par Messenger, le 5 novembre 2026\nTarifs : Musée des Chasseurs à pied, « Infos pratiques », consultés le 5 novembre 2026 | https://www.chasseurs-a-pied-belges.be/musee/musee-infos_pratiques.htm\nWikipédia, « Caserne Caporal Trésignies » | https://fr.wikipedia.org/wiki/Caserne_Caporal_Tr%C3%A9signies",
         "Horaires": "Samedi de 10h00 à 13h00 ; du lundi au vendredi sur rendez-vous (Facebook, courriel ou téléphone 071 30 07 48).",
         "Facebook": "https://www.facebook.com/MuseeDesChasseursAPied"
       }
@@ -562,33 +562,6 @@
         "candidate": true,
         "HW_ID": "HW-01M616BN4SQX38SGZ10QJAVGVG",
         "Zone": "Monceau-sur-Sambre"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          4.4432432,
-          50.4112272
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Mémorial (Rue de France)",
-        "Catégorie": "Monument",
-        "osm_ref": "node/5011237584",
-        "HW_ID": "HW-01M616BN55AZFWV07KY7QGRGXW",
-        "description": "Mémorial de la rue de France, à Charleroi. OpenStreetMap y indique un mémorial, sans nom.\nSa nature et son nom restent à confirmer sur place.",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "verified": false,
-        "introuvableCarte": true,
-        "descriptionPublic": true,
-        "osmChecked": true,
-        "mapsChecked": true,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "Zone": "Charleroi"
       }
     },
     {
