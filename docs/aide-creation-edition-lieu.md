@@ -55,7 +55,7 @@ position — non modifiable.
 ### 4 · Catégorie et précisions
 Choisir la **Catégorie** fait apparaître, selon le type de lieu, jusqu'à trois précisions :
 - **Sous-type** — la variante du lieu. **Quand la catégorie en propose** *(Mosquée,
-  Église, Chapelle, Château, Monument, Vestige industriel, Artisanat)*, le sous-type **choisit
+  Église, Chapelle, Château, Monument, Vestige industriel, Édifice civil, Artisanat)*, le sous-type **choisit
   aussi l'icône** sur la carte : une mosquée *à minaret*, *à coupoles*, *à voûtes en berceau*
   ou *fortifiée* n'a pas le même pictogramme, ni une chapelle *à porte* et une chapelle
   *à grille*, ni un *château fort* et un *château-ferme*.
@@ -103,7 +103,7 @@ Petits « ? » inline (`attachFieldHelp`, `richEditor.js`) à côté de 4 labels
 c'est le **secteur** où il se trouve. **Non modifiable.** *Découpage d'après OpenStreetMap.*
 
 **« ? » Catégorie** — Classe le lieu et choisit son **icône**. Débloque **Sous-type /
-État / Accès**. *Pour Mosquée, Église, Chapelle, Château, Monument, Vestige industriel, Artisanat, le sous-type précise l'icône (à minaret,
+État / Accès**. *Pour Mosquée, Église, Chapelle, Château, Monument, Vestige industriel, Édifice civil, Artisanat, le sous-type précise l'icône (à minaret,
 château fort, monument aux morts…).*
 
 **« ? » Description courte** — Ce texte s'affiche dans les **applications de marche**
@@ -146,7 +146,7 @@ valeurs PAR catégorie. Ex. **Mosquée** → sous-types « À minaret / À coupo
 berceau / Fortifiée » (vide = icône « Mosquée »), états « En activité / Désaffecté / Ruine /
 Disparu », accès « Intérieur visitable /
 Extérieur seulement / Non visitable ». Le **sous-type pilote l'icône** pour les catégories
-multi-icônes (Mosquée, Église, Chapelle, Château, Monument, Vestige industriel, Artisanat) : `getIconForFeature` → `getIconHtml(catégorie,
+multi-icônes (Mosquée, Église, Chapelle, Château, Monument, Vestige industriel, Édifice civil, Artisanat) : `getIconForFeature` → `getIconHtml(catégorie,
 sous-type)` (lookup hiérarchique). Catégories sans sous-type → 1 icône.
 
 **Validation** (`updateSaveButtonState`) : « Enregistrer » désactivé tant que Nom vide

@@ -444,7 +444,7 @@ export const HELP_LIEU_CATEGORIE = {
         sur la carte. Elle débloque aussi <strong>Sous-type</strong>, <strong>État</strong> et
         <strong>Accès</strong>.</p>
         <p class="help-muted">Pour quelques catégories (Mosquée, Église, Chapelle, Château,
-        Monument, Vestige industriel, Artisanat), le sous-type précise l'icône : à minaret,
+        Monument, Vestige industriel, Édifice civil, Artisanat), le sous-type précise l'icône : à minaret,
         château fort, monument aux morts…</p>`,
 };
 
@@ -534,7 +534,7 @@ export const GUIDE_LIEU = {
                 <ul class="help-list">
                     <li><strong>Sous-type</strong> — la variante du lieu. <span class="help-muted">Quand
                         la catégorie en propose (Mosquée, Église, Chapelle, Château, Monument,
-                        Vestige industriel, Artisanat), il choisit aussi l'icône sur la carte : une
+                        Vestige industriel, Édifice civil, Artisanat), il choisit aussi l'icône sur la carte : une
                         mosquée à minaret, à coupoles, à voûtes en berceau ou fortifiée n'a pas le
                         même pictogramme, ni une chapelle à porte et une chapelle à grille, ni un
                         château fort et un château-ferme.</span></li>

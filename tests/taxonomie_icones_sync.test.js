@@ -52,6 +52,15 @@ describe('taxonomie ↔ icônes', () => {
         expect(getIconHtml('Monument', '')).toBe(getIconHtml('Monument', 'Mémorial'));
     });
 
+    it('Édifice civil : hôtel de ville, beffroi isolé ou accolé, demeure ; sans sous-type = la demeure', () => {
+        const groups = getLegendGroups();
+        const civil = groups.find(g => g.category === 'Édifice civil');
+        expect(civil.variants.map(v => v.label)).toEqual(['Hôtel de ville', 'Beffroi isolé', 'Beffroi accolé', 'Demeure']);
+        const all = groups.flatMap(g => g.variants.map(v => v.svg));
+        expect(new Set(all).size).toBe(all.length);
+        expect(getIconHtml('Édifice civil', '')).toBe(getIconHtml('Édifice civil', 'Demeure'));
+    });
+
     it('chaque catégorie de poi-categories.json a sa propre icône (Potale comprise)', () => {
         const legend = new Set(getLegendGroups().map(g => g.category));
         for (const cat of taxonomy.categories) {

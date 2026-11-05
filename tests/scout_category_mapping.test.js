@@ -49,6 +49,9 @@ const OSM_SAMPLES = [
     { man_made: 'water_well' }, { man_made: 'lighthouse' },
     { man_made: 'windmill' }, { man_made: 'watermill' },
     { craft: 'pottery' }, { craft: 'weaving' }, { shop: 'pottery' },
+    // Édifice civil (05/11/2026)
+    { historic: 'tower', name: 'Beffroi de Binche' }, { amenity: 'townhall' },
+    { man_made: 'tower', 'tower:type': 'belfry' },
 ];
 
 describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () => {
@@ -125,6 +128,16 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
         expect(getHwCategory({ man_made: 'lighthouse' })).toBe('Curiosité');
         expect(getHwCategory({ man_made: 'windmill' })).toBe('Vestige industriel');
         expect(getHwCategory({ man_made: 'watermill' })).toBe('Vestige industriel');
+    });
+    it('Édifice civil : beffroi reconnu à son nom, hôtel de ville à amenity=townhall', () => {
+        expect(getHwCategory({ historic: 'tower', name: 'Beffroi de Binche' })).toBe('Édifice civil');
+        expect(getHwCategory({ name: 'beffroi' })).toBe('Édifice civil');
+        expect(getHwCategory({ 'name:fr': 'Beffroi de Mons', name: 'Belfort van Bergen' })).toBe('Édifice civil');
+        expect(getHwCategory({ amenity: 'townhall' })).toBe('Édifice civil');
+        // tower:type=belfry seul = aussi les clochers d'église → pas de catégorie devinée.
+        expect(getHwCategory({ man_made: 'tower', 'tower:type': 'belfry' })).toBeNull();
+        // « Beffroi » doit être le premier mot du nom.
+        expect(getHwCategory({ historic: 'tower', name: 'Rue du Beffroi' })).toBeNull();
     });
     it('artisanat traditionnel → Artisanat', () => {
         expect(getHwCategory({ craft: 'pottery' })).toBe('Artisanat');

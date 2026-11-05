@@ -112,6 +112,19 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
     },
     {
+      "label": "Édifice civil",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Hôtel de ville", "portee": "générique" },
+        { "label": "Beffroi isolé", "portee": "générique" },
+        { "label": "Beffroi accolé", "portee": "générique" },
+        { "label": "Demeure", "portee": "générique" }
+      ],
+      "etats": ["Conservé", "Reconverti", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
       "label": "Site funéraire",
       "groupe": "Site historique",
       "libelleDerive": false,

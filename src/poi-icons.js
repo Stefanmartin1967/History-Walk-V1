@@ -1,7 +1,8 @@
 // poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre,
 // + « À voûtes en berceau » le 24/10/2026 = 28 ; + Chapelle « À porte » et
 // « À grille » le 01/11/2026 = 30 ; + Potale le 01/11/2026 = 31 ; + Château (3),
-// Monument (3) et Vestige industriel (3) le 05/11/2026 = 40).
+// Monument (3) et Vestige industriel (3) le 05/11/2026 = 40 ; + Édifice civil (4)
+// le 05/11/2026 = 44).
 // Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
 // legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
@@ -16,6 +17,8 @@
 // - Monument : 3 sous-types (Aux morts / Mémorial / Statue).
 // - Vestige industriel : 2 sous-types (Mine / Moulin) + icône « Vestige
 //   industriel » sans sous-type (usine, forge, four…).
+// - Édifice civil : 4 sous-types (Hôtel de ville / Beffroi isolé / Beffroi accolé /
+//   Demeure).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
 //   « Atelier » comme générique de la catégorie (sans sous-type).
 // - Les autres catégories sont mono-niveau.
@@ -42,7 +45,7 @@ function svgFor(paths, raw) {
         paths + '</g></svg>';
 }
 
-// ───── Les 40 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+// ───── Les 44 icônes (paths inline, wrapper appliqué dynamiquement) ─────
 
 // Lieux de culte — Mosquée (4 sous-types + icône sans sous-type)
 const I_MOSQUEE_MINARET = svgFor(G +
@@ -338,6 +341,68 @@ const I_INDUSTRIEL_GENERIQUE = svgFor(
     '<line x1="59.5" y1="32" x2="68.5" y2="32" stroke-width="1.6"/>'
 );
 
+// Site historique — Édifice civil (05/11/2026, variantes choisies par Stefan).
+// « Beffroi isolé » : tour seule, flèche d'ardoise et clochetons d'angle (Tournai).
+const I_BEFFROI_ISOLE = svgFor(G +
+    '<rect x="36" y="34" width="24" height="48"/>' +
+    '<rect x="33" y="28" width="30" height="6"/>' +
+    '<path d="M38 28 L48 6 L58 28 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<path d="M33 28 L35.5 19 L38 28 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.5"/>' +
+    '<path d="M58 28 L60.5 19 L63 28 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.5"/>' +
+    '<line x1="48" y1="6" x2="48" y2="2" stroke-width="2"/>' +
+    '<circle cx="48" cy="44" r="6" fill="#F4EFE6"/>' +
+    '<line x1="48" y1="44" x2="48" y2="40" stroke-width="1.6"/>' +
+    '<line x1="48" y1="44" x2="51" y2="46" stroke-width="1.6"/>' +
+    '<rect x="44" y="55" width="8" height="12" rx="4" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M43 82 L43 75 Q43 71 48 71 Q53 71 53 75 L53 82 Z')
+);
+
+// « Beffroi accolé » : la tour et une aile basse, le beffroi faisant corps avec
+// l'hôtel de ville (Charleroi, Binche). Une seule fiche pour l'ensemble.
+const I_BEFFROI_ACCOLE = svgFor(G +
+    '<rect x="19" y="56" width="36" height="26"/>' +
+    '<path d="M16 56 L23 47 L55 47 L55 56 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="24" y="62" width="7" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="40" y="62" width="7" height="8" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="55" y="30" width="22" height="52"/>' +
+    '<rect x="53" y="22" width="26" height="8"/>' +
+    '<path d="M55 22 L66 6 L77 22 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<line x1="66" y1="6" x2="66" y2="2" stroke-width="2"/>' +
+    '<circle cx="66" cy="42" r="6.5" fill="#F4EFE6"/>' +
+    '<line x1="66" y1="42" x2="66" y2="37.5" stroke-width="1.6"/>' +
+    '<line x1="66" y1="42" x2="69.5" y2="44" stroke-width="1.6"/>' +
+    '<rect x="62" y="54" width="8" height="10" rx="4" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M61 82 L61 72 Q61 68 66 68 Q71 68 71 72 L71 82 Z')
+);
+
+// « Hôtel de ville » : façade et clocheton central à horloge.
+const I_HOTEL_DE_VILLE = svgFor(
+    '<line x1="6" y1="82" x2="90" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="10" y="48" width="76" height="34"/>' +
+    '<path d="M8 48 L14 40 L82 40 L88 48 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="40" y="26" width="16" height="22"/>' +
+    '<path d="M38 26 L48 14 L58 26 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<circle cx="48" cy="35" r="4.5" fill="#F4EFE6" stroke-width="1.5"/>' +
+    '<rect x="38" y="62" width="20" height="3"/>' +
+    '<rect x="16" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="28" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="61" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="73" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M43 82 L43 70 Q43 66 48 66 Q53 66 53 70 L53 82 Z')
+);
+
+// « Demeure » : maison remarquable, façade cintrée à grande baie (Art nouveau).
+const I_DEMEURE = svgFor(G +
+    '<path d="M30 82 L30 26 Q30 14 48 12 Q66 14 66 26 L66 82 Z"/>' +
+    '<path d="M37 44 L37 30 Q37 22 48 22 Q59 22 59 30 L59 44 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1.2"/>' +
+    '<line x1="48" y1="22" x2="48" y2="44" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<path d="M38 34 Q48 28 58 34" fill="none" stroke="#C99A5C" stroke-width="1.5"/>' +
+    '<rect x="34" y="48" width="28" height="3"/>' +
+    '<rect x="38" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="51" y="54" width="7" height="9" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M42 82 L42 70 Q42 66 48 66 Q54 66 54 70 L54 82 Z')
+);
+
 // Site archéologique — raw (palette pierre #C7B795 / #807055, autonome)
 const I_SITE_ARCHEO = svgFor(
     '<line x1="10" y1="82" x2="86" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
@@ -575,6 +640,14 @@ const POI_ICONS = {
         // Sans sous-type (usine, forge, four…) : bâtiment et cheminée accolée.
         _default: I_INDUSTRIEL_GENERIQUE,
     },
+    'Édifice civil': {
+        'Hôtel de ville': I_HOTEL_DE_VILLE,
+        'Beffroi isolé': I_BEFFROI_ISOLE,
+        'Beffroi accolé': I_BEFFROI_ACCOLE,
+        'Demeure': I_DEMEURE,
+        // Sans sous-type : la demeure, l'édifice civil le plus courant.
+        _default: I_DEMEURE,
+    },
     'Site funéraire': I_SITE_FUNERAIRE,
     'Site archéologique': I_SITE_ARCHEO,
     'Menzel': I_MENZEL,
@@ -685,8 +758,9 @@ const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée', 'Vestig
  *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
  *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
  *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
- * Total des variants sur l'ensemble = 40 (27 du handoff #22 + voûtes en berceau
- * + les deux chapelles + potale + 3 châteaux, 3 monuments, 3 vestiges industriels).
+ * Total des variants sur l'ensemble = 44 (27 du handoff #22 + voûtes en berceau
+ * + les deux chapelles + potale + 3 châteaux, 3 monuments, 3 vestiges industriels
+ * + 4 édifices civils).
  */
 export function getLegendGroups() {
     return Object.entries(POI_ICONS).map(([category, entry]) => {

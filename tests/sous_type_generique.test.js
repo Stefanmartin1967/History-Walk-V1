@@ -27,8 +27,8 @@ describe('sous-type « Générique » retiré', () => {
         expect(all).not.toContain('Générique');
     });
 
-    it('légende : 40 icônes distinctes (handoff #22 + voûtes en berceau + 2 chapelles + potale + château, monument, vestige industriel)', () => {
+    it('légende : 44 icônes distinctes (handoff #22 + voûtes en berceau + 2 chapelles + potale + château, monument, vestige industriel, édifice civil)', () => {
         const total = getLegendGroups().reduce((n, g) => n + g.variants.length, 0);
-        expect(total).toBe(40);
+        expect(total).toBe(44);
     });
 });
