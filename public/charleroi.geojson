@@ -165,7 +165,7 @@
       },
       "properties": {
         "Nom du site FR": "Statue de Jules Destrée",
-        "Catégorie": "Taxi",
+        "Catégorie": "Monument",
         "osm_ref": "node/2656447316",
         "HW_ID": "HW-01M616BMX945K93TF5ZQQDASBJ",
         "Temps_minutes": 0,
@@ -173,12 +173,17 @@
         "maps_ref": "https://maps.app.goo.gl/VDwoTe68Hxgz4nAu5",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "Statue",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "description": "Statue de Jules Destrée, au carrefour de la rue de la Montagne et du boulevard Audent, à Charleroi.\nSelon Wikipédia, qui l'appelle Monument à Jules Destrée, cette statue en bronze du sculpteur Alphonse Darville rend hommage à l'avocat et homme politique wallon ; inaugurée le 23 juin 1957 en présence du roi Baudouin, elle le représente debout, sur un socle de pierre bleue gravé « À Jules Destrée ».\nD'après le même article, l'emplacement faisait face au Palais du Peuple, que fréquentait Destrée, à quelques pas de l'ancien palais de justice où il exerçait comme avocat ; le lieu reste un point de rassemblement du Mouvement wallon, notamment lors des Fêtes de Wallonie.",
+        "Source": "Wikipédia, « Monument à Jules Destrée » | https://fr.wikipedia.org/wiki/Monument_%C3%A0_Jules_Destr%C3%A9e"
       }
     },
     {
@@ -562,15 +567,15 @@
       },
       "properties": {
         "Nom du site FR": "Mémorial (Rue de France)",
-        "Catégorie": "Taxi",
+        "Catégorie": "Monument",
         "osm_ref": "node/5011237584",
         "HW_ID": "HW-01M616BN55AZFWV07KY7QGRGXW",
-        "description": "Mémorial sur OSM, à vérifier\nNon trouvé sur Maps\nUne photo d'un \"bloc de bêton\" visible de la rue sur Street Maps",
+        "description": "Mémorial de la rue de France, à Charleroi. OpenStreetMap y indique un mémorial, sans nom.\nSa nature et son nom restent à confirmer sur place.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": true,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
@@ -823,20 +828,24 @@
       },
       "properties": {
         "Nom du site FR": "Monument au pigeon soldat",
-        "Catégorie": "Taxi",
+        "Catégorie": "Monument",
         "osm_ref": "node/8618152347",
         "HW_ID": "HW-01M616BNBSR2572V57W6XRVQEG",
-        "description": "Attention, OSM renseigne deux mémoriaux, tous deux ajoutés par robfr\nA vérifier\nUn seul est visible sur Maps",
+        "description": "Mémorial « Au pigeon soldat », dans le parc Reine Astrid, à Charleroi.\nSelon l'article Wikipédia consacré au parc, ce petit mémorial, œuvre du sculpteur Alphonse Darville, a été inauguré en 1951, du côté du boulevard Defontaine, comme le monument des 1er et 4e régiments de Chasseurs à pied.\nUne photographie publiée sur Wikimedia Commons montre un pilier de pierre gravé « AU PIGEON SOLDAT », surmonté d'un pigeon aux ailes déployées.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "Mémorial",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nAu pigeon soldat, photographie de Jmh2o, 26 septembre 2007 (Wikimedia Commons, domaine public) | https://commons.wikimedia.org/wiki/File:Charleroi-Au_pigeon_soldat.jpg"
       }
     },
     {
@@ -849,8 +858,8 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Monument aux 1er et 4ème régiments de Chasseurs à pied",
-        "Catégorie": "Taxi",
+        "Nom du site FR": "Monument aux 1er et 4e régiments de Chasseurs à pied",
+        "Catégorie": "Monument",
         "osm_ref": "node/8618152352",
         "HW_ID": "HW-01M616BNC9X19N7F03ZS9ENPJP",
         "Temps_minutes": 0,
@@ -858,12 +867,17 @@
         "maps_ref": "https://maps.app.goo.gl/M8BLfUuurLYGroaq9",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "Aux morts",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "description": "Monument aux morts des 1er et 4e régiments de Chasseurs à pied, dans le parc Reine Astrid, à Charleroi.\nSelon l'article Wikipédia consacré au parc, il rend hommage aux soldats de ces deux régiments morts pendant la Première Guerre mondiale ; c'est une œuvre d'Edouard Vereycken, du côté du boulevard Defontaine.\nD'après le relevé joint à une photographie publiée sur Wikimedia Commons, l'inscription rappelle que les deux régiments de Charleroi sont partis d'ici le 3 août 1914 et que 1566 des leurs sont morts pour la Belgique.",
+        "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nMonument des 1er et 4e Chasseurs à pied, photographie de Jmh2o, 23 août 2014 (Wikimedia Commons, CC BY-SA 3.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_parc_Astrid_-_monument_des_1_et_4_chasseurs_%C3%A0_pied.jpg"
       }
     },
     {
@@ -3090,20 +3104,24 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle du Sacré-Cœur",
-        "Catégorie": "Taxi",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/575735788",
         "HW_ID": "HW-01M616BR71ED150ZM8QFWJ0VQR",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
         "maps_ref": "https://maps.app.goo.gl/WxfnzqgUc9h3GDwW8",
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "À porte",
+        "Accès": "Intérieur visitable",
+        "description": "Chapelle de la rue de Montigny, à Charleroi.\nSelon le site egliseinfo.be, elle relève de l'unité pastorale de Charleroi, dans le diocèse de Tournai, et des célébrations y sont annoncées plusieurs fois par semaine.",
+        "Source": "egliseinfo.be, « Chapelle du Sacré-Cœur », fiche mise à jour le 16 août 2025 | https://www.egliseinfo.be/lieu/60/charleroi/sacre-coeur"
       }
     },
     {
@@ -3215,7 +3233,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame au Rempart",
-        "Catégorie": "Taxi",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/576985148",
         "HW_ID": "HW-01M616BRBPJ9NS0F50TM0GEBWT",
         "Temps_minutes": 0,
@@ -3223,12 +3241,17 @@
         "maps_ref": "https://maps.app.goo.gl/RBqCQgZGdreSyUfT9",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "Sous-type": "À porte",
+        "État": "En activité",
+        "Accès": "Intérieur visitable",
+        "description": "Chapelle du boulevard de l'Yser, à Charleroi.\nSelon la fiche du site egliseinfo.be, son origine remonte à mai 1682 : des soldats de la forteresse espagnole découvrent une statue de la Vierge dans un arbre du rempart nord-ouest. Une première chapelle est bâtie rue du Beffroi, puis démolie en 1819 lors des travaux de fortification hollandais.\nLa même fiche indique qu'une nouvelle chapelle est élevée à l'emplacement actuel en 1908 ; incendiée par les troupes allemandes le 22 août 1914, alors que la statue est sauvée, elle est rebâtie plus grande en 1916.\nLe même site y annonce des célébrations chaque semaine.",
+        "Source": "egliseinfo.be, « Notre-Dame au Rempart », fiche mise à jour le 4 février 2025 | https://www.egliseinfo.be/lieu/60/charleroi/notre-dame-au-rempart"
       }
     },
     {
@@ -3511,7 +3534,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Beffroi",
+        "Nom du site FR": "Beffroi de Charleroi",
         "Catégorie": "Taxi",
         "osm_ref": "way/845814299",
         "HW_ID": "HW-01M616BRWS5WR93VM1BQWVN5GX",
@@ -3520,12 +3543,14 @@
         "maps_ref": "https://maps.app.goo.gl/bxmUT5ZznCsf9yvr8",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "description": "Beffroi de l'hôtel de ville de Charleroi, dans la Ville-Haute, près de la place du Manège.\nSelon Wikipédia, il a été inauguré en 1936 dans le style Art déco ; haut de 70 mètres, c'est le plus récent des beffrois de Wallonie. Bâti en béton armé, il repose sur des piliers munis de vérins hydrauliques qui permettent d'en régler l'aplomb, à cause des mouvements miniers du sous-sol.\nToujours selon Wikipédia, son carillon de 47 cloches joue à chaque quart d'heure un air de Jacques Bertrand, chansonnier carolorégien du 19ᵉ siècle.\nOpenStreetMap l'indique comme faisant partie des beffrois inscrits au patrimoine mondial de l'UNESCO en 1999.",
+        "Source": "Wikipédia, « Beffroi de l'hôtel de ville de Charleroi » | https://fr.wikipedia.org/wiki/Beffroi_de_l%27h%C3%B4tel_de_ville_de_Charleroi"
       }
     },
     {
