@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 // (events.js) pour vérifier le routing réel event → handler.
 const h = vi.hoisted(() => ({
     isMobileView: vi.fn(() => false),
-    renderMobilePoiList: vi.fn(),
+    refreshMobileCircuitDetails: vi.fn(),
     refreshMapMarkers: vi.fn(),
     populateCircuitsMenu: vi.fn(),
     loadCircuitById: vi.fn(() => Promise.resolve()),
@@ -17,7 +17,7 @@ const h = vi.hoisted(() => ({
 }));
 
 vi.mock('../src/mobile-state.js', () => ({ isMobileView: (...a) => h.isMobileView(...a) }));
-vi.mock('../src/mobile-poi.js', () => ({ renderMobilePoiList: (...a) => h.renderMobilePoiList(...a) }));
+vi.mock('../src/mobile-poi.js', () => ({ refreshMobileCircuitDetails: (...a) => h.refreshMobileCircuitDetails(...a) }));
 vi.mock('../src/map.js', () => ({ refreshMapMarkers: (...a) => h.refreshMapMarkers(...a) }));
 vi.mock('../src/ui-filters.js', () => ({ populateCircuitsMenu: (...a) => h.populateCircuitsMenu(...a) }));
 vi.mock('../src/circuit.js', () => ({
@@ -40,11 +40,14 @@ beforeEach(() => {
 });
 
 describe('events-bus — data:filtered', () => {
-    it('mobile → rend la liste POI mobile, pas les markers carte', () => {
+    // Bug 05/11/2026 (Charleroi) : la liste filtrée de la destination était
+    // passée au détail du circuit → « 2468 LIEUX » sous le titre du circuit.
+    it('mobile → rafraîchit le détail du circuit SANS lui passer la liste filtrée', () => {
         h.isMobileView.mockReturnValue(true);
         const features = [{ id: 1 }];
         eventBus.emit('data:filtered', features);
-        expect(h.renderMobilePoiList).toHaveBeenCalledWith(features);
+        expect(h.refreshMobileCircuitDetails).toHaveBeenCalledTimes(1);
+        expect(h.refreshMobileCircuitDetails).toHaveBeenCalledWith();
         expect(h.refreshMapMarkers).not.toHaveBeenCalled();
     });
 
@@ -53,7 +56,7 @@ describe('events-bus — data:filtered', () => {
         const features = [{ id: 1 }, { id: 2 }];
         eventBus.emit('data:filtered', features);
         expect(h.refreshMapMarkers).toHaveBeenCalledWith(features);
-        expect(h.renderMobilePoiList).not.toHaveBeenCalled();
+        expect(h.refreshMobileCircuitDetails).not.toHaveBeenCalled();
     });
 });
 

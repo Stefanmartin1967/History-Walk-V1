@@ -7,7 +7,7 @@
 
 import { eventBus } from './events.js';
 import { isMobileView } from './mobile-state.js';
-import { renderMobilePoiList } from './mobile-poi.js';
+import { refreshMobileCircuitDetails } from './mobile-poi.js';
 import { refreshMapMarkers } from './map.js';
 import { populateCircuitsMenu } from './ui-filters.js';
 import { refreshVisitedFromCircuits } from './visited-state.js';
@@ -19,7 +19,11 @@ import { applyFilters } from './data.js';
 export function setupEventBusListeners() {
     eventBus.on('data:filtered', (visibleFeatures) => {
         if (isMobileView()) {
-            renderMobilePoiList(visibleFeatures);
+            // Mobile : aucun écran n'affiche la liste filtrée de la destination.
+            // Seul le détail du circuit se rafraîchit (étapes cochées), avec ses
+            // propres étapes. Lui passer visibleFeatures affichait toute la
+            // destination sous le titre du circuit (05/11/2026, Charleroi).
+            refreshMobileCircuitDetails();
         } else {
             refreshMapMarkers(visibleFeatures);
             // Anciens menus dropdown #zonesMenu / #categoriesMenu retirés en
