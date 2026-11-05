@@ -11,6 +11,7 @@ const FALLBACK = {
         { label: "Artisanat", groupe: "Culture & découvertes" },
         { label: "Café", groupe: "Manger & boire" },
         { label: "Chapelle", groupe: "Lieux de culte" },
+        { label: "Château", groupe: "Site historique" },
         { label: "Commerce", groupe: "Services & commodités" },
         { label: "Curiosité", groupe: "Culture & découvertes" },
         { label: "Église", groupe: "Lieux de culte" },
@@ -19,6 +20,7 @@ const FALLBACK = {
         { label: "Mausolée", groupe: "Lieux de culte" },
         { label: "Marché", groupe: "Services & commodités" },
         { label: "Menzel", groupe: "Architecture traditionnelle", libelleDerive: true },
+        { label: "Monument", groupe: "Site historique" },
         { label: "Mosquée", groupe: "Lieux de culte" },
         { label: "Musée", groupe: "Culture & découvertes" },
         { label: "Pâtisserie", groupe: "Manger & boire" },
@@ -29,7 +31,8 @@ const FALLBACK = {
         { label: "Site archéologique", groupe: "Site historique" },
         { label: "Site funéraire", groupe: "Site historique" },
         { label: "Synagogue", groupe: "Lieux de culte" },
-        { label: "Taxi", groupe: "Services & commodités" }
+        { label: "Taxi", groupe: "Services & commodités" },
+        { label: "Vestige industriel", groupe: "Site historique" }
     ]
 };
 
