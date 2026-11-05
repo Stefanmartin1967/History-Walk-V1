@@ -6,6 +6,14 @@
 
 ---
 
+- TAXONOMIE : TROIS CATÉGORIES POUR LA WALLONIE, CHÂTEAU, MONUMENT, VESTIGE INDUSTRIEL (v3.7.476) — demandé et validé par Stefan le 05/11/2026. En curant Andenne, trop de lieux finissaient en « Taxi » faute de catégorie (monuments de Charleroi, Chant d'Oiseaux, puits de mine).
+  - **Château** (groupe Site historique) : sous-types **Château fort** (donjon crénelé, distinct de la muraille « Fortification »), **Château résidentiel** (manoir à tourelles d'ardoise) et **Château-ferme** (porche-tour entre deux granges). Sans sous-type : icône du résidentiel. Accès par défaut « Extérieur seulement ».
+  - **Monument** : **Aux morts** (obélisque ; « Monument › Aux morts », plus court dans la légende), **Mémorial** (stèle gravée : catastrophe, résistance, régiment…) et **Statue**. Sans sous-type : la stèle. États « Conservé / Disparu », accès « Extérieur seulement / Non visitable ».
+  - **Vestige industriel** : **Mine** (chevalement à molette) et **Moulin** (roue à aubes) ; sans sous-type, sa propre icône (bâtiment et cheminée accolée) pour l'usine, la forge, le four…
+  - Icônes choisies par Stefan parmi des variantes (château fort B, résidentiel B, aux morts A, mémorial A, statue A ; cheminée collée au bâtiment à sa demande). Légende : 40 icônes.
+  - **Scout** (prochains scans seulement) : `historic=castle` et `manor` → Château (au lieu de Fortification / à définir), `historic=monument` et `memorial` → Monument (au lieu d'« A définir »), moulins `man_made=windmill/watermill` → Vestige industriel (au lieu de Curiosité). Les candidats déjà présents ne changent pas.
+  - Aide et doc mises à jour. Tests : taxonomie_icones_sync, scout_category_mapping, comptes de la légende.
+
 - ÉDITEUR DE FICHE ET IMPORT DE PHOTOS : COORDONNÉES COPIABLES, BOUTON GOOGLE (v3.7.475) — demandé et validé par Stefan le 05/11/2026.
   - **Éditeur de fiche, pied GPS** : un clic sur les coordonnées les copie (« lat, lng », collable tel quel dans Google Maps) ; après un « Déplacer », c'est la nouvelle position. Nouveau bouton **Google** devant Maps · OSM : il cherche le nom et le quartier **saisis** dans le formulaire (marche pendant un renommage et en création ; nom vide → avertissement).
   - **Import de photos** : bouton **Google** devant Maps · OSM sur un groupe rattaché à un lieu ; il suit le sélecteur de lieu. Pas de bouton sur un groupe orphelin ou « Hors POI » (pas de nom à chercher).

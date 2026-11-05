@@ -1,6 +1,7 @@
 // poi-icons.js — référentiel des icônes POI v2 (handoff #22, 27 icônes ocre,
 // + « À voûtes en berceau » le 24/10/2026 = 28 ; + Chapelle « À porte » et
-// « À grille » le 01/11/2026 = 30 ; + Potale le 01/11/2026 = 31).
+// « À grille » le 01/11/2026 = 30 ; + Potale le 01/11/2026 = 31 ; + Château (3),
+// Monument (3) et Vestige industriel (3) le 05/11/2026 = 40).
 // Refonte 20/05/2026 (PR2 chantier iconification) : remplace les icônes MDI
 // legacy par les SVGs custom validés. viewBox 0 0 96 96. Variante OCRE PLEINE
 // pour la carte (markers). Variante outline = PR3 (panneau filtres, fiche).
@@ -11,6 +12,10 @@
 //   « Mosquée » sans sous-type (forme indéterminée ou pas encore classée).
 // - Église : 2 sous-types (Catholique / Orthodoxe).
 // - Chapelle : 2 sous-types (À porte / À grille).
+// - Château : 3 sous-types (Château fort / Château résidentiel / Château-ferme).
+// - Monument : 3 sous-types (Aux morts / Mémorial / Statue).
+// - Vestige industriel : 2 sous-types (Mine / Moulin) + icône « Vestige
+//   industriel » sans sous-type (usine, forge, four…).
 // - Artisanat : 3 sous-types (Poterie / Huilerie / Tissage) + icône
 //   « Atelier » comme générique de la catégorie (sans sous-type).
 // - Les autres catégories sont mono-niveau.
@@ -37,7 +42,7 @@ function svgFor(paths, raw) {
         paths + '</g></svg>';
 }
 
-// ───── Les 31 icônes (paths inline, wrapper appliqué dynamiquement) ─────
+// ───── Les 40 icônes (paths inline, wrapper appliqué dynamiquement) ─────
 
 // Lieux de culte — Mosquée (4 sous-types + icône sans sous-type)
 const I_MOSQUEE_MINARET = svgFor(G +
@@ -211,6 +216,126 @@ const I_FORTIFICATION = svgFor(G +
     '<rect x="28" y="54" width="4" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
     '<rect x="64" y="54" width="4" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
     door('M40 80 L40 60 Q40 54 48 54 Q56 54 56 60 L56 80 Z')
+);
+
+// Site historique — Château (3 sous-types, 05/11/2026, variantes choisies par
+// Stefan pour la Wallonie). Toits d'ardoise sombres ; le château fort est un
+// donjon crénelé, pour ne pas se confondre avec la Fortification (muraille).
+const I_CHATEAU_FORT = svgFor(G +
+    '<rect x="10" y="58" width="22" height="24"/>' +
+    '<rect x="10" y="53" width="5" height="5"/>' +
+    '<rect x="19" y="53" width="5" height="5"/>' +
+    '<rect x="64" y="58" width="22" height="24"/>' +
+    '<rect x="72" y="53" width="5" height="5"/>' +
+    '<rect x="81" y="53" width="5" height="5"/>' +
+    '<rect x="32" y="28" width="32" height="54"/>' +
+    '<rect x="32" y="20" width="7" height="8"/>' +
+    '<rect x="44.5" y="20" width="7" height="8"/>' +
+    '<rect x="57" y="20" width="7" height="8"/>' +
+    '<rect x="45" y="36" width="6" height="12" rx="3" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M42 82 L42 70 Q42 65 48 65 Q54 65 54 70 L54 82 Z')
+);
+
+// « Château résidentiel » : manoir à deux tourelles d'ardoise (Chant d'Oiseaux).
+const I_CHATEAU_RESIDENTIEL = svgFor(G +
+    '<rect x="22" y="44" width="52" height="38"/>' +
+    '<path d="M18 44 L30 28 L66 28 L78 44 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="12" y="42" width="12" height="40"/>' +
+    '<path d="M10 42 L18 22 L26 42 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="72" y="42" width="12" height="40"/>' +
+    '<path d="M70 42 L78 22 L86 42 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="31" y="52" width="7" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="58" y="52" width="7" height="10" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M43 82 L43 68 Q43 63 48 63 Q53 63 53 68 L53 82 Z')
+);
+
+// « Château-ferme » : porche-tour entre deux granges (ferme carrée wallonne).
+const I_CHATEAU_FERME = svgFor(
+    '<line x1="6" y1="82" x2="90" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="8" y="60" width="26" height="22"/>' +
+    '<path d="M6 60 L12 51 L34 51 L34 60 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="62" y="60" width="26" height="22"/>' +
+    '<path d="M62 51 L84 51 L90 60 L62 60 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="34" y="34" width="28" height="48"/>' +
+    '<path d="M31 34 L48 16 L65 34 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<rect x="45" y="40" width="6" height="7" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    door('M39 82 L39 62 Q39 54 48 54 Q57 54 57 62 L57 82 Z')
+);
+
+// Site historique — Monument (3 sous-types, 05/11/2026).
+// « Aux morts » : obélisque sur degrés, couronne.
+const I_MONUMENT_AUX_MORTS = svgFor(G +
+    '<rect x="28" y="74" width="40" height="8"/>' +
+    '<rect x="34" y="67" width="28" height="7"/>' +
+    '<path d="M40 67 L43 22 L48 13 L53 22 L56 67 Z"/>' +
+    '<circle cx="48" cy="48" r="6" fill="none" stroke="#5C4538" stroke-width="3"/>'
+);
+
+// « Mémorial » : stèle cintrée gravée (catastrophe, résistance, régiment…).
+const I_MEMORIAL = svgFor(G +
+    '<rect x="26" y="74" width="44" height="8"/>' +
+    '<path d="M33 74 L33 36 Q33 22 48 22 Q63 22 63 36 L63 74 Z"/>' +
+    '<line x1="40" y1="40" x2="56" y2="40" stroke="#5C4538" stroke-width="2"/>' +
+    '<line x1="40" y1="48" x2="56" y2="48" stroke="#5C4538" stroke-width="2"/>' +
+    '<line x1="40" y1="56" x2="56" y2="56" stroke="#5C4538" stroke-width="2"/>' +
+    '<line x1="40" y1="64" x2="56" y2="64" stroke="#5C4538" stroke-width="2"/>'
+);
+
+// « Statue » : personnage debout sur son socle (hommage à une personne).
+const I_STATUE = svgFor(G +
+    '<rect x="34" y="58" width="28" height="24"/>' +
+    '<rect x="31" y="54" width="34" height="4"/>' +
+    '<path d="M41 54 L42 32 Q42 27 48 27 Q54 27 54 32 L55 54 Z"/>' +
+    '<circle cx="48" cy="19" r="6"/>' +
+    '<line x1="54" y1="33" x2="62" y2="23" stroke-width="4"/>'
+);
+
+// Site historique — Vestige industriel (05/11/2026). « Mine » : chevalement à
+// molette et bâtiment d'extraction.
+const I_INDUSTRIEL_MINE = svgFor(
+    '<line x1="6" y1="82" x2="90" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="8" y="64" width="22" height="18"/>' +
+    '<path d="M6 64 L19 56 L32 64 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<line x1="38" y1="82" x2="42" y2="28" stroke-width="3.5"/>' +
+    '<line x1="58" y1="82" x2="54" y2="28" stroke-width="3.5"/>' +
+    '<line x1="54" y1="32" x2="84" y2="82" stroke-width="3.5"/>' +
+    '<line x1="40" y1="44" x2="56" y2="44" stroke-width="2"/>' +
+    '<line x1="39" y1="62" x2="57" y2="62" stroke-width="2"/>' +
+    '<line x1="40" y1="44" x2="57" y2="62" stroke-width="1.6"/>' +
+    '<line x1="56" y1="44" x2="39" y2="62" stroke-width="1.6"/>' +
+    '<rect x="38" y="26" width="20" height="4"/>' +
+    '<circle cx="48" cy="17" r="10" fill="none" stroke-width="3"/>' +
+    '<line x1="48" y1="7" x2="48" y2="27" stroke-width="1.6"/>' +
+    '<line x1="38" y1="17" x2="58" y2="17" stroke-width="1.6"/>' +
+    '<circle cx="48" cy="17" r="2.5" fill="#5C4538"/>'
+);
+
+// « Moulin » : bâtiment et roue à aubes.
+const I_INDUSTRIEL_MOULIN = svgFor(
+    '<line x1="6" y1="82" x2="90" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="12" y="48" width="40" height="34"/>' +
+    '<path d="M8 48 L32 30 L56 48 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    door('M26 82 L26 68 Q26 63 32 63 Q38 63 38 68 L38 82 Z') +
+    '<rect x="20" y="54" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<rect x="38" y="54" width="6" height="6" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<circle cx="68" cy="64" r="16"/>' +
+    '<circle cx="68" cy="64" r="4" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<line x1="68" y1="48" x2="68" y2="80" stroke-width="1.6"/>' +
+    '<line x1="52" y1="64" x2="84" y2="64" stroke-width="1.6"/>' +
+    '<line x1="56.7" y1="52.7" x2="79.3" y2="75.3" stroke-width="1.6"/>' +
+    '<line x1="79.3" y1="52.7" x2="56.7" y2="75.3" stroke-width="1.6"/>'
+);
+
+// Sans sous-type : bâtiment et sa cheminée accolée (usine, forge, four…).
+const I_INDUSTRIEL_GENERIQUE = svgFor(
+    '<line x1="6" y1="82" x2="90" y2="82" stroke="#C9A876" stroke-width="3.5" fill="none" stroke-linecap="round"/>' +
+    '<rect x="12" y="54" width="46" height="28"/>' +
+    '<path d="M10 54 L35 38 L60 54 Z" fill="#5C4538" stroke="#2C2825"/>' +
+    '<path d="M20 72 L20 64 Q20 60 24 60 Q28 60 28 64 L28 72 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<path d="M38 72 L38 64 Q38 60 42 60 Q46 60 46 64 L46 72 Z" fill="#5C4538" stroke="#2C2825" stroke-width="1"/>' +
+    '<path d="M58 82 L60 16 L68 16 L70 82 Z"/>' +
+    '<rect x="57" y="11" width="14" height="5"/>' +
+    '<line x1="59.5" y1="32" x2="68.5" y2="32" stroke-width="1.6"/>'
 );
 
 // Site archéologique — raw (palette pierre #C7B795 / #807055, autonome)
@@ -430,6 +555,26 @@ const POI_ICONS = {
     'Potale': I_POTALE,
     'Synagogue': I_SYNAGOGUE,
     'Fortification': I_FORTIFICATION,
+    'Château': {
+        'Château fort': I_CHATEAU_FORT,
+        'Château résidentiel': I_CHATEAU_RESIDENTIEL,
+        'Château-ferme': I_CHATEAU_FERME,
+        // Sans sous-type : le résidentiel, le cas le plus courant en Wallonie.
+        _default: I_CHATEAU_RESIDENTIEL,
+    },
+    'Monument': {
+        'Aux morts': I_MONUMENT_AUX_MORTS,
+        'Mémorial': I_MEMORIAL,
+        'Statue': I_STATUE,
+        // Sans sous-type : la stèle du mémorial, la forme la plus neutre.
+        _default: I_MEMORIAL,
+    },
+    'Vestige industriel': {
+        'Mine': I_INDUSTRIEL_MINE,
+        'Moulin': I_INDUSTRIEL_MOULIN,
+        // Sans sous-type (usine, forge, four…) : bâtiment et cheminée accolée.
+        _default: I_INDUSTRIEL_GENERIQUE,
+    },
     'Site funéraire': I_SITE_FUNERAIRE,
     'Site archéologique': I_SITE_ARCHEO,
     'Menzel': I_MENZEL,
@@ -529,7 +674,9 @@ export function getStepCategoryDisplay(feature) {
 // Tissage. Mosquée : l'icône sans sous-type porte le nom de la catégorie
 // (validé par Stefan le 10/10/2026, plus de sous-type « Générique »). Église :
 // son _default duplique un sous-type nommé (Catholique) → pas d'entrée ajoutée.
-const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
+// Vestige industriel : comme la Mosquée, l'icône sans sous-type porte le nom
+// de la catégorie (05/11/2026).
+const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée', 'Vestige industriel': 'Vestige industriel' };
 
 /**
  * Structure ordonnée pour la légende exhaustive (info-popover) — chaque
@@ -538,8 +685,8 @@ const GENERIC_LABELS = { 'Artisanat': 'Atelier', 'Mosquée': 'Mosquée' };
  *  - `isMulti=false` : catégorie mono-icône (variants = 1 entrée = la catégorie).
  *  - `isMulti=true`  : catégorie à sous-types ; variants = chaque sous-type
  *    nommé + une entrée générique si le `_default` n'est pas déjà l'un d'eux.
- * Total des variants sur l'ensemble = 31 (27 du handoff #22 + voûtes en berceau
- * + les deux chapelles + potale).
+ * Total des variants sur l'ensemble = 40 (27 du handoff #22 + voûtes en berceau
+ * + les deux chapelles + potale + 3 châteaux, 3 monuments, 3 vestiges industriels).
  */
 export function getLegendGroups() {
     return Object.entries(POI_ICONS).map(([category, entry]) => {

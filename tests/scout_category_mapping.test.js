@@ -25,8 +25,9 @@ const OSM_SAMPLES = [
     { historic: 'castle' },
     { historic: 'archaeological_site' },
     { historic: 'ruins' },
-    { historic: 'monument' },                     // ambigu → null
-    { historic: 'memorial' },                     // ambigu → null
+    { historic: 'monument' },                     // → Monument (05/11/2026)
+    { historic: 'memorial' },                     // → Monument (05/11/2026)
+    { historic: 'manor' },                        // → Château (05/11/2026)
     { tourism: 'museum' },
     { tourism: 'theme_park' },
     { tourism: 'zoo' },
@@ -80,7 +81,10 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'christian' })).toBe('Église');
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'jewish' })).toBe('Synagogue');
         expect(getHwCategory({ historic: 'fort' })).toBe('Fortification');
-        expect(getHwCategory({ historic: 'castle' })).toBe('Fortification');
+        expect(getHwCategory({ historic: 'castle' })).toBe('Château');
+        expect(getHwCategory({ historic: 'manor' })).toBe('Château');
+        expect(getHwCategory({ historic: 'monument' })).toBe('Monument');
+        expect(getHwCategory({ historic: 'memorial' })).toBe('Monument');
         expect(getHwCategory({ historic: 'archaeological_site' })).toBe('Site archéologique');
         expect(getHwCategory({ historic: 'ruins' })).toBe('Site archéologique');
         expect(getHwCategory({ tourism: 'museum' })).toBe('Musée');
@@ -93,8 +97,6 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
     it('tags ambigus / non mappés → null (triage manuel, pas de catégorie devinée à tort)', () => {
         expect(getHwCategory({ amenity: 'place_of_worship' })).toBeNull();
         expect(getHwCategory({ amenity: 'place_of_worship', religion: 'buddhist' })).toBeNull();
-        expect(getHwCategory({ historic: 'monument' })).toBeNull();
-        expect(getHwCategory({ historic: 'memorial' })).toBeNull();
         expect(getHwCategory({ amenity: 'parking' })).toBeNull();
         expect(getHwCategory({})).toBeNull();
     });
@@ -118,11 +120,11 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
             expect(getHwCategory({ historic: v }), v).toBe('Site funéraire');
         }
     });
-    it('patrimoine technique man_made → Puits / Curiosité', () => {
+    it('patrimoine technique man_made → Puits / Curiosité / Vestige industriel', () => {
         expect(getHwCategory({ man_made: 'water_well' })).toBe('Puits');
         expect(getHwCategory({ man_made: 'lighthouse' })).toBe('Curiosité');
-        expect(getHwCategory({ man_made: 'windmill' })).toBe('Curiosité');
-        expect(getHwCategory({ man_made: 'watermill' })).toBe('Curiosité');
+        expect(getHwCategory({ man_made: 'windmill' })).toBe('Vestige industriel');
+        expect(getHwCategory({ man_made: 'watermill' })).toBe('Vestige industriel');
     });
     it('artisanat traditionnel → Artisanat', () => {
         expect(getHwCategory({ craft: 'pottery' })).toBe('Artisanat');
@@ -130,7 +132,7 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
         expect(getHwCategory({ shop: 'pottery' })).toBe('Artisanat');
     });
     it('valeurs historic ambiguës moissonnées → null (triage « A définir »)', () => {
-        for (const v of ['tower', 'palace', 'monastery', 'aqueduct', 'manor', 'wayside_shrine', 'heritage']) {
+        for (const v of ['tower', 'palace', 'monastery', 'aqueduct', 'wayside_shrine', 'heritage']) {
             expect(getHwCategory({ historic: v }), v).toBeNull();
         }
     });

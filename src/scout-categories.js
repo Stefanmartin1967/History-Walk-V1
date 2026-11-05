@@ -9,17 +9,23 @@
 //   - une valeur retournée = catégorie devinée avec confiance,
 //   - `null` = non devinée → le Scout marque le candidat « inconnu », et la capture
 //     écrit le sentinel 'A définir' (badge « à catégoriser » au tri).
-// Les tags ambigus (monument, mémorial, lieu de culte de religion inconnue) tombent
+// Les tags ambigus (tour, palais, lieu de culte de religion inconnue) tombent
 // volontairement sur `null` plutôt que sur une catégorie devinée à tort.
 
 // OSM (historic / tourism / amenity / leisure) → catégorie-feuille v2.
 export const HW_MAPPING = {
     // Site historique (P1 Niveau 1 : whitelist élargie au patrimoine bâti net —
     // ouvrages défensifs + sites funéraires. Les valeurs hors liste mais moissonnées
-    // — palais, monastère, aqueduc, tour, monument, mémorial… — tombent volontairement
+    // — palais, monastère, aqueduc, tour… — tombent volontairement
     // sur null → « A définir » → triage manuel, plutôt qu'une catégorie devinée à tort.)
-    fort: 'Fortification', castle: 'Fortification', fortress: 'Fortification',
+    fort: 'Fortification', fortress: 'Fortification',
     citadel: 'Fortification', city_gate: 'Fortification', citywalls: 'Fortification', bastion: 'Fortification',
+    // Château, Monument (05/11/2026, Wallonie) : un château est une résidence avant
+    // d'être un ouvrage défensif ; le sous-type (fort, résidentiel, ferme) se choisit
+    // à la curation. Monuments et mémoriaux ne sont plus « ambigus » depuis que la
+    // catégorie existe.
+    castle: 'Château', manor: 'Château',
+    monument: 'Monument', memorial: 'Monument',
     archaeological_site: 'Site archéologique', ruins: 'Site archéologique',
     tomb: 'Site funéraire', mausoleum: 'Site funéraire', tumulus: 'Site funéraire',
     // Culture & découvertes
@@ -72,7 +78,8 @@ export function getHwCategory(tags = {}) {
     // Patrimoine technique / vernaculaire (P1 Niveau 1) — clés hors `raw` ci-dessous,
     // traitées en amont. Branchent des catégories de la taxo jusque-là jamais moissonnées :
     if (tags.man_made === 'water_well') return 'Puits';
-    if (tags.man_made === 'lighthouse' || tags.man_made === 'windmill' || tags.man_made === 'watermill') return 'Curiosité';
+    if (tags.man_made === 'windmill' || tags.man_made === 'watermill') return 'Vestige industriel';   // sous-type Moulin à la curation
+    if (tags.man_made === 'lighthouse') return 'Curiosité';
     if (tags.craft === 'pottery' || tags.craft === 'weaving' || tags.shop === 'pottery') return 'Artisanat';
     const raw = tags.historic || tags.tourism || tags.amenity || tags.leisure;
     return HW_MAPPING[raw] || null; // null = catégorie non devinée (candidat « inconnu »)

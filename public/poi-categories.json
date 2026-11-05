@@ -77,6 +77,41 @@
       "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Intérieur visitable" }
     },
     {
+      "label": "Château",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Château fort", "portee": "générique" },
+        { "label": "Château résidentiel", "portee": "générique" },
+        { "label": "Château-ferme", "portee": "générique" }
+      ],
+      "etats": ["Conservé", "Vestiges partiels", "Ruine"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
+      "label": "Monument",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Aux morts", "portee": "générique" },
+        { "label": "Mémorial", "portee": "générique" },
+        { "label": "Statue", "portee": "générique" }
+      ],
+      "etats": ["Conservé", "Disparu"],
+      "acces": { "valeurs": ["Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
+      "label": "Vestige industriel",
+      "groupe": "Site historique",
+      "libelleDerive": false,
+      "sousTypes": [
+        { "label": "Mine", "portee": "générique" },
+        { "label": "Moulin", "portee": "générique" }
+      ],
+      "etats": ["Conservé", "Vestiges partiels", "Ruine", "Disparu"],
+      "acces": { "valeurs": ["Intérieur visitable", "Extérieur seulement", "Non visitable"], "defaut": "Extérieur seulement" }
+    },
+    {
       "label": "Site funéraire",
       "groupe": "Site historique",
       "libelleDerive": false,

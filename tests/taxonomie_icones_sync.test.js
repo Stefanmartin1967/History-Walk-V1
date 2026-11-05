@@ -36,6 +36,22 @@ describe('taxonomie ↔ icônes', () => {
         expect(getIconHtml('Chapelle', '')).toBe(getIconHtml('Chapelle', 'À porte'));
     });
 
+    it('Château, Monument, Vestige industriel : une icône par sous-type, toutes distinctes', () => {
+        const groups = getLegendGroups();
+        const labels = cat => groups.find(g => g.category === cat).variants.map(v => v.label);
+        expect(labels('Château')).toEqual(['Château fort', 'Château résidentiel', 'Château-ferme']);
+        expect(labels('Monument')).toEqual(['Aux morts', 'Mémorial', 'Statue']);
+        // Sans sous-type : icône propre, nommée comme la catégorie (comme Mosquée).
+        expect(labels('Vestige industriel')).toEqual(['Mine', 'Moulin', 'Vestige industriel']);
+        const all = groups.flatMap(g => g.variants.map(v => v.svg));
+        expect(new Set(all).size).toBe(all.length);
+        // Le château fort ne reprend pas l'icône Fortification.
+        expect(getIconHtml('Château', 'Château fort')).not.toBe(getIconHtml('Fortification', ''));
+        // Sans sous-type : résidentiel pour le Château, stèle pour le Monument.
+        expect(getIconHtml('Château', '')).toBe(getIconHtml('Château', 'Château résidentiel'));
+        expect(getIconHtml('Monument', '')).toBe(getIconHtml('Monument', 'Mémorial'));
+    });
+
     it('chaque catégorie de poi-categories.json a sa propre icône (Potale comprise)', () => {
         const legend = new Set(getLegendGroups().map(g => g.category));
         for (const cat of taxonomy.categories) {
