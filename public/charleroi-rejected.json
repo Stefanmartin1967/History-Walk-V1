@@ -7,5 +7,14 @@
     "lng": 4.595909,
     "lat": 50.4227374,
     "rejectedAt": 1793808006031
+  },
+  "node/5011237584": {
+    "osm_ref": "node/5011237584",
+    "name": "Mémorial (Rue de France)",
+    "nameAr": "",
+    "category": "Monument",
+    "lng": 4.4432432,
+    "lat": 50.4112272,
+    "rejectedAt": 1793896618465
   }
 }
