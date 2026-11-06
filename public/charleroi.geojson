@@ -24208,7 +24208,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Chant d'Oiseaux",
-        "Catégorie": "Taxi",
+        "Catégorie": "Château",
         "osm_ref": "way/871992553",
         "HW_ID": "HW-01M6EV5YP3BARA4DS8XGMMKGA9",
         "description": "Château de Landenne (Andenne), appelé aussi château Collignon.\nSelon une étude manuscrite conservée par Bibliotheca Andana (collection Norbert Lona), le domaine relevait du chapitre de Sclayn avant d'être déclaré bien national. Charles Collignon, de Pontillas, l'acquiert vers 1840-1845, défriche une partie des terres et bâtit la ferme, puis y accole vers 1855 un château destiné à sa famille, ouvert au sud sur un parc.\nLa même étude rapporte que le château, inoccupé depuis avant la Première Guerre mondiale, a servi de cantonnement aux troupes allemandes pendant ce conflit, puis de camp scout jusqu'en 1950, et qu'en 1973 il tombait lentement en ruine.\nSelon Wikipédia, le château compte trois étages et deux tourelles couvertes d'ardoises ; la ferme carrée qui lui est accolée date des années 1840, et la propriété est aujourd'hui un gîte à la ferme qui accueille des groupes et des classes vertes.",
@@ -24223,7 +24223,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Andenne"
+        "Zone": "Andenne",
+        "Sous-type": "Château résidentiel",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -45012,10 +45015,10 @@
         "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nPlaque du mémorial et observation sur place, le 5 novembre 2026",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
-        "mapsHasPhoto": false,
+        "mapsHasPhoto": true,
         "jalelChecked": false,
         "HW_ID": "HW-01M6PC21XQFSQKGBQNWVPWBA51",
         "osm_ref": "way/303026294",
