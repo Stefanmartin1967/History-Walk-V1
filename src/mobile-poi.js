@@ -196,12 +196,17 @@ function renderSimplePoiList(container, listToDisplay) {
 }
 
 // ─── Vue Circuit (cible PC-02) ─────────────────────────────────────────────
-function renderCircuitView(container, listToDisplay) {
+// Les étapes viennent TOUJOURS de state.currentCircuit, jamais de la liste reçue
+// par renderMobilePoiList : celle-ci peut être la liste filtrée de toute la
+// destination (bug du 05/11/2026 à Charleroi : « MARCINELLE · 2468 LIEUX », la
+// destination entière sous le titre du circuit, après avoir coché « Visité »).
+function renderCircuitView(container, fallbackList) {
     const circuit = getActiveCircuit();
     if (!circuit) {
-        renderSimplePoiList(container, listToDisplay);
+        renderSimplePoiList(container, fallbackList);
         return;
     }
+    const listToDisplay = state.currentCircuit || [];
 
     const title = (circuit.name || '').replace(/^(Circuit de |Boucle de )/i, '');
     const fullName = circuit.name || 'Circuit';
@@ -219,15 +224,15 @@ function renderCircuitView(container, listToDisplay) {
 
     // Métadonnées eyebrow (zone, POIs, km)
     let zoneName = '';
-    const firstPoi = listToDisplay[0] || state.currentCircuit[0];
+    const firstPoi = listToDisplay[0];
     if (firstPoi?.geometry?.coordinates) {
         const [lng, lat] = firstPoi.geometry.coordinates;
         zoneName = getZoneFromCoords(lat, lng) || '';
     }
-    const poiCount = listToDisplay.length || state.currentCircuit.length;
+    const poiCount = listToDisplay.length;
     let totalDistance;
     if (circuit.realTrack) totalDistance = getRealDistance(circuit);
-    else totalDistance = getOrthodromicDistance(state.currentCircuit);
+    else totalDistance = getOrthodromicDistance(listToDisplay);
     const kmDisplay = (totalDistance / 1000).toFixed(1);
 
     // D+ (dénivelé positif) BRouter si stocké pour ce circuit (tracé in-app).
@@ -346,7 +351,7 @@ function renderCircuitView(container, listToDisplay) {
 
     // Hero photo (async, fire-and-forget)
     const hero = document.getElementById('mobile-cc-hero');
-    applyMobileCircuitHero(hero, state.currentCircuit, zoneName, poiCount);
+    applyMobileCircuitHero(hero, listToDisplay, zoneName, poiCount);
 
     // Icons
     createIcons({ icons: appIcons, root: container });
@@ -376,7 +381,7 @@ function renderCircuitView(container, listToDisplay) {
 
     document.getElementById('cc-act-done')?.addEventListener('click', async () => {
         const result = await handleCircuitVisitedToggle(circuit.id, isCompleted);
-        if (result?.success !== false) renderMobilePoiList(listToDisplay);
+        if (result?.success !== false) renderMobilePoiList();
     });
 
     document.getElementById('cc-act-hide')?.addEventListener('click', async () => {
@@ -390,7 +395,7 @@ function renderCircuitView(container, listToDisplay) {
                 onClick: () => setCircuitHidden(circuit.id, false)
             });
         }
-        renderMobilePoiList(listToDisplay);
+        renderMobilePoiList();
     });
 
     container.querySelectorAll('.cartel-step').forEach(step => {
@@ -419,6 +424,17 @@ export function renderMobilePoiList(features) {
     } else {
         renderSimplePoiList(container, listToDisplay);
     }
+}
+
+// Rafraîchissement après un changement de données (data:filtered, émis par
+// applyFilters : « Visité » coché, lieu ajouté, synchro…). Seul le détail du
+// circuit se re-peint, et seulement s'il est l'écran affiché : une fiche ouverte,
+// la recherche, l'ajout d'un lieu ou le menu occupent le même conteneur et
+// seraient remplacés (même garde que notifyCircuitChanged, circuit.js).
+export function refreshMobileCircuitDetails() {
+    if (getCurrentView() !== 'circuit-details') return;
+    if (state.activeCircuitId == null || state.currentFeatureId != null) return;
+    renderMobilePoiList();
 }
 
 // ─── Mise à jour position GPS d'un POI ───────────────────────────────────────

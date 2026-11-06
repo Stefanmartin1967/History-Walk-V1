@@ -6,6 +6,12 @@
 
 ---
 
+- CIRCUIT MOBILE : LE DÉTAIL N'AFFICHE PLUS TOUTE LA DESTINATION (v3.7.480) — constaté par Stefan le 05/11/2026 à Charleroi, en suivant le circuit « Église Saint-Pierre à Maison Mattot » (captures de 14h18, 14h45 et 15h37). Par moments, l'écran du circuit annonçait « MARCINELLE · 2468 LIEUX » et listait Le Bois du Cazier, Monument aux martyrs… au lieu des 16 étapes.
+  - **Cause** : chaque fois que l'app relance les filtres (« Visité » coché dans une fiche ou pendant le suivi, lieu ajouté avec « + », synchro qui apporte des changements…), elle envoie la liste filtrée de **toute la destination**. Sur mobile, cette liste partait vers l'écran du circuit, qui la prenait pour ses étapes (zone calculée sur le premier lieu, Le Bois du Cazier à Marcinelle). Et l'écran affiché (la fiche ouverte, l'écran d'ajout) était remplacé. Reproduit en preview sur Charleroi : cocher « Visité » dans la fiche Église Saint-Pierre → « MARCINELLE · 2469 LIEUX ». Un retour arrière redessinait le bon circuit, d'où le bug « par moments ».
+  - **Correctif** : l'écran du circuit prend ses étapes dans le circuit, jamais dans la liste reçue. Et sur mobile, la relance des filtres ne redessine plus que l'écran du circuit, s'il est affiché ; la fiche ouverte, la recherche, l'ajout et le menu ne sont plus remplacés. Les coches « Visité » de l'écran du circuit restent à jour.
+  - Sans lien avec le passage à 30 lieux (v3.7.478) : le défaut est plus ancien.
+  - Tests : mobile_poi_circuit_steps (9 cas, dont 7 en échec sur l'ancien code), events-bus mis à jour.
+
 - SCOUT : LES CHAPELLES ET LES CATHÉDRALES SONT MOISSONNÉES (v3.7.479) — demandé et validé par Stefan le 05/11/2026. La Chapelle Saint-Fiacre de Charleroi, tracée dans OSM, n'a été trouvée qu'en balade.
   - **Cause** : la case « Lieux de culte » ne demandait à Overpass que `amenity=place_of_worship` et les bâtiments `mosque|church|synagogue`. Un bâtiment `building=chapel` (ou `cathedral`) sans `amenity` n'était jamais moissonné, alors que le Scout sait le classer (« Chapelle », « Église »). Mesuré sur l'emprise Wallonie : 244 chapelles dans ce cas, 211 sans fiche à 50 m, dont 79 avec un nom.
   - **Correctif** : la liste des bâtiments religieux moissonnés devient `mosque, church, cathedral, chapel, synagogue`, sur les nœuds, chemins et relations (`nwr` au lieu de `way`), avec une regex ancrée. Vérifié en direct sur la place Saint-Fiacre : la chapelle sort.
