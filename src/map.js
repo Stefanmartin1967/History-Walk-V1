@@ -15,6 +15,7 @@ import { iconMap, getIconHtml, getIconForFeature } from './poi-icons.js';
 import { showInfoPopover } from './info-popover.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 import { onNetworkBack } from './network-status.js';
+import { isMobileView } from './mobile-state.js';
 
 export { iconMap, getIconHtml, getIconForFeature };
 
@@ -545,8 +546,14 @@ export function fitReferenceLayer() {
 }
 
 // --- LE PEINTRE DE POINTS (Reçoit les données déjà filtrées) ---
+// PC seulement. Sur mobile, la carte n'existe que pour le suivi de circuit
+// (mobile-follow.js), qui pose ses propres marqueurs : les étapes du circuit.
+// Peindre ici toute la destination par-dessus (enregistrement d'une fiche,
+// 05/11/2026, Charleroi) laissait des icônes jamais mises à jour : lieu en
+// double après « Capturer position », et un clic qui ouvrait la fiche
+// complète cachée derrière la carte au lieu de l'aperçu du suivi.
 export function refreshMapMarkers(visibleFeatures) {
-    if (!map) return;
+    if (!map || isMobileView()) return;
 
     if (!state.geojsonLayer) {
         // Clustering progressif : Leaflet regroupe les marqueurs dont la distance

@@ -346,12 +346,12 @@ async function saveTaxonomyBatch(poiId, fields) {
     }
 
     // Sync Gist debounced + refresh affichage carte (catégorie change → icône
-    // change → la passe markers doit redessiner). Import dynamique anti-cycle.
+    // change → la passe markers doit redessiner) : applyFilters émet
+    // 'data:filtered', qui redessine les marqueurs (events-bus.js). Import
+    // dynamique anti-cycle.
     const dataMod = await import('./data.js');
     if (typeof dataMod.schedulePush === 'function') dataMod.schedulePush();
     dataMod.applyFilters();
-    const mapMod = await import('./map.js');
-    mapMod.refreshMapMarkers(dataMod.getFilteredFeatures());
 }
 
 // Ouvre une popover compacte ancrée sur `anchorEl` avec 4 selects (Catégorie,
