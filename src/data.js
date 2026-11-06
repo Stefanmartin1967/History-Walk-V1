@@ -6,6 +6,7 @@ import {
     getAllPoiDataForMap,
     getAllCircuitsForMap,
     savePoiData,
+    deletePoiData,
     batchSavePoiData,
     getAppState,
     saveAppState,
@@ -765,6 +766,31 @@ export function discardPendingPoi(poiId) {
     }
 
     if (changed) applyFilters();
+}
+
+// Retire de l'appareil un lieu CRÉÉ ici et jamais publié : « Annuler » sur une
+// création, dans le Centre de contrôle. Il n'y a rien à supprimer côté dépôt, on
+// efface donc le lieu lui-même. Avant, seule la ligne du brouillon partait : le lieu
+// restait dans customFeatures, et « Tout publier » — qui régénère le geojson depuis
+// TOUS les lieux de l'appareil (admin-geojson.js) — le publiait quand même
+// (06/11/2026, Charleroi : Chapelle Saint-Fiacre et le mémorial en double).
+export async function removeUnpublishedPoi(poiId) {
+    const idx = state.loadedFeatures.findIndex(f => getPoiId(f) === poiId);
+    if (idx !== -1) state.loadedFeatures.splice(idx, 1);
+
+    if (state.customFeatures) {
+        const cIdx = state.customFeatures.findIndex(f => getPoiId(f) === poiId);
+        if (cIdx !== -1) {
+            state.customFeatures.splice(cIdx, 1);
+            await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+        }
+    }
+
+    delete state.userData[poiId];
+    await deletePoiData(state.currentMapId, poiId);
+    deleteZoneCacheEntry(poiId);
+
+    applyFilters();
 }
 
 export function isPendingPoi(poiId) {

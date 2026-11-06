@@ -35,6 +35,7 @@ const h = vi.hoisted(() => {
         showConfirmSpy: vi.fn(() => Promise.resolve(true)),
         fetchWithTimeoutSpy: vi.fn(),
         revertCircuitToPublishedSpy: vi.fn(() => Promise.resolve()),
+        removeUnpublishedPoiSpy: vi.fn(() => Promise.resolve()),
     };
 });
 
@@ -151,8 +152,14 @@ vi.mock('../src/admin-control-ui.js', () => ({
     renderTab: (tab, diff, cbs) => h.renderTabSpy(tab, diff, cbs)
 }));
 
+// Import dynamique depuis admin-control-center (création annulée).
+vi.mock('../src/data.js', () => ({
+    removeUnpublishedPoi: (id) => h.removeUnpublishedPoiSpy(id)
+}));
+
 // L'import doit venir après les mocks
-import { processDecision } from '../src/admin-control-center.js';
+import { processDecision, addToDraft, getAdminDraft } from '../src/admin-control-center.js';
+import { diffData } from '../src/admin-diff-engine.js';
 
 function setupPoi(id, props = {}, userData = null, geom = [10, 33]) {
     const f = {
@@ -325,5 +332,53 @@ describe("processDecision — scope='circuit' : annuler une modification", () =>
 
         expect(h.showConfirmSpy).not.toHaveBeenCalled();
         expect(h.revertCircuitToPublishedSpy).not.toHaveBeenCalled();
+    });
+});
+
+// Régression du 06/11/2026 (Charleroi) : « Annuler » sur deux lieux CRÉÉS sur le
+// téléphone retirait la ligne du brouillon mais laissait le lieu sur l'appareil ;
+// « Tout publier » (geojson régénéré depuis tous les lieux de l'appareil) les a
+// publiés quand même (Chapelle Saint-Fiacre et le mémorial, en double).
+describe("processDecision — scope='poi' : annuler une CRÉATION non publiée", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(true));
+        mockState.userData = {};
+        diffData.pois = [{ id: 'HW-neuf', name: 'Chapelle Saint-Fiacre', isCreation: true }];
+        addToDraft('poi', 'HW-neuf', { type: 'creation' });
+        document.body.innerHTML = '<div id="cc-diff-item-HW-neuf"></div>';
+    });
+
+    it("après confirmation : retire le lieu de l'appareil, la ligne du brouillon et ses photos en attente", async () => {
+        await processDecision('HW-neuf', 'refuse', 'poi');
+
+        expect(h.showConfirmSpy).toHaveBeenCalledTimes(1);
+        expect(h.showConfirmSpy.mock.calls[0][1]).toContain('Chapelle Saint-Fiacre');
+        expect(h.removeUnpublishedPoiSpy).toHaveBeenCalledWith('HW-neuf');
+        expect(getAdminDraft().pendingPois['HW-neuf']).toBeUndefined();
+        expect(clearPendingAdminPhotosSpy).toHaveBeenCalledWith('djerba', 'HW-neuf');
+        expect(document.getElementById('cc-diff-item-HW-neuf')).toBeNull();
+        expect(prepareDiffDataSpy).toHaveBeenCalled();
+    });
+
+    it('« Garder » : rien ne bouge (lieu, brouillon, ligne affichée)', async () => {
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(false));
+
+        await processDecision('HW-neuf', 'refuse', 'poi');
+
+        expect(h.removeUnpublishedPoiSpy).not.toHaveBeenCalled();
+        expect(getAdminDraft().pendingPois['HW-neuf']).toMatchObject({ type: 'creation' });
+        expect(document.getElementById('cc-diff-item-HW-neuf')).not.toBeNull();
+    });
+
+    it("une MODIFICATION d'un lieu publié garde le chemin habituel (pas de suppression)", async () => {
+        diffData.pois = [{ id: 'HW-neuf', name: 'Publié', changes: [] }];
+        setupPoi('HW-neuf', {}, { description: 'modif' });
+
+        await processDecision('HW-neuf', 'refuse', 'poi');
+
+        expect(h.showConfirmSpy).not.toHaveBeenCalled();
+        expect(h.removeUnpublishedPoiSpy).not.toHaveBeenCalled();
+        expect(setUserDataSpy).toHaveBeenCalled();
     });
 });

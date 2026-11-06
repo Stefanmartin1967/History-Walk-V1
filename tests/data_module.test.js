@@ -46,6 +46,7 @@ vi.mock('../src/database.js', () => ({
     getAllPoiDataForMap: vi.fn(),
     getAllCircuitsForMap: vi.fn(),
     savePoiData: vi.fn(),
+    deletePoiData: vi.fn(),
     batchSavePoiData: vi.fn(),
     getAppState: vi.fn(),
     saveAppState: vi.fn(),
@@ -113,7 +114,7 @@ vi.mock('../src/url-utils.js', () => ({
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState, savePoiData, saveCircuit, batchSavePoiData, getAppState, getAllPoiDataForMap } from '../src/database.js';
+import { saveAppState, savePoiData, deletePoiData, saveCircuit, batchSavePoiData, getAppState, getAllPoiDataForMap } from '../src/database.js';
 import { addToDraft, getMigrationId, getAdminDraft } from '../src/admin-control-center.js';
 import { schedulePush } from '../src/gist-sync.js';
 import { showToast } from '../src/toast.js';
@@ -133,6 +134,7 @@ import {
     addPendingPoiFeature,
     commitPendingPoiIfNeeded,
     discardPendingPoi,
+    removeUnpublishedPoi,
     updatePoiData,
     addPoiFeature,
     updatePoiCoordinates,
@@ -1154,5 +1156,29 @@ describe('checkAndApplyMigrations (stage-then-commit)', () => {
         expect(saveCircuit).not.toHaveBeenCalled();
         expect(addToDraft).not.toHaveBeenCalled();
         expect(f.properties.HW_ID).toBe(validHwId);
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 06/11/2026 (Charleroi) : « Annuler » sur un lieu créé laissait le lieu sur
+// l'appareil, et « Tout publier » le publiait quand même.
+describe('removeUnpublishedPoi', () => {
+    it("retire le lieu de l'appareil : liste chargée, créations (persistées), données, cache de zone", async () => {
+        const keep = poi('HW-garde');
+        const gone = poi('HW-annule');
+        state.loadedFeatures = [keep, gone];
+        state.customFeatures = [gone];
+        state.userData = { 'HW-annule': { description: 'Mémorial' } };
+
+        await removeUnpublishedPoi('HW-annule');
+
+        expect(state.loadedFeatures).toEqual([keep]);
+        expect(state.customFeatures).toEqual([]);
+        expect(saveAppState).toHaveBeenCalledWith('customPois_djerba', []);
+        expect(state.userData['HW-annule']).toBeUndefined();
+        expect(deletePoiData).toHaveBeenCalledWith('djerba', 'HW-annule');
+        expect(deleteZoneCacheEntry).toHaveBeenCalledWith('HW-annule');
+        // Pas de demande de suppression côté dépôt : le lieu n'y a jamais existé.
+        expect(addToDraft).not.toHaveBeenCalled();
     });
 });

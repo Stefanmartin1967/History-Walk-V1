@@ -362,13 +362,55 @@ export function openEditorForPoi(id) {
     }, { once: true });
 }
 
+// « Annuler » sur un lieu créé sur cet appareil et jamais publié : le lieu
+// n'existe nulle part ailleurs → confirmation, puis retrait complet (lieu,
+// ligne du brouillon, photos en attente). Cf. processDecision.
+async function cancelUnpublishedCreation(id) {
+    const item = diffData.pois.find(p => p.id === id);
+    const name = item?.name || 'Ce lieu';
+    const ok = await showConfirm(
+        "Annuler la création",
+        `« ${name} » n'existe que sur cet appareil : l'annuler le supprime définitivement.`,
+        "Supprimer le lieu",
+        "Garder",
+        true
+    );
+    if (!ok) return;
+
+    const card = document.getElementById(`cc-diff-item-${id}`);
+    if (card) card.remove();
+
+    delete adminDraft.pendingPois[id];
+    try { await saveDraftAwait(adminDraft); }
+    catch (e) { console.warn('[CC] saveDraftAwait failed:', e); }
+    try { updateButtonBadge(); } catch (e) { console.warn('[CC] updateButtonBadge failed:', e); }
+
+    try { await clearPendingAdminPhotos(getActiveMapId(), id); }
+    catch (e) { console.warn('[CC] clearPendingAdminPhotos failed:', e); }
+
+    // Import dynamique : data.js importe déjà ce module (addToDraft).
+    const { removeUnpublishedPoi } = await import('./data.js');
+    await removeUnpublishedPoi(id);
+
+    showToast("Lieu supprimé de cet appareil", "info");
+
+    try {
+        await prepareDiffAndPurge();
+        renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+    } catch (e) {
+        console.warn('[CC] prepareDiffData/renderTab after creation cancel failed:', e);
+    }
+}
+
 /**
  * Refuser une modification ou supprimer un sous-ensemble de l'état pending.
  *
  * @param {string} id - POI / circuit ID
  * @param {string} decision - 'refuse' (revert) ou autre (accepter, no-op affichage)
  * @param {string} [scope='poi'] - 'poi' : revert geom + userData, garde les photos
- *                                  pending ; 'photos' : supprime UNIQUEMENT les
+ *                                  pending (sur une CRÉATION jamais publiée : retire
+ *                                  le lieu de l'appareil, après confirmation) ;
+ *                                  'photos' : supprime UNIQUEMENT les
  *                                  photos pending pour ce POI sans toucher au reste.
  *                                  Pour les circuits, le scope est ignoré
  *                                  (comportement legacy conservé).
@@ -382,6 +424,16 @@ export const processDecision = async (id, decision, scope = 'poi') => {
             card.style.opacity = "0.5";
             card.style.pointerEvents = "none";
         }
+        return;
+    }
+
+    // Création jamais publiée (lieu ajouté sur cet appareil) : il n'y a pas de
+    // version publiée à laquelle revenir, « Annuler » retire donc le lieu
+    // lui-même. Retirer la seule ligne du brouillon le laissait sur l'appareil,
+    // et « Tout publier » (qui repart de tous les lieux de l'appareil) le
+    // publiait quand même (06/11/2026, Charleroi).
+    if (scope === 'poi' && diffData.pois.some(p => p.id === id && p.isCreation)) {
+        await cancelUnpublishedCreation(id);
         return;
     }
 

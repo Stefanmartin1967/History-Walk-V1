@@ -6,6 +6,12 @@
 
 ---
 
+- CENTRE DE CONTRÔLE : « ANNULER » UN LIEU CRÉÉ LE RETIRE VRAIMENT (v3.7.482). Constaté par Stefan le 06/11/2026. Il avait annulé deux lieux créés sur le téléphone à Charleroi (Chapelle Saint-Fiacre, et un mémorial à côté du Kiosque du parc Reine Astrid), déjà créés depuis le PC. Ils ont quand même été publiés avec les 6 autres, d'où deux doublons en ligne.
+  - **Cause** : sur une création, « Annuler » retirait la ligne du brouillon mais laissait le lieu sur l'appareil. Or « Tout publier » ne publie pas seulement le brouillon : il régénère le fichier de la destination depuis tous les lieux de l'appareil (`admin-geojson.js`). Reproduit en preview sur Charleroi.
+  - **Correctif** : sur un lieu créé et jamais publié, « Annuler » demande confirmation (« n'existe que sur cet appareil : l'annuler le supprime définitivement »), puis retire le lieu, sa ligne du brouillon et ses photos en attente (`removeUnpublishedPoi`, data.js). « Garder » ne change rien. L'annulation d'une modification d'un lieu publié ne change pas.
+  - Les deux doublons déjà publiés restent à supprimer à la main (« Supprimer » dans la fiche, puis publier).
+  - Tests : `tests/admin_process_decision.test.js`, `tests/data_module.test.js`.
+
 - SUIVI MOBILE : PLUS DE FICHE CACHÉE DERRIÈRE LA CARTE NI DE LIEU EN DOUBLE (v3.7.481). Constaté par Stefan le 05/11/2026 à Charleroi, en suivant le circuit « Église Saint-Pierre à Maison Mattot ». Le plus souvent, toucher l'icône d'un lieu ne montrait rien. Fermer la carte révélait la fiche du lieu. Et après « Capturer position », le lieu apparaissait deux fois.
   - **Cause** : enregistrer une fiche modifiée sur le téléphone redessinait les lieux sur la carte (geste prévu pour le PC). Toute la destination s'ajoutait alors à la carte du suivi, sous les icônes du circuit, jusqu'au redémarrage de l'app, sans jamais être mise à jour. Toucher une de ces icônes ouvrait la fiche complète, rendue derrière la carte, au lieu de l'aperçu du suivi. Après une capture de position, l'icône du circuit se déplaçait, l'autre restait à l'ancienne place. Reproduit en preview sur Charleroi (clic sur Église Saint-Pierre → fiche cachée ; capture → deux Église Saint-Pierre à ~35 m).
   - **Correctif** : ce dessin de la destination ne se fait plus sur le téléphone, où la carte ne sert qu'au suivi, avec ses propres icônes. Les deux appels en trop qui le déclenchaient (enregistrement d'une fiche, et d'une catégorie depuis l'import photos) sont retirés : sur PC, le dessin se fait déjà par la relance des filtres.
