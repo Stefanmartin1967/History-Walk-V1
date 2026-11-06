@@ -24,10 +24,31 @@
     body.follow-active #mobile-container {
         display: none !important;
     }
-    /* Les contrôles Leaflet par défaut (zoom/calques/légende en haut-gauche)
-       sont remplacés par notre UI de suivi pendant le mode immersif. */
-    body.follow-active .leaflet-control-container {
+    /* Les contrôles Leaflet par défaut (zoom/calques en haut-gauche) sont
+       remplacés par notre UI de suivi pendant le mode immersif… */
+    body.follow-active .leaflet-top {
         display: none !important;
+    }
+    /* …SAUF la mention de la carte (« © OpenStreetMap contributors © CARTO ») :
+       condition de gratuité du fond Voyager (cf. map.js). Sur le téléphone la
+       carte ne s'affiche QUE pendant le suivi : masquée ici, elle n'apparaissait
+       nulle part (constat du 06/11/2026). Ligne fine centrée tout en bas, sous
+       les boutons « Nouveau lieu » et « recentrer » (bottom 28px). */
+    body.follow-active .leaflet-bottom.leaflet-left {
+        left: 0; right: 0;
+        bottom: env(safe-area-inset-bottom, 0);
+        display: flex; justify-content: center;
+    }
+    body.follow-active .leaflet-bottom > .leaflet-control:not(.leaflet-control-attribution) {
+        display: none !important;
+    }
+    body.follow-active .leaflet-control-attribution {
+        margin: 0;
+        padding: 1px 8px;
+        font-size: 10px;
+        line-height: 1.4;
+        border-radius: 6px 6px 0 0;
+        white-space: nowrap;
     }
 }
 
@@ -105,7 +126,7 @@
 .follow-ctl-locate { bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
 .follow-ctl-zoom { bottom: calc(92px + env(safe-area-inset-bottom, 0)); }
 /* « Nouveau lieu » : bas-gauche, en face de « recentrer » (pouce gauche ; coin
-   libre, l'attribution Leaflet étant masquée pendant le suivi). Icône épingle+
+   libre ; la mention de la carte passe dessous, cf. §1). Icône épingle+
    pour ne pas la confondre avec le « + » du zoom. */
 .follow-ctl-add { right: auto; left: 12px; bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
 /* Bouton recentrer : icône cobalt (couleur « device location », cf. point bleu). */

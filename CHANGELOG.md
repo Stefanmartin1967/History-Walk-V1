@@ -6,6 +6,11 @@
 
 ---
 
+- SUIVI MOBILE : LA MENTION DE LA CARTE EST DE NOUVEAU AFFICHÉE (v3.7.485). Constat du 06/11/2026 : sur le téléphone, la carte ne s'affiche que pendant le suivi, et le suivi masquait tous les contrôles Leaflet, mention comprise. « © OpenStreetMap contributors © CARTO » n'apparaissait donc nulle part sur mobile, alors que c'est une condition de l'usage gratuit du fond Voyager (cf. `map.js`).
+  - Seuls les contrôles du haut (zoom, calques) restent remplacés par ceux du suivi. La mention s'affiche en petit (10 px), centrée tout en bas de l'écran, sous les boutons « Nouveau lieu » et « recentrer ». Liens OpenStreetMap et CARTO conservés. Rien ne change sur PC.
+  - Styles dans `style/mobile-follow.css` (§1), `style.css?v=8.51`. Vérifié en preview mobile (375×812) sur le circuit de Charleroi : mention lisible, sans chevauchement des boutons.
+  - Test : `tests/follow_map_attribution_css.test.js`.
+
 - SUIVI MOBILE : CRÉER UN LIEU SANS QUITTER LE SUIVI (v3.7.484). Retour de Stefan après le suivi de « Église Saint-Pierre à Maison Mattot » à Charleroi (05/11/2026) : le dock et son (+) sont masqués pendant le suivi, il fallait fermer la carte pour créer un lieu.
   - Bouton « Nouveau lieu » en bas à gauche de la carte du suivi, en face de « recentrer » (icône épingle+, pour ne pas la confondre avec le « + » du zoom). Masqué, comme les autres boutons, quand l'aperçu d'un lieu est ouvert.
   - Même fenêtre « Nouveau Lieu » que le (+) du dock. « Annuler » : on reste dans le suivi. « Capturer » : la fiche du nouveau lieu s'ouvre pour le nommer et, comme « Fiche → », le retour arrière relance le suivi. Un lieu dont la fiche est fermée sans modification est abandonné, comme avec le (+) du dock.
