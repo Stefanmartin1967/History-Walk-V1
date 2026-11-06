@@ -34,6 +34,7 @@ import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { arrowPositions, metersPerPixel } from './follow-arrows.js';
+import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -141,6 +142,11 @@ function buildOverlay(circuit) {
             <button type="button" id="follow-zoom-in" aria-label="Zoomer"><i data-lucide="plus"></i></button>
             <button type="button" id="follow-zoom-out" aria-label="Dézoomer"><i data-lucide="minus"></i></button>
         </div>
+        <div class="follow-ctl follow-ctl-add">
+            <button type="button" id="follow-add-place" aria-label="Créer un lieu à ma position">
+                <i data-lucide="map-pin-plus"></i>
+            </button>
+        </div>
         <div class="follow-ctl follow-ctl-locate">
             <button type="button" id="follow-locate" class="is-locate" aria-label="Recentrer sur ma position">
                 <i data-lucide="locate"></i>
@@ -156,6 +162,7 @@ function buildOverlay(circuit) {
     overlay.querySelector('#follow-zoom-in').addEventListener('click', () => map.zoomIn());
     overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut());
     overlay.querySelector('#follow-locate').addEventListener('click', recenterOnGps);
+    overlay.querySelector('#follow-add-place').addEventListener('click', addPlaceDuringFollow);
     // « Autoriser » : on relance une acquisition (re-prompt si l'utilisateur
     // avait seulement écarté la demande ; ré-échec immédiat si blocage dur).
     overlay.querySelector('#follow-invite-btn').addEventListener('click', () => {
@@ -379,6 +386,25 @@ function exitToFiche(poiId) {
     // vider le circuit au retour).
     _resumeFollowCircuitId = circuitId;
     openDetailsPanel(globalIndex, null, false, { replaceLevel: location.hash === '#sheet' });
+}
+
+// « Nouveau lieu » pendant le suivi (retour terrain Charleroi, 05/11/2026 : le
+// dock et son (+) sont masqués en plein écran). Même fenêtre que le (+) du dock.
+// « Annuler » → on reste dans le suivi. « Capturer » → la fiche du nouveau lieu
+// s'ouvre pour le nommer, comme « Fiche → » : le Back depuis la fiche relance
+// le suivi (_resumeFollowCircuitId + onHwBack). Ici l'entrée courante est
+// #follow (pas de #sheet ouvert : le bouton est masqué sous le sheet) → la
+// fiche EMPILE #p, la pile reste [.., #follow, #p].
+async function addPlaceDuringFollow() {
+    const position = await showNewPlaceModal();
+    if (!position) return;
+    const index = createPlaceAt(position);
+    // Suivi quitté pendant la fenêtre (Back Android) → création classique.
+    if (!_active) { openDetailsPanel(index); return; }
+    const circuitId = state.activeCircuitId;
+    stopFollow();
+    _resumeFollowCircuitId = circuitId;
+    openDetailsPanel(index);
 }
 
 // Relance le suivi mémorisé par exitToFiche, SANS re-pousser d'entrée
