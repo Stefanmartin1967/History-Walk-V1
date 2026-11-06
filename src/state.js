@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.480'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.481'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 // Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
 // lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
 // (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
