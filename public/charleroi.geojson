@@ -45032,29 +45032,538 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4477542,
-          50.4095433
+          4.0162082,
+          50.571823
         ]
       },
       "properties": {
-        "Nom du site FR": "Nouveau Lieu",
-        "Catégorie": "Monument",
-        "HW_ID": "HW-01M6NYPRQGCEW3Z324Y454PDZ4",
-        "created_at": "2026-11-05T13:34:52.649Z",
-        "Nom du site arabe": "Mémorial Tutsis",
-        "Sous-type": "Mémorial",
-        "État": "Conservé",
-        "Accès": "Extérieur seulement",
-        "description": "Mémorial érigé par la ville de Charleroi en mémoire Tutsis",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "verified": false,
-        "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": false,
-        "mapsChecked": false,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/1151283658",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2BR7YMYMCZDEGES3WASR",
+        "Zone": "Soignies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3373923,
+          50.4594794
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Assalam",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14350260271",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2BVXS48B5M2KSB9VGS7W",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2589879,
+          50.5603488
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint Ethon",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/220629955",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2C103FYYB7PP1ZG157WX",
+        "Zone": "Seneffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0621362,
+          50.497619
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/311794894",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2C52TSQH8A6ZEXGA5T5X",
+        "Zone": "Le Rœulx"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.356727,
+          50.5072726
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame-des-Grâces",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/326685386",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2C8KCQV550R4GCJY8K4Z",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2409527,
+          50.562549
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint Anne",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1037142495",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2CD7TDA4D90BK7TWZHM3",
+        "Zone": "Seneffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2585399,
+          50.5500443
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1037204829",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2CH66WQ6CM3299WG92TG",
+        "Zone": "Seneffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1657781,
+          50.4190612
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame des Sept Douleurs",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1122621269",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2CN3AS7DEHR5E4JV2JW6",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1376772,
+          50.4005257
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-François de Paule",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1122640188",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2CRWD5GAFZRB08EHKQDC",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1552356,
+          50.4079912
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Hal",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1122643682",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2CWES01DMCEG3FPY96TB",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.169156,
+          50.4172367
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte-Anne de Battignies",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1122651633",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2D0C5MB8SBF7YQ8JTR1A",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1561879,
+          50.413677
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Walcourt",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1122654297",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2D4EJ37MREZBXTJ31AHW",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2153256,
+          50.4770987
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancien château du Bouly",
+        "Catégorie": "Château",
+        "osm_ref": "way/1182518723",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2D8031PPFBGD68B9QFXW",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1655188,
+          50.5151152
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Wavrin",
+        "Catégorie": "Château",
+        "osm_ref": "way/1191904081",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DBVZK1SQRZ3GJJZA4TF",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1865594,
+          50.4737776
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Gilson",
+        "Catégorie": "Château",
+        "osm_ref": "way/1198251888",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DFQ2RG9MQEKQK8E5NAH",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1762836,
+          50.4798139
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de la Closière",
+        "Catégorie": "Château",
+        "osm_ref": "way/1202082871",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DM07BS8J9W3V4NJSYBM",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1760065,
+          50.4837096
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Boël",
+        "Catégorie": "Château",
+        "osm_ref": "way/1202087363",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DQD9RERR3X599WN5KT4",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2277239,
+          50.4810831
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Deltenre",
+        "Catégorie": "Château",
+        "osm_ref": "way/1205524577",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DTR9KV2HYCK9VD50C24",
+        "Zone": "Manage"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2341311,
+          50.511908
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de la Courte-au-bois",
+        "Catégorie": "Château",
+        "osm_ref": "way/1206822924",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2DYJ6AT59FEWN33TNQ22",
+        "Zone": "Manage"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1056264,
+          50.5554895
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte-Vierge",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1280974551",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2E26T880KMTXY4B6V5K0",
+        "Zone": "Soignies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1427618,
+          50.3996696
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Bonne Espérance",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1299366676",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2E5GRB8C7FDSHB37BRDM",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2229222,
+          50.4887959
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de l'Escaille",
+        "Catégorie": "Château",
+        "osm_ref": "way/1340557717",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2E95TTN46F59FSG7KGFX",
+        "Zone": "Manage"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2524708,
+          50.4538287
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1346290003",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ECQDBP8CVQKMZ0813DN",
+        "Zone": "Morlanwelz"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1269628,
+          50.4688918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1354550606",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2EFVM6MZ8RFRYBZNSNMB",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1508318,
+          50.4496084
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Wolff de Moorsel",
+        "Catégorie": "Château",
+        "osm_ref": "way/1354553024",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2EKBZP4DBR0FJJSZX9AP",
+        "Zone": "La Louvière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2841373,
+          50.406862
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1356025124",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2EPT45TA1JEVWBRCX9ND",
+        "Zone": "Anderlues"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3269794,
+          50.5381195
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1356437929",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ESYG0S1FNZWXADD09CT",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.302097,
+          50.4976446
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1356443151",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2EXEFXXPHJX4Y25A6S3S",
+        "Zone": "Courcelles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2151271,
+          50.4010183
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte-Rita",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1388612812",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2F10A3HNFF0SEGWVWS05",
+        "Zone": "Binche"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4465954,
+          50.4200599
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Diyanet et centre culturel et sportif",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14348974676",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2F45H89GA5A7HYGZF0EP",
         "Zone": "Charleroi"
       }
     },
@@ -45063,26 +45572,3149 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4399705,
-          50.4089971
+          4.4445628,
+          50.4142967
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle Saint-Fiacre",
-        "Catégorie": "Chapelle",
-        "HW_ID": "HW-01M6P0PY86KP71PZ35FXC8F81J",
-        "created_at": "2026-11-05T14:09:55.462Z",
-        "Sous-type": "À porte",
-        "Temps_minutes": 0,
-        "Prix_TND": 0,
-        "verified": false,
-        "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": false,
-        "mapsChecked": false,
-        "mapsHasPhoto": false,
-        "jalelChecked": false,
+        "Nom du site FR": "Charleroi Milli Görüş camii- Beaux-arts",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14349005670",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2F7N6A6KDWE1N5SX05V5",
         "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4737644,
+          50.4301422
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée At-Touba",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14349014998",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FC0E927YQW7YTKZDVTG",
+        "Zone": "Gilly"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.393459,
+          50.4111208
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mosquée Mevlana Camii",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14349507655",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FF603CQRP4JN71132FQ",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6630608,
+          50.5357079
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre Dame des Affligés",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/186911650",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FJGCZ7YKPVJ2EV86RDV",
+        "Zone": "Gembloux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4090007,
+          50.4915381
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint Georges",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/319112928",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FP8RDDMS5K83FW1TJVM",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6909214,
+          50.5578068
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sainte Adèle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/447984811",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FSWX9VH1G30Z4DM7YV1",
+        "Zone": "Gembloux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6200253,
+          50.4159303
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/733745777",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2FXBYKKSF02K2FFHX5T2",
+        "Zone": "Sambreville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6225808,
+          50.4257809
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/741177182",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2G0MN979GNXAC2T6CEMP",
+        "Zone": "Sambreville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.52694,
+          50.4038494
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/821959772",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2G42ZYTEE8GBT8QC0TFV",
+        "Zone": "Châtelet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5519842,
+          50.3590925
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/849574180",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2G7H147T46ZXM7KEJKTY",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3793189,
+          50.4161279
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/854575844",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GAPF6Q9GNB4AM725NFY",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6472863,
+          50.350955
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/931553158",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GE56H8XHE4WE6HBA730",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6479551,
+          50.3524886
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1115308418",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GHFYWBD06H29QYJMW56",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5430066,
+          50.5595835
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1116769587",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GMNNXDSYBJ3Z510A2AY",
+        "Zone": "Villers-la-Ville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4605014,
+          50.5057803
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1230654804",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GR04393KYF807G6RH5Z",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5435475,
+          50.5121948
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1313859659",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GVHHDXEGX916E5ZTAQC",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4229224,
+          50.485757
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Terre al danse",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1332156392",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2GYN2G6AEDB7TC76PRA9",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3587824,
+          50.5408699
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1356440522",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2H267DNEGSZ31AG80KM8",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3977502,
+          50.5113587
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1360357190",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2H5MD741V9X9R2V30PKS",
+        "Zone": "Pont-à-Celles"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3958356,
+          50.4016424
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1415698766",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2H9SMD9PTC71CGD80C9A",
+        "Zone": "Marchienne-au-Pont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4480566,
+          50.428714
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1417932220",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HD0C1WRDQW192MPGFX9",
+        "Zone": "Lodelinsart"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3813169,
+          50.4107422
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Ancienne église Saint-Louis-de-Gonzague",
+        "Catégorie": "Église",
+        "osm_ref": "relation/16766850",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HGDM896T171X65MFQSG",
+        "Zone": "Monceau-sur-Sambre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8813386,
+          50.4143965
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090624966",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HM4CS9Q36QBGZMW1TNE",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8803014,
+          50.4123918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090624972",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HQTW9YKQXA3BDC9HJD5",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8565967,
+          50.3927153
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090624974",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HVDRV835MWK1EF83S65",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8706218,
+          50.5024697
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090624984",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2HYP6K0HD1H5PWE6T3BA",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8631878,
+          50.4964432
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle du Sacrement à Frizet",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630385",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2J28VDYY3NQ5HQM3GY2Z",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7611091,
+          50.4776727
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630395",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2J5P4HZ48SFY6TQZMDX4",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7802884,
+          50.4850379
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630396",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2J8TDN956RB314JEW353",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7836271,
+          50.4812898
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630398",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JC88YPHRM16Q82SXW6W",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8010369,
+          50.4656097
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630399",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JFM2SXRAJWWG78C2QEN",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8685996,
+          50.4517573
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630698",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JJQK72H3YJP0W84ZG8Z",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8767818,
+          50.4491893
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "node/6090630699",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JP7ABF4GT6QM0Q48TQ2",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8747108,
+          50.4654896
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Centre Culturel Albanais « Haxhi Zeka » de Namur",
+        "Catégorie": "Mosquée",
+        "osm_ref": "node/14348419701",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JSTDYP3SB726EW7YQWT",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7631006,
+          50.4318384
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle de Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/232355359",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2JWY3Q796QYAY7FC6CTD",
+        "Zone": "Floreffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7942238,
+          50.5487397
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Hal",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/258950938",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2K0J453TEEYFYZH3S2TT",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8325188,
+          50.5477951
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Lorette",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/258951977",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2K5KNW3W4QKPXY3V036Z",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9020555,
+          50.4163512
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/347506264",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2K95JCX3WAVC8QJX6C7C",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8836772,
+          50.4205542
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/352031134",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KCEEJ5RDNATS9VDYEWN",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9027391,
+          50.4160444
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/353593570",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KG5NVRJREQBZKJA7PAE",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9969753,
+          50.4737104
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/377672926",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KKWQQE0W612K4R65Y1X",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7146356,
+          50.5250726
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Sainte Anne",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/447984814",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KQFJ9J57XJCSKF1H4Z5",
+        "Zone": "Gembloux"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7864319,
+          50.5140454
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Donat",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/496457507",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KTRB2YHBNQDW40BR1JV",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7781835,
+          50.473915
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Hanot",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/511358677",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2KY4QQ02AZM49CK6AGHZ",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8376574,
+          50.5708861
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Donat",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/537940356",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2M1H53207FKHKJ9DP9XW",
+        "Zone": "Eghezée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8370907,
+          50.4611264
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/574647171",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2M4PQY7T2FK6FP89F0BJ",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8697682,
+          50.4677024
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/587062059",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2M8CWFXMZ6SR9Y2GY4B3",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8956072,
+          50.4723642
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte Rita",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/589928883",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MBZ084YBMRPFTKE8TBT",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9090587,
+          50.4710336
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/590277382",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MFEFAXWH091ZPS48FJV",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8628871,
+          50.4522401
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/591888539",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MK6TT83VZJ8C7J8EG8C",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9399495,
+          50.5249866
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre-Dame des Sept Douleurs",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/600372372",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MPPN3XPXMBN4SF5MB5K",
+        "Zone": "Fernelmont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8663237,
+          50.4601682
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/636381816",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MSRK4ZH145MDZ993PPQ",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8707467,
+          50.419117
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/640303774",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2MX6FJC446R2YEKMPQG6",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8654067,
+          50.4120709
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/640303999",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2N0PZ2M9RD4SZX93K50C",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7966411,
+          50.4736062
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/642709605",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2N3RC66HNYJXBD4YCWNK",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.927842,
+          50.4961211
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828248",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2N76TQPMPH6JVAP5QV6A",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8660153,
+          50.4291772
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828249",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NAPCEW537J3MZ8K68Q6",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8591923,
+          50.4212838
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828250",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NE2QFE774YT8SCXMSCB",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8629104,
+          50.4174863
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828252",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NH9ESEJZJKFWNNFS9B5",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8820252,
+          50.4125999
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828253",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NP32PVWFTT2J2AYYA8H",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9014312,
+          50.5246418
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828255",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NSEDYNPCEJCCM7N083N",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8790204,
+          50.4546467
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648828258",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2NX2TCK5VQJ9FA020NFB",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.745031,
+          50.4807577
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/648833349",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2P0S6V91AYQG9MRZ2AT1",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8355876,
+          50.567671
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Lourdes",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/708140323",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2P41KGM5NCXGGP93EMQV",
+        "Zone": "Eghezée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8359759,
+          50.5704154
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame des Affligés",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/708140325",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2P7RY1D3NCKCSXAFJK21",
+        "Zone": "Eghezée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9741697,
+          50.4589452
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/722506904",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PB8JNRCCFRFWYDS4MM3",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.713514,
+          50.4316802
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/732455402",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PEKENJY030NGNNH5P0B",
+        "Zone": "Floreffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.003333,
+          50.4769439
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte Thérése",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/740538537",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PJ74VZADC31XJ1CE1DB",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7153144,
+          50.37347
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/741269462",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PNRZVVTV6M83W4VJK0T",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7556036,
+          50.4871311
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/742900039",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PRY00GWKB7WCNM7EJWG",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8187723,
+          50.4011914
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/842975663",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PWD97HBYFBYKEEXKN49",
+        "Zone": "Profondeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9944755,
+          50.4747552
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de la Paix",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/906683523",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2PZTFAYACBVPZEVGRYVB",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9541769,
+          50.5055066
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/972621343",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Q3B4N2DHDYWAWZ51G4M",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9583879,
+          50.4866036
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1005991468",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Q6Z1RYKH1MZN196RRSJ",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9974189,
+          50.4690566
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sacré-Cœur",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1013182773",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QBAHY0WXK847WKM36Q0",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0405524,
+          50.4932931
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Pré Notre-Dame",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1079116788",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QEHTY1EZ0EFXGP2ARHW",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.744517,
+          50.4515593
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1099690052",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QJ5DE214639TCZ2YM3X",
+        "Zone": "Floreffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8751641,
+          50.3804551
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1147026638",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QNXR29GAT50DCDQTF3T",
+        "Zone": "Profondeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8583524,
+          50.3583867
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1147075832",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QS950ESMEHC7DYEB5X9",
+        "Zone": "Profondeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7937484,
+          50.4263889
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1256633138",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2QWW8EGGQVEPK5KJJ58F",
+        "Zone": "Namur"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7943624,
+          50.5389641
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Grâce",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1267207925",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2R0QNKTB5BDBJ6M8A78K",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7783818,
+          50.5124251
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Grâce",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1308326616",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2R49NSNGCDNX1YAQJM3D",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7817567,
+          50.5183011
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Lourdes",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1343001155",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2R877JMPMH7DSH51C3S0",
+        "Zone": "La Bruyère"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0087303,
+          50.4758841
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1424148971",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2RBN5K60CYBAQTTMEW1A",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7247943,
+          50.4357165
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1466394888",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2REVGTNKM4C6MR97BETR",
+        "Zone": "Floreffe"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9584849,
+          50.4024525
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1530707902",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2RJDKGMDVZ6542SADN9B",
+        "Zone": "Assesse"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0528256,
+          50.4891369
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Zone Ciel",
+        "Catégorie": "Église",
+        "osm_ref": "way/1575531487",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2RNSBEK87F4G5E2NGQ11",
+        "Zone": "Andenne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2913828,
+          50.3388453
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle des Sœurs Grises",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/231552283",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2RS0Z8MGAJFW2076M9XA",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1798662,
+          50.2933143
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Sainte-Marguerite",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/319341129",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2RY310VYY3W7RDJX7WP6",
+        "Zone": "Erquelinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2778129,
+          50.2242389
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/548782625",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2S20YSAJN1Y4S4FHBMXC",
+        "Zone": "Beaumont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2450364,
+          50.2384267
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/751424461",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2S5N4GEWZ19T82HHBQS2",
+        "Zone": "Beaumont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1439653,
+          50.3147048
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1023606354",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2S9EYV3PDNM1X5PXB33Z",
+        "Zone": "Erquelinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1237667,
+          50.3459575
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1347166903",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SD9QPV8TBZ6C01HQM6K",
+        "Zone": "Estinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2910578,
+          50.3481252
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1377025251",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SGYCTVAVZS4F4BMTZRT",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2572257,
+          50.323245
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1378118323",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SM93EEGR9T33ABW6S7X",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2720923,
+          50.1365723
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1384722903",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SQW5PTFYAVZCR5PKPTT",
+        "Zone": "Sivry-Rance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.1766672,
+          50.2035274
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1384728399",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SV905ZXTCMK1VE3DPXG",
+        "Zone": "Sivry-Rance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3291905,
+          50.1342347
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1389648314",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2SYNCVVY6PJGDXCXC3KN",
+        "Zone": "Froidchapelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3097552,
+          50.1991502
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1389650232",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2T1WNSZSFR1PT6DT93JS",
+        "Zone": "Froidchapelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2380264,
+          50.2649634
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1428924009",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2T59WAS7HP8R5MYD534D",
+        "Zone": "Beaumont"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.335705,
+          50.1499089
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1431212567",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2T8PE417SK4M7GY826SR",
+        "Zone": "Froidchapelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3878479,
+          50.321674
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/280489868",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TBV23ZXCJK7JWC77734",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4346459,
+          50.3170324
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle des chartes",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/623801157",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TFDZK3R86PJCB3FDCBR",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4261861,
+          50.3207305
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle de la croix rouge",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/623801158",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TJR97MARFAR8XQD53G2",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6549001,
+          50.3260573
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737387981",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TP96B42PYXH8EPZ2HKK",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.702883,
+          50.3352096
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737388602",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TV9XGMZ72B3E9MB4YK6",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.677259,
+          50.2947407
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737961955",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2TYKY1QXFAGEX09S9V8G",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6386358,
+          50.3462964
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/738291705",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2V2EMR71HZQBV4EGGAHH",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5078724,
+          50.2406776
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/740949122",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2V66RVXQJ2WTGFSDSE5V",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4987095,
+          50.2405816
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/740949147",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2V9HMCNP2K9VHQ9MAE6J",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.548181,
+          50.1974297
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle des Remparts",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/744191767",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VD648FS11P8SBN6GSDQ",
+        "Zone": "Philippeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6190397,
+          50.1566833
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/745473570",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VGT3SD5WGRRPGJYAEJH",
+        "Zone": "Philippeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5026163,
+          50.3159548
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/752733926",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VMATTR0NKCJ7T0VZGF2",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4431476,
+          50.3401659
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Calvaire Monom",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/837396762",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.541509,
+          50.3258042
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Lourdes",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/838372541",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VV2K3078KTKF3TBXZQ9",
+        "Zone": "Gerpinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4891862,
+          50.2762637
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/852710563",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2VYKSMHQXXDSF1DY6CYS",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4983625,
+          50.2827374
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/852710567",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2W1XFR3MW534B26NW7N3",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6167916,
+          50.3326484
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/887640451",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2W5H05GEQJ81JZ2KC1P2",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6051185,
+          50.3377168
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/888284631",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2W8Y76VY49SMJ158ATFC",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6081532,
+          50.3462696
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/889200000",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WC6Y23Q31EXQEGTHKSR",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6065123,
+          50.3383779
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/891049492",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WFKPHWKYTQ5AQWV03EJ",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3739946,
+          50.322661
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1080691437",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WKSK5JYYATVV8FAGRHH",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6374466,
+          50.3459085
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1115308112",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WQ3KR4KCG018SW4SA22",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6305494,
+          50.34292
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1115308919",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WTGQCJ0X4Y1C9ARECQX",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6345196,
+          50.3446192
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1115309418",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2WYDCPMC5D67DQYNGWD9",
+        "Zone": "Mettet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5408982,
+          50.3073249
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Oger",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1197026044",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2X2ESKM0482A5PZ3H1PN",
+        "Zone": "Florennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4081687,
+          50.1683314
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Joseph",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1431212564",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2X622BTSJP4A83BJHWV1",
+        "Zone": "Cerfontaine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4028944,
+          50.1674126
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1431212565",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2X9BF0P7D8WD2SSGDV4K",
+        "Zone": "Cerfontaine"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5133249,
+          50.2595832
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1544792075",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XCYC6AF862PD1MBDYS5",
+        "Zone": "Walcourt"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7598011,
+          50.2431653
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/456653239",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XGF8SXG3CGZ6S2ZG7VM",
+        "Zone": "Onhaye"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8367179,
+          50.2168858
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Walhère",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/510760792",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XKYDP5ETF4VJZ2R2YJ8",
+        "Zone": "Hastière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0489235,
+          50.1874955
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame du Maquis",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/516228440",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XQ6BYZ1T22HEV0D62E7",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7936714,
+          50.275013
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de la Salette",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/551675435",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XTQEG28WZ9KGKEXCYH9",
+        "Zone": "Onhaye"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7917781,
+          50.2816799
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/553324557",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2XYF6VA20HT3Q17G0HK8",
+        "Zone": "Onhaye"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8539635,
+          50.1553313
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/560055322",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Y1R29BCV6V7MSPA4CC9",
+        "Zone": "Hastière"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7237929,
+          50.248276
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Bon-Secours",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737034117",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Y5CV3235RXMWSPB1HK6",
+        "Zone": "Florennes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8136786,
+          50.3377711
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737137653",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Y8VKZK5RAQZ5Y80SDA4",
+        "Zone": "Anhée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7959426,
+          50.3322118
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/737137701",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YCKZ8PGW5JDN7R45PQ0",
+        "Zone": "Anhée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9242503,
+          50.1675041
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/743135226",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YH5DPNJS41G5W2TB83G",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0316949,
+          50.1536138
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame des Grâce",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/885985212",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YMMF5JKSRRX8P0TX60K",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.827955,
+          50.3220903
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/983318330",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YQYHEQA6GSJTFQB4X1B",
+        "Zone": "Anhée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7382485,
+          50.1863562
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "La chapelle Delobbe",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1083994973",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YVNEP4JYFJPF1XR15Z5",
+        "Zone": "Doische"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9164673,
+          50.2592035
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1087069249",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2YZJ1AGEF4KEQ76TE7EE",
+        "Zone": "Dinant"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8973914,
+          50.2536593
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle de la Salette",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1101696444",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Z35E387HB9R5T108F5P",
+        "Zone": "Dinant"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0084338,
+          50.2282976
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Hadelin",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1101698854",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2Z6JWZACX268GXEDFZRP",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0447183,
+          50.1611565
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1102867783",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZA5FF2JRE8RB0WDXD66",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0041811,
+          50.1897832
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1118014486",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZDSPWC8RGSX9WD0NMZ7",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.798169,
+          50.3400468
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1534954600",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZH6J4WF8C1S106SYYJZ",
+        "Zone": "Anhée"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0047112,
+          50.1912054
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1551660346",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZMC62S5XWQYQKG6Q47R",
+        "Zone": "Houyet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2453308,
+          49.9864462
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle de Malapaire",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/827372540",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZQWA14EV8DH1FNHCRXM",
+        "Zone": "Momignies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.25896,
+          50.0359002
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/877646229",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZVJ9BC7RTTJ5H30Y2E2",
+        "Zone": "Chimay"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3302517,
+          50.0635227
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1412736432",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM2ZYXXFY4WFN4VRZZKZ3Y",
+        "Zone": "Chimay"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6355078,
+          50.0843465
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Mausolée de Mesnil de Volkrange",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/333325000",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM302GTGMDENGVSX9Q8WD0",
+        "Zone": "Viroinval"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.7036039,
+          50.1026119
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Roch",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/574103751",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30642NG5KRNN4VPCMFQS",
+        "Zone": "Viroinval"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4034737,
+          50.0670738
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/712201735",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM309J66VNBQC7245P4V8M",
+        "Zone": "Couvin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4289825,
+          49.9471339
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Hilaire",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/795894073",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30DMBDKCJMENQCQEKSN7",
+        "Zone": "Chimay"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5355055,
+          50.0610722
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Saint-Antoine",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/903383340",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30H03F56RGQGKCFJP4KH",
+        "Zone": "Couvin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4286106,
+          50.036434
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/993728739",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30MEPRYKWNDAVQ7D6159",
+        "Zone": "Couvin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5746721,
+          50.1056312
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1270178871",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30R4FFA1CTCD2FAEPZD1",
+        "Zone": "Philippeville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6674955,
+          50.0915577
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1342516328",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30VYPG73H7V7JFVNZZFR",
+        "Zone": "Viroinval"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.6084068,
+          50.0659919
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1378015337",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM30ZGHN4K0P6TXTXR5XNR",
+        "Zone": "Viroinval"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3704927,
+          50.0296546
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1409793892",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM3138T2NC7AY4AGQDN8J2",
+        "Zone": "Chimay"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3753813,
+          50.0626026
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1431338738",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM316JSNH4WCMDP3B6G4XM",
+        "Zone": "Chimay"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.433364,
+          50.0544173
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre-Dame des Sept Douleurs",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/1436197832",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31A55C0HRGMKV3F5NQVM",
+        "Zone": "Couvin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8534822,
+          50.066463
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle St Joseph",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/160128931",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31DHZB765XPQKM19A5ZD",
+        "Zone": "Beauraing"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.925359,
+          50.0367415
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/420331135",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31GSKP7C1YE4V74W9NWQ",
+        "Zone": "Gedinne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.971832,
+          49.9175297
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/598994728",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31MD56J18ERB8EP9HK6R",
+        "Zone": "Bièvre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0486948,
+          50.0858013
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/622267688",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31QWXEV3EF87D1D1S3TE",
+        "Zone": "Beauraing"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0065807,
+          50.0993791
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/625899872",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31VCW2RYGECWNW8C5BZP",
+        "Zone": "Beauraing"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9448036,
+          50.0823045
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/741059962",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM31Z09G9B8771E0DW7S4N",
+        "Zone": "Beauraing"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8447221,
+          49.9883359
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/746493111",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM322JW3V96C65BEZVYW98",
+        "Zone": "Gedinne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.8592603,
+          50.0238275
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/751413744",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM326VF8PAG4EZ8WKFMSTF",
+        "Zone": "Gedinne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.9171215,
+          49.989958
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de la Délivrance",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/823400470",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM32ACCAMB1QP833P7PRGM",
+        "Zone": "Gedinne"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0342095,
+          49.9234097
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/938104960",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM32DR2G603CDQHRY2CW42",
+        "Zone": "Bièvre"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.955366,
+          50.1197532
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Notre-Dame de Beauraing",
+        "Catégorie": "Chapelle",
+        "osm_ref": "way/958279518",
+        "candidate": true,
+        "HW_ID": "HW-01M6PM32HE1W4MR7GH0DVA5N4J",
+        "Zone": "Beauraing"
       }
     }
   ]
