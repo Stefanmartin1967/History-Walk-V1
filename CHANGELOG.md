@@ -6,6 +6,13 @@
 
 ---
 
+- SUIVI MOBILE : CRÉER UN LIEU SANS QUITTER LE SUIVI (v3.7.484). Retour de Stefan après le suivi de « Église Saint-Pierre à Maison Mattot » à Charleroi (05/11/2026) : le dock et son (+) sont masqués pendant le suivi, il fallait fermer la carte pour créer un lieu.
+  - Bouton « Nouveau lieu » en bas à gauche de la carte du suivi, en face de « recentrer » (icône épingle+, pour ne pas la confondre avec le « + » du zoom). Masqué, comme les autres boutons, quand l'aperçu d'un lieu est ouvert.
+  - Même fenêtre « Nouveau Lieu » que le (+) du dock. « Annuler » : on reste dans le suivi. « Capturer » : la fiche du nouveau lieu s'ouvre pour le nommer et, comme « Fiche → », le retour arrière relance le suivi. Un lieu dont la fiche est fermée sans modification est abandonné, comme avec le (+) du dock.
+  - La fenêtre et la création du lieu passent dans `src/mobile-new-place.js`, partagé par le dock (`mobile-nav.js`) et le suivi (`mobile-follow.js`). Styles dans `style/mobile-follow.css`, `style.css?v=8.50`.
+  - Vérifié en preview sur le circuit de Charleroi : fenêtre au-dessus de la carte, « Annuler » garde le suivi, « Capturer » ouvre la fiche, le retour relance le suivi (flèches et bouton revenus) sans laisser de lieu fantôme ; le (+) du dock fonctionne comme avant.
+  - Test : `tests/mobile_follow_new_place.test.js`.
+
 - SUIVI MOBILE : FLÈCHES DE SENS SUR LE TRACÉ (v3.7.483). Demande de Stefan du 06/11/2026, après le suivi de « Église Saint-Pierre à Maison Mattot » à Charleroi : là où le circuit repasse par la même rue ou forme une boucle, on ne savait plus dans quel sens marcher.
   - Sur la carte du suivi uniquement (décision de Stefan : ni sur PC, ni sur la carte de consultation). Des pastilles bleues à chevron blanc sont posées sur le tracé tous les ~90 px à l'écran, dans le sens de la marche. L'écart reste constant quel que soit le zoom, car les flèches sont recalculées à chaque zoom. Elles ne sont pas cliquables et passent sous les icônes des lieux et sous le point bleu.
   - Calcul pur dans `src/follow-arrows.js` (positions régulières le long du tracé et cap de chaque segment). Pose et retrait dans `mobile-follow.js`, avec le cycle du suivi. La rotation passe par le CSSOM, sans `style="…"` inline bloqué par la CSP de prod. Styles dans `style/mobile-follow.css` (§10), `style.css?v=8.49`.

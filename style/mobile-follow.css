@@ -104,6 +104,10 @@
 /* Rafts bas-droite : « recentrer sur moi » (bas, sous le pouce) + zoom au-dessus. */
 .follow-ctl-locate { bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
 .follow-ctl-zoom { bottom: calc(92px + env(safe-area-inset-bottom, 0)); }
+/* « Nouveau lieu » : bas-gauche, en face de « recentrer » (pouce gauche ; coin
+   libre, l'attribution Leaflet étant masquée pendant le suivi). Icône épingle+
+   pour ne pas la confondre avec le « + » du zoom. */
+.follow-ctl-add { right: auto; left: 12px; bottom: calc(28px + env(safe-area-inset-bottom, 0)); }
 /* Bouton recentrer : icône cobalt (couleur « device location », cf. point bleu). */
 .follow-ctl .is-locate { color: var(--gps); }
 .follow-ctl .is-locate:active { background: var(--surface-muted); }
