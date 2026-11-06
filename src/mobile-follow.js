@@ -33,6 +33,7 @@ import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp } from './utils.js'
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { getActiveCircuit } from './circuit-lookup.js';
+import { arrowPositions, metersPerPixel } from './follow-arrows.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -55,6 +56,12 @@ let _poiMarkers = new Map(); // poiId -> { marker, feature, idx }
 let _sheetEl = null;         // élément DOM du bottom sheet (null = fermé)
 let _sheetPoiId = null;      // poiId affiché dans le sheet
 let _sheetObjUrl = null;     // objectURL d'une photo locale (à révoquer)
+
+// --- Flèches de sens sur le tracé (06/11/2026) ---
+let _arrowLayer = null;      // L.layerGroup des chevrons
+let _arrowTrack = null;      // tracé [lat, lng] du circuit suivi
+let _zoomHandler = null;     // recalcul de l'écart à chaque zoom
+const ARROW_SPACING_PX = 90; // écart entre deux flèches, constant à l'écran
 
 // « Voir la fiche complète » quitte le suivi pour afficher la fiche détaillée
 // (rendue dans #mobile-container, masqué pendant le suivi). On mémorise ici le
@@ -195,6 +202,53 @@ function applyMarkerVisited(poiId) {
 function removePoiMarkers() {
     if (_poiLayer) { _poiLayer.remove(); _poiLayer = null; }
     _poiMarkers.clear();
+}
+
+// ─── FLÈCHES DE SENS SUR LE TRACÉ ──────────────────────────────────────────────
+// Chevrons posés le long du tracé réel, dans le sens de la marche : lisibles là
+// où le circuit repasse au même endroit ou forme une boucle. Carte du suivi
+// seulement (décision Stefan, 06/11/2026). Écart constant à l'écran : recalculé
+// à chaque zoom. Non cliquables, sous les icônes des lieux.
+
+function arrowIcon(bearing) {
+    const el = document.createElement('div');
+    el.className = 'follow-arrow';
+    el.innerHTML = '<svg viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="7"/><path d="M6 4.5 L10 8 L6 11.5"/></svg>';
+    // CSSOM (autorisé par la CSP de prod, contrairement à un style="…" inline).
+    // Le chevron dessiné pointe vers l'est (cap 90°).
+    el.style.transform = `rotate(${Math.round(bearing - 90)}deg)`;
+    return L.divIcon({ className: 'follow-arrow-icon', html: el, iconSize: [18, 18], iconAnchor: [9, 9] });
+}
+
+function drawArrows() {
+    if (!_arrowLayer || !map) return;
+    _arrowLayer.clearLayers();
+    if (!_arrowTrack) return;
+    const spacingM = ARROW_SPACING_PX * metersPerPixel(map.getCenter().lat, map.getZoom());
+    arrowPositions(_arrowTrack, spacingM).forEach(({ lat, lng, bearing }) => {
+        L.marker([lat, lng], {
+            icon: arrowIcon(bearing),
+            interactive: false,
+            keyboard: false,
+            zIndexOffset: -1000, // sous les icônes des lieux et le point bleu
+        }).addTo(_arrowLayer);
+    });
+}
+
+function buildArrows(circuit) {
+    const track = circuit?.realTrack;
+    _arrowTrack = Array.isArray(track) && track.length >= 2 ? track : null;
+    _arrowLayer = L.layerGroup().addTo(map);
+    _zoomHandler = () => drawArrows();
+    map.on('zoomend', _zoomHandler);
+    drawArrows();
+}
+
+function removeArrows() {
+    if (_zoomHandler && map) map.off('zoomend', _zoomHandler);
+    _zoomHandler = null;
+    if (_arrowLayer) { _arrowLayer.remove(); _arrowLayer = null; }
+    _arrowTrack = null;
 }
 
 // ─── BOTTOM SHEET D'APERÇU POI (PR3, variante A : compact, photo à gauche) ────
@@ -533,6 +587,7 @@ export function startFollow(opts = {}) {
 
     _overlay = buildOverlay(circuit);
     buildPoiMarkers(); // marqueurs POI cliquables (PR3)
+    buildArrows(circuit); // flèches de sens sur le tracé
 
     // Entrée d'historique : le Back Android (et la croix) quittent le suivi
     // au lieu de revenir à la liste des circuits. À la REPRISE depuis une fiche
@@ -591,6 +646,7 @@ export function stopFollow() {
     // Sheet + marqueurs POI (PR3)
     closeSheetInternal();
     removePoiMarkers();
+    removeArrows();
 
     // GPS + Wake Lock teardown (PR2)
     stopWatch();

@@ -6,6 +6,13 @@
 
 ---
 
+- SUIVI MOBILE : FLÈCHES DE SENS SUR LE TRACÉ (v3.7.483). Demande de Stefan du 06/11/2026, après le suivi de « Église Saint-Pierre à Maison Mattot » à Charleroi : là où le circuit repasse par la même rue ou forme une boucle, on ne savait plus dans quel sens marcher.
+  - Sur la carte du suivi uniquement (décision de Stefan : ni sur PC, ni sur la carte de consultation). Des pastilles bleues à chevron blanc sont posées sur le tracé tous les ~90 px à l'écran, dans le sens de la marche. L'écart reste constant quel que soit le zoom, car les flèches sont recalculées à chaque zoom. Elles ne sont pas cliquables et passent sous les icônes des lieux et sous le point bleu.
+  - Calcul pur dans `src/follow-arrows.js` (positions régulières le long du tracé et cap de chaque segment). Pose et retrait dans `mobile-follow.js`, avec le cycle du suivi. La rotation passe par le CSSOM, sans `style="…"` inline bloqué par la CSP de prod. Styles dans `style/mobile-follow.css` (§10), `style.css?v=8.49`.
+  - Vérifié en preview sur le circuit de Charleroi : 90 px entre les flèches, sens conforme au tracé (Église Saint-Pierre → Musée des Beaux-Arts vers le sud-ouest), flèches opposées là où le circuit repasse, retrait complet en quittant le suivi.
+  - Écartée le même jour : la carte orientée dans le sens de la marche (« plus d'arguments contre que pour »).
+  - Test : `tests/follow_arrows.test.js`.
+
 - CENTRE DE CONTRÔLE : « ANNULER » UN LIEU CRÉÉ LE RETIRE VRAIMENT (v3.7.482). Constaté par Stefan le 06/11/2026. Il avait annulé deux lieux créés sur le téléphone à Charleroi (Chapelle Saint-Fiacre, et un mémorial à côté du Kiosque du parc Reine Astrid), déjà créés depuis le PC. Ils ont quand même été publiés avec les 6 autres, d'où deux doublons en ligne.
   - **Cause** : sur une création, « Annuler » retirait la ligne du brouillon mais laissait le lieu sur l'appareil. Or « Tout publier » ne publie pas seulement le brouillon : il régénère le fichier de la destination depuis tous les lieux de l'appareil (`admin-geojson.js`). Reproduit en preview sur Charleroi.
   - **Correctif** : sur un lieu créé et jamais publié, « Annuler » demande confirmation (« n'existe que sur cet appareil : l'annuler le supprime définitivement »), puis retire le lieu, sa ligne du brouillon et ses photos en attente (`removeUnpublishedPoi`, data.js). « Garder » ne change rien. L'annulation d'une modification d'un lieu publié ne change pas.

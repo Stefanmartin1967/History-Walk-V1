@@ -324,3 +324,18 @@
 }
 .pv-fiche svg { width: 16px; height: 16px; }
 .pv-fiche:active { filter: brightness(0.97); }
+
+/* ============================================================
+   10. FLÈCHES DE SENS SUR LE TRACÉ (06/11/2026)
+   ============================================================
+   Pastille de la couleur du tracé réel (.real-track-polyline, panels.css)
+   avec un chevron blanc, posée sur la ligne tous les ~90 px dans le sens de la
+   marche. La rotation est appliquée par mobile-follow.js (CSSOM). */
+.follow-arrow-icon { background: transparent !important; border: 0 !important; pointer-events: none; }
+.follow-arrow { width: 18px; height: 18px; }
+.follow-arrow svg { display: block; width: 18px; height: 18px; overflow: visible; }
+.follow-arrow circle { fill: #3B82F6; stroke: #fff; stroke-width: 1.5; }
+.follow-arrow path {
+    fill: none; stroke: #fff; stroke-width: 2.2;
+    stroke-linecap: round; stroke-linejoin: round;
+}
