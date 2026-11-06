@@ -12270,7 +12270,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien puits de mine Saint-Henry",
-        "Catégorie": "Taxi",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/6958907673",
         "HW_ID": "HW-01M6EV4RD4CZYJMMBPMGX0CCVK",
         "description": "Ancien puits de charbonnage du quartier d'Oignies, à Aiseau-Presles.\nSelon l'article Wikipédia consacré à Aiseau, le charbon y était extrait par deux puits, l'un à Oignies, le puits Saint-Henry, l'autre à Ménonry ; ces puits, bétonnés, restent visibles.\nOpenStreetMap le donne pour le siège n° 5 d'Oignies, exploité de 1890 à 1955.",
@@ -12284,7 +12284,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Aiseau-Presles"
+        "Zone": "Aiseau-Presles",
+        "Sous-type": "Mine",
+        "État": "Vestiges partiels",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -17704,7 +17707,7 @@
       },
       "properties": {
         "Nom du site FR": "Monument de la catastrophe du Bâty-Driane",
-        "Catégorie": "Taxi",
+        "Catégorie": "Monument",
         "osm_ref": "node/8074214714",
         "HW_ID": "HW-01M6EV585P2FYMTH3J65Y3K67D",
         "description": "Monument à la mémoire des victimes de la catastrophe minière du Bâty-Driane, à Vezin (Andenne).\nSelon le site de la Ville d'Andenne, le puits de Bâty-Driane faisait partie de la mine de Vezin-Brichebo ; le 26 septembre 1883, un incendie s'est déclaré dans une galerie et a coûté la vie à 21 jeunes ouvriers. Le monument a été érigé à l'initiative de la jeunesse de Ville-en-Warêt.\nD'après la légende d'une photographie publiée sur Wikimedia Commons, il se dressait d'abord dans l'ancien cimetière de Ville-en-Waret et a été remonté sur le site de l'ancienne mine après la disparition de ce cimetière. Une autre photographie montre qu'il porte les noms de neuf victimes, originaires de Ville-en-Waret et de Houssoy.",
@@ -17718,7 +17721,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Andenne"
+        "Zone": "Andenne",
+        "Sous-type": "Mémorial",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement"
       }
     },
     {
@@ -24240,7 +24246,7 @@
       },
       "properties": {
         "Nom du site FR": "Vestige de cheminée de la mine Saint-Remy",
-        "Catégorie": "Taxi",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/890885962",
         "HW_ID": "HW-01M6EV5YR1N4WNJGN03REQH4SY",
         "description": "Base d'une cheminée de l'ancienne mine Saint-Remy, à Landenne (Andenne).\nSelon la légende d'une photographie publiée sur Wikimedia Commons, la concession date de 1854 : on y a extrait du plomb et du zinc à partir de 1860, puis du minerai de fer à partir de 1885, à plus de 223 m de profondeur.\nOpenStreetMap indique aussi, à une vingtaine de mètres, l'emplacement du puits de mine, ou bure, aujourd'hui disparu, et un terril. Le vestige de cheminée borde un chemin de la Balade du Chant d'Oiseaux.",
@@ -24254,7 +24260,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Andenne"
+        "Zone": "Andenne",
+        "Sous-type": "Mine",
+        "État": "Vestiges partiels",
+        "Accès": "Extérieur seulement"
       }
     },
     {
