@@ -26,6 +26,12 @@ export const HW_MAPPING = {
     // catégorie existe.
     castle: 'Château', manor: 'Château',
     monument: 'Monument', memorial: 'Monument',
+    // Potale (06/11/2026) : `wayside_shrine` était moissonné mais classé « ambigu »
+    // depuis la v3.7.318, quand la catégorie n'existait pas (créée le 01/11/2026).
+    // 275 potales de Wallonie arrivaient en « A définir », 181 sans nom (« Lieu
+    // inconnu »). Une petite chapelle tracée en `building=chapel` reste Chapelle :
+    // les lieux de culte sont testés avant ce tableau.
+    wayside_shrine: 'Potale',
     archaeological_site: 'Site archéologique', ruins: 'Site archéologique',
     tomb: 'Site funéraire', mausoleum: 'Site funéraire', tumulus: 'Site funéraire',
     // Culture & découvertes

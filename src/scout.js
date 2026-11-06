@@ -30,7 +30,7 @@ import { state, DEFAULT_MAP_ID} from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
 import { fetchOverpassJson, hasOverpassKey } from './osm-overpass.js';
-import { addPoiFeature } from './data.js';
+import { addPoiFeature, applyFilters } from './data.js';
 import { isDestinationPublished } from './utils.js';
 import { hwPrompt } from './modal.js';
 import { makeUniqueDestId, saveDraftZones } from './local-destinations.js';
@@ -40,6 +40,9 @@ import { isRejected } from './rejected.js';
 import { getHwCategory, resolveOsmNames } from './scout-categories.js';
 import { buildQuery } from './scout-query.js';
 import { collectKnownOsmRefs, isDuplicateCandidate } from './scout-dedup.js';
+import { findReclassifiableCandidates } from './scout-reclassify.js';
+import { persistPoiEdit } from './poi-persistence.js';
+import { schedulePush } from './gist-sync.js';
 import { hasTerritory, inTerritory, zonesExtent } from './scout-territory.js';
 import { getStoredToken } from './github-sync.js';
 import { registerDraftDestinationOnGitHub, pushDestinationZones } from './publish-destination.js';
@@ -542,6 +545,7 @@ async function scan() {
     const knownOsmRefs = collectKnownOsmRefs(state.loadedFeatures || []);
     let rejectedSkipped = 0;  // objets déjà rejetés (corbeille) ignorés — transparence au récap
     let outsideSkipped = 0;   // destination à territoire : objets hors de ses quartiers, ignorés
+    const scannedCats = new Map(); // osm_ref → catégorie, pour reclasser les candidats restés « A définir »
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
     let attempt = 0;
@@ -584,6 +588,7 @@ async function scan() {
                     if (territory && !inTerritory(lat, lon)) { outsideSkipped++; continue; }
                     const tags = el.tags || {};
                     const cat = getHwCategory(tags);
+                    if (cat) scannedCats.set(key, cat);
                     // Doublon si l'objet OSM est DÉJÀ porté par un POI chargé (identité
                     // osm_ref, quelle que soit la distance), sinon < 50 m d'un POI
                     // existant (règle #472) ou d'un candidat déjà retenu dans CE scan.
@@ -608,6 +613,7 @@ async function scan() {
         }
         _scannedBounds = { ..._box };
         persistBox();   // la boîte scannée devient la « boîte de la destination » (mémorisée)
+        const reclassified = await reclassifyKnownCandidates(scannedCats);
         refreshRecap(); // badge final : les refresh en boucle tournaient avant que _scannedBounds soit posé
         const net = all.filter(c => inBox(c) && !c.dup).length;
         const failed = pending.length;
@@ -616,7 +622,8 @@ async function scan() {
         const rej = (rejectedSkipped
             ? ` · ${rejectedSkipped} déjà rejeté${rejectedSkipped > 1 ? 's' : ''} ignoré${rejectedSkipped > 1 ? 's' : ''}`
             : '')
-            + (outsideSkipped ? ` · ${outsideSkipped} hors territoire ignoré${outsideSkipped > 1 ? 's' : ''}` : '');
+            + (outsideSkipped ? ` · ${outsideSkipped} hors territoire ignoré${outsideSkipped > 1 ? 's' : ''}` : '')
+            + (reclassified ? ` · ${reclassified} candidat${reclassified > 1 ? 's' : ''} « A définir » reclassé${reclassified > 1 ? 's' : ''}` : '');
         if (failed === tiles.length) {
             // Sans clé, seul le serveur public (souvent saturé) est interrogé : on le dit.
             const keyHint = hasOverpassKey() ? '' : ' Une clé overpass.ch (Configuration) évite le serveur public saturé.';
@@ -630,6 +637,34 @@ async function scan() {
         _scanning = false; updatePrimary();
         showLoading(false);
     }
+}
+
+// Candidats déjà capturés et restés « A définir » que cette moisson sait classer
+// (scout-reclassify.js) : on leur donne leur catégorie, par le même chemin que les
+// autres éditions (persistPoiEdit). Ils ne sont jamais re-capturés (doublons par
+// osm_ref) : sans ce pas, une règle de classement ajoutée après coup ne les
+// atteignait jamais (275 potales, 06/11/2026).
+// Pas de signal `admin:poi-edited` : ce sont tous des candidats, que la liste du
+// Centre de Contrôle écarte (prepareDiffData) ; le signal ne ferait que monter le
+// compteur du bouton jusqu'à la prochaine ouverture. Sur une destination brouillon,
+// la catégorie part avec la prochaine publication, qui régénère le fichier entier
+// candidats compris (admin-geojson.js, keepCandidates).
+async function reclassifyKnownCandidates(scannedCats) {
+    const todo = findReclassifiableCandidates(state.loadedFeatures || [], scannedCats);
+    let done = 0;
+    for (const { id, cat } of todo) {
+        try {
+            await persistPoiEdit(id, { 'Catégorie': cat });
+            done++;
+        } catch (e) {
+            console.warn('[scout] reclassement du candidat échoué :', id, e);
+        }
+    }
+    if (done) {
+        schedulePush();
+        applyFilters(); // nouvelle catégorie → nouvelle icône, et les filtres par catégorie
+    }
+    return done;
 }
 
 // Réunif C1 + Scout v2 : « Capturer » → les candidats non-doublons dans la boîte

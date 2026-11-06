@@ -45,6 +45,7 @@ const OSM_SAMPLES = [
     { historic: 'citywalls' }, { historic: 'bastion' },
     { historic: 'tomb' }, { historic: 'mausoleum' }, { historic: 'tumulus' },
     { historic: 'tower' },                        // ambigu (défensif ou non) → null
+    { historic: 'wayside_shrine' },               // → Potale (06/11/2026)
     { historic: 'palace' }, { historic: 'monastery' }, { historic: 'aqueduct' }, // → null (triage)
     { man_made: 'water_well' }, { man_made: 'lighthouse' },
     { man_made: 'windmill' }, { man_made: 'watermill' },
@@ -145,9 +146,15 @@ describe('scout-categories — getHwCategory aligné sur la taxonomie v2', () =>
         expect(getHwCategory({ shop: 'pottery' })).toBe('Artisanat');
     });
     it('valeurs historic ambiguës moissonnées → null (triage « A définir »)', () => {
-        for (const v of ['tower', 'palace', 'monastery', 'aqueduct', 'wayside_shrine', 'heritage']) {
+        for (const v of ['tower', 'palace', 'monastery', 'aqueduct', 'heritage']) {
             expect(getHwCategory({ historic: v }), v).toBeNull();
         }
+    });
+    it('potale (wayside_shrine) → Potale, sauf petite chapelle tracée en building=chapel', () => {
+        // Cas fondateur (06/11/2026) : Potale Saint-Hubert de Vezin, node/8150135169,
+        // arrivée en « Lieu inconnu » (A définir, sans nom).
+        expect(getHwCategory({ historic: 'wayside_shrine', religion: 'christian', denomination: 'roman_catholic' })).toBe('Potale');
+        expect(getHwCategory({ historic: 'wayside_shrine', building: 'chapel' })).toBe('Chapelle');
     });
     it('un lieu de culte prime sur un man_made co-tagué', () => {
         // ex. minaret tagué man_made=tower + amenity=place_of_worship → reste Mosquée
