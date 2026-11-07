@@ -408,6 +408,59 @@ describe('Admin Diff Engine', () => {
     // 3. prepareDiffData — Changes sur POIs
     // ========================================================================
     describe('prepareDiffData — POIs', () => {
+        // Cadrage des photos d'en-tête (photo-focus.js, v3.7.488) : un objet.
+        // Le test générique String() verrait « [object Object] » des deux côtés.
+        const withPublishedPoi = (props) => {
+            const remotePoi = { type: 'Feature', properties: { HW_ID: 'pf_1', Nom: 'Église', ...props }, geometry: { type: 'Point', coordinates: [4, 50] } };
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [remotePoi] }) });
+                return defaultFetchImpl(url);
+            });
+            return remotePoi;
+        };
+
+        it('voit un cadrage de photo ajouté (« Cadrage photo »)', async () => {
+            const remote = withPublishedPoi({ photos: ['photos/a.jpg'] });
+            state.loadedFeatures = [{ ...remote, properties: { ...remote.properties, userData: { photoFocus: { 'a.jpg': 20 } } } }];
+            state.userData = { pf_1: { photoFocus: { 'a.jpg': 20 } } };
+
+            const r = await prepareDiffData({ pendingPois: { pf_1: { type: 'update' } }, pendingCircuits: {} });
+
+            const change = r.pois.find(p => p.id === 'pf_1')?.changes.find(c => c.key === 'Cadrage photo');
+            expect(change).toEqual(expect.objectContaining({ old: '—', new: '1 photo(s) cadrée(s)' }));
+        });
+
+        it('voit un cadrage modifié à nombre égal', async () => {
+            const remote = withPublishedPoi({ photos: ['photos/a.jpg'], photoFocus: { 'a.jpg': 20 } });
+            state.loadedFeatures = [{ ...remote, properties: { ...remote.properties, userData: { photoFocus: { 'a.jpg': 70 } } } }];
+            state.userData = { pf_1: { photoFocus: { 'a.jpg': 70 } } };
+
+            const r = await prepareDiffData({ pendingPois: { pf_1: { type: 'update' } }, pendingCircuits: {} });
+
+            expect(r.pois.find(p => p.id === 'pf_1')?.changes.some(c => c.key === 'Cadrage photo')).toBe(true);
+        });
+
+        it('cadrage identique au publié (ordre des clés différent) : aucun changement', async () => {
+            const remote = withPublishedPoi({ photos: ['photos/a.jpg', 'photos/b.jpg'], photoFocus: { 'b.jpg': 30, 'a.jpg': 20 } });
+            state.loadedFeatures = [{ ...remote, properties: { ...remote.properties, userData: { photoFocus: { 'a.jpg': 20, 'b.jpg': 30 } } } }];
+            state.userData = { pf_1: { photoFocus: { 'a.jpg': 20, 'b.jpg': 30 } } };
+
+            const r = await prepareDiffData({ pendingPois: { pf_1: { type: 'update' } }, pendingCircuits: {} });
+
+            expect(r.pois.find(p => p.id === 'pf_1')).toBeUndefined();
+        });
+
+        it('cadrage remis au centre (null) sur une photo cadrée publiée : changement vu', async () => {
+            const remote = withPublishedPoi({ photos: ['photos/a.jpg'], photoFocus: { 'a.jpg': 20 } });
+            state.loadedFeatures = [{ ...remote, properties: { ...remote.properties, userData: { photoFocus: null } } }];
+            state.userData = { pf_1: { photoFocus: null } };
+
+            const r = await prepareDiffData({ pendingPois: { pf_1: { type: 'update' } }, pendingCircuits: {} });
+
+            const change = r.pois.find(p => p.id === 'pf_1')?.changes.find(c => c.key === 'Cadrage photo');
+            expect(change).toEqual(expect.objectContaining({ old: '1 photo(s) cadrée(s)', new: '—' }));
+        });
+
         it('ignore une suppression sans original GitHub (POI jamais publié → pas de « SUPPRESSION / Inconnu »)', async () => {
             const draft = { pendingPois: { 'ghost_1': { type: 'delete', timestamp: 1 } }, pendingCircuits: {} };
             global.fetch.mockImplementation(defaultFetchImpl); // geojson vide → pas d'original

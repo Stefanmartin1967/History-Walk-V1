@@ -34,12 +34,17 @@ const pendingByHero = new WeakMap();
  * @param {object} opts
  * @param {string} opts.gradient  linear-gradient(...) posé au-dessus de la photo
  * @param {string} [opts.cssVar]  variable CSS à renseigner (lisibilité/debug)
+ * @param {number|null} [opts.focusY]  cadrage vertical 0..100 (photo-focus.js) ;
+ *        null/absent = centré. Sans effet sur un portrait (affiché entier).
+ * @param {(m: {width: number, height: number, portrait: boolean}) => void} [opts.onMeasured]
+ *        appelé quand les dimensions de la photo sont connues (mode « Cadrer »).
  */
-export function setHeroPhoto(hero, url, { gradient, cssVar } = {}) {
+export function setHeroPhoto(hero, url, { gradient, cssVar, focusY = null, onMeasured } = {}) {
     if (!hero || !url) return;
     const safe = String(url).replace(/['"\\]/g, encodeURIComponent);
     if (cssVar) hero.style.setProperty(cssVar, `url("${safe}")`);
     hero.style.backgroundImage = `${gradient}, url("${safe}")`;
+    setHeroFocus(hero, focusY);
 
     hero.querySelector(':scope > .hero-portrait')?.remove();
     pendingByHero.set(hero, safe);
@@ -49,7 +54,9 @@ export function setHeroPhoto(hero, url, { gradient, cssVar } = {}) {
     const probe = new Image();
     probe.onload = () => {
         if (pendingByHero.get(hero) !== safe || !hero.isConnected) return;
-        if (!isPortrait(probe.naturalWidth, probe.naturalHeight)) return;
+        const portrait = isPortrait(probe.naturalWidth, probe.naturalHeight);
+        onMeasured?.({ width: probe.naturalWidth, height: probe.naturalHeight, portrait });
+        if (!portrait) return;
         hero.querySelector(':scope > .hero-portrait')?.remove();
         const layer = document.createElement('span');
         layer.className = 'hero-portrait';
@@ -58,6 +65,27 @@ export function setHeroPhoto(hero, url, { gradient, cssVar } = {}) {
         hero.prepend(layer);
     };
     probe.src = url;
+}
+
+/**
+ * Cadrage vertical du fond (photo en cover) : 0 = haut, 100 = bas, null = centré
+ * (position de la feuille CSS). CSSOM, CSP-safe.
+ */
+export function setHeroFocus(hero, focusY) {
+    if (!hero) return;
+    if (Number.isFinite(focusY)) hero.style.backgroundPosition = `center ${focusY}%`;
+    else hero.style.removeProperty('background-position');
+}
+
+/**
+ * Marge verticale (px) d'une photo en cover dans un hero : la hauteur qui
+ * dépasse et qu'on peut faire glisser. 0 = la photo remplit juste la hauteur
+ * (photo plus panoramique que le hero) → rien à cadrer.
+ */
+export function verticalSlack(heroW, heroH, imgW, imgH) {
+    if (!(heroW > 0 && heroH > 0 && imgW > 0 && imgH > 0)) return 0;
+    const scale = Math.max(heroW / imgW, heroH / imgH);
+    return Math.max(0, imgH * scale - heroH);
 }
 
 /** Plus haute que large (un carré reste en cover). Exportée pour les tests. */

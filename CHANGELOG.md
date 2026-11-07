@@ -6,6 +6,16 @@
 
 ---
 
+- PHOTO D'EN-TÊTE : CADRER UNE PHOTO PAYSAGE EN MODE ADMIN (v3.7.488). Suite de la v3.7.487, demandée par Stefan le 07/11/2026 : Djerba compte déjà 280 photos publiées, et le dossier de Charleroi du 05/11 a 53 photos paysage à importer.
+  - Dans le bandeau (200 px de haut, environ deux fois plus large), une photo paysage n'est coupée qu'en haut et en bas. Sur PC, en mode Admin, une puce « Cadrer » (en bas à gauche) permet de choisir la partie visible : glisser la photo vers le haut ou le bas, ou flèches ↑ ↓, puis Valider (Entrée) ou Annuler (Échap). Pendant le cadrage, un clic sur la photo n'ouvre pas la visionneuse.
+  - Pas de puce sur mobile (glisser y gênerait le défilement de la fiche), sur une photo portrait (affichée entière) ni sur une photo plus panoramique que le bandeau (rien à cadrer). Pas non plus sur une photo locale pas encore publiée.
+  - Le cadrage s'affiche partout : fiche sur PC et sur mobile, couverture du panneau Circuit et en-tête de l'onglet Circuit.
+  - Donnée : champ `photoFocus` du lieu, `{ "<nom du fichier>": 0..100 }` (0 = haut). Absent = photo centrée comme avant. Un réglage par photo, pas par fiche : changer de photo principale ne reprend pas l'ancien cadrage. Clé = nom du fichier, pour survivre au déménagement des photos vers un dépôt de photos. Le fichier photo n'est pas modifié. Les cadrages de photos retirées du lieu partent au réglage suivant.
+  - Circuit de publication habituel : la modification apparaît au Centre de Contrôle (« Cadrage photo : 1 photo(s) cadrée(s) ») et part avec « Tout publier ». Le diff compare l'objet (le test générique n'aurait vu aucun changement), la publication ne laisse pas de `photoFocus` vide.
+  - Code : `src/photo-focus.js` (lecture, écriture), `src/hero-framing.js` (mode Cadrer), `setHeroFocus` dans `src/hero-photo.js`, style dans `style/cartel.css`, icône MoveVertical, `style.css?v=8.53`.
+  - Vérifié en preview (port à part, sans jeton) sur la Mosquée Ibn Abbas : cadrage au glisser et au clavier, enregistré, conservé au rechargement, affiché au Centre de Contrôle et sur la fiche mobile (sans puce). Phare de Taguermess et Mosquée Ténafsa : photos portrait affichées entières, pas de puce.
+  - Tests : `tests/photo_focus.test.js`, `tests/admin_diff_engine.test.js`, `tests/admin_geojson.test.js`.
+
 - PHOTO D'EN-TÊTE : UNE PHOTO PORTRAIT EST AFFICHÉE ENTIÈRE (v3.7.487). Constat de Stefan le 07/11/2026 sur le Monument aux héros coloniaux de Vezin : le bandeau photo (200 px de haut, environ deux fois plus large) se remplit en rognant, une photo portrait (monument élancé, église prise de loin) n'en montrait qu'une tranche.
   - Une photo plus haute que large est maintenant affichée entière, centrée, sur un fond fait de la même photo floutée et assombrie (pas de bandes vides). Automatique, aucun réglage ni donnée enregistrés. Les photos paysage et carrées gardent le cadrage actuel.
   - Vaut pour les trois en-têtes photo : fiche d'un lieu (PC et mobile, photos publiées, locales et photos de travail), couverture du panneau Circuit (PC) et en-tête de l'onglet Circuit (mobile). Code commun dans `src/hero-photo.js` (`setHeroPhoto`), style `.hero-portrait` dans `style/cartel.css`, `style.css?v=8.52`.
