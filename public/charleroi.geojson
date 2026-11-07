@@ -16041,11 +16041,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Monument aux morts (Sclayn)",
         "Catégorie": "Monument",
         "osm_ref": "node/880954692",
-        "candidate": true,
         "HW_ID": "HW-01M6EV52WSPTWJESS9J7F8SZ24",
+        "Sous-type": "Aux morts",
+        "Accès": "Extérieur seulement",
+        "description": "Monument aux morts des deux guerres mondiales, au carrefour de la rue du Vieux Sclayn et de la route de Namur, près de l'église Saint-Maurice, à Sclayn (Andenne).\nSa face avant porte l'inscription « Gloire et reconnaissance aux vaillants défenseurs de la patrie, du droit et de l'humanité », et son socle les dates 1914-1918 et 1940-1945.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inscription du monument, lue sur une photographie d'un contributeur Google Maps, juillet 2024\nTracesOfWar, « War Memorial Sclayn » | https://www.tracesofwar.com/sights/151191/War-Memorial-Sclayn.htm",
+        "maps_ref": "https://maps.app.goo.gl/QM9QrsPHgr9oGzTN8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -18033,11 +18046,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Potale (Rue Marche en Pré)",
         "Catégorie": "Potale",
         "osm_ref": "node/8416543960",
-        "candidate": true,
         "HW_ID": "HW-01M6EV590QNNFXFPNKV8Q3DK5H",
+        "description": "Potale de la rue Marche en Pré, à Sclayn (Andenne).\nOpenStreetMap y indique une potale catholique, sans nom. Sa dédicace reste à confirmer sur place.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -18925,18 +18947,18 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Aux morts pour la Belgique 1830-1930 (Vezin)",
+        "Nom du site FR": "Monument aux morts (Vezin)",
         "Catégorie": "Monument",
         "osm_ref": "node/11278255129",
         "HW_ID": "HW-01M6EV5C7KMGR19PJHPMBTNSHB",
         "Sous-type": "Aux morts",
         "Accès": "Extérieur seulement",
-        "description": "Monument aux morts de Vezin (Andenne).\nOpenStreetMap le nomme « Aux morts pour la Belgique 1830-1930 ».",
+        "description": "Monument aux morts de Vezin (Andenne).\nIl porte l'inscription « Aux morts pour la Belgique 1830-1930 ».\nOpenStreetMap le nomme « Aux morts pour la Belgique 1830-1930 ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": false,
         "mapsHasPhoto": false,
@@ -18972,11 +18994,23 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Ancien calvaire (Sclayn)",
         "Catégorie": "Potale",
-        "osm_ref": "node/11753355492",
-        "candidate": true,
+        "osm_ref": "node/11753355495",
         "HW_ID": "HW-01M6EV5CB83QB1ZS40CCM37VB3",
+        "Accès": "Extérieur seulement",
+        "description": "Ancien calvaire de la rue Saint-Maurice, à Sclayn (Andenne) : une rangée de niches en pierre encastrées dans un mur, le long d'un chemin.\nOpenStreetMap le décrit comme le calvaire et le mur de l'ancienne église paroissiale. À quelques dizaines de mètres se trouvent les ruines de la chapelle de l'ancien cimetière.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Calvaire et mur de l'ancienne église paroissiale de Sclayn, photographie d'Eebie, 22 novembre 2023 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Calvaire_et_mur_de_l%27ancienne_%C3%A9glise_paroissiale_de_Sclayn_Andenne.jpg\nRuines de la chapelle de l'ancien cimetière de Sclayn, photographie d'Eebie, 22 novembre 2023 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Ruines_de_la_chapelle_de_l%E2%80%99ancien_cimeti%C3%A8re_de_Sclayn_Andenne.jpg",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-07",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -19794,10 +19828,21 @@
       },
       "properties": {
         "Nom du site FR": "Château de Chérimont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/75073140",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5F3MJCHFJ3VEGJ377CDM",
+        "Sous-type": "Château résidentiel",
+        "description": "Château de la rue Chérimont, à Sclayn (Andenne), en vallée de Meuse.\nL'article Wikipédia consacré à Sclayn le cite parmi le patrimoine du village. Une carte postale éditée vers 1910, conservée par la bibliothèque de l'université de Gand, le montre déjà.\nLe site du domaine indique qu'il est devenu, depuis plus de 25 ans, un centre de loisirs de 45 hectares : parcours tout-terrain en 4x4 et quad, tir aux clays, paintball, tir à l'arc, club-house et restaurant.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Wikipédia, « Sclayn » | https://fr.wikipedia.org/wiki/Sclayn\nCarte postale « Château de Cherimont », éditions Dinot Frères et C. Baune, vers 1910 (bibliothèque de l'université de Gand, Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Chateau_de_Cherimont_Sclayn_Andenne.jpg\nSite du domaine de Chérimont, « Domaine » | https://cherimont.com/domaine/",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -19811,11 +19856,25 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Espace Muséal d'Andenne",
-        "Catégorie": "Musée",
+        "Nom du site FR": "Grotte Scladina",
+        "Catégorie": "Site archéologique",
         "osm_ref": "way/75238589",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5F5NAGEGWW5DC3Q2PWZ7",
+        "État": "Conservé",
+        "Accès": "Intérieur visitable",
+        "description": "Grotte de la vallée du Ry de Pontainne, au sud-ouest du village de Sclayn (Andenne), sur le coteau de la rive droite de la Meuse.\nSelon l'article Wikipédia qui lui est consacré, des spéléologues du Cercle archéologique sclaynois l'ont découverte en 1971 ; l'Université de Liège participe aux fouilles depuis 1978. Elle a livré des outils du Paléolithique moyen et les traces de deux occupations néandertaliennes, vers 130 000 et 40 000 ans, et a servi de lieu d'inhumation au Néolithique. En 1993, on y a découvert la mâchoire d'un enfant néandertalien, l'Enfant de Sclayn ; ce sont les seuls restes de Néandertal trouvés en Belgique au 20ᵉ siècle. En 2025, des outils en os exhumés en 1982 ont été identifiés comme des os de lion des cavernes.\nLe site archéologique des grottes paléolithiques de Sclayn est classé patrimoine exceptionnel de Wallonie depuis le 27 mai 2009.\nLe site de l'Espace muséal d'Andenne la présente comme l'unique chantier de fouilles préhistoriques de Belgique accessible au public. La visite se fait uniquement avec un archéologue, sur réservation ; le chemin d'accès (170 m de chemin raide et des escaliers) la rend inaccessible aux personnes à mobilité réduite. Tarifs annoncés : adulte 8 €, senior 6 €, 6-18 ans 4 €, gratuit pour les moins de 6 ans et pour tous le premier dimanche du mois, d'avril à novembre.",
+        "Temps_minutes": 90,
+        "Prix_TND": 8,
+        "Source": "Wikipédia, « Grotte Scladina » | https://fr.wikipedia.org/wiki/Grotte_Scladina\nEspace muséal d'Andenne, « La Grotte Scladina » | https://www.ema.museum/scladina\nHoraires et tarifs : Espace muséal d'Andenne, « Infos pratiques - La Grotte Scladina », consultés le 7 novembre 2026 | https://www.ema.museum/visite/infos-grotte\nRégion wallonne, patrimoine exceptionnel, 92003-PEX-0002-01 | https://territoire.wallonie.be/fr/thema/PAT_EXC/92003-PEX-0002-01",
+        "Téléphone": "+32 85 84 96 95",
+        "Horaires": "Visite guidée sur réservation uniquement (± 1 h 30). Du 12 avril au 23 août : samedis, dimanches et jours fériés, et mercredis, jeudis et vendredis des congés scolaires. Du 6 septembre au 1er novembre : premier dimanche du mois et jours fériés. Visites à 11 h (néerlandais) et 14 h (français). Fermé aux visiteurs individuels de décembre à mars ; groupes toute l'année sur réservation.",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -19991,11 +20050,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saints-Pierre-et-Paul",
+        "Nom du site FR": "Église Saints-Pierre-et-Paul (Ville-en-Warêt)",
         "Catégorie": "Église",
         "osm_ref": "way/102597271",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5FR5KXX1XZ816Q7GHCSR",
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "description": "Église paroissiale de Ville-en-Waret, village de l'ancienne commune de Vezin (Andenne).\nSelon la fiche de l'Institut royal du Patrimoine artistique (KIK-IRPA), elle a été construite en 1861, date inscrite au-dessus du portail, sur les plans de l'architecte Émile Coulon, dans un style néoclassique : trois nefs, un chevet semi-circulaire et un clocher en façade. La paroisse, attestée depuis le 17ᵉ siècle, a été supprimée à la Révolution et rétablie en 1848 ; l'ancienne église a été démolie en 1858. Cette fiche la nomme église Saint-Pierre.\nL'article Wikipédia consacré à Ville-en-Waret ajoute qu'elle est bâtie en grès et pierre de taille et entourée de son cimetière.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "KIK-IRPA, BALaT, « église paroissiale - Eglise Saint-Pierre [Ville-en-Warêt] » | https://balat.kikirpa.be/object/10039288\nWikipédia, « Ville-en-Waret » | https://fr.wikipedia.org/wiki/Ville-en-Waret",
+        "maps_ref": "https://maps.app.goo.gl/5QYGWNWXazp7ASy66",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -24415,11 +24487,21 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle Notre-Dame de Liesse",
+        "Nom du site FR": "Chapelle Notre-Dame de Liesse (Bonneville)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/906618711",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5YY29EMJZA7KWFBEER3E",
+        "description": "Chapelle du quartier de Rouvroy, à l'une des entrées du village de Bonneville (Andenne).\nSelon un article de La Dernière Heure, c'est un lieu de dévotion populaire érigé en 1844, où les habitants venaient prier pour que les accouchements se passent bien. L'association Qualité-Village-Wallonie indique qu'elle est inscrite à l'Inventaire du patrimoine immobilier culturel de Wallonie.\nLa même association rapporte que la dernière propriétaire connue est morte en 1959 sans héritier, et que la Ville d'Andenne a pris possession de la chapelle en mai 2021. Avec le comité de village Bonn'Vie Initiatives, elle en a entrepris la restauration : en juillet 2021, un chantier de pionniers scouts a renouvelé le badigeon à la chaux de la maçonnerie en briques ; le clocheton et la toiture restaient à restaurer.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Qualité-Village-Wallonie, « Restauration de la chapelle N-D de Liesse à Bonneville (Andenne) » | https://qvw.be/fr|restauration-de-la-chapelle-n-d-de-liesse-a-bonneville-andenne.html\nLa DH, « Les pios en mode \"réno\" », 7 juillet 2021 | https://www.dhnet.be/archives-journal/2021/07/07/les-pios-en-mode-reno-RHWL7RG6ZFGQNF7QPF5BG3UWPI/",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -47045,8 +47127,19 @@
         "Nom du site FR": "Pré Notre-Dame",
         "Catégorie": "Chapelle",
         "osm_ref": "way/1079116788",
-        "candidate": true,
         "HW_ID": "HW-01M6PM2QEHTY1EZ0EFXGP2ARHW",
+        "Accès": "Extérieur seulement",
+        "description": "Petite chapelle de Sclayn (Andenne).\nOpenStreetMap la nomme Pré Notre-Dame. Aucune autre source n'a été trouvée : le nom et la dédicace restent à confirmer sur place.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "OSM : terrain religieux tracé par fgerin (16 juillet 2022), sans nom ; nom « Pré Notre-Dame » et building=chapel ajoutés par Macumba Macaca (25 avril 2023), sans source. Autour : une croix (node/9892283678), trois bancs, neuf arbres.\nStreet View, mai 2026 (408 rue Docteur Parent) : pelouse entretenue avec une allée depuis la route, bancs, grande croix, et au fond une petite construction couverte de végétation, ouverture sombre entre deux piliers clairs. Grotte (de type Lourdes ?) plutôt que chapelle à porte : à vérifier sur place, avec le sous-type.\nRien sur Wikipédia ni sur Commons (rayon de 250 m) ni en recherche web, le 7 novembre 2026. Komoot : point « Notre-Dame-des Près » (komoot.com/highlight/6029562), position non vérifiée.\nÀ voir sur place : plaque, dédicace, nature de l'édifice.",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -47186,11 +47279,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Chapelle (Samson)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/1424148971",
-        "candidate": true,
         "HW_ID": "HW-01M6PM2RBN5K60CYBAQTTMEW1A",
+        "description": "Petite chapelle de Samson (Thon-Samson, Andenne), entre la voie ferrée et les champs du bord de Meuse.\nOpenStreetMap y indique une chapelle, sans nom. Son existence, sa dédicace et son accès à pied restent à confirmer sur place.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": true,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -47228,24 +47330,6 @@
         "candidate": true,
         "HW_ID": "HW-01M6PM2RJDKGMDVZ6542SADN9B",
         "Zone": "Assesse"
-      }
-    },
-    {
-      "type": "Feature",
-      "geometry": {
-        "type": "Point",
-        "coordinates": [
-          5.0528256,
-          50.4891369
-        ]
-      },
-      "properties": {
-        "Nom du site FR": "Zone Ciel",
-        "Catégorie": "Église",
-        "osm_ref": "way/1575531487",
-        "candidate": true,
-        "HW_ID": "HW-01M6PM2RNSBEK87F4G5E2NGQ11",
-        "Zone": "Andenne"
       }
     },
     {
