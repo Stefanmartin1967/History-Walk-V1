@@ -18919,8 +18919,19 @@
         "Nom du site FR": "Aux morts pour la Belgique 1830-1930",
         "Catégorie": "Monument",
         "osm_ref": "node/11278255129",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5C7KMGR19PJHPMBTNSHB",
+        "Sous-type": "Aux morts",
+        "Accès": "Extérieur seulement",
+        "description": "Monument aux morts de Vezin (Andenne).\nOpenStreetMap le nomme « Aux morts pour la Belgique 1830-1930 ».",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -19006,11 +19017,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Potale Notre-Dame des 7 douleurs",
+        "Nom du site FR": "Potale Notre-Dame des sept douleurs",
         "Catégorie": "Potale",
         "osm_ref": "node/11780364498",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5CGXBBYG8F7T3MKDER61",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Vezin (Andenne), à une centaine de mètres du monument aux héros coloniaux.\nOpenStreetMap et une photographie publiée sur Wikimedia Commons la nomment « Potale Notre-Dame des 7 douleurs ».\nSelon Wikipédia, Notre-Dame des Douleurs, ou des Sept Douleurs, est l'un des titres sous lesquels l'Église catholique vénère la Vierge Marie ; la fête de Notre-Dame des Douleurs a lieu le 15 septembre.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Potale Notre-Dame des 7 douleurs, photographie d'Eebie, 22 novembre 2023 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Potale_Notre-Dame_des_7_douleurs_Vezin_Andenne.jpg\nWikipédia, « Notre-Dame des Douleurs » | https://fr.wikipedia.org/wiki/Notre-Dame_des_Douleurs",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
@@ -48774,6 +48796,40 @@
         "candidate": true,
         "HW_ID": "HW-01M6PM32HE1W4MR7GH0DVA5N4J",
         "Zone": "Beauraing"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          5.0043284,
+          50.5022317
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Potale Santa Maria",
+        "Catégorie": "Potale",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Vezin (Andenne).\nUne photographie publiée sur Wikimedia Commons montre, sous la niche, l'inscription latine « Sancta Maria ora pro nobis » (« Sainte Marie, priez pour nous »), encadrée par le millésime 1761, et le monogramme IHS sculpté au-dessus.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Potale Santa Maria, photographie d'Eebie, 13 octobre 2023 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Potale_Santa_Maria_1761_Vezin_Andenne.jpg",
+        "osm_ref": "node/11278255130",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-07",
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6TESJGMW01SX0BDMV3QYE21",
+        "accessPoint": [
+          5.004262,
+          50.5023252
+        ],
+        "Zone": "Andenne"
       }
     }
   ]
