@@ -6,6 +6,14 @@
 
 ---
 
+- SCOUT : LES POTALES SONT CLASSÉES « POTALE », ET LES CANDIDATS RESTÉS « A DÉFINIR » SONT RECLASSÉS À LA MOISSON (v3.7.486). Constat de Stefan le 06/11/2026 : la Potale Saint-Hubert de Vezin (Andenne, node/8150135169) apparaissait en « Lieu inconnu ».
+  - **Cause** : le Scout moissonnait bien `historic=wayside_shrine`, mais le rangeait « ambigu » (règle de la v3.7.318, quand la catégorie Potale n'existait pas encore ; elle date de la v3.7.465). Sans nom, ces candidats s'affichaient « Lieu inconnu ». Sur la Wallonie, 275 potales étaient en « A définir », dont 181 sans nom.
+  - **Classement** : `wayside_shrine` → Potale (`scout-categories.js`). Une petite chapelle tracée en `building=chapel` reste Chapelle, car les lieux de culte sont testés avant.
+  - **Candidats déjà capturés** : le Scout ne les re-capture jamais (doublons par osm_ref), une règle ajoutée après coup ne les atteignait donc pas. Désormais, la moisson donne leur catégorie aux candidats encore « A définir » dont elle reconnaît l'objet OSM (`scout-reclassify.js`, écriture par `persistPoiEdit`). Le récap le dit : « N candidats « A définir » reclassés ». Jamais une fiche validée, jamais une catégorie choisie à la curation, jamais par proximité. Vaut aussi pour les monuments capturés avant le 05/11/2026 (« Héros Coloniaux » à Vezin → Monument).
+  - Comme toute modification d'un candidat, le reclassement n'apparaît pas dans la liste du Centre de Contrôle. Sur une destination brouillon (Wallonie), il part avec la prochaine publication, qui régénère le fichier entier candidats compris.
+  - Vérifié en preview sur Vezin (port à part, sans jeton) : 3 candidats reclassés (2 potales, 1 monument), icônes mises à jour, catégorie conservée au rechargement et présente dans le fichier que générerait la publication.
+  - Tests : `tests/scout_reclassify.test.js`, `tests/scout_category_mapping.test.js`.
+
 - SUIVI MOBILE : LA MENTION DE LA CARTE EST DE NOUVEAU AFFICHÉE (v3.7.485). Constat du 06/11/2026 : sur le téléphone, la carte ne s'affiche que pendant le suivi, et le suivi masquait tous les contrôles Leaflet, mention comprise. « © OpenStreetMap contributors © CARTO » n'apparaissait donc nulle part sur mobile, alors que c'est une condition de l'usage gratuit du fond Voyager (cf. `map.js`).
   - Seuls les contrôles du haut (zoom, calques) restent remplacés par ceux du suivi. La mention s'affiche en petit (10 px), centrée tout en bas de l'écran, sous les boutons « Nouveau lieu » et « recentrer ». Liens OpenStreetMap et CARTO conservés. Rien ne change sur PC.
   - Styles dans `style/mobile-follow.css` (§1), `style.css?v=8.51`. Vérifié en preview mobile (375×812) sur le circuit de Charleroi : mention lisible, sans chevauchement des boutons.
