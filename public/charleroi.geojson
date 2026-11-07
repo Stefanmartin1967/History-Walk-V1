@@ -29,7 +29,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Monument aux martyrs",
+        "Nom du site FR": "Monument aux martyrs (Charleroi)",
         "Catégorie": "Monument",
         "osm_ref": "node/1392880410",
         "HW_ID": "HW-01M616BMT0WVS0MA2RAVJMWM45",
@@ -1218,7 +1218,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Tour carrée",
+        "Nom du site FR": "Tour carrée (Acoz)",
         "Catégorie": "Site archéologique",
         "osm_ref": "node/14020680901",
         "HW_ID": "HW-01M616BNR9WQKMB7JS6GVFN98J",
@@ -2104,7 +2104,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Pierre",
+        "Nom du site FR": "Église Saint-Pierre (Montignies-sur-Sambre)",
         "Catégorie": "Église",
         "osm_ref": "way/218273125",
         "HW_ID": "HW-01M616BPTAFCEQFANX8N44P62T",
@@ -2423,7 +2423,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Antoine de Padoue",
+        "Nom du site FR": "Église Saint-Antoine de Padoue (Charleroi)",
         "Catégorie": "Église",
         "osm_ref": "way/255950599",
         "HW_ID": "HW-01M616BQ72DMZK225MWPD7JAKJ",
@@ -3114,7 +3114,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle du Sacré-Cœur",
+        "Nom du site FR": "Chapelle du Sacré-Cœur (Charleroi)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/575735788",
         "HW_ID": "HW-01M616BR71ED150ZM8QFWJ0VQR",
@@ -3936,7 +3936,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Christophe",
+        "Nom du site FR": "Église Saint-Christophe (Charleroi)",
         "Catégorie": "Église",
         "osm_ref": "relation/15780121",
         "HW_ID": "HW-01M616BSF5BT9VJD3JTD75HCCM",
@@ -4412,7 +4412,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Monument aux prisonniers politiques",
+        "Nom du site FR": "Monument aux prisonniers politiques (Charleroi)",
         "Catégorie": "Monument",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -4515,7 +4515,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Potale de Notre-Dame des Sept Douleurs",
+        "Nom du site FR": "Potale de Notre-Dame des Sept Douleurs (Thuin)",
         "Catégorie": "Potale",
         "Accès": "Non visitable",
         "description": "Borne-potale au bord de l'allée du Calvaire, dans le Bois du Grand Bon Dieu, à Thuin.\nSelon le panneau d'information, ce petit édifice, connu à Thuin sous le nom de « chapelle Notre-Dame des Sept Douleurs », est une « borne-potale », comme on en trouve en Wallonie et dans le nord de la France : un socle portant une niche, ici en pierre de taille. La niche abrite d'ordinaire la statue d'un saint populaire ou une image de la Vierge ; celle de cette potale n'a laissé aucune trace.\nElle est dédiée à Notre-Dame des Sept Douleurs ; le panneau rappelle que ce titre de Marie renvoie aux sept douleurs que, selon les Évangiles, lui valut l'accompagnement de son Fils.\nDétruite en grande partie par des vandales à la fin du 20ᵉ siècle, elle a été reconstruite et restaurée en 2025 à l'initiative de l'asbl Thuin Petit Patrimoine (ThuPePa), avec le concours du Pôle de la pierre, à Soignies.\nSur place, une statuette occupe aujourd'hui la niche, derrière une grille.",
@@ -17812,7 +17812,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Potale Saint-Hubert",
+        "Nom du site FR": "Potale Saint-Hubert (Vezin)",
         "Catégorie": "Potale",
         "osm_ref": "node/8150135169",
         "HW_ID": "HW-01M6EV58CMQPKAVAHYH5NQMGJS",
@@ -18925,7 +18925,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Aux morts pour la Belgique 1830-1930",
+        "Nom du site FR": "Aux morts pour la Belgique 1830-1930 (Vezin)",
         "Catégorie": "Monument",
         "osm_ref": "node/11278255129",
         "HW_ID": "HW-01M6EV5C7KMGR19PJHPMBTNSHB",
@@ -20315,7 +20315,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Notre-Dame-Auxiliatrice",
+        "Nom du site FR": "Église Notre-Dame-Auxiliatrice (Petit-Warêt)",
         "Catégorie": "Église",
         "osm_ref": "way/152824317",
         "HW_ID": "HW-01M6EV5GWCRCCHZXQ8C5GTD8R3",
@@ -48842,7 +48842,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Potale Santa Maria",
+        "Nom du site FR": "Potale Santa Maria (Vezin)",
         "Catégorie": "Potale",
         "Accès": "Extérieur seulement",
         "description": "Potale de Vezin (Andenne).\nUne photographie publiée sur Wikimedia Commons montre, sous la niche, l'inscription latine « Sancta Maria ora pro nobis » (« Sainte Marie, priez pour nous »), encadrée par le millésime 1761, et le monogramme IHS sculpté au-dessus.",
