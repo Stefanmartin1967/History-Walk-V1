@@ -190,6 +190,52 @@
     backdrop-filter: blur(16px) brightness(0.62);
 }
 
+/* ─────────────────── CADRER LA PHOTO (admin, PC, 07/11/2026) ───────────────────
+   Puce « Cadrer » et barre Annuler / Valider posées par src/hero-framing.js.
+   En bas à gauche : le haut gauche porte « Photos gardées », le haut droit le
+   compteur. Sans habillage de bouton propre : la puce papier fait le visuel.
+   Aucune puce sur un portrait (affiché entier, rien à cadrer). */
+.cartel-hero-frame {
+    position: absolute;
+    left: var(--space-md);
+    bottom: var(--space-md);
+    z-index: 2;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    cursor: pointer;
+}
+.cartel-hero-frame[hidden],
+.hero-portrait ~ .cartel-hero-frame { display: none; }
+.cartel-hero-frame:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; border-radius: var(--radius-pill); }
+.poi-hero.is-framing {
+    cursor: ns-resize;
+    touch-action: none;
+    user-select: none;
+}
+.cartel-hero-framebar {
+    position: absolute;
+    left: var(--space-md);
+    right: var(--space-md);
+    bottom: var(--space-md);
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-sm);
+    cursor: default;
+}
+.cartel-hero-framehint { margin-right: auto; min-width: 0; overflow: hidden; }
+.cartel-hero-framehint > span { overflow: hidden; text-overflow: ellipsis; }
+.cartel-hero-framebtn { cursor: pointer; }
+.cartel-hero-framebtn.is-primary {
+    background: var(--brand);
+    color: var(--on-brand-fg);
+    border-color: var(--brand);
+}
+.cartel-hero-framebtn:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+
 /* ─────────────────── PHOTO DE TRAVAIL (admin, 10/08/2026) ───────────────────
    Image dont Stefan n'est PAS l'auteur (capture Facebook, envoi d'un contact,
    extrait de PDF), affichée en repli quand un lieu pas encore visité n'a

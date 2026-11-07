@@ -56,6 +56,22 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         state.hiddenPoiIds = [];
     });
 
+    it('publie le cadrage des photos (photoFocus) venu de l\'overlay', () => {
+        state.loadedFeatures = [buildFeature('poi_1', { photos: ['photos/a.jpg'] }, { photoFocus: { 'a.jpg': 25 } })];
+        const props = generateMasterGeoJSONData().features[0].properties;
+        expect(props.photoFocus).toEqual({ 'a.jpg': 25 });
+    });
+
+    it('cadrage remis au centre (null ou objet vide) : aucun résidu publié', () => {
+        state.loadedFeatures = [
+            buildFeature('poi_1', { photoFocus: { 'a.jpg': 25 } }, { photoFocus: null }),
+            buildFeature('poi_2', {}, { photoFocus: {} }),
+        ];
+        const [a, b] = generateMasterGeoJSONData().features;
+        expect('photoFocus' in a.properties).toBe(false);
+        expect('photoFocus' in b.properties).toBe(false);
+    });
+
     it('retourne null si aucune feature chargée', () => {
         expect(generateMasterGeoJSONData()).toBeNull();
     });

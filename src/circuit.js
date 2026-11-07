@@ -29,6 +29,7 @@ import { stripCircuitSignature } from './circuit-description.js';
 import { rememberPublishedTrack } from './track-fingerprint.js';
 import { stampVisited } from './visited-state.js';
 import { setHeroPhoto } from './hero-photo.js';
+import { getPhotoFocus } from './photo-focus.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -420,6 +421,7 @@ async function applyCircuitHero() {
     }
 
     let heroUrl = null;
+    let heroFocus = null; // cadrage de la photo publiée retenue (photo-focus.js)
     let totalPhotoCount = 0;
 
     // Passe 1 : photos (getPoiProp = overlay userData prioritaire). Compte aussi le
@@ -429,7 +431,7 @@ async function applyCircuitHero() {
         const published = getPoiProp(poi, 'photos');
         if (Array.isArray(published) && published.length > 0) {
             totalPhotoCount += published.length;
-            if (!heroUrl) heroUrl = published[0];
+            if (!heroUrl) { heroUrl = published[0]; heroFocus = getPhotoFocus(poi, heroUrl); }
         }
     }
 
@@ -475,6 +477,7 @@ async function applyCircuitHero() {
     setHeroPhoto(cover, heroUrl, {
         gradient: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35))',
         cssVar: '--circuit-hero-bg',
+        focusY: heroFocus,
     });
 
     const badge = document.createElement('span');

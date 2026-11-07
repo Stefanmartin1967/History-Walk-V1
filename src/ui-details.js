@@ -20,6 +20,8 @@ import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
 import { openWebSearch } from './web-search.js';
 import { setHeroPhoto } from './hero-photo.js';
+import { getPhotoFocus } from './photo-focus.js';
+import { attachHeroFraming, canFrameHero } from './hero-framing.js';
 
 // Aide « ? » général de la fiche d'un lieu : le patron rend l'icône via createIcons.
 // Idempotent (configureHelp est déjà appelé par ui-photo-batch et ui-circuit-list ;
@@ -66,13 +68,23 @@ const POI_HERO_PHOTO = {
     cssVar: '--poi-hero-bg',
 };
 
-// Applique le background-image du hero via CSSOM (CSP-safe : 'unsafe-inline' style retiré).
-function applyHeroBackground() {
+// Applique le background-image du hero via CSSOM (CSP-safe : 'unsafe-inline' style retiré),
+// avec le cadrage vertical enregistré pour cette photo (photo-focus.js) et, en
+// admin sur PC, la puce « Cadrer » (hero-framing.js) une fois la photo mesurée.
+function applyHeroBackground(feature) {
     const hero = document.getElementById('poi-hero');
     if (!hero) return;
     const url = hero.dataset.bgUrl;
     if (!url) return;
-    setHeroPhoto(hero, url, POI_HERO_PHOTO);
+    const poiId = getPoiId(feature);
+    const framable = canFrameHero({ isMobile: isMobileView(), url });
+    setHeroPhoto(hero, url, {
+        ...POI_HERO_PHOTO,
+        focusY: getPhotoFocus(feature, url),
+        onMeasured: (measured) => {
+            if (framable && !measured.portrait) attachHeroFraming(hero, { feature, poiId, url, measured });
+        },
+    });
 }
 
 // Re-render la fiche POI courante après save de la modale Photos (le hero
@@ -527,6 +539,9 @@ function setupHeroClick(poiId) {
     if (!hero.classList.contains('has-photo') && !hero.classList.contains('is-clickable')) return;
     const handleOpen = async (e) => {
         if (e.target.closest('.poi-back-pill')) return;
+        // Mode « Cadrer » (hero-framing.js) : glisser la photo ne doit pas
+        // ouvrir la visionneuse.
+        if (hero.classList.contains('is-framing') || e.target.closest('.cartel-hero-frame')) return;
         if (hero.classList.contains('has-photo')) {
             openHeroViewer(poiId);
             return;
@@ -800,7 +815,7 @@ export function openDetailsPanel(featureId, circuitIndex = null, fromSearch = fa
     }
 
     // Background hero (CSSOM, CSP-safe)
-    applyHeroBackground();
+    applyHeroBackground(feature);
 
     // Bindings
     const poiId = getPoiId(feature);
