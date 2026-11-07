@@ -893,11 +893,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "Potale",
+        "Nom du site FR": "Chapelle Saint-Donat (Wayaux)",
+        "Catégorie": "Chapelle",
         "osm_ref": "node/9025129346",
-        "candidate": true,
         "HW_ID": "HW-01M616BNDFFAGB6RZ380CDCD82",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle qui jouxte la ferme de la Tourelle, rue de Gosselies, à Wayaux.\nSelon la promenade « À travers les plaines » de la commune des Bons Villers, elle fut érigée peu après la Seconde Guerre mondiale à la demande de l'ancien agriculteur de la ferme, dont les chevaux avaient été tués par la foudre, et dédiée à saint Donat, protecteur contre la foudre.\nAppelée Chapelle Saint Donat sur Maps ; OpenStreetMap y indique une potale, sans nom.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Commune des Bons Villers, « À travers les plaines. Promenade à Wayaux » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-wayaux.pdf/@@download/file/RV_001_Wayaux.pdf",
+        "maps_ref": "https://maps.app.goo.gl/Rt6JLadMthb7fsVx5",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "Sous-type": "À porte",
         "Zone": "Les Bons Villers"
       }
     },
@@ -1282,7 +1295,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien château de Loverval",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "node/14293364453",
         "candidate": true,
         "HW_ID": "HW-01M616BNSX5CT2BSAF20F51XFX",
@@ -1763,7 +1776,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Acoz",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/172162441",
         "candidate": true,
         "HW_ID": "HW-01M616BPD104MDEG4GHYPCBVA3",
@@ -1853,7 +1866,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame d'Heigne",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/195535110",
         "candidate": true,
         "HW_ID": "HW-01M616BPGJJV697CNSRZ0F8NWJ",
@@ -1907,7 +1920,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Saint-Vaast",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/207010890",
         "candidate": true,
         "HW_ID": "HW-01M616BPJQXXNMGC8ZM6A427DR",
@@ -1979,7 +1992,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame des Affligés",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/207698071",
         "candidate": true,
         "HW_ID": "HW-01M616BPN42QNETFCMC27PD5W3",
@@ -2069,7 +2082,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Monceau",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/217337810",
         "candidate": true,
         "HW_ID": "HW-01M616BPRY9600BW5DYDB6CMMH",
@@ -2154,7 +2167,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Trazegnies",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/220663325",
         "candidate": true,
         "HW_ID": "HW-01M616BPVKWGT9GYV1Y79HAR70",
@@ -2388,7 +2401,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Halloint",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/253693853",
         "candidate": true,
         "HW_ID": "HW-01M616BQ5E3FVWQD4C7RT1KT69",
@@ -2474,7 +2487,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame de Lourdes",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/260209395",
         "candidate": true,
         "HW_ID": "HW-01M616BQ8GYH3R61C5PY1TS04Y",
@@ -2704,7 +2717,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Saint-Roch",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/361371603",
         "candidate": true,
         "HW_ID": "HW-01M616BQK0Q8AC5F12R8FCREQ0",
@@ -2722,7 +2735,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fontaine-l'Évêque",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/366295242",
         "candidate": true,
         "HW_ID": "HW-01M616BQKSGDPQ584H5Y5T3QQT",
@@ -2758,7 +2771,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame De Lourdes",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/372460393",
         "candidate": true,
         "HW_ID": "HW-01M616BQNM95WKB5AZFZRAFTV1",
@@ -2776,7 +2789,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Saint-Antoine",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/372460394",
         "candidate": true,
         "HW_ID": "HW-01M616BQPDZ191X21B5WM7ZAB3",
@@ -2794,7 +2807,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/374160955",
         "candidate": true,
         "HW_ID": "HW-01M616BQQ8P8PDY3Y6VGM9TTM8",
@@ -2830,7 +2843,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/377001441",
         "candidate": true,
         "HW_ID": "HW-01M616BQS5VZQQ6Y5T8DFHXMKF",
@@ -2902,7 +2915,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/422198119",
         "candidate": true,
         "HW_ID": "HW-01M616BQX50QBKXZ4ZXWVH05KH",
@@ -2992,7 +3005,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Bois-Lombut",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/472120845",
         "candidate": true,
         "HW_ID": "HW-01M616BR24H9ZY917BMVKJR18Q",
@@ -3453,7 +3466,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Saint-Roch",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/812609376",
         "candidate": true,
         "HW_ID": "HW-01M616BRQ6KCD2PB7Q79PFVFJ6",
@@ -3613,7 +3626,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle du Ruau",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/854575763",
         "candidate": true,
         "HW_ID": "HW-01M616BRYTSVRAB9F7ETB4GND2",
@@ -3649,7 +3662,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/857345642",
         "candidate": true,
         "HW_ID": "HW-01M616BS0KS04ZHPHQ01M3MX3E",
@@ -3757,7 +3770,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle du Bosquet Chènoi",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/975266536",
         "candidate": true,
         "HW_ID": "HW-01M616BS6GCWPHRMYAH497BX80",
@@ -3774,11 +3787,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Sainte-Vierge",
+        "Nom du site FR": "Église Sainte-Vierge (Wayaux)",
         "Catégorie": "Église",
         "osm_ref": "way/975266540",
-        "candidate": true,
         "HW_ID": "HW-01M616BS7E0W9PBYD1SB1RVWTC",
+        "Sous-type": "Catholique",
+        "Accès": "Intérieur visitable",
+        "description": "Église du village de Wayaux, rue de Gosselies, sur la place du village.\nSelon la promenade « À travers les plaines » de la commune des Bons Villers, l'église actuelle est une construction moderne de 1989, bâtie sur les ruines de l'ancienne église de 1874, dont l'ancien chœur est encore visible.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Commune des Bons Villers, « À travers les plaines. Promenade à Wayaux » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-wayaux.pdf/@@download/file/RV_001_Wayaux.pdf",
+        "maps_ref": "https://maps.app.goo.gl/w3c87yH3kYD9xZJG6",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Les Bons Villers"
       }
     },
@@ -3811,7 +3837,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame du Try d'Haies",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1002076838",
         "candidate": true,
         "HW_ID": "HW-01M616BS8YXE9J3GSSV4TMEWAN",
@@ -3829,7 +3855,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1002077077",
         "candidate": true,
         "HW_ID": "HW-01M616BS9W0T1B3JXCNWN8WTH6",
@@ -3847,7 +3873,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Sainte-Anne",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1013142033",
         "candidate": true,
         "HW_ID": "HW-01M616BSAKH1WAM57MDBGXYEEF",
@@ -3901,7 +3927,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1155782105",
         "candidate": true,
         "HW_ID": "HW-01M616BSDHM0C720DDK7T1A2R6",
@@ -3919,7 +3945,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1160421467",
         "candidate": true,
         "HW_ID": "HW-01M616BSEDDARVQ5ZP5CD8YS3C",
@@ -4035,7 +4061,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1277611279",
         "candidate": true,
         "HW_ID": "HW-01M616BSJJPHGRAZYD234BJ0QW",
@@ -4053,7 +4079,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1277611304",
         "candidate": true,
         "HW_ID": "HW-01M616BSK7XBTSR7NCFYHJ53XY",
@@ -4071,7 +4097,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Pirmez",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1334347516",
         "candidate": true,
         "HW_ID": "HW-01M616BSM7J5VAS0D5BAYHT19A",
@@ -4107,7 +4133,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Haussy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1357607282",
         "candidate": true,
         "HW_ID": "HW-01M616BSNV84C4GH78X5VDR5Y1",
@@ -4143,7 +4169,7 @@
       },
       "properties": {
         "Nom du site FR": "Notre-Dame des Bons Secours",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1359683160",
         "candidate": true,
         "HW_ID": "HW-01M616BSR1XAZCV53F1GNBH97J",
@@ -4179,7 +4205,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Bilquin-de Cartier",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1378690676",
         "candidate": true,
         "HW_ID": "HW-01M616BSSPQ5E74MN9QKSBARHB",
@@ -4197,7 +4223,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Lausprelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1413331934",
         "candidate": true,
         "HW_ID": "HW-01M616BSTCF6E5XDJ5HS509VPP",
@@ -4215,7 +4241,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame-de-Fátima de Pironchamps",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1414858884",
         "candidate": true,
         "HW_ID": "HW-01M616BSV8W2738HPQEG1EAMH5",
@@ -4233,7 +4259,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1414995104",
         "candidate": true,
         "HW_ID": "HW-01M616BSW2XD6KCXM0V3S8HJJS",
@@ -4341,7 +4367,7 @@
       },
       "properties": {
         "Nom du site FR": "Chapelle Notre-Dame au Bois",
-        "Catégorie": "Église",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/1419011199",
         "candidate": true,
         "HW_ID": "HW-01M616BT2RHF77SP30963CSKP6",
@@ -4377,7 +4403,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Rianwelz",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1569109848",
         "candidate": true,
         "HW_ID": "HW-01M616BT4HSCRQGMGQGJC1C373",
@@ -4584,7 +4610,7 @@
       },
       "properties": {
         "Nom du site FR": "Le Moulin Brûlé",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/319243440",
         "candidate": true,
         "HW_ID": "HW-01M6EV45CXRYC575667DEYTE9J",
@@ -5556,7 +5582,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien Moulin",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/3452345761",
         "candidate": true,
         "HW_ID": "HW-01M6EV46Y5CXHCQH91JZQ3DKBD",
@@ -7536,7 +7562,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Rouveroy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/130442808",
         "candidate": true,
         "HW_ID": "HW-01M6EV4B9R6BN9YZ8SQMPPV4W2",
@@ -7572,7 +7598,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Princes de Croÿ-Solre",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/132407160",
         "candidate": true,
         "HW_ID": "HW-01M6EV4BBZCBQJA1AHV8FPKYFK",
@@ -7734,7 +7760,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Ecaussinnes Lalaing",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/141553461",
         "candidate": true,
         "HW_ID": "HW-01M6EV4BQ30FK2ERMSXGFQ41MY",
@@ -7842,7 +7868,7 @@
       },
       "properties": {
         "Nom du site FR": "Maison de la Laïcité",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/153815517",
         "candidate": true,
         "HW_ID": "HW-01M6EV4BYWKWVW5XQEVANR6VYP",
@@ -7986,7 +8012,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Savoye",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/171947603",
         "candidate": true,
         "HW_ID": "HW-01M6EV4C8B707XKMPR8E3KTTHJ",
@@ -8022,7 +8048,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Thieusies",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/172046952",
         "candidate": true,
         "HW_ID": "HW-01M6EV4CAE6NVMQZA83PE9TEMW",
@@ -8346,7 +8372,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Hourpes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/220327358",
         "candidate": true,
         "HW_ID": "HW-01M6EV4D54A2ZYCFAD0MHFHTQE",
@@ -8364,7 +8390,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Saint-Pierre",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/227392940",
         "candidate": true,
         "HW_ID": "HW-01M6EV4D6HD69XKMT0XG8WTY3S",
@@ -8562,7 +8588,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Misonne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/303672658",
         "candidate": true,
         "HW_ID": "HW-01M6EV4DVXXCSZQ146EHX0N496",
@@ -8850,7 +8876,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Havré",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/372199603",
         "candidate": true,
         "HW_ID": "HW-01M6EV4ETKMWW6WM70KV2XCPK2",
@@ -9084,7 +9110,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Hutte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/485937460",
         "candidate": true,
         "HW_ID": "HW-01M6EV4FJ4P3FV237FWZWP1SXM",
@@ -9156,7 +9182,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Priches",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/504039551",
         "candidate": true,
         "HW_ID": "HW-01M6EV4FTQSHGJ4SN0W5DFS218",
@@ -9264,7 +9290,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Miremont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/530098582",
         "candidate": true,
         "HW_ID": "HW-01M6EV4G61WYXEYKRNYRHNAJJB",
@@ -9318,7 +9344,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Tyberchamps",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/618602809",
         "candidate": true,
         "HW_ID": "HW-01M6EV4GCYZ495HNXCYB169KVM",
@@ -9516,7 +9542,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de l'Espinette",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/803870324",
         "candidate": true,
         "HW_ID": "HW-01M6EV4H6Z671CP3EDW22GE369",
@@ -9552,7 +9578,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Scrawelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/807330305",
         "candidate": true,
         "HW_ID": "HW-01M6EV4HB4M0BBY2R0WSYX1S64",
@@ -9606,7 +9632,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Bois-le-Comte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/809980614",
         "candidate": true,
         "HW_ID": "HW-01M6EV4HHAQ6EBPWVXGFX24Z0M",
@@ -9696,7 +9722,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Ysembart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/902344528",
         "candidate": true,
         "HW_ID": "HW-01M6EV4HW84TT1XB89PSYSDRJG",
@@ -9840,7 +9866,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Bois d'Angre",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1122619941",
         "candidate": true,
         "HW_ID": "HW-01M6EV4JC99AHS35E057BVSZFD",
@@ -10407,7 +10433,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1200774874",
         "candidate": true,
         "HW_ID": "HW-01M6EV4KW7YV0NDRHGCN56WY9J",
@@ -10551,7 +10577,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Familleureux",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1220079537",
         "candidate": true,
         "HW_ID": "HW-01M6EV4M7VA0BJ999DMBQ6EWKG",
@@ -10623,7 +10649,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1335742628",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MD3ZNDATBB5FF4B7CX2",
@@ -10641,7 +10667,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Clerfayt",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1338108528",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MFPCVQGXFZG5ZX9BF8G",
@@ -10677,7 +10703,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Jolimetz",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1341362050",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MJERKPSC9RV6T0K53ZN",
@@ -10695,7 +10721,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Epinois",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1341362803",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MKRK942A6C7B66G03XT",
@@ -10785,7 +10811,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Beaulieu",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1350669941",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MTVEEYQX5VYYDXS9GB5",
@@ -10803,7 +10829,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Bon Vouloir",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1354682754",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MWEKQP7D4ZFCMM55FXY",
@@ -10821,7 +10847,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Buisseret",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1356204137",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MXY0CTR4XY1BBKHHHWC",
@@ -10839,7 +10865,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Marche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1357604734",
         "candidate": true,
         "HW_ID": "HW-01M6EV4MZFPQTXRP08RFP7FV8A",
@@ -10875,7 +10901,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Trichon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1365313185",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N25X7026583W3SX46RC",
@@ -10893,7 +10919,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Alcantara",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1365323964",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N3E6TDYCBF3CDXKYZAZ",
@@ -10911,7 +10937,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Saint-Vincent",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1369785932",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N4RQMEZVW1BQFNE4932",
@@ -10947,7 +10973,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de la Roquette",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1373188318",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N76E7NVEY3SBPEQTGJJ",
@@ -10965,7 +10991,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Scaron",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1383610053",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N8AB1PC07ZFPFW28DBA",
@@ -10983,7 +11009,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Blase",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1383610751",
         "candidate": true,
         "HW_ID": "HW-01M6EV4N9E3Z1YWKHH9C02MRPF",
@@ -11019,7 +11045,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Hayettes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1569647206",
         "candidate": true,
         "HW_ID": "HW-01M6EV4NC0JZJN2G31CJA9S5CG",
@@ -11037,7 +11063,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fonteni",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1571944956",
         "candidate": true,
         "HW_ID": "HW-01M6EV4ND4XWV2424K74T8WAEB",
@@ -11055,7 +11081,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Feluy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/21692657",
         "candidate": true,
         "HW_ID": "HW-01M6EV4NE9JKNFR5PJQSRBMC50",
@@ -11343,7 +11369,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin des Golettes",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/853764265",
         "candidate": true,
         "HW_ID": "HW-01M6EV4P21H3MMWWN0DP65WAZS",
@@ -12171,7 +12197,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Sombreffe",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "node/5942793927",
         "candidate": true,
         "HW_ID": "HW-01M6EV4R4HWAJEQM8B4BK2R8BG",
@@ -13044,7 +13070,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de La Bruyère",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/102548791",
         "candidate": true,
         "HW_ID": "HW-01M6EV4T94CQZEM85FK99FDADX",
@@ -13339,7 +13365,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Bailli",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/180230624",
         "candidate": true,
         "HW_ID": "HW-01M6EV4V0135B0QW4WQ7FWJ5C1",
@@ -13357,7 +13383,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Winson",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/183419326",
         "candidate": true,
         "HW_ID": "HW-01M6EV4V1EEA0RFKF9ZW2NEDK9",
@@ -13614,7 +13640,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Pirmez",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/226723953",
         "candidate": true,
         "HW_ID": "HW-01M6EV4VP7MVDYX60EZXRC7KAF",
@@ -13632,7 +13658,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Houtain-le-Mont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/233988388",
         "candidate": true,
         "HW_ID": "HW-01M6EV4VR5BSB14FP33K50TE5Q",
@@ -13974,7 +14000,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Spy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/280027541",
         "candidate": true,
         "HW_ID": "HW-01M6EV4WVPV0A4XNJ0Q239JN59",
@@ -13992,7 +14018,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Acosse",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/284271596",
         "candidate": true,
         "HW_ID": "HW-01M6EV4WX7S3444ETSK1MQN91G",
@@ -14028,7 +14054,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Wanfercéee",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/301069343",
         "candidate": true,
         "HW_ID": "HW-01M6EV4X0QRYFV14B3MBX0SAZ6",
@@ -14118,7 +14144,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Falnuée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/316377853",
         "candidate": true,
         "HW_ID": "HW-01M6EV4X8AM4M6PWGRR2B0X41V",
@@ -14244,7 +14270,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Sart-Eustache",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/368454208",
         "candidate": true,
         "HW_ID": "HW-01M6EV4XMYRF3AN4R6YMRC89RV",
@@ -14280,7 +14306,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Soupart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/369242596",
         "candidate": true,
         "HW_ID": "HW-01M6EV4XRMYKBBNZ6E9HWPWSRM",
@@ -14388,7 +14414,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme-château de Tongrenelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/394164522",
         "candidate": true,
         "HW_ID": "HW-01M6EV4Y428H4XB4N93YW7NS44",
@@ -14406,7 +14432,7 @@
       },
       "properties": {
         "Nom du site FR": "Château ferme de Quirini",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/400594714",
         "candidate": true,
         "HW_ID": "HW-01M6EV4Y5Y2789RGECNHRN6D99",
@@ -14442,7 +14468,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Tongrinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/451294172",
         "candidate": true,
         "HW_ID": "HW-01M6EV4Y9F2A9YTWZD1X9HGJ7S",
@@ -14460,7 +14486,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Hermoye",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/484207997",
         "candidate": true,
         "HW_ID": "HW-01M6EV4YB2HQV6N0SMD1W15ZCY",
@@ -14532,7 +14558,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme-château de Balâtre",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/560976969",
         "candidate": true,
         "HW_ID": "HW-01M6EV4YJZ8W6B1V3Z42EJ0KCQ",
@@ -14568,7 +14594,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de la Fluette",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/577348553",
         "candidate": true,
         "HW_ID": "HW-01M6EV4YNY3XH50BQTCY8ZB3FG",
@@ -14712,7 +14738,7 @@
       },
       "properties": {
         "Nom du site FR": "Petite cense des Monts",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/733842095",
         "candidate": true,
         "HW_ID": "HW-01M6EV4Z30RWHQGB50TDZA2TEE",
@@ -14885,7 +14911,7 @@
       },
       "properties": {
         "Nom du site FR": "Nouveau château de Baulet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/741212407",
         "candidate": true,
         "HW_ID": "HW-01M6EV4ZGXJG11PJE0400KJXK6",
@@ -14903,7 +14929,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin à eau d'Onoz",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/743626081",
         "candidate": true,
         "HW_ID": "HW-01M6EV4ZJE82AT736WV8HY65H3",
@@ -15095,7 +15121,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Tour",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/976652056",
         "candidate": true,
         "HW_ID": "HW-01M6EV50392GR9PE54GVNBKMWW",
@@ -15293,7 +15319,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de l'Escaille",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1091955737",
         "candidate": true,
         "HW_ID": "HW-01M6EV50PKVFTF8DNBQ92PK1VA",
@@ -15329,7 +15355,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Mielmont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1095160008",
         "candidate": true,
         "HW_ID": "HW-01M6EV50TDKEXKVANSZ87FM3YD",
@@ -15430,7 +15456,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Foriet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1192630026",
         "candidate": true,
         "HW_ID": "HW-01M6EV514ZANPTAK10EZXS2BMF",
@@ -15448,7 +15474,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin du Châtelet",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1224815504",
         "candidate": true,
         "HW_ID": "HW-01M6EV518ETKWNYMRHQGEETCMY",
@@ -15484,7 +15510,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Cocriamont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1270105800",
         "candidate": true,
         "HW_ID": "HW-01M6EV51CBGZ8CP2K540PE75DC",
@@ -15502,7 +15528,7 @@
       },
       "properties": {
         "Nom du site FR": "Le Nouveau Châtelet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1270105807",
         "candidate": true,
         "HW_ID": "HW-01M6EV51DXC4WGNN03757XTKJV",
@@ -15520,7 +15546,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Cognée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1270720433",
         "candidate": true,
         "HW_ID": "HW-01M6EV51FF6DC7QDXZH3FGY7EZ",
@@ -15538,7 +15564,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Hutte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1279607059",
         "candidate": true,
         "HW_ID": "HW-01M6EV51H1EFPTKYWV7QF4679B",
@@ -15556,7 +15582,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de la Jouerie",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1279628514",
         "candidate": true,
         "HW_ID": "HW-01M6EV51JW1YD91BW1CAH2D7CJ",
@@ -15574,7 +15600,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Paix",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1414994197",
         "candidate": true,
         "HW_ID": "HW-01M6EV51MCHWDX8Y2BBR4RTYB4",
@@ -15664,7 +15690,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Taravisée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1478594289",
         "candidate": true,
         "HW_ID": "HW-01M6EV51WJXAZQZFCWR2KN7DEP",
@@ -15682,7 +15708,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme du Chêne.",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1478601178",
         "candidate": true,
         "HW_ID": "HW-01M6EV51Y1GG9Q725BPWV3XVJZ",
@@ -15700,7 +15726,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Belle-Motte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1478616621",
         "candidate": true,
         "HW_ID": "HW-01M6EV51ZMJ4TWNN4R4C3VRXHF",
@@ -15718,7 +15744,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Vichenet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1479333717",
         "candidate": true,
         "HW_ID": "HW-01M6EV521C2EFBR5C81E38P2FW",
@@ -15736,7 +15762,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Dames",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1488812567",
         "candidate": true,
         "HW_ID": "HW-01M6EV522XYHB57XTWY4G8H07J",
@@ -15772,7 +15798,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien château du Voisin",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1529679265",
         "candidate": true,
         "HW_ID": "HW-01M6EV526DFF8NYN8SHCGYWQZJ",
@@ -15808,7 +15834,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin à vent",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1530020266",
         "candidate": true,
         "HW_ID": "HW-01M6EV529HT0G8YF51C0Q8ES2H",
@@ -19889,7 +19915,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Crupet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/89795704",
         "candidate": true,
         "HW_ID": "HW-01M6EV5F7BQNPW7VTN6Q2TR47C",
@@ -19943,7 +19969,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Arche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/89831411",
         "candidate": true,
         "HW_ID": "HW-01M6EV5FD07XMHGMD84FMV1J8Y",
@@ -20100,7 +20126,7 @@
       },
       "properties": {
         "Nom du site FR": "Le Moulin de l'Abbaye",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/108040133",
         "candidate": true,
         "HW_ID": "HW-01M6EV5FVZXWZCSM6G0W5AW0CK",
@@ -20244,7 +20270,7 @@
       },
       "properties": {
         "Nom du site FR": "Citadelle de Namur",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/121629346",
         "candidate": true,
         "HW_ID": "HW-01M6EV5GCHZDBGY7ZB27MW2137",
@@ -20526,7 +20552,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Flawinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/168671063",
         "candidate": true,
         "HW_ID": "HW-01M6EV5H9KR4D92A2QAAG5ZCBD",
@@ -20634,7 +20660,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Zualart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/199083616",
         "candidate": true,
         "HW_ID": "HW-01M6EV5HN5569C3C9V1AWTE8D7",
@@ -20652,7 +20678,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Wartet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/201969995",
         "candidate": true,
         "HW_ID": "HW-01M6EV5HQ0WP8AM1ZX88P2ZVN2",
@@ -20670,7 +20696,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Dave",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/204046448",
         "candidate": true,
         "HW_ID": "HW-01M6EV5HS29VJPYT522N7H42FR",
@@ -20688,7 +20714,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de l'Islia",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/204046450",
         "candidate": true,
         "HW_ID": "HW-01M6EV5HTYXED5G8CFMANMV1X3",
@@ -20706,7 +20732,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Petit-Leez",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/205943569",
         "candidate": true,
         "HW_ID": "HW-01M6EV5HWP0678DKF3J8XJRPDX",
@@ -20790,7 +20816,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Brumagne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/232410343",
         "candidate": true,
         "HW_ID": "HW-01M6EV5J43NEYPWRQPNBNA12QD",
@@ -20862,7 +20888,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Namur",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/241556029",
         "candidate": true,
         "HW_ID": "HW-01M6EV5JC6Z73J0221FTMGQA0W",
@@ -20997,7 +21023,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Fosses",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/244162699",
         "candidate": true,
         "HW_ID": "HW-01M6EV5JRH9HMB7KT2WM1W8HP9",
@@ -21231,7 +21257,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-Ferme de la Falize",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/282047866",
         "candidate": true,
         "HW_ID": "HW-01M6EV5KJ06TG4QKAP5XAJYH5R",
@@ -21249,7 +21275,7 @@
       },
       "properties": {
         "Nom du site FR": "Cercle de Wallonie",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/282637401",
         "candidate": true,
         "HW_ID": "HW-01M6EV5KKT6HBNHH92SFXEYX5S",
@@ -21267,7 +21293,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Rougemont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/284629765",
         "candidate": true,
         "HW_ID": "HW-01M6EV5KNM7VDBD5RFEAQZ535H",
@@ -21339,7 +21365,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Distillerie",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/298319925",
         "candidate": true,
         "HW_ID": "HW-01M6EV5KXM0VZZE3KMDS1BG8YR",
@@ -21357,7 +21383,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/314646833",
         "candidate": true,
         "HW_ID": "HW-01M6EV5KZEZNW3VP3TJZW19D9D",
@@ -21375,7 +21401,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Arthey",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/314646837",
         "candidate": true,
         "HW_ID": "HW-01M6EV5M1D5VH4EYNEQDG166AF",
@@ -21465,7 +21491,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-Ferme Ramet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/370498354",
         "candidate": true,
         "HW_ID": "HW-01M6EV5MBBWCKNBJ20JZ9RPB71",
@@ -21537,7 +21563,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Arenberg",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/370638316",
         "candidate": true,
         "HW_ID": "HW-01M6EV5MKC6GD7Q17A4NQS5857",
@@ -21555,7 +21581,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Hulplanche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/370652323",
         "candidate": true,
         "HW_ID": "HW-01M6EV5MNDEM1V87GQYYFEEBH7",
@@ -21591,7 +21617,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Floriffoux",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/371417767",
         "candidate": true,
         "HW_ID": "HW-01M6EV5MS9T7HKZPB13TYS3K0G",
@@ -21609,7 +21635,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Soye",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/371417768",
         "candidate": true,
         "HW_ID": "HW-01M6EV5MV2HC9ZT6TPRQZYQ0AB",
@@ -21681,7 +21707,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Moisnil",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/377672934",
         "candidate": true,
         "HW_ID": "HW-01M6EV5N2S4MGVG6PX7WJEQWWH",
@@ -21699,7 +21725,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Waret",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/379076252",
         "candidate": true,
         "HW_ID": "HW-01M6EV5N4XTXVZTP4YJ2XPKMZK",
@@ -21789,7 +21815,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de l'Arton",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/389597933",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NEB4MAFRP7AMN3421XK",
@@ -21825,7 +21851,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Jennevaux",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/397035312",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NJ9V0SBKM7VVGCW6D5Z",
@@ -21861,7 +21887,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Faulx",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/397741855",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NNYDF9J1P1YC9MP7BG2",
@@ -21879,7 +21905,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Bayard",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/398240838",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NR42DMV3A60JV283RZ3",
@@ -21897,7 +21923,7 @@
       },
       "properties": {
         "Nom du site FR": "Manoir Saint-Germain",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/398240851",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NSYAAFCEYZDFPBAY4KQ",
@@ -21915,7 +21941,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Baron",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/398900390",
         "candidate": true,
         "HW_ID": "HW-01M6EV5NVV0K3JKH7SAH24DFBT",
@@ -21951,7 +21977,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Ferooz",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/400117786",
         "candidate": true,
         "HW_ID": "HW-01M6EV5P028NFGFTGA3NDNQSDJ",
@@ -21969,7 +21995,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Tillier",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/401756120",
         "candidate": true,
         "HW_ID": "HW-01M6EV5P1XVNG5TJHZ1GGME4DN",
@@ -21987,7 +22013,7 @@
       },
       "properties": {
         "Nom du site FR": "Centre d'Action Laïque",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/416032511",
         "candidate": true,
         "HW_ID": "HW-01M6EV5P5VTY36CPSFGCZ60DKE",
@@ -22077,7 +22103,7 @@
       },
       "properties": {
         "Nom du site FR": "Élysette",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/444268272",
         "candidate": true,
         "HW_ID": "HW-01M6EV5PG5AS6BH4AFSS0A85ZD",
@@ -22203,7 +22229,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Arville",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/460962214",
         "candidate": true,
         "HW_ID": "HW-01M6EV5PYR9EPRMA5KXN7TXV1W",
@@ -22239,7 +22265,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Amée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/499811294",
         "candidate": true,
         "HW_ID": "HW-01M6EV5Q30DS0EHYCX9A44GKRY",
@@ -22383,7 +22409,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Les Hayettes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/586339586",
         "candidate": true,
         "HW_ID": "HW-01M6EV5QJFZ2DED7VAYE9788TN",
@@ -22815,7 +22841,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Grottes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/627435050",
         "candidate": true,
         "HW_ID": "HW-01M6EV5S1MFCWAMXQQ6713RM1R",
@@ -22923,7 +22949,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Rond-Chêne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/636250631",
         "candidate": true,
         "HW_ID": "HW-01M6EV5SDM4NJ605534CFD31ME",
@@ -22941,7 +22967,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Perche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/636628292",
         "candidate": true,
         "HW_ID": "HW-01M6EV5SFM10SDHBSE84E1B8GQ",
@@ -22995,7 +23021,7 @@
       },
       "properties": {
         "Nom du site FR": "ACIS ASBL Accueil",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/637602246",
         "candidate": true,
         "HW_ID": "HW-01M6EV5SQS5FHW4N62FVN2J99A",
@@ -23067,7 +23093,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Le Moûtier",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/639463258",
         "candidate": true,
         "HW_ID": "HW-01M6EV5T08KWWT57EG7ZVGKW5F",
@@ -23103,7 +23129,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fooz",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/640303914",
         "candidate": true,
         "HW_ID": "HW-01M6EV5T4NXQP0S0VPETT2XZJP",
@@ -23121,7 +23147,7 @@
       },
       "properties": {
         "Nom du site FR": "Villa Douxchamps",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/640318594",
         "candidate": true,
         "HW_ID": "HW-01M6EV5T6MVXD7JBS9VG3DFGGA",
@@ -23175,7 +23201,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Rivière",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/648193569",
         "candidate": true,
         "HW_ID": "HW-01M6EV5TD10A7XVJ1EDSV824JC",
@@ -23193,7 +23219,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Reppeau",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/648273593",
         "candidate": true,
         "HW_ID": "HW-01M6EV5TF2V8DDA76YXW7ND0SF",
@@ -23211,7 +23237,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Wierde",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/648273603",
         "candidate": true,
         "HW_ID": "HW-01M6EV5THB7B5CXT8ZYWT7757W",
@@ -23229,7 +23255,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Andoy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/648273635",
         "candidate": true,
         "HW_ID": "HW-01M6EV5TKCXM7ZV3GJ8465P38H",
@@ -23422,7 +23448,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Ronchinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/689841016",
         "candidate": true,
         "HW_ID": "HW-01M6EV5V75ZA3YGA2FR8XY76E7",
@@ -23440,7 +23466,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'en Haut",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/698944540",
         "candidate": true,
         "HW_ID": "HW-01M6EV5V9B8RAW8JCDR5DX1ERY",
@@ -23458,7 +23484,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Le Richmond",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/715572885",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VB8Q0ZHN9TD3G56FX2P",
@@ -23476,7 +23502,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Posterie",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/720341047",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VD7QMQHVVMPZPARNPAE",
@@ -23494,7 +23520,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Sorinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/720985602",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VFBDV8RDQ0AQVEC3951",
@@ -23512,7 +23538,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Houte",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/720985648",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VH9ATP61XTQ927Z59M9",
@@ -23530,7 +23556,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Maizeret",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/722506903",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VK4CWNWWSYC5CTJRW5N",
@@ -23566,7 +23592,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Marchovelette",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/723982906",
         "candidate": true,
         "HW_ID": "HW-01M6EV5VQ7BNECXRHVK0QXKKJ4",
@@ -23638,7 +23664,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Hulle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/732091949",
         "candidate": true,
         "HW_ID": "HW-01M6EV5W0C0JYHW0XTBM6VW2XY",
@@ -23656,7 +23682,7 @@
       },
       "properties": {
         "Nom du site FR": "Manoir Rhisnes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/736778333",
         "candidate": true,
         "HW_ID": "HW-01M6EV5W2ABGZRWT740W3E0RV4",
@@ -23692,7 +23718,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de l'Argilière",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738944869",
         "candidate": true,
         "HW_ID": "HW-01M6EV5W6HH723T0F6DERJT1BN",
@@ -23710,7 +23736,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien Moulin",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/739436788",
         "candidate": true,
         "HW_ID": "HW-01M6EV5W8V6PC20MKDGNR4MA16",
@@ -23728,7 +23754,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Goyet",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/739998642",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WAY09BBK76XS0GXFT8B",
@@ -23746,7 +23772,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Emines",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/740482048",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WD51GP4XG4AQ2M8JS5Q",
@@ -23813,7 +23839,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Thon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/740832182",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WKG7TH8MSWN8C7A5AZT",
@@ -23831,7 +23857,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Namèche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/740832346",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WNCXJ89H9PF1DZC092P",
@@ -23849,7 +23875,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Villers",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/741206235",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WQAF75HN65Q4NSV6BV3",
@@ -23885,7 +23911,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Forges",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/741270433",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WVC1XZG2VV5XQJR87KV",
@@ -23903,7 +23929,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Goyet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/741270453",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WX9B1XPFCXX7TFRWHRW",
@@ -23921,7 +23947,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/741270458",
         "candidate": true,
         "HW_ID": "HW-01M6EV5WZGKT8P8YMNF546P653",
@@ -23939,7 +23965,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Pavillon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/742899967",
         "candidate": true,
         "HW_ID": "HW-01M6EV5X1E8MQWKWZX9KCG4G52",
@@ -23957,7 +23983,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Tronquoy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/743135496",
         "candidate": true,
         "HW_ID": "HW-01M6EV5X3FMDQXAB6ZFJXQ77RH",
@@ -23975,7 +24001,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Dorlodot",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/744740285",
         "candidate": true,
         "HW_ID": "HW-01M6EV5X5M7G9EXH9NNW5GKF8B",
@@ -24267,7 +24293,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Géronsart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/805019125",
         "candidate": true,
         "HW_ID": "HW-01M6EV5Y3W351E4JHEBSJMH6Q0",
@@ -24339,7 +24365,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Marteau Longe",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/839649883",
         "candidate": true,
         "HW_ID": "HW-01M6EV5YBZJV9YCMHK6RNWY2GR",
@@ -24492,7 +24518,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/906375335",
         "candidate": true,
         "HW_ID": "HW-01M6EV5YSXANDPQG8PE7EJEMQF",
@@ -24510,7 +24536,7 @@
       },
       "properties": {
         "Nom du site FR": "Forteresse de Samson",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/906380868",
         "candidate": true,
         "HW_ID": "HW-01M6EV5YW388NEB5ZG9YCMF610",
@@ -24558,7 +24584,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Beez",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/909790472",
         "candidate": true,
         "HW_ID": "HW-01M6EV5Z02VWWJGBB0R46CYDPC",
@@ -24612,7 +24638,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin Trieu Martin",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/916846088",
         "candidate": true,
         "HW_ID": "HW-01M6EV5Z61CW4249RGDVGGTDK8",
@@ -24965,7 +24991,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Hestroy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1020835876",
         "candidate": true,
         "HW_ID": "HW-01M6EV60FYCB6HMFVJZJWT3RN0",
@@ -25091,7 +25117,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Golzinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1095149353",
         "candidate": true,
         "HW_ID": "HW-01M6EV60YEMFTM89V5HF5B93KE",
@@ -25289,7 +25315,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Vil-en-Val",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1223822130",
         "candidate": true,
         "HW_ID": "HW-01M6EV61MQDHVDYVP0WMEMAWW6",
@@ -25325,7 +25351,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Vivier l’Agneau",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1303882805",
         "candidate": true,
         "HW_ID": "HW-01M6EV61SRD5TRT5MRAYG8Q2QG",
@@ -25361,7 +25387,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Saint-Marc",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1340744527",
         "candidate": true,
         "HW_ID": "HW-01M6EV61XY3R2EZFR3WSPMDW7T",
@@ -25487,7 +25513,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Liroux",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1479624875",
         "candidate": true,
         "HW_ID": "HW-01M6EV62DDE437NYSNAX4Q37PA",
@@ -25523,7 +25549,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Mehaignoule",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1488908369",
         "candidate": true,
         "HW_ID": "HW-01M6EV62HJ4KV8F7NW24SEPF0Q",
@@ -25541,7 +25567,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Bruyère",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1488953604",
         "candidate": true,
         "HW_ID": "HW-01M6EV62KJBZCXF2QDG34JA5WF",
@@ -25559,7 +25585,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Ostin",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1488967318",
         "candidate": true,
         "HW_ID": "HW-01M6EV62NHSN8QE6332N5EWVC4",
@@ -25595,7 +25621,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Boninne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1489605924",
         "candidate": true,
         "HW_ID": "HW-01M6EV62SQMQGAPB8QK0BKT6YE",
@@ -25613,7 +25639,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Bivort",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1489968027",
         "candidate": true,
         "HW_ID": "HW-01M6EV62VN8G3Z494642R3XE5G",
@@ -25631,7 +25657,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Loyers",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1496296679",
         "candidate": true,
         "HW_ID": "HW-01M6EV62XWX8VZC1S27MB0N2CF",
@@ -25649,7 +25675,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Cotibeau",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1500668302",
         "candidate": true,
         "HW_ID": "HW-01M6EV62ZVW5NGV62YSXME2ABC",
@@ -25685,7 +25711,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Boquet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1500722145",
         "candidate": true,
         "HW_ID": "HW-01M6EV6342D1HJQVPYMX6DS9DR",
@@ -25703,7 +25729,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d’Hubermont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1521453531",
         "candidate": true,
         "HW_ID": "HW-01M6EV635ZFEY23KVYCC3CA0Q5",
@@ -25721,7 +25747,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Lesve",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1521641307",
         "candidate": true,
         "HW_ID": "HW-01M6EV6385HAMW3V0QZ8HMG7FT",
@@ -25739,7 +25765,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Clairfontaine",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1521777876",
         "candidate": true,
         "HW_ID": "HW-01M6EV63AGH19JR7J94S1BD1F0",
@@ -25757,7 +25783,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Courrière",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/1323216",
         "candidate": true,
         "HW_ID": "HW-01M6EV63CHTWK0QE68G8323499",
@@ -25775,7 +25801,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fernelmont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/3802795",
         "candidate": true,
         "HW_ID": "HW-01M6EV63EH4SYR4ASYACF54TRR",
@@ -25793,7 +25819,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme-Château de Bierwart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/5518945",
         "candidate": true,
         "HW_ID": "HW-01M6EV63GVQFVW2ZAV9ZZ7MQW2",
@@ -25847,7 +25873,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Franc-Waret",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/12440739",
         "candidate": true,
         "HW_ID": "HW-01M6EV63PY397XMK9Q8JR3GC6Z",
@@ -25883,7 +25909,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-Domaine de Mozet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/13344029",
         "candidate": true,
         "HW_ID": "HW-01M6EV63VXWGF8NC3Z4RH9SMW0",
@@ -26675,7 +26701,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Donstiennes",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/10834519178",
         "candidate": true,
         "HW_ID": "HW-01M6EV66Y6BNW0D26JMY5XPFB2",
@@ -27395,7 +27421,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Doyen",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/217548292",
         "candidate": true,
         "HW_ID": "HW-01M6EV69RVS4PPDPBZWPSHNWNC",
@@ -27431,7 +27457,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Beauregard",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/231380599",
         "candidate": true,
         "HW_ID": "HW-01M6EV69X7HC5YHW22932ZV8G2",
@@ -27557,7 +27583,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Montignies Saint-Christoph",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/246034415",
         "candidate": true,
         "HW_ID": "HW-01M6EV6AD2XZE133GE580ENG2X",
@@ -27665,7 +27691,7 @@
       },
       "properties": {
         "Nom du site FR": "Château La Mazelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/374257054",
         "candidate": true,
         "HW_ID": "HW-01M6EV6AVW8KQ1AZ2QEF0MYZPT",
@@ -27737,7 +27763,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Vergnies",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/467611092",
         "candidate": true,
         "HW_ID": "HW-01M6EV6B61NQBKT4A2470AZCMS",
@@ -27791,7 +27817,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de la Fabrique",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/548636312",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BCQQP93W0NXGH9ADE8D",
@@ -27809,7 +27835,7 @@
       },
       "properties": {
         "Nom du site FR": "Forge de l'Enclume",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/548636313",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BEWA0PP77RDBNJBM7EB",
@@ -27827,7 +27853,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Forges",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/548636318",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BHA4SDBTZV0GA6C0QRQ",
@@ -27845,7 +27871,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/548755331",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BKDKQ1JRQSEKXJYEECX",
@@ -27881,7 +27907,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Barbençon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/548782597",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BR133R2KGP9ZEH4EW1X",
@@ -27899,7 +27925,7 @@
       },
       "properties": {
         "Nom du site FR": "Châtelet de Barbençon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/548782598",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BT5E980GT0G0P5YGQS1",
@@ -27935,7 +27961,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/548782631",
         "candidate": true,
         "HW_ID": "HW-01M6EV6BYHZ1BG0KTSYVJ5Q2Z6",
@@ -27971,7 +27997,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Jette Feuille",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/548913653",
         "candidate": true,
         "HW_ID": "HW-01M6EV6C32JGF8KQ8GBQMK3FS0",
@@ -28007,7 +28033,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin à eau",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/548968640",
         "candidate": true,
         "HW_ID": "HW-01M6EV6C7KEXTCEHGN2VAMYC91",
@@ -28079,7 +28105,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Puissant",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/601196313",
         "candidate": true,
         "HW_ID": "HW-01M6EV6CGGMTF18RR3NHPAEHXH",
@@ -28205,7 +28231,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Montbliart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/813927146",
         "candidate": true,
         "HW_ID": "HW-01M6EV6D1VQKNFM74D9NZ6T45E",
@@ -28223,7 +28249,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Arnould",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/851410974",
         "candidate": true,
         "HW_ID": "HW-01M6EV6D4CWHPV6RPBPKPX1YM3",
@@ -28295,7 +28321,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme du Fayt",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/885706644",
         "candidate": true,
         "HW_ID": "HW-01M6EV6DEBYCZEBC4WR5TRW0EP",
@@ -28529,7 +28555,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Thuillies",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1239449777",
         "candidate": true,
         "HW_ID": "HW-01M6EV6EBQVHV60BKXFTHDRQTW",
@@ -28601,7 +28627,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Roquette",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1378119161",
         "candidate": true,
         "HW_ID": "HW-01M6EV6EMJRR9D3G2TKYSCQ47X",
@@ -28619,7 +28645,7 @@
       },
       "properties": {
         "Nom du site FR": "Château des Caraman-Chimay",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1380146011",
         "candidate": true,
         "HW_ID": "HW-01M6EV6EQ0EYHPVZK6TPV1EK0G",
@@ -28655,7 +28681,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Ossogne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1386286501",
         "candidate": true,
         "HW_ID": "HW-01M6EV6EVKJW4RTM9GPG3HWBT6",
@@ -28673,7 +28699,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de la Biesmelle",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1386287569",
         "candidate": true,
         "HW_ID": "HW-01M6EV6EXRB0EP22TJ3BED7YNB",
@@ -28709,7 +28735,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Fosteau",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1436914122",
         "candidate": true,
         "HW_ID": "HW-01M6EV6F3128FHVF09QEDQFTSR",
@@ -29375,7 +29401,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/8241754691",
         "candidate": true,
         "HW_ID": "HW-01M6EV6HWJVGJRST1XEXGZWPVP",
@@ -29843,7 +29869,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/8638955759",
         "candidate": true,
         "HW_ID": "HW-01M6EV6KV5DASK4C1NAS9A63VZ",
@@ -29933,7 +29959,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/8656519334",
         "candidate": true,
         "HW_ID": "HW-01M6EV6M7WXY7EJCBNZ4E0YX06",
@@ -30563,7 +30589,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d’En Haut",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "node/14293532649",
         "candidate": true,
         "HW_ID": "HW-01M6EV6PY8X39P7GK5JD26BTFK",
@@ -30599,7 +30625,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Ham-sur-Heure",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/88369901",
         "candidate": true,
         "HW_ID": "HW-01M6EV6Q325BF4Q2BCFR9FNGA2",
@@ -31067,7 +31093,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d’en Bas",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/172253021",
         "candidate": true,
         "HW_ID": "HW-01M6EV6S5MMVZW889S0B7QFYXT",
@@ -31103,7 +31129,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Daussois",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/220429559",
         "candidate": true,
         "HW_ID": "HW-01M6EV6SAKM96SX3T018XMPF1K",
@@ -31265,7 +31291,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Merlemont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/280570958",
         "candidate": true,
         "HW_ID": "HW-01M6EV6T132D0E8YP1PNQ0J0VQ",
@@ -31337,7 +31363,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Hanzinelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/290171222",
         "candidate": true,
         "HW_ID": "HW-01M6EV6TB7PG5G9Q5YXET99V6K",
@@ -31355,7 +31381,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Scry",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/290681856",
         "candidate": true,
         "HW_ID": "HW-01M6EV6TDP8A1983JZTT7YHF5J",
@@ -31589,7 +31615,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Thy-le-Château",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/635590833",
         "candidate": true,
         "HW_ID": "HW-01M6EV6VGKKBGZBHA9WSJV9FAD",
@@ -31751,7 +31777,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Lennery",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/732724780",
         "candidate": true,
         "HW_ID": "HW-01M6EV6W890XSB5VGR8ZM4VDWD",
@@ -31769,7 +31795,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Senzeilles",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/732740857",
         "candidate": true,
         "HW_ID": "HW-01M6EV6WAY53KRBZEAFEQMBCWD",
@@ -31823,7 +31849,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Rognée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/733410065",
         "candidate": true,
         "HW_ID": "HW-01M6EV6WJFKB0ZNMFSWB7TW91C",
@@ -31859,7 +31885,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Saint-Jean",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/737388108",
         "candidate": true,
         "HW_ID": "HW-01M6EV6WQMCP32M396JKQABK36",
@@ -31895,7 +31921,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Chauveaux",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/737412190",
         "candidate": true,
         "HW_ID": "HW-01M6EV6WWRYFADTXQZCYN05Y8H",
@@ -31913,7 +31939,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Biesme",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738269519",
         "candidate": true,
         "HW_ID": "HW-01M6EV6WZ7BEZ4ATXQR7SVPZ3H",
@@ -31931,7 +31957,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738292108",
         "candidate": true,
         "HW_ID": "HW-01M6EV6X1YXPWAJYCKT2FBPDJD",
@@ -31949,7 +31975,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Roly",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/738316339",
         "candidate": true,
         "HW_ID": "HW-01M6EV6X4EMT6XNB6XKN4XW5ES",
@@ -31967,7 +31993,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Villers-Deux-Églises",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738316748",
         "candidate": true,
         "HW_ID": "HW-01M6EV6X74CA8G38S6TFD0GJDV",
@@ -31985,7 +32011,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Toussaint",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/739998555",
         "candidate": true,
         "HW_ID": "HW-01M6EV6X9H3BSVSY16WKHY7EHH",
@@ -32021,7 +32047,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Oret-Mont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/741206100",
         "candidate": true,
         "HW_ID": "HW-01M6EV6XEPKEHCX4DJMBC7TJPC",
@@ -32057,7 +32083,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/743626436",
         "candidate": true,
         "HW_ID": "HW-01M6EV6XM5V9CSB22PTCQTST28",
@@ -32183,7 +32209,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Tour",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/838372276",
         "candidate": true,
         "HW_ID": "HW-01M6EV6Y7Y1E8EN684G218TYZK",
@@ -32309,7 +32335,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Thozée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/931570525",
         "candidate": true,
         "HW_ID": "HW-01M6EV6YT51F0BMWPHS6DMXTMF",
@@ -32507,7 +32533,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme d'Auxbrebis",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1238156086",
         "candidate": true,
         "HW_ID": "HW-01M6EV6ZPZ0C6Q6DWWEXM9W4ZY",
@@ -32525,7 +32551,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Samart",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1240806294",
         "candidate": true,
         "HW_ID": "HW-01M6EV6ZSM6RE2WGJNWTWN4M63",
@@ -32633,7 +32659,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-Ferme de Berzée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1368504068",
         "candidate": true,
         "HW_ID": "HW-01M6EV709QNBC0K9X95T516M1A",
@@ -32687,7 +32713,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fairoul",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1373192850",
         "candidate": true,
         "HW_ID": "HW-01M6EV70K8QWJ41YWVJ1MYMMAR",
@@ -32705,7 +32731,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Morialmé",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1384367569",
         "candidate": true,
         "HW_ID": "HW-01M6EV70P0GWQSPRKTRGEJNAK5",
@@ -32795,7 +32821,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Bossière",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1488975802",
         "candidate": true,
         "HW_ID": "HW-01M6EV713SG97EDB2NMFN2REC2",
@@ -32867,7 +32893,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Sart-en-Fagne",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/1514050561",
         "candidate": true,
         "HW_ID": "HW-01M6EV71ETREFMBE068ETFP339",
@@ -32903,7 +32929,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Surice",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1521435622",
         "candidate": true,
         "HW_ID": "HW-01M6EV71M2B2QSYQ0ZCFMFG68H",
@@ -32921,7 +32947,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Tarcienne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1534662395",
         "candidate": true,
         "HW_ID": "HW-01M6EV71PJ04SM2ENBTC2ED2BP",
@@ -32939,7 +32965,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Laneffe",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1534694816",
         "candidate": true,
         "HW_ID": "HW-01M6EV71S7ATGB7ZAZTSXBEZHK",
@@ -32975,7 +33001,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Florennes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/20197293",
         "candidate": true,
         "HW_ID": "HW-01M6EV71YCV5BVJ5ZPCVNGVHSS",
@@ -34325,7 +34351,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/6964951423",
         "candidate": true,
         "HW_ID": "HW-01M6EV78FAQ49TEF7HK31EW4FP",
@@ -35837,7 +35863,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Falaën",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/75088243",
         "candidate": true,
         "HW_ID": "HW-01M6EV7G0J45PY8XZJCB4X76GK",
@@ -35855,7 +35881,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Crèvecœur",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/77894109",
         "candidate": true,
         "HW_ID": "HW-01M6EV7G3DR7WF7T1R1VBK971Y",
@@ -35909,7 +35935,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Poilvache",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/93649572",
         "candidate": true,
         "HW_ID": "HW-01M6EV7GC6MPSVB5E2JPXX5DAZ",
@@ -35963,7 +35989,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Lisogne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/94870844",
         "candidate": true,
         "HW_ID": "HW-01M6EV7GN6ZQTFJ1HNX59VS23P",
@@ -36107,7 +36133,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Agimont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/97952618",
         "candidate": true,
         "HW_ID": "HW-01M6EV7HCPXGYW214ZABDCZ08E",
@@ -36125,7 +36151,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Baronville",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/102489519",
         "candidate": true,
         "HW_ID": "HW-01M6EV7HFER5EPNK4KWR8Z40P8",
@@ -36215,7 +36241,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fontaine",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/109994721",
         "candidate": true,
         "HW_ID": "HW-01M6EV7HXM8A1278DX8NKXEG9F",
@@ -36359,7 +36385,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Montaigle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/112567260",
         "candidate": true,
         "HW_ID": "HW-01M6EV7JNEDPR0BS4DP54BK80A",
@@ -36485,7 +36511,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/118550400",
         "candidate": true,
         "HW_ID": "HW-01M6EV7KAQJPMSW3NR4AW23AP7",
@@ -36737,7 +36763,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Tricointe",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/217469963",
         "candidate": true,
         "HW_ID": "HW-01M6EV7MKN2HZQSNQMFQ2J9WSG",
@@ -36827,7 +36853,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Gaiffier",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/297041574",
         "candidate": true,
         "HW_ID": "HW-01M6EV7N3DF0FBCPC8MB8A8QRQ",
@@ -36863,7 +36889,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Chesselet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/310813839",
         "candidate": true,
         "HW_ID": "HW-01M6EV7N9EQ146SEMWHQW9ADRD",
@@ -36917,7 +36943,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Neffe",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/352248963",
         "candidate": true,
         "HW_ID": "HW-01M6EV7NJ66FP2ZWMJFGARTDNA",
@@ -37007,7 +37033,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Taviet",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/374757823",
         "candidate": true,
         "HW_ID": "HW-01M6EV7P0Y0BCBMKXQN0H8NGZF",
@@ -37025,7 +37051,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de La Motte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/374760854",
         "candidate": true,
         "HW_ID": "HW-01M6EV7P3T2WEY9AQY9TZ9VF9C",
@@ -37043,7 +37069,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Spontin",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/374771590",
         "candidate": true,
         "HW_ID": "HW-01M6EV7P6SS4KQYGMAGPFEVDR5",
@@ -37061,7 +37087,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Mouffrin",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/384280473",
         "candidate": true,
         "HW_ID": "HW-01M6EV7P9J6P1JQZBHZE0KS3W7",
@@ -37097,7 +37123,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Évrehailles",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/387150756",
         "candidate": true,
         "HW_ID": "HW-01M6EV7PFAQK5MV6VZ53WEMZF3",
@@ -37151,7 +37177,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Onthaine",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/390066063",
         "candidate": true,
         "HW_ID": "HW-01M6EV7PR7JF765MN68JMBKDHQ",
@@ -37187,7 +37213,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Spontin",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/390988236",
         "candidate": true,
         "HW_ID": "HW-01M6EV7PY7ZNWFV4F5DZ3B0AJK",
@@ -37259,7 +37285,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Herbuchenne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/392229090",
         "candidate": true,
         "HW_ID": "HW-01M6EV7Q9XF93TNYR30R9G6EGJ",
@@ -37313,7 +37339,7 @@
       },
       "properties": {
         "Nom du site FR": "La Machine à l'Eau de Sommière",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/396434966",
         "candidate": true,
         "HW_ID": "HW-01M6EV7QJKTZA043KGX92JV5XQ",
@@ -37565,7 +37591,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme Château du Buc",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/421737582",
         "candidate": true,
         "HW_ID": "HW-01M6EV7RZKQ65QRRKE6JNPBV62",
@@ -37709,7 +37735,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Weillen",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/444469525",
         "candidate": true,
         "HW_ID": "HW-01M6EV7SRD6N32JS0SFD18QS48",
@@ -37727,7 +37753,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Forge",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/452672594",
         "candidate": true,
         "HW_ID": "HW-01M6EV7SVG0EQQYDEBBPHM2XAY",
@@ -37799,7 +37825,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Beau-Chêne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/455376586",
         "candidate": true,
         "HW_ID": "HW-01M6EV7T74G1QM8YSFFY72EJNX",
@@ -37853,7 +37879,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Ostemerée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/456662252",
         "candidate": true,
         "HW_ID": "HW-01M6EV7TG5NT2CPF5HK45PJRME",
@@ -37997,7 +38023,7 @@
       },
       "properties": {
         "Nom du site FR": "Vieux château",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/502941892",
         "candidate": true,
         "HW_ID": "HW-01M6EV7VAC061FZG2258BQ7S22",
@@ -38087,7 +38113,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Miavoye",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/556804002",
         "candidate": true,
         "HW_ID": "HW-01M6EV7VS5Z17FH48A336BX0AD",
@@ -38123,7 +38149,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancien moulin de l'abbaye",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/567548577",
         "candidate": true,
         "HW_ID": "HW-01M6EV7VZ14383G43PADR219GM",
@@ -38141,7 +38167,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Moulins",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/567548578",
         "candidate": true,
         "HW_ID": "HW-01M6EV7W255CSTVPJGE207CJCE",
@@ -38159,7 +38185,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Senenne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/569599833",
         "candidate": true,
         "HW_ID": "HW-01M6EV7W4ZVCB30RS6H6KEACFP",
@@ -38195,7 +38221,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Annevoie",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/572505473",
         "candidate": true,
         "HW_ID": "HW-01M6EV7WB4XGM79W9ET4YHMZVV",
@@ -38213,7 +38239,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Bauche",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/576874173",
         "candidate": true,
         "HW_ID": "HW-01M6EV7WDYYPK6MDFW0MT1F6C9",
@@ -38339,7 +38365,7 @@
       },
       "properties": {
         "Nom du site FR": "Castel de Pont-à-Lesse",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/609499904",
         "candidate": true,
         "HW_ID": "HW-01M6EV7X2RFCFVD680X6BQC27S",
@@ -38357,7 +38383,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Hordenne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/609660128",
         "candidate": true,
         "HW_ID": "HW-01M6EV7X61TCA18PA00AJXGBQ7",
@@ -38447,7 +38473,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de la Thylère",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/619871082",
         "candidate": true,
         "HW_ID": "HW-01M6EV7XP7QK59MG879QAA0PQR",
@@ -38465,7 +38491,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin d'Hermeton",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/619871084",
         "candidate": true,
         "HW_ID": "HW-01M6EV7XSF3ETQFA57WEFHD9BN",
@@ -38501,7 +38527,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Harnoy",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/636558366",
         "candidate": true,
         "HW_ID": "HW-01M6EV7Y095TX272N00GEGMF39",
@@ -38591,7 +38617,7 @@
       },
       "properties": {
         "Nom du site FR": "Domaine Le Mont d'Anhée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/671280057",
         "candidate": true,
         "HW_ID": "HW-01M6EV7YGAZER5ZDJQMENTCGX0",
@@ -38609,7 +38635,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Chession",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/676281409",
         "candidate": true,
         "HW_ID": "HW-01M6EV7YKNEVP2WK6PVTRYKD7H",
@@ -38717,7 +38743,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Bouvignes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/715548206",
         "candidate": true,
         "HW_ID": "HW-01M6EV7Z64X0ERHD6ZRCHVT2K0",
@@ -38789,7 +38815,7 @@
       },
       "properties": {
         "Nom du site FR": "Château St-Marc",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/728193161",
         "candidate": true,
         "HW_ID": "HW-01M6EV7ZJ7TJD67ZN5K1CEGG5J",
@@ -38861,7 +38887,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme Saint-Hubert",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738603652",
         "candidate": true,
         "HW_ID": "HW-01M6EV7ZY6N3YVEN5YKY0SE2HC",
@@ -38879,7 +38905,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Saint-Roch",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738944789",
         "candidate": true,
         "HW_ID": "HW-01M6EV8017W6HB87NQ481XD8GX",
@@ -38897,7 +38923,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Morimont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738944794",
         "candidate": true,
         "HW_ID": "HW-01M6EV8043HYWDXVFYPG8B2E19",
@@ -38915,7 +38941,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Martin",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738944929",
         "candidate": true,
         "HW_ID": "HW-01M6EV80770EX355RGSE7K4771",
@@ -38969,7 +38995,7 @@
       },
       "properties": {
         "Nom du site FR": "Tour Léopold",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/742899669",
         "candidate": true,
         "HW_ID": "HW-01M6EV80G25Y7H7RHGMQ86YS2A",
@@ -39005,7 +39031,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Sorinnes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/745978232",
         "candidate": true,
         "HW_ID": "HW-01M6EV80PD6P8F8GA3B4PV36SJ",
@@ -39041,7 +39067,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin Bayot",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/746469468",
         "candidate": true,
         "HW_ID": "HW-01M6EV80Z33F2VCC30BJF2TJTH",
@@ -39077,7 +39103,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Ferage",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/746767380",
         "candidate": true,
         "HW_ID": "HW-01M6EV815J9QAZWPAPC4YX3HGG",
@@ -39131,7 +39157,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Capelle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/760928306",
         "candidate": true,
         "HW_ID": "HW-01M6EV81F92401EWHW1C0DYS3P",
@@ -39347,7 +39373,7 @@
       },
       "properties": {
         "Nom du site FR": "Manoir de Grand-Mont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/814277367",
         "candidate": true,
         "HW_ID": "HW-01M6EV82M3D7JGYANEFGXJCRPB",
@@ -39581,7 +39607,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Maredsous",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1082587724",
         "candidate": true,
         "HW_ID": "HW-01M6EV83XWZGSW58G694JTZX53",
@@ -39635,7 +39661,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Dapsens",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1222217686",
         "candidate": true,
         "HW_ID": "HW-01M6EV847AFE7J26XSRJXSGVTX",
@@ -39707,7 +39733,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Vincon",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1472725970",
         "candidate": true,
         "HW_ID": "HW-01M6EV84KEF6BWV2E9DYBVWYRV",
@@ -39725,7 +39751,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Amand",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1473307704",
         "candidate": true,
         "HW_ID": "HW-01M6EV84PMQ2JX8NH1DV6C6HJV",
@@ -39743,7 +39769,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Thierry",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1473604451",
         "candidate": true,
         "HW_ID": "HW-01M6EV84SESP30429V88SDCPZ6",
@@ -39779,7 +39805,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Boisseilles",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1473867749",
         "candidate": true,
         "HW_ID": "HW-01M6EV84ZGST51SFQFKAN3TY25",
@@ -39797,7 +39823,7 @@
       },
       "properties": {
         "Nom du site FR": "Manoir Flavion",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1476161974",
         "candidate": true,
         "HW_ID": "HW-01M6EV852RE47VEEFBECQ0DFG4",
@@ -39815,7 +39841,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-Ferme de Custinne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1483926381",
         "candidate": true,
         "HW_ID": "HW-01M6EV855K9JFADCZR150RZB7K",
@@ -39923,7 +39949,7 @@
       },
       "properties": {
         "Nom du site FR": "Château du Montaigle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1512298712",
         "candidate": true,
         "HW_ID": "HW-01M6EV85R4Q6Q3SWPNCMMF2RB9",
@@ -39941,7 +39967,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Hontoir",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1512534540",
         "candidate": true,
         "HW_ID": "HW-01M6EV85V38NQHQM8M8YDD0BYJ",
@@ -39977,7 +40003,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Blocqmont",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1536652749",
         "candidate": true,
         "HW_ID": "HW-01M6EV8616CD2G44F0K1XY2RV9",
@@ -40013,7 +40039,7 @@
       },
       "properties": {
         "Nom du site FR": "Citadelle de Dinant",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/1432379",
         "candidate": true,
         "HW_ID": "HW-01M6EV8676HVGCX6VEQVQK0JHV",
@@ -40031,7 +40057,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Freÿr",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/2571227",
         "candidate": true,
         "HW_ID": "HW-01M6EV86ACMQQ2FAEXP68QQCA3",
@@ -40049,7 +40075,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Vêves",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/5912357",
         "candidate": true,
         "HW_ID": "HW-01M6EV86DJ68AMWS8P53BKTN4R",
@@ -40067,7 +40093,7 @@
       },
       "properties": {
         "Nom du site FR": "Le Prieuré",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/8463225",
         "candidate": true,
         "HW_ID": "HW-01M6EV86GDT56SC6R7TEAATJZD",
@@ -40085,7 +40111,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Bioul",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "relation/9401249",
         "candidate": true,
         "HW_ID": "HW-01M6EV86KKTGYH841WH0TJJ9E6",
@@ -40625,7 +40651,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Chimay",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/349793576",
         "candidate": true,
         "HW_ID": "HW-01M6EV89M9HWGW4KW41KN977ZE",
@@ -40769,7 +40795,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Virelles",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/837521632",
         "candidate": true,
         "HW_ID": "HW-01M6EV8ACXB6RYCM26A9KQ6J5J",
@@ -40895,7 +40921,7 @@
       },
       "properties": {
         "Nom du site FR": "Château d'Imbrechies",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/914268229",
         "candidate": true,
         "HW_ID": "HW-01M6EV8B5XHY8T6T87NBQ2VDQ1",
@@ -41039,7 +41065,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme du Haut Desivier",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1384722477",
         "candidate": true,
         "HW_ID": "HW-01M6EV8C0M809QPDJ79R6FJD6R",
@@ -41453,7 +41479,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/6609949522",
         "candidate": true,
         "HW_ID": "HW-01M6EV8ECK5QCNX6XH0EMTSX47",
@@ -41957,7 +41983,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Fagnolle",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/94543971",
         "candidate": true,
         "HW_ID": "HW-01M6EV8HA2VM8CR57P00EDR6MF",
@@ -42245,7 +42271,7 @@
       },
       "properties": {
         "Nom du site FR": "Ancienne moulin des Bois",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/209288194",
         "candidate": true,
         "HW_ID": "HW-01M6EV8K14A3XJ040T6S97N7BW",
@@ -42389,7 +42415,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Vierves",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/333277542",
         "candidate": true,
         "HW_ID": "HW-01M6EV8KVC4DED1EV4Q337GGHH",
@@ -42479,7 +42505,7 @@
       },
       "properties": {
         "Nom du site FR": "Château-ferme de Mazée",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/572831427",
         "candidate": true,
         "HW_ID": "HW-01M6EV8MBZHBXE6CAJJ987556W",
@@ -42641,7 +42667,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Hauteroche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/666783530",
         "candidate": true,
         "HW_ID": "HW-01M6EV8NDDDHFHWHCTW33G3F05",
@@ -42659,7 +42685,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme Château de Dourbes",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/667758900",
         "candidate": true,
         "HW_ID": "HW-01M6EV8NH1C3VASJDF5EGJ0AWJ",
@@ -42677,7 +42703,7 @@
       },
       "properties": {
         "Nom du site FR": "Maison du Bailli",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/667864266",
         "candidate": true,
         "HW_ID": "HW-01M6EV8NM5NN57JHYFJHEDD126",
@@ -42731,7 +42757,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Tromcourt",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/710420876",
         "candidate": true,
         "HW_ID": "HW-01M6EV8NY36CV9A5MEYZDEMY5R",
@@ -42749,7 +42775,7 @@
       },
       "properties": {
         "Nom du site FR": "Château Saint-Roch",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/727329304",
         "candidate": true,
         "HW_ID": "HW-01M6EV8P1F12M01PQ0EKYRW5RS",
@@ -42821,7 +42847,7 @@
       },
       "properties": {
         "Nom du site FR": "Manoir de la Motte",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/738902535",
         "candidate": true,
         "HW_ID": "HW-01M6EV8PF2NYT6DNQC4FEH8FG7",
@@ -42839,7 +42865,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Boussu",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/758803272",
         "candidate": true,
         "HW_ID": "HW-01M6EV8PJF54F0HYT7VV521W7C",
@@ -42875,7 +42901,7 @@
       },
       "properties": {
         "Nom du site FR": "",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/871570000",
         "candidate": true,
         "HW_ID": "HW-01M6EV8PS3KE6VYE561BBYCKSS",
@@ -43001,7 +43027,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Tromcourt",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1305830871",
         "candidate": true,
         "HW_ID": "HW-01M6EV8QHPXSMGA6FJTZHYQJSD",
@@ -43145,7 +43171,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Felenne",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/1722784384",
         "candidate": true,
         "HW_ID": "HW-01M6EV8RD7CXJ2TEY5183H3KMR",
@@ -43163,7 +43189,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin d'Olenne",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "node/1722803032",
         "candidate": true,
         "HW_ID": "HW-01M6EV8RGB528WJDN6803B9P89",
@@ -44369,7 +44395,7 @@
       },
       "properties": {
         "Nom du site FR": "Moulin de Bourseigne",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/231705628",
         "candidate": true,
         "HW_ID": "HW-01M6EV8ZZ4PHAPWQW4E7PB424J",
@@ -44639,7 +44665,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Revogne",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/621584167",
         "candidate": true,
         "HW_ID": "HW-01M6EV91N8Q614QXAA1GVH6GXJ",
@@ -44657,7 +44683,7 @@
       },
       "properties": {
         "Nom du site FR": "Le Moulin de Revogne",
-        "Catégorie": "Curiosité",
+        "Catégorie": "Vestige industriel",
         "osm_ref": "way/621584170",
         "candidate": true,
         "HW_ID": "HW-01M6EV91S0YHNHSHKS9DJVP39C",
@@ -44801,7 +44827,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Sevry",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/727070476",
         "candidate": true,
         "HW_ID": "HW-01M6EV92NYGJZ5DE9MPJDHSRYA",
@@ -44855,7 +44881,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Javingue",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/740023938",
         "candidate": true,
         "HW_ID": "HW-01M6EV930DBZRZYJKFY55QF487",
@@ -44891,7 +44917,7 @@
       },
       "properties": {
         "Nom du site FR": "Ferme-château de Nafraiture",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/744090530",
         "candidate": true,
         "HW_ID": "HW-01M6EV937HW5SYBFAPKTR82N1Q",
@@ -44963,7 +44989,7 @@
       },
       "properties": {
         "Nom du site FR": "Tour de Sevry",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/886930761",
         "candidate": true,
         "HW_ID": "HW-01M6EV93NAMSVA7KF2M9B6DN0R",
@@ -45125,7 +45151,7 @@
       },
       "properties": {
         "Nom du site FR": "Château de Vonêche",
-        "Catégorie": "Fortification",
+        "Catégorie": "Château",
         "osm_ref": "way/1467374094",
         "candidate": true,
         "HW_ID": "HW-01M6EV94Q1X9H4AD515TR1MA0H",
