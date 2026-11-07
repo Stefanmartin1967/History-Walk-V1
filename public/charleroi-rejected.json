@@ -16,5 +16,14 @@
     "lng": 4.4432432,
     "lat": 50.4112272,
     "rejectedAt": 1793896618465
+  },
+  "way/1575531487": {
+    "osm_ref": "way/1575531487",
+    "name": "Zone Ciel",
+    "nameAr": "",
+    "category": "Église",
+    "lng": 5.0528256,
+    "lat": 50.4891369,
+    "rejectedAt": 1794048658484
   }
 }
