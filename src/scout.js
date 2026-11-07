@@ -545,7 +545,7 @@ async function scan() {
     const knownOsmRefs = collectKnownOsmRefs(state.loadedFeatures || []);
     let rejectedSkipped = 0;  // objets déjà rejetés (corbeille) ignorés — transparence au récap
     let outsideSkipped = 0;   // destination à territoire : objets hors de ses quartiers, ignorés
-    const scannedCats = new Map(); // osm_ref → catégorie, pour reclasser les candidats restés « A définir »
+    const scannedCats = new Map(); // osm_ref → catégorie, pour reclasser les candidats déjà capturés (scout-reclassify)
     showLoading(true, multi ? `Moisson 1/${tiles.length}…` : 'Interrogation d’Overpass…');
     let pending = tiles.map((t, i) => ({ t, i }));  // tuiles restant à scanner
     let attempt = 0;
@@ -623,7 +623,7 @@ async function scan() {
             ? ` · ${rejectedSkipped} déjà rejeté${rejectedSkipped > 1 ? 's' : ''} ignoré${rejectedSkipped > 1 ? 's' : ''}`
             : '')
             + (outsideSkipped ? ` · ${outsideSkipped} hors territoire ignoré${outsideSkipped > 1 ? 's' : ''}` : '')
-            + (reclassified ? ` · ${reclassified} candidat${reclassified > 1 ? 's' : ''} « A définir » reclassé${reclassified > 1 ? 's' : ''}` : '');
+            + (reclassified ? ` · ${reclassified} candidat${reclassified > 1 ? 's' : ''} reclassé${reclassified > 1 ? 's' : ''}` : '');
         if (failed === tiles.length) {
             // Sans clé, seul le serveur public (souvent saturé) est interrogé : on le dit.
             const keyHint = hasOverpassKey() ? '' : ' Une clé overpass.ch (Configuration) évite le serveur public saturé.';
@@ -639,8 +639,8 @@ async function scan() {
     }
 }
 
-// Candidats déjà capturés et restés « A définir » que cette moisson sait classer
-// (scout-reclassify.js) : on leur donne leur catégorie, par le même chemin que les
+// Candidats déjà capturés, restés « A définir » ou classés par une règle dépassée
+// (Fortification → Château…), que cette moisson sait classer (scout-reclassify.js) : on leur donne leur catégorie, par le même chemin que les
 // autres éditions (persistPoiEdit). Ils ne sont jamais re-capturés (doublons par
 // osm_ref) : sans ce pas, une règle de classement ajoutée après coup ne les
 // atteignait jamais (275 potales, 06/11/2026).

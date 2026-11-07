@@ -6,6 +6,13 @@
 
 ---
 
+- SCOUT : LES CANDIDATS CLASSÉS PAR UNE RÈGLE DÉPASSÉE SONT RECLASSÉS À LA MOISSON (v3.7.489). Constat du 07/11/2026 en curant le Château de Bonneville (Andenne) : candidat en « Fortification » alors que `historic=castle` donne « Château » depuis le 05/11/2026.
+  - **Relevé** (tags OSM du jour des 2 610 candidats de la Wallonie, comparés aux règles actuelles de `scout-categories.js`) : 309 châteaux en Fortification, 24 chapelles (`building=chapel`) en Église, 44 moulins en Curiosité au lieu de Vestige industriel. Les forts (`historic=fort`) restent en Fortification.
+  - La moisson ne reclassait que les candidats « A définir » (v3.7.486). Elle remplace maintenant aussi ces trois anciennes catégories automatiques, et seulement par la catégorie qui les a remplacées : Fortification → Château, Église → Chapelle, Curiosité → Vestige industriel (`SUPERSEDED` dans `scout-reclassify.js`). Toute autre différence (objet dont les tags ont changé dans OSM) reste à regarder à la main.
+  - Mêmes garde-fous qu'avant : jamais une fiche validée, seulement par l'identité OSM (osm_ref), jamais par proximité. Le récap dit « N candidats reclassés ».
+  - Pour l'appliquer : relancer une moisson sur les zones concernées, puis publier (destination brouillon : la publication régénère le fichier entier, candidats compris).
+  - Restent à trier à la main : 43 candidats « A définir » que les règles ne savent toujours pas classer (abbaye, lieu de culte sans religion, musée industriel…), 3 candidats dont l'objet OSM n'a plus aucun tag (Château d'Avondance node/4665705494, Vieux Château node/1946796777, un « Lieu inconnu » node/1764497163), et le Château communal de Viroinval (`amenity=townhall` → Édifice civil, laissé en Fortification).
+  - Test : `tests/scout_reclassify.test.js`.
 - PHOTO D'EN-TÊTE : CADRER UNE PHOTO PAYSAGE EN MODE ADMIN (v3.7.488). Suite de la v3.7.487, demandée par Stefan le 07/11/2026 : Djerba compte déjà 280 photos publiées, et le dossier de Charleroi du 05/11 a 53 photos paysage à importer.
   - Dans le bandeau (200 px de haut, environ deux fois plus large), une photo paysage n'est coupée qu'en haut et en bas. Sur PC, en mode Admin, une puce « Cadrer » (en bas à gauche) permet de choisir la partie visible : glisser la photo vers le haut ou le bas, ou flèches ↑ ↓, puis Valider (Entrée) ou Annuler (Échap). Pendant le cadrage, un clic sur la photo n'ouvre pas la visionneuse.
   - Pas de puce sur mobile (glisser y gênerait le défilement de la fiche), sur une photo portrait (affichée entière) ni sur une photo plus panoramique que le bandeau (rien à cadrer). Pas non plus sur une photo locale pas encore publiée.
