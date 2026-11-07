@@ -17791,11 +17791,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
-        "Catégorie": "A définir",
+        "Nom du site FR": "Potale Saint-Hubert",
+        "Catégorie": "Potale",
         "osm_ref": "node/8150135169",
-        "candidate": true,
         "HW_ID": "HW-01M6EV58CMQPKAVAHYH5NQMGJS",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Vezin (Andenne).\nUne photographie publiée sur Wikimedia Commons la nomme « Potale Saint-Hubert ».\nSelon Wikipédia, saint Hubert, évêque de Tongres et de Maastricht mort en 727, est considéré comme le saint patron de la chasse et des forestiers ; il est fêté le 3 novembre en Belgique.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Potale Saint-Hubert, photographie d'Eebie, 7 novembre 2020 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Potale_Saint-Hubert_Vezin.jpg\nWikipédia, « Hubert de Liège » | https://fr.wikipedia.org/wiki/Hubert_de_Li%C3%A8ge",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
