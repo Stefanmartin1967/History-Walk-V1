@@ -10019,11 +10019,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle Saint-Fiacre",
+        "Nom du site FR": "Chapelle Saint-Fiacre (Binche)",
         "Catégorie": "Église",
         "osm_ref": "way/1122646568",
         "candidate": true,
         "HW_ID": "HW-01M6EV4JW1TKJWE5T3E07VYDX8",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Binche"
       }
     },
@@ -19017,7 +19026,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Potale Notre-Dame des sept douleurs",
+        "Nom du site FR": "Potale Notre-Dame des sept douleurs (Vezin)",
         "Catégorie": "Potale",
         "osm_ref": "node/11780364498",
         "HW_ID": "HW-01M6EV5CGXBBYG8F7T3MKDER61",
@@ -45074,7 +45083,7 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle Saint-Fiacre",
+        "Nom du site FR": "Chapelle Saint-Fiacre (Charleroi)",
         "Catégorie": "Chapelle",
         "Sous-type": "À porte",
         "Accès": "Extérieur seulement",
