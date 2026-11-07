@@ -173,6 +173,23 @@
     z-index: 2;
 }
 
+/* ─────────────────── PHOTO PORTRAIT ENTIÈRE (07/11/2026) ───────────────────
+   Calque posé par setHeroPhoto (src/hero-photo.js) sur les trois heros photo
+   (fiche, cover circuit PC, hero circuit mobile) quand la photo est plus haute
+   que large. Le hero garde sa photo en cover : le backdrop-filter la floute et
+   l'assombrit (fond), et le calque pose par-dessus la MÊME photo en contain.
+   Pas de z-index : les puces (z-index 2) restent au-dessus. */
+.hero-portrait {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover, contain; /* gradient, photo */
+    -webkit-backdrop-filter: blur(16px) brightness(0.62);
+    backdrop-filter: blur(16px) brightness(0.62);
+}
+
 /* ─────────────────── PHOTO DE TRAVAIL (admin, 10/08/2026) ───────────────────
    Image dont Stefan n'est PAS l'auteur (capture Facebook, envoi d'un contact,
    extrait de PDF), affichée en repli quand un lieu pas encore visité n'a

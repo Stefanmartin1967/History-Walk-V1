@@ -19,6 +19,7 @@ import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
 import { GUIDE_LIRE_LIEU } from './help-content.js';
 import { openWebSearch } from './web-search.js';
+import { setHeroPhoto } from './hero-photo.js';
 
 // Aide « ? » général de la fiche d'un lieu : le patron rend l'icône via createIcons.
 // Idempotent (configureHelp est déjà appelé par ui-photo-batch et ui-circuit-list ;
@@ -58,15 +59,20 @@ function setupGlobalEditButton(poiId) {
     });
 }
 
+// Photo du hero de fiche : gradient de lisibilité + variable CSS. setHeroPhoto
+// (hero-photo.js) affiche aussi entière une photo portrait.
+const POI_HERO_PHOTO = {
+    gradient: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35))',
+    cssVar: '--poi-hero-bg',
+};
+
 // Applique le background-image du hero via CSSOM (CSP-safe : 'unsafe-inline' style retiré).
 function applyHeroBackground() {
     const hero = document.getElementById('poi-hero');
     if (!hero) return;
     const url = hero.dataset.bgUrl;
     if (!url) return;
-    const safe = String(url).replace(/['"\\]/g, encodeURIComponent);
-    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
-    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+    setHeroPhoto(hero, url, POI_HERO_PHOTO);
 }
 
 // Re-render la fiche POI courante après save de la modale Photos (le hero
@@ -154,9 +160,7 @@ async function hydrateHeroFromBlobs(poiId) {
     badge.innerHTML = `<i data-lucide="image"></i>${count} ${count > 1 ? 'photos' : 'photo'}`;
     hero.appendChild(badge);
 
-    const safe = activeHeroObjectUrl.replace(/['"\\]/g, encodeURIComponent);
-    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
-    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+    setHeroPhoto(hero, activeHeroObjectUrl, POI_HERO_PHOTO);
 
     createIcons({ icons: appIcons, root: hero });
 
@@ -245,9 +249,7 @@ async function hydrateHeroFromWorkPhotos(hero, poiId) {
     badge.innerHTML = `<span class="cartel-chip cartel-chip--warn"><i data-lucide="search"></i>${n > 1 ? `${n} photos de travail` : 'Photo de travail'}</span>`;
     hero.appendChild(badge);
 
-    const safe = activeHeroObjectUrl.replace(/['"\\]/g, encodeURIComponent);
-    hero.style.setProperty('--poi-hero-bg', `url("${safe}")`);
-    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+    setHeroPhoto(hero, activeHeroObjectUrl, POI_HERO_PHOTO);
 
     createIcons({ icons: appIcons, root: hero });
 }

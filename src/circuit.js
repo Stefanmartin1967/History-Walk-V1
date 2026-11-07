@@ -28,6 +28,7 @@ import { persistCircuit } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { rememberPublishedTrack } from './track-fingerprint.js';
 import { stampVisited } from './visited-state.js';
+import { setHeroPhoto } from './hero-photo.js';
 
 export function isCircuitTested(circuitId) {
     return state.testedCircuits[String(circuitId)] === true;
@@ -471,9 +472,10 @@ async function applyCircuitHero() {
     cover.classList.remove('is-empty');
     cover.dataset.bg = 'true';
     setCoverClickable(cover, true);
-    const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
-    cover.style.setProperty('--circuit-hero-bg', `url("${safe}")`);
-    cover.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35)), url("${safe}")`;
+    setHeroPhoto(cover, heroUrl, {
+        gradient: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35))',
+        cssVar: '--circuit-hero-bg',
+    });
 
     const badge = document.createElement('span');
     badge.className = 'cartel-hero-count';

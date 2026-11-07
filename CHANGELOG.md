@@ -6,6 +6,13 @@
 
 ---
 
+- PHOTO D'EN-TÊTE : UNE PHOTO PORTRAIT EST AFFICHÉE ENTIÈRE (v3.7.487). Constat de Stefan le 07/11/2026 sur le Monument aux héros coloniaux de Vezin : le bandeau photo (200 px de haut, environ deux fois plus large) se remplit en rognant, une photo portrait (monument élancé, église prise de loin) n'en montrait qu'une tranche.
+  - Une photo plus haute que large est maintenant affichée entière, centrée, sur un fond fait de la même photo floutée et assombrie (pas de bandes vides). Automatique, aucun réglage ni donnée enregistrés. Les photos paysage et carrées gardent le cadrage actuel.
+  - Vaut pour les trois en-têtes photo : fiche d'un lieu (PC et mobile, photos publiées, locales et photos de travail), couverture du panneau Circuit (PC) et en-tête de l'onglet Circuit (mobile). Code commun dans `src/hero-photo.js` (`setHeroPhoto`), style `.hero-portrait` dans `style/cartel.css`, `style.css?v=8.52`.
+  - Le recadrage manuel en mode Admin (choisir la partie visible d'une photo paysage) est remis à plus tard, quand les vraies photos seront là.
+  - Vérifié en preview sur une fiche, avec une image portrait puis une image paysage générées : portrait entier sur fond flou, paysage inchangé, aucune erreur en console.
+  - Test : `tests/hero_photo_portrait.test.js`.
+
 - SCOUT : LES POTALES SONT CLASSÉES « POTALE », ET LES CANDIDATS RESTÉS « A DÉFINIR » SONT RECLASSÉS À LA MOISSON (v3.7.486). Constat de Stefan le 06/11/2026 : la Potale Saint-Hubert de Vezin (Andenne, node/8150135169) apparaissait en « Lieu inconnu ».
   - **Cause** : le Scout moissonnait bien `historic=wayside_shrine`, mais le rangeait « ambigu » (règle de la v3.7.318, quand la catégorie Potale n'existait pas encore ; elle date de la v3.7.465). Sans nom, ces candidats s'affichaient « Lieu inconnu ». Sur la Wallonie, 275 potales étaient en « A définir », dont 181 sans nom.
   - **Classement** : `wayside_shrine` → Potale (`scout-categories.js`). Une petite chapelle tracée en `building=chapel` reste Chapelle, car les lieux de culte sont testés avant.

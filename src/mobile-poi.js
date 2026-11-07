@@ -23,6 +23,7 @@ import { getActiveCircuit } from './circuit-lookup.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { showConfirm } from './modal.js';
 import { setAccessPointAt } from './access-point.js';
+import { setHeroPhoto } from './hero-photo.js';
 
 export function initMobilePoiListeners() {
     eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
@@ -114,14 +115,16 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openCircuitGallery(); }
     };
 
-    const safe = String(heroUrl).replace(/['"\\]/g, encodeURIComponent);
-    hero.style.setProperty('--cc-hero-bg', `url("${safe}")`);
+    hero.innerHTML = '';
+
     // L'inline-style backgroundImage est crucial : sans lui les URL via var()
     // depuis la feuille CSS bundlée résolvent contre la feuille → 404 en prod
-    // (cf. PR #554 sur le hero PC).
-    hero.style.backgroundImage = `linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45)), url("${safe}")`;
-
-    hero.innerHTML = '';
+    // (cf. PR #554 sur le hero PC). Posé APRÈS le innerHTML = '' : le calque
+    // « portrait entier » éventuel est un enfant du hero.
+    setHeroPhoto(hero, heroUrl, {
+        gradient: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45))',
+        cssVar: '--cc-hero-bg',
+    });
 
     const badge = document.createElement('span');
     badge.className = 'cartel-hero-count';
