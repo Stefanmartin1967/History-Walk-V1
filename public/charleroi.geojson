@@ -23660,11 +23660,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Martin",
+        "Nom du site FR": "Église Saint-Martin (Vezin)",
         "Catégorie": "Église",
         "osm_ref": "way/740831481",
-        "candidate": true,
         "HW_ID": "HW-01M6EV5WH7HP15NXHGYQ6Y6S5N",
+        "Sous-type": "Catholique",
+        "Accès": "Extérieur seulement",
+        "description": "Église paroissiale de Vezin (Andenne), dédiée à saint Martin.\nSelon l'article Wikipédia consacré à Vezin, elle a été bâtie en 1980 dans un style moderniste et remplace une église de 1866 ; la version anglaise de l'article la dit reconstruite en 1979. Les datations varient selon les sources.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Wikipédia, « Vezin » | https://fr.wikipedia.org/wiki/Vezin\nWikipedia, « Vezin, Wallonia » | https://en.wikipedia.org/wiki/Vezin,_Wallonia",
+        "maps_ref": "https://maps.app.goo.gl/57jygypa7e9Ro8Wx9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Andenne"
       }
     },
