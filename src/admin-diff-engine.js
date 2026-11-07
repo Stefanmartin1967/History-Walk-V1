@@ -5,6 +5,7 @@ import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
+import { countFramed } from './photo-focus.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { pendingRejectedCount } from './rejected.js';
 import { trackFingerprint, fingerprintPointCount, publishedTrackFingerprint, rememberPublishedTrack, parseGpxTrack } from './track-fingerprint.js';
@@ -334,6 +335,23 @@ export async function prepareDiffData(adminDraft) {
                 const newF = fmt(newVal);
                 if (oldF !== newF) {
                     changes.push({ key: 'Point d\'accès', old: oldF, new: newF });
+                }
+                return;
+            }
+
+            // Cadrage des photos d'en-tête (photo-focus.js) : objet { fichier: % }.
+            // Le test générique String(a) !== String(b) donnerait « [object Object] »
+            // des deux côtés et ne verrait aucun changement.
+            if (key === 'photoFocus') {
+                const norm = (v) => (v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v).length > 0)
+                    ? JSON.stringify(Object.fromEntries(Object.entries(v).sort(([a], [b]) => a.localeCompare(b))))
+                    : '';
+                if (norm(oldVal) !== norm(newVal)) {
+                    const fmt = (v) => {
+                        const n = countFramed(v);
+                        return n > 0 ? `${n} photo(s) cadrée(s)` : '—';
+                    };
+                    changes.push({ key: 'Cadrage photo', rawKey: key, old: fmt(oldVal), new: fmt(newVal) });
                 }
                 return;
             }

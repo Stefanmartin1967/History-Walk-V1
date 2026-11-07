@@ -84,6 +84,13 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
                 delete properties.accessPoint;
             }
 
+            // Cadrage des photos (photo-focus.js) : un réglage remis au centre pour
+            // toutes les photos vaut null dans l'overlay → aucun résidu publié.
+            const pf = properties.photoFocus;
+            if (!pf || typeof pf !== 'object' || Array.isArray(pf) || Object.keys(pf).length === 0) {
+                delete properties.photoFocus;
+            }
+
             delete properties._leaflet_id;
 
             return {

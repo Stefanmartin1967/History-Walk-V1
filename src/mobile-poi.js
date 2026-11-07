@@ -24,6 +24,7 @@ import { stripCircuitSignature } from './circuit-description.js';
 import { showConfirm } from './modal.js';
 import { setAccessPointAt } from './access-point.js';
 import { setHeroPhoto } from './hero-photo.js';
+import { getPhotoFocus } from './photo-focus.js';
 
 export function initMobilePoiListeners() {
     eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
@@ -66,6 +67,7 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
     if (!circuit || circuit.length === 0) { renderEmpty('Aucune étape'); return; }
 
     let heroUrl = null;
+    let heroFocus = null; // cadrage de la photo publiée retenue (photo-focus.js)
     let totalPhotoCount = 0;
 
     for (const poi of circuit) {
@@ -74,7 +76,7 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
         const published = getPoiProp(poi, 'photos');
         if (Array.isArray(published) && published.length > 0) {
             totalPhotoCount += published.length;
-            if (!heroUrl) heroUrl = published[0];
+            if (!heroUrl) { heroUrl = published[0]; heroFocus = getPhotoFocus(poi, heroUrl); }
         }
     }
 
@@ -124,6 +126,7 @@ async function applyMobileCircuitHero(hero, circuit, zoneName, etapeCount) {
     setHeroPhoto(hero, heroUrl, {
         gradient: 'linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.45))',
         cssVar: '--cc-hero-bg',
+        focusY: heroFocus,
     });
 
     const badge = document.createElement('span');
