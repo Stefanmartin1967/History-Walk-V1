@@ -24,7 +24,7 @@ import {
 } from './mobile-state.js';
 import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
-import { isFollowActive, followBack, getResumeFollowCircuitId, resumeFollow } from './mobile-follow.js';
+import { isFollowActive, followBack, getResumeFollow, resumeFollow, startAroundMe } from './mobile-follow.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
 
 // ─── Bouton Retour Android (pattern proactif) ────────────────────────────────
@@ -50,21 +50,22 @@ export function onHwBack() {
 
     if (!isMobileView()) return;
 
-    // Reprise du suivi : Back depuis une fiche ouverte via « Voir la fiche
-    // complète » PENDANT un suivi. exitToFiche a mémorisé le circuit et remplacé
-    // l'entrée #sheet par #p → ce Back repop l'entrée #follow : on relance la
-    // marche là où on l'a laissée (une fiche = une parenthèse), au lieu de
-    // retomber sur la liste. À traiter AVANT la branche « POI ouvert » (la fiche
-    // est encore ouverte : currentFeatureId non nul).
-    const resumeId = getResumeFollowCircuitId();
-    if (resumeId && state.currentFeatureId !== null) {
+    // Reprise de la carte : Back depuis une fiche ouverte via « Fiche → » (ou
+    // « Nouveau lieu ») PENDANT un suivi ou « Autour de moi ». exitToFiche a
+    // mémorisé la carte quittée et remplacé l'entrée #sheet par #p → ce Back
+    // repop l'entrée #follow : on rouvre la carte là où on l'a laissée (une
+    // fiche = une parenthèse), au lieu de retomber sur la liste. À traiter AVANT
+    // la branche « POI ouvert » (la fiche est encore ouverte : currentFeatureId
+    // non nul).
+    const resume = getResumeFollow();
+    if (resume && state.currentFeatureId !== null) {
         // Ferme proprement la fiche : re-render la liste des POI du circuit dans
-        // #mobile-container (masqué sous le suivi) → à la sortie ULTÉRIEURE du
-        // suivi, on y retrouve le circuit et non une fiche périmée. Capturer
-        // resumeId AVANT (closeDetailsPanel émet 'details-panel:closed' qui efface
-        // le flag interne) et le passer explicitement à resumeFollow.
+        // #mobile-container (masqué sous la carte) → à la sortie ULTÉRIEURE, on
+        // y retrouve le circuit et non une fiche périmée. Capturer la cible
+        // AVANT (closeDetailsPanel émet 'details-panel:closed' qui efface le flag
+        // interne) et la passer explicitement à resumeFollow.
         closeDetailsPanel(true);
-        resumeFollow(resumeId);
+        resumeFollow(resume);
         return;
     }
 
@@ -173,6 +174,18 @@ export function initMobileMode() {
             }, { passive: true });
         }
     });
+
+    // ─── Bouton « Carte » : Autour de moi ──────────────────────────────────────
+    // Pas une vue du dock : la carte plein écran s'ouvre PAR-DESSUS la vue
+    // courante (comme le suivi) ; la croix ou le Back la referment et l'on
+    // retrouve la vue d'où l'on venait.
+    const aroundBtn = document.getElementById('btn-mobile-around');
+    if (aroundBtn) {
+        aroundBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            startAroundMe();
+        });
+    }
 
     // ─── Bouton filtre (Œil / liste) ──────────────────────────────────────────
 

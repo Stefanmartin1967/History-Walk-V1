@@ -19,6 +19,15 @@
 //
 // Le tracé est dessiné par le listener `circuit:updated` de map.js (enregistré
 // par initMap) : après init, on (ré)émet notifyCircuitChanged pour le tracer.
+//
+// Mode « Autour de moi » (08/11/2026, idée de Stefan après la marche ADEPS de
+// Mellet) : la MÊME carte, sans circuit, ouverte par le bouton « Carte » du
+// dock. But : voir les lieux proches de l'endroit où l'on marche pour décider
+// d'un détour. Pas de tracé ni de flèches ; les lieux affichés sont ceux que
+// l'utilisateur peut trouver (isShownToUser, même règle que la recherche),
+// limités à la zone visible (Charleroi : plus de 2 600 lieux) ; l'aperçu donne
+// la distance au lieu de l'étape. Pas de sélecteur de fond (décision Stefan :
+// sur place, on voit les chemins ; la carte dit seulement « il y a un lieu par là »).
 
 import L from 'leaflet';
 import { map, initMap, createHistoryWalkIcon } from './map.js';
@@ -29,7 +38,8 @@ import { updatePoiData, getPatrimonialName } from './data.js';
 import { getPoiPhotos } from './database.js';
 import { openDetailsPanel } from './ui-details.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp } from './utils.js';
+import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp, calculateDistance } from './utils.js';
+import { isShownToUser } from './poi-visibility.js';
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { getActiveCircuit } from './circuit-lookup.js';
@@ -38,6 +48,7 @@ import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
+let _mode = 'circuit';   // 'circuit' (suivi d'un circuit) | 'around' (« Autour de moi »)
 
 // --- État GPS (PR2) ---
 let _watchId = null;     // id de navigator.geolocation.watchPosition
@@ -58,20 +69,31 @@ let _sheetEl = null;         // élément DOM du bottom sheet (null = fermé)
 let _sheetPoiId = null;      // poiId affiché dans le sheet
 let _sheetObjUrl = null;     // objectURL d'une photo locale (à révoquer)
 
+// --- « Autour de moi » : marqueurs limités à la zone visible ---
+let _moveHandler = null;     // rafraîchit les marqueurs à chaque déplacement de la carte
+let _zoneShown = false;      // zone de la position déjà inscrite dans l'en-tête
+// Au-delà, on n'affiche rien et on invite à zoomer : des centaines de marqueurs
+// font ramer le téléphone, et à cette échelle la carte ne sert plus à choisir un détour.
+const AROUND_MAX_MARKERS = 300;
+
 // --- Flèches de sens sur le tracé (06/11/2026) ---
 let _arrowLayer = null;      // L.layerGroup des chevrons
 let _arrowTrack = null;      // tracé [lat, lng] du circuit suivi
 let _zoomHandler = null;     // recalcul de l'écart à chaque zoom
 const ARROW_SPACING_PX = 90; // écart entre deux flèches, constant à l'écran
 
-// « Voir la fiche complète » quitte le suivi pour afficher la fiche détaillée
-// (rendue dans #mobile-container, masqué pendant le suivi). On mémorise ici le
-// circuit suivi : le Back depuis cette fiche RELANCE la marche là où on l'a
-// laissée (une fiche = une parenthèse, pas une sortie). Consommé par
-// resumeFollow() ; annulé par toute fermeture NORMALE de la fiche (event
-// 'details-panel:closed', cf. abonnement en bas de module).
-let _resumeFollowCircuitId = null;
-export function getResumeFollowCircuitId() { return _resumeFollowCircuitId; }
+// « Voir la fiche complète » quitte la carte pour afficher la fiche détaillée
+// (rendue dans #mobile-container, masqué pendant le suivi). On mémorise ici ce
+// qu'on quittait — { mode, circuitId } : le Back depuis cette fiche RELANCE la
+// carte là où on l'a laissée (une fiche = une parenthèse, pas une sortie).
+// Consommé par resumeFollow() ; annulé par toute fermeture NORMALE de la fiche
+// (event 'details-panel:closed', cf. abonnement en bas de module).
+let _resumeFollow = null;
+export function getResumeFollow() { return _resumeFollow; }
+
+function currentResumeTarget() {
+    return { mode: _mode, circuitId: state.activeCircuitId };
+}
 
 export function isFollowActive() {
     return _active;
@@ -96,31 +118,39 @@ function getFitPoints(circuit) {
         .map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0]]);
 }
 
+function eyebrowHtml(icon, label, zoneName) {
+    return `<i data-lucide="${icon}"></i>${zoneName ? `${label} · ${escapeHtml(zoneName.toUpperCase())}` : label}`;
+}
+
 function buildOverlay(circuit) {
     const container = map.getContainer();
+    const around = _mode === 'around';
 
-    const title = (circuit.name || 'Circuit')
+    const title = around ? 'Autour de moi' : (circuit.name || 'Circuit')
         .replace(/^(Circuit de |Boucle de |Boucle autour du )/i, '');
 
-    // Zone du point de départ du tracé (eyebrow « SUIVI · HOUMT SOUK »).
+    // Suivi : zone du point de départ du tracé (eyebrow « SUIVI · HOUMT SOUK »).
+    // Autour de moi : la zone de la position s'inscrit au 1er fix GPS (showAroundZone).
     let zoneName = '';
-    const pts = getFitPoints(circuit);
-    if (pts.length > 0) zoneName = getZoneFromCoords(pts[0][0], pts[0][1]) || '';
+    if (!around) {
+        const pts = getFitPoints(circuit);
+        if (pts.length > 0) zoneName = getZoneFromCoords(pts[0][0], pts[0][1]) || '';
+    }
 
     const overlay = document.createElement('div');
     overlay.className = 'follow-ui';
     overlay.innerHTML = `
         <div class="follow-top">
             <div class="follow-title-card">
-                <div class="follow-eyebrow">
-                    <i data-lucide="route"></i>${zoneName ? `SUIVI · ${escapeHtml(zoneName.toUpperCase())}` : 'SUIVI'}
+                <div class="follow-eyebrow" id="follow-eyebrow">
+                    ${around ? eyebrowHtml('locate', 'CARTE', '') : eyebrowHtml('route', 'SUIVI', zoneName)}
                 </div>
                 <div class="follow-title">${escapeHtml(title)}</div>
                 <div class="wake-chip" id="follow-wake" hidden>
                     <i data-lucide="sun"></i> Écran maintenu allumé
                 </div>
             </div>
-            <button type="button" class="follow-close" id="follow-close" aria-label="Quitter le suivi">
+            <button type="button" class="follow-close" id="follow-close" aria-label="${around ? 'Fermer la carte' : 'Quitter le suivi'}">
                 <i data-lucide="x"></i>
             </button>
         </div>
@@ -129,11 +159,15 @@ function buildOverlay(circuit) {
             <span class="acq-spin"></span> Recherche du signal GPS…
         </div>
 
+        <div class="acq-toast" id="follow-zoom-hint" hidden>
+            <i data-lucide="zoom-in"></i> Zoomez pour voir les lieux
+        </div>
+
         <div class="gps-invite" id="follow-invite" hidden>
             <div class="gps-invite-ico"><i data-lucide="map-pin-off"></i></div>
             <div class="gps-invite-body">
                 <div class="gps-invite-t">Localisation désactivée</div>
-                <div class="gps-invite-s">Le tracé reste affiché. Autorise la position pour te voir avancer.</div>
+                <div class="gps-invite-s">${around ? 'Les lieux restent affichés.' : 'Le tracé reste affiché.'} Autorise la position pour te voir avancer.</div>
             </div>
             <button type="button" class="gps-invite-btn" id="follow-invite-btn">Autoriser</button>
         </div>
@@ -159,8 +193,10 @@ function buildOverlay(circuit) {
     // La croix pop l'entrée d'historique #follow → popstate → onHwBack →
     // followBack(). Même chemin que le Back Android (sortie unique).
     overlay.querySelector('#follow-close').addEventListener('click', () => history.back());
-    overlay.querySelector('#follow-zoom-in').addEventListener('click', () => map.zoomIn());
-    overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut());
+    // Un niveau entier par appui : le pas de la carte (zoomDelta 0.1, réglé pour
+    // la molette sur PC) ne bougeait presque pas la carte à chaque toucher.
+    overlay.querySelector('#follow-zoom-in').addEventListener('click', () => map.zoomIn(1));
+    overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut(1));
     overlay.querySelector('#follow-locate').addEventListener('click', recenterOnGps);
     overlay.querySelector('#follow-add-place').addEventListener('click', addPlaceDuringFollow);
     // « Autoriser » : on relance une acquisition (re-prompt si l'utilisateur
@@ -176,23 +212,57 @@ function buildOverlay(circuit) {
 
 // ─── MARQUEURS POI CLIQUABLES (PR3) ───────────────────────────────────────────
 
+function addPoiMarker(feature, idx) {
+    const coords = feature?.geometry?.coordinates;
+    if (!coords) return;
+    const poiId = getPoiId(feature);
+    const marker = L.marker([coords[1], coords[0]], {
+        icon: createHistoryWalkIcon(feature),
+        title: getPatrimonialName(feature),
+    });
+    marker.on('click', () => openPoiSheet(poiId));
+    marker.addTo(_poiLayer);
+    _poiMarkers.set(poiId, { marker, feature, idx });
+    applyMarkerVisited(poiId);
+}
+
 function buildPoiMarkers() {
     _poiLayer = L.layerGroup().addTo(map);
     _poiMarkers.clear();
+    if (_mode === 'around') {
+        // Marqueurs posés au fil des déplacements (zone visible seulement).
+        _moveHandler = () => refreshAroundMarkers();
+        map.on('moveend', _moveHandler);
+        return;
+    }
+    (state.currentCircuit || []).forEach((feature, idx) => addPoiMarker(feature, idx));
+}
 
-    (state.currentCircuit || []).forEach((feature, idx) => {
-        const coords = feature?.geometry?.coordinates;
-        if (!coords) return;
-        const poiId = getPoiId(feature);
-        const marker = L.marker([coords[1], coords[0]], {
-            icon: createHistoryWalkIcon(feature),
-            title: getPatrimonialName(feature),
-        });
-        marker.on('click', () => openPoiSheet(poiId));
-        marker.addTo(_poiLayer);
-        _poiMarkers.set(poiId, { marker, feature, idx });
-        applyMarkerVisited(poiId);
+// « Autour de moi » : n'affiche que les lieux de la zone visible, un peu
+// élargie pour qu'un léger glissement ne laisse pas de trous. Les marqueurs
+// déjà posés sont gardés (pas de clignotement), ceux qui sortent de la zone
+// sont retirés. Trop de lieux à l'écran → aucun, et une invite à zoomer.
+function refreshAroundMarkers() {
+    if (!_active || _mode !== 'around' || !_poiLayer || !map) return;
+    const bounds = map.getBounds().pad(0.3);
+    const inView = (state.loadedFeatures || []).filter(f => {
+        const c = f?.geometry?.coordinates;
+        return c && bounds.contains([c[1], c[0]]) && isShownToUser(f);
     });
+    const tooMany = inView.length > AROUND_MAX_MARKERS;
+    const hint = _overlay && _overlay.querySelector('#follow-zoom-hint');
+    if (hint) hint.hidden = !tooMany;
+
+    const keep = new Set(tooMany ? [] : inView.map(f => getPoiId(f)));
+    _poiMarkers.forEach((entry, poiId) => {
+        // Le lieu dont l'aperçu est ouvert reste sur la carte.
+        if (!keep.has(poiId) && poiId !== _sheetPoiId) {
+            entry.marker.remove();
+            _poiMarkers.delete(poiId);
+        }
+    });
+    if (tooMany) return;
+    inView.forEach(f => { if (!_poiMarkers.has(getPoiId(f))) addPoiMarker(f, -1); });
 }
 
 // Reflète l'état « visité » sur le marqueur (atténué + pastille verte). Le
@@ -207,6 +277,8 @@ function applyMarkerVisited(poiId) {
 }
 
 function removePoiMarkers() {
+    if (_moveHandler && map) map.off('moveend', _moveHandler);
+    _moveHandler = null;
     if (_poiLayer) { _poiLayer.remove(); _poiLayer = null; }
     _poiMarkers.clear();
 }
@@ -264,8 +336,24 @@ function revokeSheetObjUrl() {
     if (_sheetObjUrl) { URL.revokeObjectURL(_sheetObjUrl); _sheetObjUrl = null; }
 }
 
-function sheetMarkup(feature, idx) {
+// « À 350 M » / « À 1,2 KM » : distance à vol d'oiseau depuis la dernière position.
+function formatDistance(meters) {
+    if (meters < 1000) return `À ${Math.round(meters / 10) * 10} M`;
+    return `À ${(meters / 1000).toFixed(1).replace('.', ',')} KM`;
+}
+
+function sheetLead(feature, idx) {
+    if (_mode === 'around') {
+        if (!_lastLatLng) return '';
+        const c = feature.geometry.coordinates;
+        return formatDistance(calculateDistance(_lastLatLng[0], _lastLatLng[1], c[1], c[0]));
+    }
     const total = (state.currentCircuit || []).length;
+    return `ÉTAPE ${idx + 1}${total ? ` / ${total}` : ''}`;
+}
+
+function sheetMarkup(feature, idx) {
+    const lead = sheetLead(feature, idx);
     const cat = (getPoiProp(feature, 'Catégorie') || 'Lieu').toString();
     const excerpt = (getPoiProp(feature, 'info_gpx')
         || getPoiProp(feature, 'description') || '').toString().trim();
@@ -286,7 +374,7 @@ function sheetMarkup(feature, idx) {
                     : `<div class="pv-photo-ph"><i data-lucide="image"></i></div>`}
             </div>
             <div class="pv-body">
-                <span class="pv-eyebrow">ÉTAPE ${idx + 1}${total ? ` / ${total}` : ''} · ${escapeHtml(cat.toUpperCase())}</span>
+                <span class="pv-eyebrow">${lead ? `${lead} · ` : ''}${escapeHtml(cat.toUpperCase())}</span>
                 <div class="pv-name" dir="auto">${escapeHtml(getPatrimonialName(feature))}</div>
                 ${excerpt ? `<p class="pv-excerpt">${escapeHtml(excerpt)}</p>` : ''}
             </div>
@@ -376,7 +464,7 @@ async function toggleVisited(poiId) {
 function exitToFiche(poiId) {
     const globalIndex = state.loadedFeatures.findIndex(f => getPoiId(f) === poiId);
     if (globalIndex < 0) { showToast('Fiche introuvable.', 'error'); return; }
-    const circuitId = state.activeCircuitId;
+    const resume = currentResumeTarget();
     closeSheetInternal();
     stopFollow();
     // Mémorise APRÈS stopFollow (qui ne touche pas au flag) : le Back relancera
@@ -384,7 +472,7 @@ function exitToFiche(poiId) {
     // empiler une → la pile reste [.., #follow, #p], un seul Back repop #follow
     // et reprend le suivi (sinon les entrées #follow/#sheet orphelines faisaient
     // vider le circuit au retour).
-    _resumeFollowCircuitId = circuitId;
+    _resumeFollow = resume;
     openDetailsPanel(globalIndex, null, false, { replaceLevel: location.hash === '#sheet' });
 }
 
@@ -401,22 +489,24 @@ async function addPlaceDuringFollow() {
     const index = createPlaceAt(position);
     // Suivi quitté pendant la fenêtre (Back Android) → création classique.
     if (!_active) { openDetailsPanel(index); return; }
-    const circuitId = state.activeCircuitId;
+    const resume = currentResumeTarget();
     stopFollow();
-    _resumeFollowCircuitId = circuitId;
+    _resumeFollow = resume;
     openDetailsPanel(index);
 }
 
-// Relance le suivi mémorisé par exitToFiche, SANS re-pousser d'entrée
+// Relance la carte mémorisée par exitToFiche, SANS re-pousser d'entrée
 // d'historique (on vient de repop l'entrée #follow existante). Appelé par
 // onHwBack au Back depuis la fiche.
-export function resumeFollow(explicitId) {
-    // id explicite quand l'appelant (onHwBack) a déjà fermé la fiche via
+export function resumeFollow(explicit) {
+    // Cible explicite quand l'appelant (onHwBack) a déjà fermé la fiche via
     // closeDetailsPanel → 'details-panel:closed' a effacé le flag interne.
-    const id = explicitId || _resumeFollowCircuitId;
-    _resumeFollowCircuitId = null;
-    if (!id) return;
-    if (state.activeCircuitId !== id) setActiveCircuitId(id);
+    const target = explicit || _resumeFollow;
+    _resumeFollow = null;
+    if (!target) return;
+    if (target.mode === 'around') { startAroundMe({ skipHistory: true }); return; }
+    if (!target.circuitId) return;
+    if (state.activeCircuitId !== target.circuitId) setActiveCircuitId(target.circuitId);
     startFollow({ skipHistory: true });
 }
 
@@ -494,6 +584,7 @@ function onPosition(pos) {
     _lastLatLng = ll;
     setGpsState('live');
     updatePuck(ll);
+    if (_mode === 'around' && !_zoneShown) showAroundZone(ll);
 
     // Recentrage automatique au 1er fix : « voilà où tu es » (zoom-in + flyTo).
     if (!_didInitialRecenter) {
@@ -512,6 +603,16 @@ function onPosition(pos) {
     if (_followMode && !_sheetEl && map.getBounds && !map.getBounds().pad(-0.25).contains(ll)) {
         map.panTo(ll, { animate: true, duration: 0.5 });
     }
+}
+
+// « CARTE · MELLET » : zone de la position, inscrite une fois au 1er fix.
+function showAroundZone(ll) {
+    _zoneShown = true;
+    const zone = getZoneFromCoords(ll[0], ll[1]) || '';
+    const el = _overlay && _overlay.querySelector('#follow-eyebrow');
+    if (!el || !zone) return;
+    el.innerHTML = eyebrowHtml('locate', 'CARTE', zone);
+    createIcons({ icons: appIcons, root: el });
 }
 
 // Seuil de pertes consécutives avant de réafficher « Recherche du signal GPS… ».
@@ -590,11 +691,23 @@ export function startFollow(opts = {}) {
     if (_active) return;
     const circuit = getActiveCircuit();
     if (!circuitHasTrace(circuit)) return; // garde-fou : pas de plein écran vide
+    openMap('circuit', circuit, opts);
+}
 
+// « Autour de moi » : la carte du suivi, sans circuit (bouton « Carte » du dock).
+export function startAroundMe(opts = {}) {
+    if (_active) return;
+    openMap('around', null, opts);
+}
+
+function openMap(mode, circuit, opts) {
+    _mode = mode;
     _active = true;
     // On révèle #map AVANT d'initialiser Leaflet : le conteneur a ainsi ses
     // vraies dimensions au moment du L.map() (sinon init à taille 0).
     document.body.classList.add('follow-active');
+    // Autour de moi : le tracé d'un circuit resté actif est masqué (CSS).
+    document.body.classList.toggle('follow-around', mode === 'around');
 
     // Init paresseuse : sur mobile la carte n'existe pas encore au 1er suivi.
     // `map` est un live binding ESM → il reflète la réassignation d'initMap.
@@ -606,14 +719,15 @@ export function startFollow(opts = {}) {
     }
     if (!map) { // init impossible (cas extrême) → on annule proprement
         _active = false;
-        document.body.classList.remove('follow-active');
+        _mode = 'circuit';
+        document.body.classList.remove('follow-active', 'follow-around');
         showToast('Carte indisponible.', 'error');
         return;
     }
 
     _overlay = buildOverlay(circuit);
     buildPoiMarkers(); // marqueurs POI cliquables (PR3)
-    buildArrows(circuit); // flèches de sens sur le tracé
+    if (mode === 'circuit') buildArrows(circuit); // flèches de sens sur le tracé
 
     // Entrée d'historique : le Back Android (et la croix) quittent le suivi
     // au lieu de revenir à la liste des circuits. À la REPRISE depuis une fiche
@@ -627,6 +741,12 @@ export function startFollow(opts = {}) {
     requestAnimationFrame(() => {
         if (!_active || !map) return;
         map.invalidateSize();
+        if (mode === 'around') {
+            // Lieux de la vue courante en attendant le 1er fix GPS, qui recentre
+            // sur la position ; ensuite chaque déplacement rafraîchit les marqueurs.
+            refreshAroundMarkers();
+            return;
+        }
         // Les marqueurs sont rendus : on peut appliquer l'état « visité ».
         _poiMarkers.forEach((_v, poiId) => applyMarkerVisited(poiId));
         const points = getFitPoints(circuit);
@@ -642,6 +762,7 @@ export function startFollow(opts = {}) {
     _hadFix = false;
     _gpsErrStreak = 0;
     _didInitialRecenter = false;
+    _zoneShown = false;
     // Mode-follow ON par défaut ; un pan manuel le désengage (regarder autour
     // sans que la carte ne resaute sur le point), le bouton « Recentrer » le
     // ré-engage. Les panTo/flyTo programmatiques NE déclenchent PAS 'dragstart'
@@ -687,7 +808,8 @@ export function stopFollow() {
     _gpsErrStreak = 0;
     _didInitialRecenter = false;
 
-    document.body.classList.remove('follow-active');
+    document.body.classList.remove('follow-active', 'follow-around');
+    _mode = 'circuit';
     if (_overlay && _overlay.parentNode) _overlay.parentNode.removeChild(_overlay);
     _overlay = null;
 
@@ -702,4 +824,4 @@ export function stopFollow() {
 // (elle remet currentFeatureId à null directement) → n'émet pas cet event, son
 // flag survit jusqu'à sa consommation. Empêche un flag résiduel de relancer un
 // suivi lors d'un Back depuis une fiche ouverte plus tard par un autre chemin.
-eventBus.on('details-panel:closed', () => { _resumeFollowCircuitId = null; });
+eventBus.on('details-panel:closed', () => { _resumeFollow = null; });

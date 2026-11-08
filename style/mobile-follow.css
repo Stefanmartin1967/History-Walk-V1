@@ -72,7 +72,7 @@
 }
 .follow-title-card {
     flex: 1; min-width: 0;
-    background: rgba(255, 255, 255, 0.94);
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     border-radius: var(--radius-lg, 14px);
     box-shadow: 0 4px 14px rgba(2, 12, 27, .16);
@@ -94,7 +94,7 @@
 }
 .follow-close {
     flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-lg, 14px);
-    background: rgba(255, 255, 255, 0.94);
+    background: color-mix(in srgb, var(--surface) 94%, transparent);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     box-shadow: 0 4px 14px rgba(2, 12, 27, .16);
     border: 0; color: var(--ink);
@@ -236,7 +236,7 @@
 .gps-invite {
     position: absolute; left: 12px; right: 12px;
     bottom: calc(26px + env(safe-area-inset-bottom, 0)); z-index: 1200;
-    background: rgba(255, 255, 255, .97);
+    background: color-mix(in srgb, var(--surface) 97%, transparent);
     -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
     border: 1px solid var(--line); border-radius: 16px;
     box-shadow: 0 10px 30px rgba(2, 12, 27, .18);
@@ -364,3 +364,17 @@
     fill: none; stroke: #fff; stroke-width: 2.2;
     stroke-linecap: round; stroke-linejoin: round;
 }
+
+/* ============================================================
+   « AUTOUR DE MOI » (bouton « Carte » du dock, 08/11/2026)
+   ============================================================ */
+/* Même carte que le suivi, sans circuit : le tracé d'un circuit resté actif
+   (dessiné par map.js) ne doit pas apparaître. */
+body.follow-around .circuit-polyline,
+body.follow-around .real-track-polyline,
+body.follow-around .real-track-polyline-done {
+    display: none;
+}
+/* Invite « Zoomez pour voir les lieux » : sous le toast GPS s'ils coexistent. */
+#follow-zoom-hint { top: calc(140px + env(safe-area-inset-top, 0)); }
+#follow-zoom-hint svg { width: 15px; height: 15px; }

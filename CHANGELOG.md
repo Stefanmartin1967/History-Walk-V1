@@ -6,6 +6,18 @@
 
 ---
 
+- MOBILE : BOUTON « CARTE » — LES LIEUX AUTOUR DE MOI (v3.7.490). Idée de Stefan après la marche ADEPS de Mellet (08/11/2026) : la Tour du Château, hors du parcours, n'a été vue que grâce à Google Maps ouvert « au cas où ». But : voir les lieux Heripia proches de l'endroit où l'on marche pour décider d'un détour. Pas de création de circuit sur mobile.
+  - Nouveau 6e bouton du dock (icône carte, entre Rech. et Filtre). Il ouvre la carte plein écran du suivi, sans circuit, par-dessus la vue en cours ; la croix ou le Retour la referment.
+  - Même carte que le suivi : point bleu, recentrer, écran maintenu allumé, zoom, « Nouveau lieu », aperçu d'un lieu (photo, « Marquer visité », « Fiche → »). Pas de tracé ni de flèches ; le tracé d'un circuit resté actif est masqué.
+  - Lieux affichés : ceux que l'utilisateur peut trouver (même règle que la recherche : ni supprimés, ni « Existence à confirmer » masqués), seulement dans la zone visible et rafraîchis à chaque déplacement (Charleroi compte plus de 2 600 lieux). Au-delà de 300 lieux à l'écran, aucun marqueur et une invite « Zoomez pour voir les lieux ».
+  - En-tête « Autour de moi », avec la zone de la position au 1er fix GPS (« CARTE · TAOURIT »). L'aperçu donne la distance à vol d'oiseau au lieu de l'étape (« À 220 M · MOSQUÉE »).
+  - Le Retour depuis une fiche ouverte sur cette carte (« Fiche → » ou « Nouveau lieu ») rouvre la carte, comme pendant un suivi.
+  - Pas de choix du fond de carte (décision de Stefan : sur place on voit les chemins, Voyager suffit pour dire « il y a un lieu par là » ; à revoir à l'usage). Constat du jour sur le tracé Strava de Mellet : Voyager montre les chemins agricoles en gris très pâle, le Plan OSM nettement.
+  - Corrigé au passage dans la carte du suivi : les boutons + / − avançaient de 0,1 niveau par appui (pas de la molette sur PC), ils avancent maintenant d'un niveau entier ; en thème Nuit, l'en-tête, la croix et l'invite GPS restaient blancs avec un texte clair, ils prennent la couleur de surface du thème.
+  - Aide : paragraphe ajouté dans « Utiliser Mes circuits » § 6. `style.css?v=8.55`.
+  - Vérifié en preview mobile (port à part, sans jeton, position GPS simulée à Houmt Souk) : ouverture, lieux autour, distance dans l'aperçu, Fiche → puis Retour qui rouvre la carte, croix, suivi de circuit inchangé (tracé, flèches, étapes), tracé masqué si un circuit reste actif, invite à zoomer. Charleroi non testé en preview (destination en brouillon, invisible sans session admin).
+  - Tests : `tests/mobile_follow_around.test.js`, `tests/mobile_follow_new_place.test.js`.
+
 - SCOUT : LES CANDIDATS CLASSÉS PAR UNE RÈGLE DÉPASSÉE SONT RECLASSÉS À LA MOISSON (v3.7.489). Constat du 07/11/2026 en curant le Château de Bonneville (Andenne) : candidat en « Fortification » alors que `historic=castle` donne « Château » depuis le 05/11/2026.
   - **Relevé** (tags OSM du jour des 2 610 candidats de la Wallonie, comparés aux règles actuelles de `scout-categories.js`) : 309 châteaux en Fortification, 24 chapelles (`building=chapel`) en Église, 44 moulins en Curiosité au lieu de Vestige industriel. Les forts (`historic=fort`) restent en Fortification.
   - La moisson ne reclassait que les candidats « A définir » (v3.7.486). Elle remplace maintenant aussi ces trois anciennes catégories automatiques, et seulement par la catégorie qui les a remplacées : Fortification → Château, Église → Chapelle, Curiosité → Vestige industriel (`SUPERSEDED` dans `scout-reclassify.js`). Toute autre différence (objet dont les tags ont changé dans OSM) reste à regarder à la main.

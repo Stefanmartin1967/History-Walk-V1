@@ -65,7 +65,7 @@ vi.mock('../src/mobile-new-place.js', () => ({
     createPlaceAt: h.createPlaceAt,
 }));
 
-import { startFollow, stopFollow, isFollowActive, getResumeFollowCircuitId } from '../src/mobile-follow.js';
+import { startFollow, stopFollow, isFollowActive, getResumeFollow } from '../src/mobile-follow.js';
 
 const flush = () => new Promise((r) => setTimeout(r, 0));
 
@@ -102,7 +102,7 @@ describe('suivi mobile — bouton « Nouveau lieu »', () => {
         expect(h.createPlaceAt).not.toHaveBeenCalled();
         expect(h.openDetailsPanel).not.toHaveBeenCalled();
         expect(isFollowActive()).toBe(true);
-        expect(getResumeFollowCircuitId()).toBeNull();
+        expect(getResumeFollow()).toBeNull();
     });
 
     it('« Capturer » : crée le lieu, ouvre sa fiche et mémorise la reprise du suivi', async () => {
@@ -113,7 +113,7 @@ describe('suivi mobile — bouton « Nouveau lieu »', () => {
         expect(h.createPlaceAt).toHaveBeenCalledWith(position);
         expect(isFollowActive()).toBe(false);
         expect(h.openDetailsPanel).toHaveBeenCalledWith(7);
-        expect(getResumeFollowCircuitId()).toBe('CIRC-1');
+        expect(getResumeFollow()).toEqual({ mode: 'circuit', circuitId: 'CIRC-1' });
         expect(document.getElementById('follow-add-place')).toBeNull();
     });
 
@@ -125,6 +125,6 @@ describe('suivi mobile — bouton « Nouveau lieu »', () => {
         resolveModal({ latitude: 50.41, longitude: 4.44 });
         await flush();
         expect(h.openDetailsPanel).toHaveBeenCalledWith(7);
-        expect(getResumeFollowCircuitId()).toBeNull();
+        expect(getResumeFollow()).toBeNull();
     });
 });

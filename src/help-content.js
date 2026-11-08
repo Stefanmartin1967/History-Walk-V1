@@ -721,6 +721,10 @@ export const GUIDE_MES_CIRCUITS = {
                 pas terminé toutes les vérifications terrain. <strong>Gardez votre application
                 de marche habituelle ouverte en parallèle</strong> — Heripia n'est pas (encore)
                 un substitut.</p>
+                <p><strong>Sans circuit</strong> : le bouton <strong>« Carte »</strong> de la barre
+                du bas ouvre la même carte, centrée sur votre position, avec les lieux Heripia
+                des environs — pratique pour repérer un lieu proche et décider d'un détour.
+                Touchez un lieu pour voir à quelle distance il se trouve.</p>
                 <p><strong>À activer côté téléphone</strong> : la <strong>localisation</strong>.
                 Sans elle, pas de point bleu pendant le suivi — et vos photos prises pendant la
                 marche ne pourront pas être associées automatiquement aux lieux ensuite.</p>`,
