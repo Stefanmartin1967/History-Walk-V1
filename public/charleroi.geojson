@@ -935,12 +935,13 @@
         "Prix_TND": 0,
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
-        "mapsChecked": false,
-        "mapsHasPhoto": false,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Les Bons Villers"
+        "Zone": "Les Bons Villers",
+        "maps_ref": "https://maps.app.goo.gl/1CAMhZMydraBwjfA8"
       }
     },
     {
