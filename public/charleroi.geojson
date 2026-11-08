@@ -13455,11 +13455,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Chapelle Saint-Jacques",
-        "Catégorie": "Église",
+        "Nom du site FR": "Chapelle Saint-Jacques (Villers-Perwin)",
+        "Catégorie": "Chapelle",
         "osm_ref": "way/202634216",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4V4ND3HGXA0RRSDCKNFX",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de Villers-Perwin, à l'angle du chemin des Neuf Bonniers et de la rue Alphonse Planche.\nSelon la promenade communale « L'Arbre de la Bruyère », elle aurait été construite vers 1760 par la famille de Renette, en même temps que le château de Villers. Elle est dédiée à saint Jacques, patron des voyageurs, et borde un chemin qui menait directement vers le pays de Charleroi : c'était autrefois le seul qui permettait de sortir du village.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Commune des Bons Villers, « L'Arbre de la Bruyère. Promenade à Villers-Perwin » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-villers-perwin.pdf/@@download/file/RV_001_Villers_Perwin.pdf",
+        "maps_ref": "https://maps.app.goo.gl/XDYe5Sirdt2fwJzg7",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Les Bons Villers"
       }
     },
@@ -46143,11 +46156,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Chapelle (Chaussée de Bruxelles)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/1230654804",
-        "candidate": true,
         "HW_ID": "HW-01M6PM2GR04393KYF807G6RH5Z",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de Mellet, sur la chaussée de Bruxelles.\nOpenStreetMap y indique une chapelle, sans nom. Sa dédicace reste à confirmer sur place.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Les Bons Villers"
       }
     },
