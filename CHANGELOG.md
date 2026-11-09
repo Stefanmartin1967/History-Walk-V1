@@ -6,6 +6,15 @@
 
 ---
 
+- IMPORT PHOTOS : OUTIL « FLOUTER » — VISAGES, PLAQUES ET AUTRES ZONES À NE PAS PUBLIER (v3.7.491). Demande de Stefan du 09/11/2026 ; proposition validée le même jour.
+  - Nouveau bouton (icône grille) à côté de « Rogner » dans la modale d'import, en grille et en mode Comparer, pour les photos neuves seulement : une photo publiée est définitive, il faut flouter avant d'enregistrer.
+  - Modale « Flouter la photo » : on trace des rectangles à la souris ou au doigt ; chaque zone s'affiche aussitôt pixelisée, une croix la retire. « Flouter » valide et remplace la copie de travail, comme le rognage ; l'original sur le disque n'est pas touché.
+  - Rendu : pixelisation franche (pas un flou léger), environ 8 blocs sur le plus grand côté de la zone, chaque bloc à la moyenne exacte de ses pixels, calculée en pleine résolution (plafond 4 096 px comme le rognage). Pas de détection automatique dans cette version.
+  - Corrigé au passage dans le ZIP : une photo rognée en sortait sans GPS ni date (la copie retouchée sort d'un canvas, sans EXIF). Le fichier importé est maintenant gardé à la première retouche et le ZIP y reprend l'EXIF, admin comme visiteur ; la vignette EXIF (image non retouchée) reste détruite par la recopie.
+  - Aide : « Organiser les photos » § 3 et les deux listes du mode Comparer. `style.css?v=8.56`.
+  - Vérifié en preview (port à part, sans jeton) sur une photo de test avec une fausse plaque : tracé à la souris, clic simple ignoré, croix, validation, vignette mise à jour (plus aucun pixel du texte dans la zone), bouton présent en Comparer. Non vérifié : le ZIP de bout en bout sur une vraie photo avec GPS, et l'usage au doigt sur téléphone.
+  - Test : `tests/photo_blur.test.js`.
+
 - MOBILE : BOUTON « CARTE » — LES LIEUX AUTOUR DE MOI (v3.7.490). Idée de Stefan après la marche ADEPS de Mellet (08/11/2026) : la Tour du Château, hors du parcours, n'a été vue que grâce à Google Maps ouvert « au cas où ». But : voir les lieux Heripia proches de l'endroit où l'on marche pour décider d'un détour. Pas de création de circuit sur mobile.
   - Nouveau 6e bouton du dock (icône carte, entre Rech. et Filtre). Il ouvre la carte plein écran du suivi, sans circuit, par-dessus la vue en cours ; la croix ou le Retour la referment.
   - Même carte que le suivi : point bleu, recentrer, écran maintenu allumé, zoom, « Nouveau lieu », aperçu d'un lieu (photo, « Marquer visité », « Fiche → »). Pas de tracé ni de flèches ; le tracé d'un circuit resté actif est masqué.

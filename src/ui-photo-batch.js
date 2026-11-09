@@ -22,6 +22,7 @@ import { showPrompt, openHwModal, closeHwModal, suspendHwModal, resumeHwModal, h
 import { createZipBlob } from './zip-store.js';
 import { compressImage, PUBLISH_COMPRESSION, ADMIN_COMPRESSION } from './photo-service.js';
 import { copyExifToBlob } from './exif-transfer.js';
+import { openBlurEditor } from './ui-photo-blur.js';
 import { getCategoryLabels, getSubtypes, getStates, getAccessValues } from './taxonomy.js';
 import { eventBus } from './events.js';
 import { configureHelp, helpButton, helpInline, closeHelp } from './help-popover.js';
@@ -1012,6 +1013,15 @@ function buildCompareCell(cluster, i) {
         crop.innerHTML = '<i data-lucide="crop"></i>';
         crop.addEventListener('click', (e) => { e.stopPropagation(); openCropPhoto(photo.id); });
         acts.appendChild(crop);
+
+        const blur = document.createElement('button');
+        blur.className = 'pb-compare-btn';
+        blur.type = 'button';
+        blur.title = 'Flouter des zones de cette photo (visages, plaques…)';
+        blur.setAttribute('aria-label', 'Flouter');
+        blur.innerHTML = '<i data-lucide="grid-2x2"></i>';
+        blur.addEventListener('click', (e) => { e.stopPropagation(); openBlurPhoto(photo.id); });
+        acts.appendChild(blur);
     }
     // Détacher : vers « Hors POI » depuis un groupe POI ; OU scinder un groupe
     // « Hors POI » en un nouveau groupe Hors POI (≥ 2 photos requises, sinon
@@ -1426,18 +1436,58 @@ async function openCropPhoto(photoId) {
 
     if (!resultBlob) return; // annulé
 
-    // Remplace la copie de travail (l'original disque reste intact).
-    const name = (photo.file && photo.file.name) || 'photo.jpg';
-    const cropped = new File([resultBlob], name, { type: 'image/jpeg' });
-    photo.file = cropped;
+    await replaceWorkingCopy(photo, resultBlob);
     photo.cropped = true;
-    try { photo.base64 = await resizeImage(cropped, 320); }
-    catch (e) { console.error('[photo-batch] aperçu post-rognage', e); }
-    try { photo.srcHash = await sha256OfFile(cropped); }
-    catch (e) { /* dédup best-effort */ }
-
     renderBody();
     showToast('Photo rognée.', 'success');
+}
+
+// Remplace la copie de travail d'une photo par une version retouchée (rognée,
+// floutée). L'original sur le disque n'est pas touché. Le fichier importé est
+// gardé dans `photo.originalFile` à la PREMIÈRE retouche : le canvas jette tout
+// l'EXIF, et le ZIP vient y reprendre GPS, date et appareil (cf.
+// buildZipEntries). Le hash suit la copie retouchée (dédup best-effort).
+async function replaceWorkingCopy(photo, blob) {
+    if (!photo.originalFile) photo.originalFile = photo.file;
+    const name = (photo.file && photo.file.name) || 'photo.jpg';
+    const edited = new File([blob], name, { type: 'image/jpeg' });
+    photo.file = edited;
+    try { photo.base64 = await resizeImage(edited, 320); }
+    catch (e) { console.error('[photo-batch] aperçu post-retouche', e); }
+    try { photo.srcHash = await sha256OfFile(edited); }
+    catch (e) { /* dédup best-effort */ }
+}
+
+// Floutage d'une photo (zones pixelisées, cf. ui-photo-blur.js). Mêmes règles
+// que le rognage : photo NEUVE uniquement (une photo publiée est définitive),
+// la version floutée remplace la copie de travail, la modale photo-batch est
+// suspendue le temps de l'édition (anti-empilement V2).
+async function openBlurPhoto(photoId) {
+    const loc = findPhotoLocation(photoId);
+    if (!loc) return;
+    const photo = loc.cluster.photos.find(p => p.id === photoId);
+    if (!photo || !photo.file) {
+        showToast("Cette photo n'est pas disponible pour le floutage.", 'error');
+        return;
+    }
+
+    let resultBlob = null;
+    suspendHwModal();
+    try {
+        resultBlob = await openBlurEditor(photo.file);
+    } catch (e) {
+        console.error('[photo-batch] floutage', e);
+        showToast("Impossible d'ouvrir cette photo pour le floutage.", 'error');
+    } finally {
+        resumeHwModal();
+    }
+
+    if (!resultBlob) return; // annulé
+
+    await replaceWorkingCopy(photo, resultBlob);
+    photo.blurred = true;
+    renderBody();
+    showToast('Photo floutée.', 'success');
 }
 
 // --- ENREGISTREMENT ---
@@ -1837,11 +1887,14 @@ let zipInProgress = false;
 // vérité que la publication, donc pas de règle dupliquée ici. Le canvas, lui,
 // jette toutes les métadonnées : copyExifToBlob recolle le bloc EXIF d'origine
 // (GPS, date, appareil), orientation neutralisée et vignette détruite.
+// L'EXIF vient du fichier IMPORTÉ (`originalFile`) quand la photo a été rognée
+// ou floutée : la copie retouchée sort d'un canvas et n'en a plus. La vignette
+// EXIF (image non retouchée) est détruite par la recopie.
 async function buildWatermarkedZipBlob(photo) {
     const encoded = await compressImage(
         photo.file, ZIP_COMPRESSION.targetMinSize, ZIP_COMPRESSION.quality
     );
-    return copyExifToBlob(photo.file, encoded);
+    return copyExifToBlob(photo.originalFile || photo.file, encoded);
 }
 
 // Construit les entrées ZIP pour une liste de clusters (photos pleine qualité).
@@ -1869,10 +1922,16 @@ async function buildZipEntries(clusters, onProgress) {
     }
 
     if (!state.isAdmin) {
-        return {
-            entries: jobs.map(j => ({ name: j.name, data: j.photo.file, date: j.date })),
-            failed: 0,
-        };
+        // Copie octet pour octet ; une photo retouchée (rognée, floutée) sort
+        // en version retouchée, avec l'EXIF du fichier importé recollé.
+        const entries = await Promise.all(jobs.map(async (j) => ({
+            name: j.name,
+            data: j.photo.originalFile
+                ? await copyExifToBlob(j.photo.originalFile, j.photo.file)
+                : j.photo.file,
+            date: j.date,
+        })));
+        return { entries, failed: 0 };
     }
 
     const entries = new Array(jobs.length);
@@ -2541,6 +2600,18 @@ function buildPhotoCard(item, cluster) {
         openCropPhoto(item.id);
     });
     acts.appendChild(cropBtn);
+
+    const blurBtn = document.createElement('button');
+    blurBtn.className = 'pb-thumb-btn';
+    blurBtn.type = 'button';
+    blurBtn.title = 'Flouter des zones de cette photo (visages, plaques…)';
+    blurBtn.setAttribute('aria-label', 'Flouter');
+    blurBtn.innerHTML = '<i data-lucide="grid-2x2"></i>';
+    blurBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        openBlurPhoto(item.id);
+    });
+    acts.appendChild(blurBtn);
 
     const deleteBtn = document.createElement('button');
     deleteBtn.className = 'pb-thumb-btn is-danger';
