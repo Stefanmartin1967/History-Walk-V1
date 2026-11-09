@@ -13311,11 +13311,24 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Saint-Martin",
+        "Nom du site FR": "Église Saint-Martin (Villers-Perwin)",
         "Catégorie": "Église",
         "osm_ref": "way/133188324",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4TR3PNFQS7MQKPNTTVG3",
+        "Sous-type": "Catholique",
+        "État": "En activité",
+        "description": "Église paroissiale de Villers-Perwin, place Commandant Bultot.\nSelon l'Inventaire du patrimoine de Wallonie, cet édifice néo-gothique en briques a été construit en 1872 par l'architecte E. Tirou ; à l'arrière se trouve le caveau de la famille Dumont de Chassart, en pierre calcaire et de style néo-roman.\nSelon la promenade communale « L'Arbre de la Bruyère », elle abrite du mobilier provenant de l'abbaye de Villers-la-Ville ; ses cloches, enlevées par les Allemands en 1943, ont été remplacées en 1952.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inventaire du patrimoine immobilier culturel de Wallonie, fiche 52075-INV-0032-01 | https://inventairepatrimoine.wallonie.be/fr/inventaire-regional-du-patrimoine/fiche/52075-INV-0032-01\nCommune des Bons Villers, « L'Arbre de la Bruyère. Promenade à Villers-Perwin » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-villers-perwin.pdf/@@download/file/RV_001_Villers_Perwin.pdf\nEgliseInfo, « Saint-Martin, Villers-Perwin » | https://www.egliseinfo.be/annuaire/Villers-Perwin",
+        "maps_ref": "https://maps.app.goo.gl/UiQPd5XWkv4pjkmT8",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Les Bons Villers"
       }
     },
@@ -15229,7 +15242,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Les Bons Villers"
+        "Zone": "Les Bons Villers",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EV501JHPJAT0FHX5Y854KJ_1794233562644.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EV501JHPJAT0FHX5Y854KJ_1794233564469.jpg"
+        ]
       }
     },
     {
@@ -49238,10 +49255,10 @@
         "Catégorie": "Chapelle",
         "Sous-type": "À porte",
         "Accès": "Extérieur seulement",
-        "description": "Chapelle de Villers-Perwin, rue Edmond Aubry.\nSur place, le fronton porte l'inscription « Notre-Dame de Bon Secours, priez pour nous qui avons recours à vous ».\nElle ne doit pas être confondue avec la chapelle de la rue Gaston Boudin, à 200 mètres, qu'OpenStreetMap appelle aussi Chapelle Notre-Dame de Bons Secours.",
+        "description": "Chapelle de Villers-Perwin, rue Edmond Aubry.\nSelon l'Inventaire du patrimoine de Wallonie, cette petite chapelle en briques date de la seconde moitié du 19ᵉ siècle ; sa façade néo-gothique, essentiellement en pierre calcaire, garde aux fenêtres des lancettes et des rosaces en ferronnerie d'époque.\nSur place, le fronton porte l'inscription « Notre-Dame de Bon Secours, priez pour nous qui avons recours à vous ».\nElle ne doit pas être confondue avec la chapelle de la rue Gaston Boudin, à 200 mètres, qu'OpenStreetMap appelle aussi Chapelle Notre-Dame de Bons Secours.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Inscription gravée au fronton de la chapelle, relevée sur place le 8 novembre 2026",
+        "Source": "Inventaire du patrimoine immobilier culturel de Wallonie, fiche 52075-INV-0033-01 | https://inventairepatrimoine.wallonie.be/fr/inventaire-regional-du-patrimoine/fiche/52075-INV-0033-01\nInscription gravée au fronton de la chapelle, relevée sur place le 8 novembre 2026",
         "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
