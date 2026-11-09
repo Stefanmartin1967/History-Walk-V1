@@ -49155,6 +49155,37 @@
         ],
         "Zone": "Les Bons Villers"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.50146,
+          50.52237
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Potale Saint-Hubert (Saint-Amand)",
+        "Catégorie": "Potale",
+        "description": "Potale de Saint-Amand, à l'angle de la rue de Chassart et du chemin de l'Arbre de la Bruyère.\nSur place, l'inscription du fût indique qu'elle est dédiée à saint Hubert, patron des chasseurs, en l'an 1825. Le socle porte une seconde inscription : « 150e anniversaire Chassart Chassant 1811-1961 ».",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inscriptions de la potale, relevées sur place le 8 novembre 2026",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": false,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6ZSZ6HDV088SCYGAJCME81E",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSZ6HDV088SCYGAJCME81E_1794216428243.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSZ6HDV088SCYGAJCME81E_1794216430114.jpg"
+        ],
+        "Zone": "Fleurus"
+      }
     }
   ]
 }
