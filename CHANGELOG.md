@@ -6,6 +6,11 @@
 
 ---
 
+- UNE PAGE FACEBOOK PAR DESTINATION (v3.7.494). Demandé par Stefan le 09/11/2026, après la création de la page « Heripia Wallonie ».
+  - Avant : le bouton « Page Facebook » (menu Outils sur PC, Menu du dock sur mobile) ouvrait toujours la page Heripia de Djerba, adresse écrite en dur à deux endroits.
+  - Maintenant, chaque destination porte sa page dans `destinations.json` (champ `facebook`) : Djerba garde la page Heripia, Wallonie ouvre « Heripia Wallonie ». `getActiveDestinationFacebook` (state.js) lit le lien de la destination active (http(s) seulement, comme le champ Facebook des fiches).
+  - Destination sans page (Hammamet) : le bouton est caché, plutôt que d'ouvrir la page d'une autre destination.
+
 - NOUVEAU LIEU (PC) : LA FICHE DU LIEU CRÉÉ S'OUVRE APRÈS L'ENREGISTREMENT (v3.7.493). Signalé par Stefan le 09/11/2026 ; diagnostic validé le même jour.
   - Avant : après « Enregistrer » dans la fenêtre « Lieu » (clic droit sur la carte, ou marqueur de la recherche par coordonnées), aucune fiche ne s'ouvrait, donc la fiche ouverte avant la création restait affichée. Seule la création avec photos (import) ouvrait déjà la nouvelle fiche.
   - Maintenant, `executeCreate` (richEditor.js) ouvre la fiche du nouveau lieu une fois le lieu et ses photos enregistrés.

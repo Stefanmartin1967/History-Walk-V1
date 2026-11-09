@@ -6,7 +6,7 @@
 // Mon Carnet, thème courant pour Préférences). Variants visuels : danger
 // (rouge), love (cœur rose pour Buy Me a Coffee), brand-emph (CC plein brand).
 
-import { state, APP_VERSION } from './state.js';
+import { state, APP_VERSION, getActiveDestinationFacebook } from './state.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { escapeHtml } from './utils.js';
 import { showConfirm } from './modal.js';
@@ -79,7 +79,11 @@ function buildSections(subs) {
             label: 'Soutenir & à propos',
             items: [
                 { id: 'mob-action-bmc', ico: 'coffee', label: 'Soutenir le projet', sub: subs.bmc, variant: 'love' },
-                { id: 'mob-action-facebook', ico: 'facebook', label: 'Page Facebook' },
+                // Une page Facebook par destination ; aucune entrée si la
+                // destination active n'en a pas (Hammamet).
+                ...(getActiveDestinationFacebook()
+                    ? [{ id: 'mob-action-facebook', ico: 'facebook', label: 'Page Facebook' }]
+                    : []),
                 { id: 'mob-action-legal-notice', ico: 'scale', label: 'Mentions légales' },
             ],
         },
@@ -205,7 +209,8 @@ export function renderMobileMenu() {
             .catch(() => { /* sollicitation à nouveau dans 30 j au pire — sans gravité */ });
     });
     document.getElementById('mob-action-facebook')?.addEventListener('click', () => {
-        window.open('https://www.facebook.com/profile.php?id=61592156811687', '_blank', 'noopener,noreferrer');
+        const url = getActiveDestinationFacebook();
+        if (url) window.open(url, '_blank', 'noopener,noreferrer');
     });
     document.getElementById('mob-action-legal-notice')?.addEventListener('click', () => showLegalNoticeModal());
 
