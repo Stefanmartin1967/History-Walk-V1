@@ -11824,7 +11824,11 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
-        "Zone": "Les Bons Villers"
+        "Zone": "Les Bons Villers",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EV4Q3999REQGSXYT16NV3H_1794233770140.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EV4Q3999REQGSXYT16NV3H_1794233772108.jpg"
+        ]
       }
     },
     {
@@ -13486,7 +13490,10 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Zone": "Les Bons Villers"
+        "Zone": "Les Bons Villers",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6EV4V4ND3HGXA0RRSDCKNFX_1794233773904.jpg"
+        ]
       }
     },
     {
