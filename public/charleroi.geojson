@@ -49362,6 +49362,43 @@
         ],
         "Zone": "Les Bons Villers"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4704,
+          50.50979
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle des Trois Arbres",
+        "Catégorie": "Potale",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Mellet, à l'angle de la rue des Trois Arbres et du chemin de l'Escavée, au milieu des champs.\nSelon la promenade communale « La balade des carottes », elle est dédiée à Notre-Dame de Bon Secours, et des fouilles archéologiques menées tout près en 1991 et 1992 ont mis au jour les fondations de deux temples gallo-romains.\nSur place, c'est un pilier en pierre aux côtés blanchis, coiffé d'une croix en fer forgé et encadré par deux grands arbres.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Commune des Bons Villers, « La balade des carottes. Promenade à Mellet » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-mellet.pdf/@@download/file/RV_001_Mellet.pdf ; observation sur place, le 8 novembre 2026",
+        "maps_ref": "https://maps.app.goo.gl/b7XREJ4KC9o1XfEE6",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": false,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M702J04D0RDE5S00WXW00AYS",
+        "accessPoint": [
+          4.4702676,
+          50.5098613
+        ],
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M702J04D0RDE5S00WXW00AYS_1794225439853.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M702J04D0RDE5S00WXW00AYS_1794225442055.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
