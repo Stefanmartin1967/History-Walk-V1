@@ -94,7 +94,7 @@ export const HELP_COMPARE = {
         <ul class="help-list">
             <li>cliquez sur une vignette de la pellicule pour l'afficher ; glissez pour
                 réordonner ;</li>
-            <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> ·
+            <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> · <strong>Flouter</strong> ·
                 <strong>Détacher / Séparer</strong> · <strong>Supprimer</strong> ;</li>
             <li>en bas, les boutons agissent <strong>sur ce groupe</strong> : Fermer la
                 comparaison · Télécharger ce groupe · Enregistrer ce lieu.</li>
@@ -190,7 +190,14 @@ export const GUIDE_IMPORT = {
                 <p><strong>Rogner</strong> <span class="help-muted">(icône recadrage)</span> :
                 recadrer une photo pour couper un bord gênant ; la version rognée remplace
                 l'originale dans Heripia. <span class="help-muted">Votre fichier d'origine sur le
-                disque n'est pas modifié, et la position (GPS) est conservée.</span></p>`,
+                disque n'est pas modifié, et la position (GPS) est conservée.</span></p>
+                <p><strong>Flouter</strong> <span class="help-muted">(icône grille)</span> :
+                masquer un visage, une plaque d'immatriculation ou tout ce qui ne doit pas être
+                publié. Tracez un rectangle sur chaque zone : elle apparaît aussitôt pixelisée ;
+                la croix la retire. <strong>Flouter</strong> valide, et la version floutée remplace
+                l'originale dans Heripia. <span class="help-muted">À faire avant d'enregistrer : une
+                photo publiée ne peut plus être floutée. Votre fichier d'origine sur le disque
+                n'est pas modifié, et la position (GPS) est conservée.</span></p>`,
         },
         {
             heading: '4 · Comparer (tri fin)',
@@ -199,7 +206,7 @@ export const GUIDE_IMPORT = {
                 <ul class="help-list">
                     <li>la <strong>pellicule</strong> (en bas) montre toutes les photos :
                         cliquez sur une vignette pour l'afficher · glissez pour réordonner ;</li>
-                    <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> ·
+                    <li>pour une photo : <strong>Masquer</strong> (œil) · <strong>Rogner</strong> · <strong>Flouter</strong> ·
                         <strong>Détacher / Séparer</strong> · <strong>Supprimer</strong> ;</li>
                     <li>en bas, les boutons agissent <strong>sur ce groupe</strong> : Fermer
                         la comparaison · Télécharger ce groupe · Enregistrer ce lieu.</li>

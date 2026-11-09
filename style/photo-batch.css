@@ -948,3 +948,67 @@
     max-width: 100%;
     max-height: 68vh;
 }
+
+/* === Floutage — modale « Flouter la photo » (ui-photo-blur.js) ===
+   Le canvas garde ses proportions (élément remplacé) dans les mêmes bornes que
+   le rognage ; .pb-blur-stage l'épouse exactement, et les zones sont placées en
+   % par-dessus. Le calque laisse passer le tracé (pointer-events: none) sauf
+   sur les croix. */
+.pb-blur-hint {
+    margin: 0 0 var(--space-sm);
+    color: var(--ink-soft);
+    font-size: var(--font-size-sm);
+}
+.pb-blur-wrap {
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+}
+.pb-blur-stage {
+    position: relative;
+    display: inline-block;
+    line-height: 0;
+    cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+}
+.pb-blur-canvas {
+    display: block;
+    max-width: 100%;
+    max-height: 68vh;
+}
+.pb-blur-layer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+.pb-blur-rect {
+    position: absolute;
+    box-sizing: border-box;
+    border: 2px solid var(--brand);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.pb-blur-rect.is-drawing {
+    border-style: dashed;
+}
+.pb-blur-rect-del {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--brand);
+    color: #fff;
+    cursor: pointer;
+    pointer-events: auto;
+}
+.pb-blur-rect-del svg {
+    width: 14px;
+    height: 14px;
+}
