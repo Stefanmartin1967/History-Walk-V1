@@ -49174,9 +49174,9 @@
         "Source": "Inscriptions de la potale, relevées sur place le 8 novembre 2026",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
-        "osmChecked": false,
-        "mapsChecked": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
         "HW_ID": "HW-01M6ZSZ6HDV088SCYGAJCME81E",
@@ -49184,7 +49184,45 @@
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSZ6HDV088SCYGAJCME81E_1794216428243.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSZ6HDV088SCYGAJCME81E_1794216430114.jpg"
         ],
+        "Accès": "Extérieur seulement",
+        "osmCheckedDate": "2026-11-09",
         "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.47899,
+          50.52341
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Notre-Dame de Bon Secours (Villers-Perwin)",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À porte",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle de Villers-Perwin, rue Edmond Aubry.\nSur place, le fronton porte l'inscription « Notre-Dame de Bon Secours, priez pour nous qui avons recours à vous ».\nElle ne doit pas être confondue avec la chapelle de la rue Gaston Boudin, à 200 mètres, qu'OpenStreetMap appelle aussi Chapelle Notre-Dame de Bons Secours.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inscription gravée au fronton de la chapelle, relevée sur place le 8 novembre 2026",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6ZTT5YQ546WV393N44PSTR3",
+        "osm_ref": "way/1436521650",
+        "osmCheckedDate": "2026-11-09",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZTT5YQ546WV393N44PSTR3_1794217477611.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZTT5YQ546WV393N44PSTR3_1794217479437.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZTT5YQ546WV393N44PSTR3_1794217481252.jpg"
+        ],
+        "Zone": "Les Bons Villers"
       }
     }
   ]
