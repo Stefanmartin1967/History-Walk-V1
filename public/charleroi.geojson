@@ -49437,6 +49437,43 @@
         ],
         "Zone": "Fleurus"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.47206,
+          50.50457
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Arbre de la Liberté (Mellet)",
+        "Catégorie": "Monument",
+        "Sous-type": "Mémorial",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
+        "description": "Arbre commémoratif de Mellet, sur la petite place au carrefour de la rue Ernest Solvay et de la rue Alphonse Helsen.\nSur place, la plaque posée à son pied le présente comme l'Arbre de la Liberté de la place du 8 Mai, planté et inauguré le 1er juin 1975 par les anciens combattants et prisonniers de guerre de 1940-1945.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Plaque au pied de l'arbre, relevée sur place le 8 novembre 2026",
+        "osm_ref": "node/11412985064",
+        "maps_ref": "https://maps.app.goo.gl/Ur5M7JPjPwnCJyRcA",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M709KDG833GQZBZQJCNZXQA9",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M709KDG833GQZBZQJCNZXQA9_1794232742164.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M709KDG833GQZBZQJCNZXQA9_1794232744001.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
