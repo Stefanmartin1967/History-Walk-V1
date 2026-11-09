@@ -49207,7 +49207,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Inscription gravée au fronton de la chapelle, relevée sur place le 8 novembre 2026",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
