@@ -49379,7 +49379,7 @@
         "description": "Potale de Mellet, à l'angle de la rue des Trois Arbres et du chemin de l'Escavée, au milieu des champs.\nSelon la promenade communale « La balade des carottes », elle est dédiée à Notre-Dame de Bon Secours, et des fouilles archéologiques menées tout près en 1991 et 1992 ont mis au jour les fondations de deux temples gallo-romains.\nSur place, c'est un pilier en pierre aux côtés blanchis, coiffé d'une croix en fer forgé et encadré par deux grands arbres.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Commune des Bons Villers, « La balade des carottes. Promenade à Mellet » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-mellet.pdf/@@download/file/RV_001_Mellet.pdf ; observation sur place, le 8 novembre 2026",
+        "Source": "Commune des Bons Villers, « La balade des carottes. Promenade à Mellet » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-mellet.pdf/@@download/file/RV_001_Mellet.pdf\nObservation sur place, le 8 novembre 2026",
         "maps_ref": "https://maps.app.goo.gl/b7XREJ4KC9o1XfEE6",
         "verified": true,
         "introuvableCarte": false,
@@ -49398,6 +49398,44 @@
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M702J04D0RDE5S00WXW00AYS_1794225442055.jpg"
         ],
         "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.50382,
+          50.51727
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Moulin de Chassart",
+        "Catégorie": "Vestige industriel",
+        "Sous-type": "Moulin",
+        "Accès": "Extérieur seulement",
+        "description": "Ancien moulin à vent de Saint-Amand, rue de Chassart, à l'angle de la rue Haute.\nSelon la base de données des moulins belges Molenecho's, ce moulin à grain en pierre, bâti en 1831, a été transformé dès le 19ᵉ siècle pour pomper l'eau destinée aux usines de Chassart, la sucrerie et la distillerie de genièvre de la famille Dumont de Chassart, et aux fermes voisines. Ses rouages ont été remployés en 1901 dans un moulin d'Oppuurs, en province d'Anvers, et l'armée française y installa un poste d'observation en août 1914.\nToujours selon Molenecho's, la tour, longtemps en ruine, a été restaurée en 2005 par ses propriétaires ; elle a perdu ses ailes et son mécanisme.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Molenecho's, « Moulin de Chassart » | https://molenechos.org/molen.php?AdvSearch=679\nObservation sur place, le 8 novembre 2026",
+        "osm_ref": "way/1092702595",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M7092J1CM372MJR44H7J75EQ",
+        "accessPoint": [
+          4.5036063,
+          50.5171874
+        ],
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M7092J1CM372MJR44H7J75EQ_1794232279405.jpg"
+        ],
+        "Zone": "Fleurus"
       }
     }
   ]
