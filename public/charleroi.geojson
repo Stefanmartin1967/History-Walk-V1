@@ -49115,6 +49115,46 @@
         ],
         "Zone": "Andenne"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.472656,
+          50.502918
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Donjon de Mellet",
+        "Catégorie": "Château",
+        "État": "Vestiges partiels",
+        "Accès": "Extérieur seulement",
+        "description": "Donjon médiéval de Mellet, rue Alphonse Helsen, dans l'ancien château devenu école communale.\nSelon l'Inventaire du patrimoine de Wallonie, il date sans doute de la fin du 13ᵉ siècle et était entouré de douves en eau, comblées seulement en 1946. Un château de plaisance s'y est accolé, peut-être au 16ᵉ siècle ; transformé, notamment par l'aménagement d'une école au 19ᵉ siècle, il est aujourd'hui presque méconnaissable. Trois tours d'angle et une enceinte, toutes disparues, protégeaient autrefois l'ensemble.\nSiège d'un fief brabançon, le château appartient au Moyen Âge aux seigneurs de Mellet, puis aux familles de Glymes, Witthem, de Cro et de Spanghen jusqu'en 1791, et enfin aux Clauwez-Briant, qui le cèdent à la commune en 1862 ; l'administration communale s'y installe jusqu'en 1937.\nLe donjon compte trois niveaux d'origine sous un grenier sans doute du 17ᵉ siècle ; une fenêtre porte à la clé l'écu des Spanghen. D'après l'étude de F. Doperé et W. Ubregts (1990) citée par l'inventaire, ses éléments défensifs ne suffisent pas à en faire une véritable « maison forte », et il tiendrait à la fois de la maison forte et de la tour d'habitation.\nLa promenade communale « La balade des carottes » précise que ses murs atteignent près de 1,80 mètre à la base, et que la toiture, les façades, les escaliers et les deux latrines intramurales sont classés monument historique depuis 1996.\nSur place, les panneaux qui y mènent l'appellent « Tour du Vieux Château », du nom de l'école communale qui occupe l'ancien château.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inventaire du patrimoine immobilier culturel de Wallonie, fiche 52075-INV-0020-01 | https://inventairepatrimoine.wallonie.be/fr/inventaire-regional-du-patrimoine/fiche/52075-INV-0020-01\nCommune des Bons Villers, « La balade des carottes. Promenade à Mellet » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-mellet.pdf/@@download/file/RV_001_Mellet.pdf\nPanneaux directionnels, relevés sur place le 8 novembre 2026",
+        "osm_ref": "way/1576512305",
+        "maps_ref": "https://maps.app.goo.gl/r5aqpJEFeUB8TLDX9",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6ZSEJ3KBJANXC73VH83S21Q",
+        "accessPoint": [
+          4.4727788,
+          50.5028359
+        ],
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSEJ3KBJANXC73VH83S21Q_1794215986383.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZSEJ3KBJANXC73VH83S21Q_1794215988333.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
