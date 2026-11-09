@@ -1611,6 +1611,13 @@ async function executeCreate(data) {
     // qui attend le retour pour retirer le cluster) lisent `currentFeatureId` via le detail.
     currentFeatureId = actualId;
 
+    // Affiche la fiche du lieu créé (Stefan, 09/11/2026) : sans ça, la fiche
+    // ouverte AVANT la création restait à l'écran — seule la création avec
+    // photos (addPhotosToPoi) ouvrait la nouvelle. Le mobile crée par un autre
+    // chemin (mobile-new-place.js), qui ouvre déjà la fiche du nouveau lieu.
+    const newIndex = state.loadedFeatures.indexOf(newFeature);
+    if (newIndex > -1) openDetailsPanel(newIndex);
+
     showToast("Lieu créé et enregistré localement.", "success");
 
     // Note privée (10/08/2026) : troisième point d'écriture de `notes` (avec
