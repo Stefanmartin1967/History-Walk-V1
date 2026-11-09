@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.493'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.494'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 // Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
 // lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
 // (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
@@ -225,6 +225,21 @@ export function getDestinationLabel(mapId) {
 export function getActiveDestinationCountry() {
     const id = state.currentMapId || state.destinations?.activeMapId;
     return state.destinations?.maps?.[id]?.country || '';
+}
+
+/**
+ * Page Facebook de la destination active (`facebook` dans destinations.json).
+ * Une page par destination depuis le 09/11/2026 : « Heripia » pour Djerba,
+ * « Heripia Wallonie » pour la Wallonie. Même contrat que les sélecteurs
+ * ci-dessus : '' si la destination n'a pas de page — le bouton « Page Facebook »
+ * est alors caché, plutôt que d'envoyer vers la page d'une autre destination.
+ * Seul un lien http(s) est rendu (même garde que le champ Facebook des fiches).
+ * @returns {string}
+ */
+export function getActiveDestinationFacebook() {
+    const id = state.currentMapId || state.destinations?.activeMapId;
+    const url = (state.destinations?.maps?.[id]?.facebook || '').trim();
+    return /^https?:\/\//i.test(url) ? url : '';
 }
 
 // Gardien pour définir les points d'intérêt chargés (features)

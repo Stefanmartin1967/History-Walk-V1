@@ -1,5 +1,5 @@
 // ui.js
-import { state, POI_CATEGORIES, APP_VERSION } from './state.js';
+import { state, POI_CATEGORIES, APP_VERSION, getActiveDestinationFacebook } from './state.js';
 import { getPoiId, applyFilters, updatePoiData, updatePoiCoordinates, deletePoi } from './data.js';
 import { restoreCircuit, saveAppState } from './database.js';
 import { escapeXml } from './utils.js';
@@ -72,6 +72,11 @@ export function initializeDomReferences() {
             const toolsMenu = document.getElementById('tools-menu-content');
             if (toolsMenu) {
                 const isActive = toolsMenu.classList.contains('active');
+                // Une page Facebook par destination : bouton caché si la
+                // destination active n'en a pas (Hammamet).
+                const btnFb = document.getElementById('btn-facebook-page');
+                // (style.display et non `hidden` : .tools-menu-item est en display:flex.)
+                if (btnFb) btnFb.style.display = getActiveDestinationFacebook() ? '' : 'none';
                 closeAllDropdowns();
                 if (!isActive) {
                     // Ferme aussi les autres popups topbar (dest, theme, info-popover)
@@ -150,7 +155,8 @@ export function initializeDomReferences() {
     const btnFacebookPage = document.getElementById('btn-facebook-page');
     if (btnFacebookPage) {
         btnFacebookPage.addEventListener('click', () => {
-            window.open('https://www.facebook.com/profile.php?id=61592156811687', '_blank', 'noopener,noreferrer');
+            const url = getActiveDestinationFacebook();
+            if (url) window.open(url, '_blank', 'noopener,noreferrer');
         });
     }
 

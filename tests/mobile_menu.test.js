@@ -17,7 +17,9 @@ vi.mock('../src/state.js', () => {
         myCircuits: [],
         officialCircuitsStatus: {}
     };
-    return { state, APP_VERSION: '4.2.0' };
+    // Page Facebook de la destination active (une par destination, 09/11/2026).
+    const getActiveDestinationFacebook = vi.fn(() => 'https://www.facebook.com/profile.php?id=1');
+    return { state, APP_VERSION: '4.2.0', getActiveDestinationFacebook };
 });
 
 vi.mock('../src/ui-dom.js', () => ({
@@ -98,7 +100,7 @@ vi.mock('../src/mobile-state.js', () => ({
     clearMobileViewFooter: vi.fn()
 }));
 
-import { state } from '../src/state.js';
+import { state, getActiveDestinationFacebook } from '../src/state.js';
 import { DOM } from '../src/ui-dom.js';
 import { showStatisticsModal } from '../src/statistics.js';
 import { startGenericScanner } from '../src/sync.js';
@@ -121,6 +123,7 @@ beforeEach(() => {
     vi.spyOn(window, 'open').mockImplementation(() => null);
     getCurrentView.mockReturnValue('actions');
     isMobileView.mockReturnValue(true);
+    getActiveDestinationFacebook.mockReturnValue('https://www.facebook.com/profile.php?id=1');
 });
 
 afterEach(() => {
@@ -254,6 +257,25 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         document.getElementById('mob-action-bmc').click();
         // L'enregistrement suit l'ouverture, via import dynamique.
         await vi.waitFor(() => expect(recordSupportClick).toHaveBeenCalled());
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// 09/11/2026 : une page Facebook par destination (destinations.json `facebook`).
+describe('renderMobileMenu — Page Facebook de la destination', () => {
+    it('click "Page Facebook" → ouvre la page de la destination active', () => {
+        getActiveDestinationFacebook.mockReturnValue('https://www.facebook.com/profile.php?id=61596398130361');
+        renderMobileMenu();
+        document.getElementById('mob-action-facebook').click();
+        expect(window.open).toHaveBeenCalledWith('https://www.facebook.com/profile.php?id=61596398130361', '_blank', 'noopener,noreferrer');
+    });
+
+    it("destination sans page (Hammamet) → pas d'entrée « Page Facebook »", () => {
+        getActiveDestinationFacebook.mockReturnValue('');
+        renderMobileMenu();
+        expect(document.getElementById('mob-action-facebook')).toBeNull();
+        // Le reste de la section est toujours là.
+        expect(document.getElementById('mob-action-legal-notice')).not.toBeNull();
     });
 });
 
