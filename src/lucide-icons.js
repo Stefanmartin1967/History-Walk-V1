@@ -76,8 +76,8 @@ import {
 
     // Rognage photo (modale import, 03/06/2026)
     Crop,
-    // Floutage photo (modale import, 09/11/2026)
-    Grid2x2,
+    // Floutage photo (modale import, 09/11/2026) ; Tracer / Déplacer du zoom
+    Grid2x2, SquareDashed, Hand,
 
     // Photos de travail gardées après import (25/09/2026)
     Pin, PinOff,
@@ -136,7 +136,7 @@ export const appIcons = {
     Tags,
 
     Crop,
-    Grid2x2,
+    Grid2x2, SquareDashed, Hand,
 
     Pin, PinOff,
 };

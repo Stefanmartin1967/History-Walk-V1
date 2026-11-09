@@ -950,10 +950,51 @@
 }
 
 /* === Floutage — modale « Flouter la photo » (ui-photo-blur.js) ===
-   Le canvas garde ses proportions (élément remplacé) dans les mêmes bornes que
-   le rognage ; .pb-blur-stage l'épouse exactement, et les zones sont placées en
-   % par-dessus. Le calque laisse passer le tracé (pointer-events: none) sauf
-   sur les croix. */
+   .pb-blur-wrap est la fenêtre de la photo (hauteur posée en JS = photo ajustée,
+   défilement quand on zoome). Le canvas a une taille CSS explicite (ajustée ×
+   zoom) ; .pb-blur-stage l'épouse exactement et les zones sont placées en %
+   par-dessus. margin:auto centre la photo sans rendre inaccessible le bord
+   gauche une fois zoomée (contrairement à justify-content:center). Le calque
+   laisse passer le tracé (pointer-events: none) sauf sur les croix. */
+.pb-blur-tools {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-sm);
+    margin: 0 0 var(--space-sm);
+}
+.pb-blur-toolgroup {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+}
+.pb-blur-tool {
+    height: 30px;
+    min-width: 30px;
+    padding: 0 var(--space-sm);
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--ink-soft);
+    font-size: var(--font-size-sm);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-xs);
+    transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+.pb-blur-tool svg { width: 14px; height: 14px; stroke-width: 2.2; }
+.pb-blur-tool:hover:not(:disabled) { background: var(--surface-muted); color: var(--ink); border-color: var(--ink-soft); }
+.pb-blur-tool:disabled { opacity: 0.4; cursor: default; }
+.pb-blur-tool.is-active { background: var(--brand-soft); color: var(--brand-ink); border-color: var(--brand); }
+.pb-blur-zoom-label {
+    min-width: 3em;
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+}
 .pb-blur-hint {
     margin: 0 0 var(--space-sm);
     color: var(--ink-soft);
@@ -961,21 +1002,23 @@
 }
 .pb-blur-wrap {
     display: flex;
-    justify-content: center;
     max-width: 100%;
+    overflow: auto;
+    overscroll-behavior: contain;
 }
 .pb-blur-stage {
     position: relative;
-    display: inline-block;
+    flex: none;
+    margin: auto;
     line-height: 0;
     cursor: crosshair;
     touch-action: none;
     user-select: none;
 }
+.pb-blur-stage.is-pan { cursor: grab; }
+.pb-blur-stage.is-panning { cursor: grabbing; }
 .pb-blur-canvas {
     display: block;
-    max-width: 100%;
-    max-height: 68vh;
 }
 .pb-blur-layer {
     position: absolute;
