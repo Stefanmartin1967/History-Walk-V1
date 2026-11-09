@@ -49296,6 +49296,39 @@
         ],
         "Zone": "Les Bons Villers"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4838,
+          50.52548
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Potale du Sacré-Cœur (Villers-Perwin)",
+        "Catégorie": "Potale",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Villers-Perwin, rue du Calvaire.\nSur place, c'est un pilier en briques dont la niche grillée porte, gravées dans la pierre, les inscriptions « Sacré Cœur de Jésus » sur l'arc et « J'ai confiance en vous » en dessous.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Inscriptions de la potale et observation sur place, le 8 novembre 2026",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6ZY2TFKHX7KSAQ51EHTQDBM",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZY2TFKHX7KSAQ51EHTQDBM_1794224318185.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZY2TFKHX7KSAQ51EHTQDBM_1794224320124.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
