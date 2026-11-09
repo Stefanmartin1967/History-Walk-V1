@@ -49259,6 +49259,43 @@
         ],
         "Zone": "Les Bons Villers"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.47615,
+          50.50422
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Chapelle Saint-Eloy (Mellet)",
+        "Catégorie": "Chapelle",
+        "Sous-type": "À grille",
+        "Accès": "Extérieur seulement",
+        "description": "Petite chapelle ouverte, appuyée au transept de l'église Saints-Martin-et-Mutien-Marie de Mellet.\nSelon la promenade communale « La balade des carottes », elle apparaît dans les archives au 17ᵉ siècle et est dédiée à saint Éloi, orfèvre et monnayeur né vers 588, devenu évêque de Noyon et patron des « ouvriers du marteau ».\nSur place, une grille ferme un arc en pierre, derrière lequel un crucifix domine un autel en pierre sculptée ; aucune inscription n'y rappelle la dédicace.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Commune des Bons Villers, « La balade des carottes. Promenade à Mellet » | https://www.les-bons-villers.be/loisirs/tourisme/balades-aux-bons-villers/5-promenades-familiales-et-patrimoniales/rv-001-mellet.pdf/@@download/file/RV_001_Mellet.pdf\nObservation sur place, le 8 novembre 2026",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M6ZXMET7X7G7TFFH3S9V4V62",
+        "accessPoint": [
+          4.4758947,
+          50.5041694
+        ],
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6ZXMET7X7G7TFFH3S9V4V62_1794220199763.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
