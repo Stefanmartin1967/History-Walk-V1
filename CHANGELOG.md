@@ -6,6 +6,15 @@
 
 ---
 
+- FLOUTER : ZOOM POUR VÉRIFIER LA ZONE (v3.7.492). Retour de Stefan le 09/11/2026 après la v3.7.491 : « pas évident à l'usage ».
+  - Barre d'outils au-dessus de la photo : **Tracer** / **Déplacer**, puis − / niveau (×1 à ×8) / + / **Ajuster** (photo entière). La molette sur la photo zoome autour du curseur.
+  - Une fois zoomé, on se déplace avec le mode Déplacer, la barre d'espace maintenue, le bouton du milieu de la souris ou les barres de défilement. Le tracé reste possible à tous les niveaux.
+  - La photo affichée est maintenant le rendu final lui-même (pleine résolution, plafond 4 096 px) : ce qu'on vérifie au zoom est exactement ce qui sera enregistré.
+  - La hauteur de la photo tient compte de la barre d'outils, pour que le bouton Flouter reste visible sans défiler.
+  - Corrigé au passage : l'image était lue par `img.decode()`, qui reste en attente dans un onglet masqué ; elle l'est maintenant par `onload`.
+  - Aide : « Organiser les photos » § 3. `style.css?v=8.57`.
+  - Vérifié en preview (photo de test de 4 000 × 3 000 px avec une fausse plaque) : molette ×2 puis ×4 centrée sur la plaque, tracé à ×2, Déplacer (défilement sans nouvelle zone), Ajuster, plus de défilement du pied de modale, validation (plus aucun pixel du texte dans la miniature). Non vérifié : la barre d'espace et le bouton du milieu (code relu seulement), et le téléphone.
+
 - IMPORT PHOTOS : OUTIL « FLOUTER » — VISAGES, PLAQUES ET AUTRES ZONES À NE PAS PUBLIER (v3.7.491). Demande de Stefan du 09/11/2026 ; proposition validée le même jour.
   - Nouveau bouton (icône grille) à côté de « Rogner » dans la modale d'import, en grille et en mode Comparer, pour les photos neuves seulement : une photo publiée est définitive, il faut flouter avant d'enregistrer.
   - Modale « Flouter la photo » : on trace des rectangles à la souris ou au doigt ; chaque zone s'affiche aussitôt pixelisée, une croix la retire. « Flouter » valide et remplace la copie de travail, comme le rognage ; l'original sur le disque n'est pas touché.

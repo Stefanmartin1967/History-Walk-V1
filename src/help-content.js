@@ -194,7 +194,10 @@ export const GUIDE_IMPORT = {
                 <p><strong>Flouter</strong> <span class="help-muted">(icône grille)</span> :
                 masquer un visage, une plaque d'immatriculation ou tout ce qui ne doit pas être
                 publié. Tracez un rectangle sur chaque zone : elle apparaît aussitôt pixelisée ;
-                la croix la retire. <strong>Flouter</strong> valide, et la version floutée remplace
+                la croix la retire. Pour vérifier qu'une zone est bien couverte, <strong>zoomez</strong>
+                (molette sur la photo, ou boutons + / −, <strong>Ajuster</strong> pour revenir à la photo
+                entière) et déplacez-vous avec <strong>Déplacer</strong>, la barre d'espace maintenue ou
+                le bouton du milieu de la souris. <strong>Flouter</strong> valide, et la version floutée remplace
                 l'originale dans Heripia. <span class="help-muted">À faire avant d'enregistrer : une
                 photo publiée ne peut plus être floutée. Votre fichier d'origine sur le disque
                 n'est pas modifié, et la position (GPS) est conservée.</span></p>`,
