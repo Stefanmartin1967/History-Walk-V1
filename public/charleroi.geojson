@@ -49329,6 +49329,39 @@
         ],
         "Zone": "Les Bons Villers"
       }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.48282,
+          50.52414
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Potale (Rue Champ du Monceau)",
+        "Catégorie": "Potale",
+        "Accès": "Extérieur seulement",
+        "description": "Potale de Villers-Perwin, rue Champ du Monceau, à l'angle de la rue de Chassart.\nSur place, c'est un pilier en briques encastré dans un muret, dont la niche, fermée par une petite porte grillagée, abrite une Vierge à l'Enfant couronnée.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "Observation sur place, le 8 novembre 2026",
+        "verified": true,
+        "introuvableCarte": false,
+        "descriptionPublic": true,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-09",
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M7023BQTFKXKAHHX0XV5MJYK",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M7023BQTFKXKAHHX0XV5MJYK_1794224952929.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M7023BQTFKXKAHHX0XV5MJYK_1794224954722.jpg"
+        ],
+        "Zone": "Les Bons Villers"
+      }
     }
   ]
 }
