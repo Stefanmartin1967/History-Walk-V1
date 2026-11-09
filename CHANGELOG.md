@@ -6,6 +6,12 @@
 
 ---
 
+- NOUVEAU LIEU (PC) : LA FICHE DU LIEU CRÉÉ S'OUVRE APRÈS L'ENREGISTREMENT (v3.7.493). Signalé par Stefan le 09/11/2026 ; diagnostic validé le même jour.
+  - Avant : après « Enregistrer » dans la fenêtre « Lieu » (clic droit sur la carte, ou marqueur de la recherche par coordonnées), aucune fiche ne s'ouvrait, donc la fiche ouverte avant la création restait affichée. Seule la création avec photos (import) ouvrait déjà la nouvelle fiche.
+  - Maintenant, `executeCreate` (richEditor.js) ouvre la fiche du nouveau lieu une fois le lieu et ses photos enregistrés.
+  - Mobile non concerné : le (+) du dock et « Nouveau lieu » du suivi ouvraient déjà la fiche du nouveau lieu, et le Retour vers la carte du suivi n'est pas touché.
+  - Vérifié en preview (PC, port à part, sans jeton) : fiche « Mosquée Fadhloun » ouverte, clic droit → « Valider cette position » → nom + catégorie → « Non, enregistrer seul » : la fiche du nouveau lieu s'affiche, sans erreur dans la console. Non vérifié : la création avec photos (la fiche s'y ouvre deux fois de suite, sans effet visible) et le Mode Données (la liste y garde en surbrillance le lieu d'avant).
+
 - FLOUTER : ZOOM POUR VÉRIFIER LA ZONE (v3.7.492). Retour de Stefan le 09/11/2026 après la v3.7.491 : « pas évident à l'usage ».
   - Barre d'outils au-dessus de la photo : **Tracer** / **Déplacer**, puis − / niveau (×1 à ×8) / + / **Ajuster** (photo entière). La molette sur la photo zoome autour du curseur.
   - Une fois zoomé, on se déplace avec le mode Déplacer, la barre d'espace maintenue, le bouton du milieu de la souris ou les barres de défilement. Le tracé reste possible à tous les niveaux.
