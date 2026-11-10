@@ -45451,7 +45451,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nPlaque du mémorial et observation sur place, le 5 novembre 2026",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -45463,7 +45463,7 @@
         "maps_ref": "https://maps.app.goo.gl/F23TcsWaS7BbDbwy9",
         "osmCheckedDate": "2026-11-05",
         "photos": [
-          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6PC21XQFSQKGBQNWVPWBA51_1793899765170.jpg"
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6PC21XQFSQKGBQNWVPWBA51_1794289862246.jpg"
         ],
         "Zone": "Charleroi"
       }
