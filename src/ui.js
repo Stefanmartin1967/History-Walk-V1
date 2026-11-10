@@ -107,8 +107,8 @@ export function initializeDomReferences() {
 
     // (Export GPX : l'ancien handler du bouton barre #btn-export-gpx a été RETIRÉ
     // le 07/06/2026 — doublon avec l'item « Exporter le GPX » du menu ⋮ du bloc
-    // tracé. C'est désormais ce dernier qui appelle handleExportWithContribution
-    // puis émet 'request-export-gpx' — cf. ui-circuit-routing.js.)
+    // tracé. C'est désormais ce dernier qui émet 'request-export-gpx' — cf.
+    // ui-circuit-routing.js.)
 
     // Bouton « Sauvegarder » du menu Outils — point d'entrée PC vers la
     // modale de sauvegarde (PR3 dissolution Mon Espace : openSaveModal V2
@@ -131,14 +131,7 @@ export function initializeDomReferences() {
 
     if (DOM.btnBmcTopbar) {
         DOM.btnBmcTopbar.addEventListener('click', () => {
-            import('./fileManager.js').then(({ recordSupportClick }) => {
-                recordSupportClick(); // Enregistre le clic pour ne plus embêter l'utilisateur
-                window.open('https://www.buymeacoffee.com/history_walk', '_blank');
-            }).catch(() => {
-                // L'enregistrement du clic est secondaire — on honore au moins
-                // l'intention (ouvrir la page de soutien). Audit R5.
-                window.open('https://www.buymeacoffee.com/history_walk', '_blank');
-            });
+            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
         });
     }
 

@@ -43,8 +43,7 @@ vi.mock('../src/modal.js', () => ({
 }));
 
 vi.mock('../src/fileManager.js', () => ({
-    saveUserData: vi.fn(),
-    recordSupportClick: vi.fn()
+    saveUserData: vi.fn()
 }));
 
 vi.mock('../src/database.js', () => ({
@@ -249,14 +248,6 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         // dynamique la sortirait du geste utilisateur et l'exposerait au blocage
         // de pop-up. Ne pas « moderniser » ce test avec un await.
         expect(window.open).toHaveBeenCalledWith('https://www.buymeacoffee.com/history_walk', '_blank');
-    });
-
-    it('click "Soutenir le projet" → enregistre le clic (plus de sollicitation pendant 30 j)', async () => {
-        const { recordSupportClick } = await import('../src/fileManager.js');
-        renderMobileMenu();
-        document.getElementById('mob-action-bmc').click();
-        // L'enregistrement suit l'ouverture, via import dynamique.
-        await vi.waitFor(() => expect(recordSupportClick).toHaveBeenCalled());
     });
 });
 

@@ -6,6 +6,10 @@
 
 ---
 
+- SOUTIEN : PLUS DE FENÊTRE « SOUTENIR LE PROJET » AVANT L'EXPORT GPX (v3.7.500). Décision de Stefan le 10/11/2026, « au moins pour le lancement » : le soutien reste dans le menu seulement (menu Outils sur PC, Menu sur mobile). Constaté le même jour en rejouant le parcours d'un visiteur : la fenêtre s'intercalait avant son premier export, avec « Offrir un café » plus visible que « Exporter le GPX ».
+  - « Exporter le GPX » (menu ⋮ du bloc tracé) lance l'export directement. Retirés avec la fenêtre : `handleExportWithContribution`, `getActionLabel`, `recordSupportClick` et la clé `hw_last_support_click` (elle ne servait qu'à espacer la fenêtre de 30 jours), le style `.modal-contribution` / `#btn-contrib-*`, et les règles mortes `.modal-close-x` et `#sidebar-bmc-container`.
+  - Tests : `ui_export.test.js` et `ui_sobriety.test.js` supprimés (ils ne testaient que la fenêtre).
+
 - CIRCUIT PERSO : RAPPEL « ENREGISTRÉ SUR CET APPAREIL », AVEC LE CHEMIN VERS LE TÉLÉPHONE (v3.7.499). Constaté le 10/11/2026 en rejouant le parcours d'un visiteur : il crée son circuit sur PC, ouvre son téléphone et ne le trouve pas, rien ne lui ayant dit que le circuit ne vit que sur l'appareil. Le trajet PC → sauvegarde légère → « Restaurer » sur un téléphone neuf a été rejoué le même jour : le circuit arrive avec son tracé et se suit.
   - Panneau du circuit (PC), sous la carte « Itinéraire tracé » d'un circuit de l'utilisateur : une ligne fixe, avec un lien « Sauvegarder » qui ouvre la fenêtre de sauvegarde (`phoneHintHtml`, `src/ui-circuit-routing.js`). Rien pour un circuit officiel.
   - Liste mobile vide : « Menu > Restaurer » n'existait pas sous ce nom ; le texte dit maintenant « Menu > Sauvegarder, puis « Restaurer » ».
