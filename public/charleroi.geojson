@@ -2478,7 +2478,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/vTFqDrcX243JgFK77",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -2490,7 +2490,15 @@
         "Accès": "Intérieur visitable",
         "description": "Église de la rue de Marchienne, dans la Ville-Basse de Charleroi.\nSelon Wikipédia, elle occupe l'emplacement du couvent des Capucins, construit en 1681 et vendu comme bien national en 1796 ; l'église du couvent, devenue paroissiale en 1804, a été remplacée par l'édifice actuel de l'architecte Jean Kuypers, béni le 15 septembre 1830 et consacré le 16 avril 1835.\nToujours selon Wikipédia, cette église néoclassique, enserrée dans l'habitat, a une façade précédée d'un portique de quatre colonnes ioniques sous un fronton triangulaire, et sa toiture est marquée par un clocheton carré. À l'intérieur, la nef voûtée en berceau est bordée d'arcades sur colonnes toscanes ; le maître-autel est l'œuvre du sculpteur anversois Jean-Baptiste Van Hool, et un tableau de François-Joseph Navez, Notre-Dame des Affligés, a été offert par le peintre en 1846. Elle figure à l'inventaire du patrimoine immobilier culturel de Wallonie.",
         "Source": "Wikipédia, « Église Saint-Antoine-de-Padoue de Charleroi » | https://fr.wikipedia.org/wiki/%C3%89glise_Saint-Antoine-de-Padoue_de_Charleroi\nHoraires : panneau « Églises ouvertes » de l'église, relevé sur place le 5 novembre 2026",
-        "Horaires": "Tous les jours : du lundi au vendredi de 7h15 à 12h15 et de 14h00 à 16h00 ; samedi de 7h15 à 16h00 ; dimanche de 10h30 à 12h00 et de 17h00 à 20h00."
+        "Horaires": "Tous les jours : du lundi au vendredi de 7h15 à 12h15 et de 14h00 à 16h00 ; samedi de 7h15 à 16h00 ; dimanche de 10h30 à 12h00 et de 17h00 à 20h00.",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303839291.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303841209.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303842932.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303844902.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303846803.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQ72DMZK225MWPD7JAKJ_1794303848429.jpg"
+        ]
       }
     },
     {
