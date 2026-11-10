@@ -45430,7 +45430,7 @@
         "Source": "Panneau « Histoire de la Cité » de la Ville de Charleroi et plaque de la statue, relevés sur place le 5 novembre 2026\nStatue de saint Fiacre, photographie de Jmh2o, 27 septembre 2014 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_chapelle_Saint-Fiacre_-_04_-_statue_par_Charles_Delporte_en_1956.jpg\nSaint Fiacre guérissant un enfant, photographie de Jmh2o, 19 juillet 2018 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Joseph_Fran%C3%A7ois_-_Saint_Fiacre_gu%C3%A9rissant_un_enfant_-_01.jpg",
         "osm_ref": "way/1167106081",
         "maps_ref": "https://maps.app.goo.gl/kVJNtV1XuxRk1Awp6",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -45443,7 +45443,12 @@
           4.4398301,
           50.4090397
         ],
-        "Zone": "Charleroi"
+        "Zone": "Charleroi",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6PBE3V86K0DHVC3GVYHKG3Z_1794305163011.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6PBE3V86K0DHVC3GVYHKG3Z_1794305164516.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6PBE3V86K0DHVC3GVYHKG3Z_1794305166260.jpg"
+        ]
       }
     },
     {
