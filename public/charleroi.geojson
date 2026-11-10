@@ -3643,7 +3643,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/bxmUT5ZznCsf9yvr8",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -3657,7 +3657,10 @@
         "État": "Conservé",
         "Accès": "Extérieur seulement",
         "lat": 50.4125544,
-        "lng": 4.4436702
+        "lng": 4.4436702,
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BRWS5WR93VM1BQWVN5GX_1794306481503.jpg"
+        ]
       }
     },
     {
