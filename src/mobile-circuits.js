@@ -215,7 +215,7 @@ export function renderMobileCircuitsList() {
     if (!hasAnyCircuits) {
         html += `<p class="mobile-empty-state">
             Aucun circuit enregistré.<br>
-            Utilisez le menu <b>Menu &gt; Restaurer</b> pour charger une sauvegarde.
+            Pour charger une sauvegarde : <b>Menu &gt; Sauvegarder</b>, puis « Restaurer ».
         </p>`;
     } else if (circuitsToDisplay.length === 0) {
         html += `<div class="mobile-finished-state">

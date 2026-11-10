@@ -35,6 +35,7 @@ import { getPoiId } from './data.js';
 import { trackFingerprint } from './track-fingerprint.js';
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
 import { WAY_CATEGORIES, formatKm, wayTypesStatus } from './way-types.js';
+import { openSaveModal } from './save-modal-ui.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -255,7 +256,23 @@ function traceStatusHtml() {
                 ${morePopHtml([...undoItems(), MP_RETRACE_ALL, { sep: true }, MP_GPX, MP_EXPORT])}
             </div>
         </div>
-        ${warn ? failNote() : ''}`;
+        ${warn ? failNote() : ''}${phoneHintHtml()}`;
+}
+
+// Rappel sous la carte d'état, pour un circuit de l'utilisateur : il n'existe que
+// sur cet appareil. Constat du 10/11/2026 (parcours visiteur) : rien ne le disait,
+// et le téléphone n'affichait pas le circuit créé sur PC. Le trajet « Sauvegarder »
+// (légère) puis « Restaurer » sur le téléphone a été rejoué et fonctionne. Pas pour
+// un circuit officiel : il est publié, tous les appareils l'ont.
+function phoneHintHtml() {
+    const c = activeCircuit();
+    if (!c || c.isOfficial) return '';
+    return `
+        <p class="trace-phone">
+            <i data-lucide="smartphone"></i>
+            <span>Ce circuit est enregistré sur cet appareil seulement. Pour le suivre sur votre téléphone :
+            <button class="trace-ways-retry" id="btn-phone-save" type="button">Sauvegarder</button>, puis « Restaurer » sur le téléphone.</span>
+        </p>`;
 }
 
 // Ligne de résumé des types de voie (création, PC) : une entrée par catégorie
@@ -444,6 +461,7 @@ export function initCircuitRoutingUI() {
             // de ce qui n'a pas changé n'est perdu → pas de confirmation).
             if (e.target.closest('#btn-retrace-stale')) { runTrace({ keepUnchanged: true }); return; }
             if (e.target.closest('#btn-ways-retry')) { retryWayTypes(); return; }
+            if (e.target.closest('#btn-phone-save')) { openSaveModal(); return; }
             if (e.target.closest('#btn-more')) {
                 e.stopPropagation();
                 document.getElementById('more-pop')?.classList.toggle('open');
