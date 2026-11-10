@@ -821,10 +821,10 @@
         "Catégorie": "Monument",
         "osm_ref": "node/8618152347",
         "HW_ID": "HW-01M616BNBSR2572V57W6XRVQEG",
-        "description": "Mémorial « Au pigeon soldat », dans le parc Reine Astrid, à Charleroi.\nSelon l'article Wikipédia consacré au parc, ce petit mémorial, œuvre du sculpteur Alphonse Darville, a été inauguré en 1951, du côté du boulevard Defontaine, comme le monument des 1er et 4e régiments de Chasseurs à pied.\nUne photographie publiée sur Wikimedia Commons montre un pilier de pierre gravé « AU PIGEON SOLDAT », surmonté d'un pigeon aux ailes déployées.",
+        "description": "Mémorial « Au pigeon soldat », dans le parc Reine Astrid, à Charleroi.\nSelon l'article Wikipédia consacré au parc, ce petit mémorial, œuvre du sculpteur Alphonse Darville, a été inauguré en 1951, du côté du boulevard Defontaine, comme le monument des 1er et 4e régiments de Chasseurs à pied.\nSur place, un pilier de pierre porte l'inscription « Au pigeon soldat » ; il est surmonté d'un pigeon aux ailes déployées.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -835,9 +835,13 @@
         "Sous-type": "Mémorial",
         "État": "Conservé",
         "Accès": "Extérieur seulement",
-        "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nAu pigeon soldat, photographie de Jmh2o, 26 septembre 2007 (Wikimedia Commons, domaine public) | https://commons.wikimedia.org/wiki/File:Charleroi-Au_pigeon_soldat.jpg",
+        "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nInscription du mémorial et observation sur place, le 5 novembre 2026",
         "lat": 50.4099297,
-        "lng": 4.4465934
+        "lng": 4.4465934,
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BNBSR2572V57W6XRVQEG_1794289649369.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BNBSR2572V57W6XRVQEG_1794289651459.jpg"
+        ]
       }
     },
     {
@@ -857,7 +861,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/M8BLfUuurLYGroaq9",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
