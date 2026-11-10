@@ -21,6 +21,7 @@ import { escapeXml } from './utils.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { getProcessedCircuits, formatUnseenLabel } from './circuit-list-service.js';
+import { getEffectiveCircuitSort, getBaseCircuitSort } from './circuit-sort.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { applyFilters, getPoiId, getPatrimonialName, getSearchableNames } from './data.js';
 import { foldForSearch } from './text-search.js';
@@ -184,6 +185,9 @@ function renderFilterPanel() {
     if (!pop) return;
 
     const n = countActiveFilters();
+    // Bouton de tri allumé = tri réellement appliqué (« Court » tant qu'il n'y a
+    // pas de point de départ), comme sur mobile.
+    const shownSort = getEffectiveCircuitSort(currentSort);
     const minPct = (filterMinKm / DIST_MAX_KM) * 100;
     const maxPct = (filterMaxKm / DIST_MAX_KM) * 100;
     const distLabel = (filterMinKm === 0 && filterMaxKm === DIST_MAX_KM)
@@ -247,20 +251,20 @@ function renderFilterPanel() {
         <div class="filter-section">
             <div class="lbl">Tri</div>
             <div class="fseg" id="mc-fseg">
-                <button class="${currentSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" title="Proximité depuis ton point de départ">
+                <button class="${shownSort === 'proximity_asc' ? 'is-on' : ''}" data-sort="proximity_asc" title="Proximité depuis ton point de départ">
                     <i data-lucide="home"></i>Proximité
                 </button>
-                <button class="${currentSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc" title="Du plus court au plus long">
+                <button class="${shownSort === 'dist_asc' ? 'is-on' : ''}" data-sort="dist_asc" title="Du plus court au plus long">
                     <i data-lucide="arrow-down-0-1"></i>Court
                 </button>
-                <button class="${currentSort === 'dist_desc' ? 'is-on' : ''}" data-sort="dist_desc" title="Du plus long au plus court">
+                <button class="${shownSort === 'dist_desc' ? 'is-on' : ''}" data-sort="dist_desc" title="Du plus long au plus court">
                     <i data-lucide="arrow-up-1-0"></i>Long
                 </button>
-                <button class="${currentSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first" title="Vérifiés d'abord">
+                <button class="${shownSort === 'verified_first' ? 'is-on' : ''}" data-sort="verified_first" title="Vérifiés d'abord">
                     <i data-lucide="shield-check"></i>Vérifiés
                 </button>
             </div>
-            ${state.homeLocation && currentSort === 'proximity_asc' ? `
+            ${state.homeLocation && shownSort === 'proximity_asc' ? `
             <div class="sp-hint">
                 <i data-lucide="locate-fixed"></i>
                 <span>Depuis <strong dir="auto">${escapeXml(getStartPointLabel() || 'lieu défini')}</strong></span>
@@ -560,7 +564,9 @@ function countActiveFilters() {
     if (filterCompletion !== 'all') n++;
     if (filterVisibility !== 'visible') n++;
     if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
-    if (currentSort !== 'proximity_asc') n++;
+    // Le tri ne compte que s'il diverge du tri par défaut, comparés tous deux
+    // tels qu'appliqués : sans point de départ, choisir « Court » revient au défaut.
+    if (getEffectiveCircuitSort(currentSort) !== getEffectiveCircuitSort('proximity_asc')) n++;
     return n;
 }
 
@@ -600,7 +606,7 @@ export function renderExplorerList() {
     // post-reorder pour mettre les vérifiés en tête.
     // filterTodo (legacy bool du service) : true uniquement si filterCompletion === 'todo'.
     // Le cas 'done' est filtré par nous (post-service) car le service ne le connaît pas.
-    const baseSortMode = currentSort === 'verified_first' ? 'proximity_asc' : currentSort;
+    const baseSortMode = getBaseCircuitSort(currentSort);
     const legacyFilterTodo = filterCompletion === 'todo';
     let circuits = getProcessedCircuits(baseSortMode, legacyFilterTodo, globalZoneFilter, filterPoiId, filterVisibility);
 
