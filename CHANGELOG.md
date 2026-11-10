@@ -6,6 +6,10 @@
 
 ---
 
+- CIRCUIT PERSO : RAPPEL « ENREGISTRÉ SUR CET APPAREIL », AVEC LE CHEMIN VERS LE TÉLÉPHONE (v3.7.499). Constaté le 10/11/2026 en rejouant le parcours d'un visiteur : il crée son circuit sur PC, ouvre son téléphone et ne le trouve pas, rien ne lui ayant dit que le circuit ne vit que sur l'appareil. Le trajet PC → sauvegarde légère → « Restaurer » sur un téléphone neuf a été rejoué le même jour : le circuit arrive avec son tracé et se suit.
+  - Panneau du circuit (PC), sous la carte « Itinéraire tracé » d'un circuit de l'utilisateur : une ligne fixe, avec un lien « Sauvegarder » qui ouvre la fenêtre de sauvegarde (`phoneHintHtml`, `src/ui-circuit-routing.js`). Rien pour un circuit officiel.
+  - Liste mobile vide : « Menu > Restaurer » n'existait pas sous ce nom ; le texte dit maintenant « Menu > Sauvegarder, puis « Restaurer » ».
+
 - TRACÉ : L'ÉCHEC DES TYPES DE VOIE N'EST PLUS AFFICHÉ À L'UTILISATEUR (v3.7.498). Constaté le 10/11/2026 (parcours visiteur, puis Stefan en navigation privée) : sous le tracé, « Types de voie indisponibles — Réessayer », y compris après « Réessayer ». Un utilisateur n'a pas de clé overpass.ch ; il dépend du serveur public overpass-api.de, souvent saturé (502), et ne peut rien y faire. Décision de Stefan : ne rien lui montrer, son tracé reste bleu.
   - `wayTypesStatus` (`src/way-types.js`) : le chargement reste montré à tous, l'échec à l'admin seulement (qui garde « Réessayer »). Si la requête aboutit, l'utilisateur voit la coloration et le résumé comme avant.
   - Tests : `tests/way_types.test.js`.
