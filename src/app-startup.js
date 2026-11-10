@@ -19,6 +19,7 @@ import { eventBus } from './events.js';
 import { pullFromGist, initGistReconnectSync } from './gist-sync.js';
 import { fetchWithTimeout } from './net.js';
 import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { fetchRepoFile, fetchRepoFileFresh, repoFileSha, setLoadedGeojsonSha } from './repo-read.js';
 import { getStoredToken } from './github-sync.js';
 import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished } from './utils.js';
@@ -189,7 +190,7 @@ export async function loadZonesForActive(mapId, dest) {
         // 'reload'` suffit à la fraîcheur. URL stable → cache hors-ligne réparé.
         const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
         const resp = adminDraft
-            ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.zones(mapId)}?t=${Date.now()}`, { cache: 'reload' })
+            ? await fetchRepoFile(GITHUB_PATHS.zones(mapId))
             : await fetchWithTimeout(`${baseUrl}${zonesFile}`, { cache: 'reload' });
         if (resp.ok) {
             const z = await resp.json();
@@ -234,7 +235,7 @@ export async function loadRejectedForActive(mapId, dest) {
         const baseUrl = import.meta.env?.BASE_URL || './';
         const adminDraft = !!getStoredToken() && dest && dest.status !== 'published';
         const resp = adminDraft
-            ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.rejected(mapId)}?t=${Date.now()}`, { cache: 'reload' })
+            ? await fetchRepoFile(GITHUB_PATHS.rejected(mapId))
             : await fetchWithTimeout(`${baseUrl}${mapId}-rejected.json`, { cache: 'reload' });
         if (resp.ok) {
             const r = await resp.json();
@@ -431,22 +432,33 @@ export async function loadAndInitializeMap() {
             // 'reload'` assure la fraîcheur (ignore le cache HTTP navigateur ;
             // GitHub Pages purge son CDN à chaque déploiement après publication).
             // URL stable → le SW sert le geojson hors-ligne, mobile inclus.
-            const resp = adminDraft
-                ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.geojson(activeMapId)}?t=${Date.now()}`, { cache: 'reload' })
-                : await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
+            // ADMIN (jeton) : la carte est lue par l'API GitHub, seule source à jour
+            // juste après une publication (RAW garde 5 min, Pages attend son
+            // déploiement), et sa version git est retenue : « Tout publier »
+            // refuse de réécrire la carte en ligne si elle a changé depuis
+            // (publish-base.js). Repli sur le chemin habituel si l'API échoue,
+            // version alors inconnue → publication refusée jusqu'au rechargement.
+            const fresh = await fetchRepoFileFresh(GITHUB_PATHS.geojson(activeMapId));
+            const resp = (fresh && fresh.ok) ? fresh
+                : adminDraft
+                    ? await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.geojson(activeMapId)}?t=${Date.now()}`, { cache: 'reload' })
+                    : await fetchWithTimeout(`${baseUrl}${fileName}`, { cache: 'reload' });
             // Une réponse en erreur (500 du CDN…) doit déclencher le MÊME repli
             // hors-ligne qu'un échec réseau (audit R5) — avant, geojsonData
             // restait null et le boot s'arrêtait sur « Impossible de charger ».
             if (!resp.ok) throw new Error(`geojson HTTP ${resp.status}`);
             geojsonData = await resp.json();
+            setLoadedGeojsonSha(activeMapId, repoFileSha(resp));
             // RAW cache-busté = pas d'ETag exploitable. De toute façon le cache
             // hors-ligne n'est PAS écrit pour un brouillon (cf. saveGeoJSONBackup gardé).
+            // Lu par l'API : l'ETag (SHA git) change avec le fichier, il convient.
             geojsonEtag = adminDraft ? null : (resp.headers?.get?.('etag') || null);
         } catch(e) {
             // Fallback offline : on relit le cache PAR DESTINATION (lastGeoJSON_<mapId>).
             // La clé encode déjà la destination → plus besoin de comparer lastMapId.
             // Un BROUILLON (Hammamet en curation) boote ainsi hors-ligne en mode admin,
             // indispensable pour le test terrain (réseau mobile instable).
+            setLoadedGeojsonSha(activeMapId, null); // version inconnue → publication refusée
             const cached = await getAppState(`lastGeoJSON_${activeMapId}`);
             if (cached) {
                 geojsonData = cached;
@@ -554,8 +566,7 @@ export async function loadAndInitializeMap() {
         // n'est pas admin). Si le fetch échoue (offline / 404 avant 1re
         // publication) → on garde le dernier local connu (fallback ligne ~279).
         try {
-            const testedUrl = `${RAW_BASE}/${GITHUB_PATHS.tested(activeMapId)}?t=${Date.now()}`;
-            const respTested = await fetchWithTimeout(testedUrl);
+            const respTested = await fetchRepoFile(GITHUB_PATHS.tested(activeMapId));
             if (respTested.ok) {
                 const publicTested = await respTested.json();
                 if (publicTested && typeof publicTested === 'object') {

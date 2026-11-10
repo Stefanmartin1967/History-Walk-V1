@@ -13,6 +13,12 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
+// Garde-fou « carte à jour » (publish-base.js) : testé à part dans publish_base.test.js.
+vi.mock('../src/publish-base.js', async (importOriginal) => ({
+    ...(await importOriginal()),
+    assertGeojsonBaseCurrent: vi.fn(async () => 'sha-en-ligne'),
+}));
+
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => 'ghp_test'),
     uploadFileToGitHub: vi.fn(async () => ({ ok: true })),

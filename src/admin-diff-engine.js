@@ -1,7 +1,7 @@
 import { state, getActiveMapId} from './state.js';
-import { fetchWithTimeout } from './net.js';
+import { fetchRepoFile } from './repo-read.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
-import { RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
+import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
@@ -116,7 +116,7 @@ async function publishedFingerprintFor(remote) {
     if (!remote.file) return null;
     try {
         const path = `public/circuits/${String(remote.file).split('/').map(encodeURIComponent).join('/')}`;
-        const resp = await fetchWithTimeout(`${RAW_BASE}/${path}?t=${Date.now()}`);
+        const resp = await fetchRepoFile(path);
         if (!resp.ok) return null;
         const coords = parseGpxTrack(await resp.text());
         rememberPublishedTrack(remote.id, coords);
@@ -137,15 +137,16 @@ export async function prepareDiffData(adminDraft) {
     let originalFeatures = [];
     let remoteCircuits = [];
     let remoteTested = {};
-    const timestamp = Date.now();
     const mapId = getActiveMapId();
 
     // 1. Fetch Remote Data (POIs + Circuits + Tested)
     try {
         const [respGeo, respCirc, respTested] = await Promise.all([
-            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.geojson(mapId)}?t=${timestamp}`),
-            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`),
-            fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.tested(mapId)}?t=${timestamp}`)
+            // Lecture fraîche (API) avec le jeton : RAW peut rendre une version
+            // vieille de 5 minutes, le `?t=` n'y change rien (cf. repo-read.js).
+            fetchRepoFile(GITHUB_PATHS.geojson(mapId)),
+            fetchRepoFile(GITHUB_PATHS.circuits(mapId)),
+            fetchRepoFile(GITHUB_PATHS.tested(mapId))
         ]);
 
         if (respGeo.ok) {

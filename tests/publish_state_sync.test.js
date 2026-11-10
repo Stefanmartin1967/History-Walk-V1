@@ -40,13 +40,19 @@ vi.mock('../src/state.js', () => {
 });
 vi.mock('../src/events.js', () => ({ eventBus: { on: vi.fn(), emit: vi.fn(), off: vi.fn() } }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
+// Garde-fou « carte à jour » (publish-base.js) : testé à part dans publish_base.test.js.
+vi.mock('../src/publish-base.js', async (importOriginal) => ({
+    ...(await importOriginal()),
+    assertGeojsonBaseCurrent: vi.fn(async () => 'sha-en-ligne'),
+}));
+
 vi.mock('../src/github-sync.js', () => ({
     uploadFileToGitHub: vi.fn(() => Promise.resolve()),
     deleteFileFromGitHub: vi.fn(() => Promise.resolve()),
     getStoredToken: vi.fn(() => 'tok'),
 }));
 vi.mock('../src/config.js', () => ({
-    GITHUB_OWNER: 'o', GITHUB_REPO: 'r', RAW_BASE: 'https://example.com',
+    GITHUB_OWNER: 'o', GITHUB_REPO: 'r', RAW_BASE: 'https://example.com', GITHUB_BRANCH: 'main',
     GITHUB_PATHS: { geojson: (m) => `public/${m}.geojson`, circuits: () => '', circuitFile: () => '', photo: () => '', tested: () => '' },
     PERSONAL_KEYS: ['vu', 'vuManual', 'notes', 'incontournable'],
 }));

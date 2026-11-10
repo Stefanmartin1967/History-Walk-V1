@@ -1,7 +1,7 @@
 import { state, removeMyCircuit, setOfficialCircuits, getActiveMapId} from './state.js';
-import { fetchWithTimeout } from './net.js';
+import { fetchRepoFile } from './repo-read.js';
 import { getStoredToken, deleteFileFromGitHub, uploadFileToGitHub } from './github-sync.js';
-import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { deleteCircuitById, restoreCircuit } from './database.js';
 import { setOfficialCircuitDeleted, noteServerDeletedCircuit, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { forgetDeletedCircuit } from './circuit-store.js';
@@ -26,11 +26,9 @@ let _maintSubView = 'trash';     // 'trash' (corbeille locale) | 'server'
  */
 async function fetchServerCircuits() {
     const mapId = getActiveMapId();
-    const timestamp = Date.now();
-    const url = `${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${timestamp}`;
 
     try {
-        const response = await fetchWithTimeout(url);
+        const response = await fetchRepoFile(GITHUB_PATHS.circuits(mapId));
         if (!response.ok) throw new Error("Impossible de charger circuits.json");
         // Relecture potentiellement en retard juste après une suppression : sans
         // ce filtre, le circuit qu'on vient d'effacer restait listé et le
