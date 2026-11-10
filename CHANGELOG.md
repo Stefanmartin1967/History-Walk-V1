@@ -6,6 +6,10 @@
 
 ---
 
+- MES CIRCUITS (PC) : « PROXIMITÉ » SANS POINT DE DÉPART TRIE PAR LONGUEUR, COMME SUR MOBILE (v3.7.497). Constaté le 10/11/2026 en rejouant le parcours d'un visiteur neuf : le circuit qu'il venait de créer restait 25e sur 25, sous les 24 officiels, et le bouton « Proximité » s'affichait allumé alors qu'il ne triait rien (aucune distance calculable sans point de départ → ordre d'entrée). Le mobile appliquait déjà « Court » dans ce cas (20/10/2026).
+  - Règle unique dans `src/circuit-sort.js` (`getEffectiveCircuitSort`, `getBaseCircuitSort`), lue par la liste PC et la liste mobile : tri appliqué, bouton allumé du panneau et pastille des filtres. « Vérifiés d'abord » part lui aussi de « Court » sans point de départ (PC et mobile).
+  - Tests : `tests/circuit_sort.test.js`.
+
 - PUBLICATION : PLUS DE RETOUR EN ARRIÈRE SILENCIEUX D'UNE PUBLICATION RÉCENTE (v3.7.496). Constaté par Stefan le 10/11/2026 sur « Beffroi de Charleroi » : la publication de 11:32 (texte seul) a effacé la photo et décoché Vérifié publiés à 11:28. Même cause que le retour en arrière du 05/11 (cheminée Saint-Remy), restée inexpliquée à l'époque.
   - Cause : l'app relisait les fichiers du dépôt sur raw.githubusercontent.com, qui les garde jusqu'à 5 minutes en cache et ignore le `?t=` censé forcer une copie fraîche (constaté : `X-Cache: HIT` pour des `?t=` différents). Rechargée dans les 5 minutes après une publication, l'app retrouvait la carte d'avant ; « Tout publier », qui réécrit tout le geojson depuis la mémoire, la republiait par-dessus.
   - Lecture fraîche (`repo-read.js`) : avec un jeton, l'app lit par l'API GitHub, toujours à jour : carte au démarrage (brouillon ET destination publiée, repli sur le chemin habituel si l'API échoue), quartiers et rejets d'un brouillon, statut Vérifié, et toutes les relectures du Centre de Contrôle (diff, index des circuits, GPX publiés, doublons, maintenance). Les visiteurs ne changent pas de chemin.

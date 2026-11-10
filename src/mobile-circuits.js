@@ -22,6 +22,7 @@ import { escapeHtml, sanitizeHTML, getZoneFromCoords } from './utils.js';
 import { isCircuitTested, loadCircuitById } from './circuit.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { getProcessedCircuits, formatUnseenLabel } from './circuit-list-service.js';
+import { getEffectiveCircuitSort, getBaseCircuitSort } from './circuit-sort.js';
 import { openStartPointModal } from './start-point.js';
 import {
     getMobileSort, setMobileSort, DEFAULT_MOBILE_SORT,
@@ -102,7 +103,7 @@ export function renderMobileCircuitsList() {
 
     // Sort : 'verified_first' → délégué au service en 'proximity_asc' puis reorder.
     const sortMode = getEffectiveSort();
-    const baseSortMode = sortMode === 'verified_first' ? 'proximity_asc' : sortMode;
+    const baseSortMode = getBaseCircuitSort(sortMode);
     const legacyFilterTodo = filterCompletion === 'todo';
 
     let circuitsToDisplay = getProcessedCircuits(
@@ -380,13 +381,9 @@ function countActiveFilters() {
     return n;
 }
 
-// Tri réellement appliqué. « Proximité » sans point de départ se lit « Court »
-// (dist_asc). Résolu à la lecture, jamais écrit dans le tri choisi : au
-// démarrage, la liste s'affiche avant que main.js relise le point de départ
-// (IndexedDB). L'écrire à ce moment figeait « Court » et allumait la pastille
-// des filtres une fois le point de départ relu (constaté le 20/10/2026).
+// Tri réellement appliqué (règle partagée avec le PC, cf. circuit-sort.js).
 function getEffectiveSort(sort = getMobileSort()) {
-    return sort === 'proximity_asc' && !state.homeLocation ? 'dist_asc' : sort;
+    return getEffectiveCircuitSort(sort);
 }
 
 function pickEmptyHint() {
