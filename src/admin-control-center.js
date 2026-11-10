@@ -5,7 +5,7 @@ import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.
 import { stripCircuitSignature } from './circuit-description.js';
 import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
 import { fetchWithTimeout } from './net.js';
-import { getPoiId, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
+import { getPoiId, getPoiProp, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -727,10 +727,19 @@ async function publishChanges() {
                 }
 
                 if (newUrls.length > 0) {
-                    // Fusion avec les URLs existantes de userData.photos (photos
-                    // déjà publiées conservées en tête de liste).
-                    const existingUrls = state.userData[poiId]?.photos || [];
-                    const mergedUrls   = [...existingUrls, ...newUrls];
+                    // Fusion avec la liste COURANTE de la fiche, photos déjà
+                    // publiées en tête. Lue par getPoiProp : l'overlay
+                    // userData.photos s'il existe (l'admin a retiré ou réordonné
+                    // des photos), sinon les photos publiées (properties.photos).
+                    // Avant le 10/11/2026 on ne lisait que l'overlay : une photo
+                    // ajoutée par la modale d'import (qui ne pose que la photo en
+                    // attente) à une fiche déjà illustrée REMPLAÇAIT la photo en
+                    // ligne (« Kiosque du parc Reine Astrid », Charleroi).
+                    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+                    const existingUrls = (feature
+                        ? getPoiProp(feature, 'photos')
+                        : state.userData[poiId]?.photos) || [];
+                    const mergedUrls   = [...existingUrls, ...newUrls.filter(u => !existingUrls.includes(u))];
 
                     const newUserData = { ...state.userData };
                     if (!newUserData[poiId]) newUserData[poiId] = {};
@@ -741,7 +750,6 @@ async function publishChanges() {
                     // feature.properties.userData (pas state.userData directement).
                     // Sans ce rebind, les URLs fraîches restent invisibles du geojson
                     // publié bien que uploadées avec succès sur GitHub.
-                    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
                     if (feature) feature.properties.userData = newUserData[poiId];
                     // Persistance dans le store par destination (seul domicile depuis
                     // le 14/09/2026 ; avant : la copie globale appState `userData`).
