@@ -237,8 +237,11 @@ function readFileAsBase64(file) {
  * @param {string} repo Le nom du repo (ex: History-Walk-V1)
  * @param {string} path Le chemin cible dans le repo (ex: public/circuits/moncircuit.json)
  * @param {string} message Le message de commit
+ * @param {{expectedSha?: string}} [opts] expectedSha : version que l'envoi doit
+ *   remplacer. GitHub refuse alors l'envoi (HTTP 409) si le fichier a changé
+ *   depuis : rien n'est écrasé à l'aveugle (cf. repo-read.js).
  */
-export async function uploadFileToGitHub(file, token, owner, repo, path, message) {
+export async function uploadFileToGitHub(file, token, owner, repo, path, message, opts = {}) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const action = `Envoi de ${fileLabel(path)}`;
 
@@ -249,14 +252,16 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     //    fichier nouveau. Tout autre échec arrête l'envoi avec son vrai code :
     //    l'ignorer faisait partir une « création » que GitHub refusait avec un
     //    message trompeur (« sha wasn't supplied »).
-    let sha = null;
-    const checkResponse = await fetchWithTimeout(apiUrl, {
+    let sha = opts.expectedSha || null;
+    const checkResponse = sha ? null : await fetchWithTimeout(apiUrl, {
         headers: {
             'Authorization': `token ${token}`,
             'Accept': 'application/vnd.github.v3+json'
         }
     });
-    if (checkResponse.ok) {
+    if (!checkResponse) {
+        // expectedSha fourni : pas de relecture, GitHub vérifie lui-même.
+    } else if (checkResponse.ok) {
         const data = await checkResponse.json();
         sha = data.sha;
     } else if (checkResponse.status !== 404) {

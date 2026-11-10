@@ -4,17 +4,18 @@ import { getAllCircuits } from './circuit-lookup.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
-import { fetchWithTimeout } from './net.js';
 import { getPoiId, getPoiProp, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { generateMasterGeoJSONData } from './admin-geojson.js';
 import { uploadFileToGitHub, deleteFileFromGitHub, getStoredToken } from './github-sync.js';
-import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
+import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { showToast } from './toast.js';
 import { getTestedSteps, rememberTestedSteps, stepsInvalidateVerified, pushTestedToGitHub } from './tested-sync.js';
-import { showConfirm } from './modal.js';
+import { showConfirm, showAlert } from './modal.js';
+import { assertGeojsonBaseCurrent, uploadGeojsonGuarded, StaleBaseError } from './publish-base.js';
+import { fetchRepoFile } from './repo-read.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData, savePoiData, removePoiDataKeys } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
 import { pendingRejectedCount } from './rejected.js';
@@ -471,7 +472,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
             catch (e) { console.warn('[CC] restauration circuit échec:', id, e); }
 
             try {
-                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(getActiveMapId())}?t=${Date.now()}`);
+                const r = await fetchRepoFile(GITHUB_PATHS.circuits(getActiveMapId()));
                 if (r.ok) {
                     // Filtré : ne jamais « restaurer » depuis une relecture en retard
                     // un circuit dont l'app a déjà supprimé le GPX — il reviendrait
@@ -496,7 +497,7 @@ export const processDecision = async (id, decision, scope = 'poi') => {
             // Un circuit absent de l'index (création non publiée) n'est pas touché —
             // l'effacer ferait perdre un travail qui n'existe nulle part ailleurs.
             try {
-                const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(getActiveMapId())}?t=${Date.now()}`);
+                const r = await fetchRepoFile(GITHUB_PATHS.circuits(getActiveMapId()));
                 const remoteIndex = r.ok ? withoutServerDeletedCircuits(await r.json()) : [];
                 const published = remoteIndex.find(e => String(e.id) === String(id)) || null;
                 if (published) {
@@ -675,6 +676,13 @@ async function publishChanges() {
     try {
         const mapId = getActiveMapId();
 
+        // ─── 0. LA CARTE CHARGÉE EST-ELLE LA VERSION EN LIGNE ? ───
+        // Le geojson est réécrit EN ENTIER depuis l'état en mémoire : parti d'une
+        // copie plus ancienne, il effacerait la publication précédente (Beffroi
+        // de Charleroi, 10/11/2026). Vérifié AVANT tout envoi, photos comprises.
+        setBtnLabel('Vérification…');
+        const onlineGeojsonSha = await assertGeojsonBaseCurrent(mapId);
+
         // ─── 1. UPLOAD DES PHOTOS PENDING (blobs locaux → GitHub) ───
         // Doit précéder la génération du geojson pour que les URLs fraîches
         // soient injectées dans userData.photos et sérialisées dans le geojson.
@@ -791,7 +799,7 @@ async function publishChanges() {
         if (rejectedToSend > 0) msgParts.push(`${rejectedToSend} rejet(s)`);
         const commitMessage = msgParts.join(' — ');
 
-        await uploadFileToGitHub(file, token, GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS.geojson(mapId), commitMessage);
+        await uploadGeojsonGuarded(file, token, mapId, commitMessage, onlineGeojsonSha);
 
         // Publication du statut "vérifié" (testedCircuits) si changements détectés.
         // Fichier public lu par tous les users au boot pour afficher le bouclier vert.
@@ -847,7 +855,7 @@ async function publishChanges() {
                 // Index distant courant (base pour upsert / suppression).
                 let index = [];
                 try {
-                    const r = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+                    const r = await fetchRepoFile(GITHUB_PATHS.circuits(mapId));
                     if (r.ok) index = await r.json();
                 } catch (_) { /* index vide si fetch échoue */ }
                 if (!Array.isArray(index)) index = [];
@@ -1113,7 +1121,8 @@ async function publishChanges() {
 
     } catch (e) {
         console.error(e);
-        showToast("Erreur: " + e.message, "error");
+        if (e instanceof StaleBaseError) showAlert("Publication refusée", e.message);
+        else showToast("Erreur: " + e.message, "error");
         if (btn) {
             btn.disabled = false;
             btn.innerHTML = `<i data-lucide="rocket"></i> TOUT PUBLIER`;

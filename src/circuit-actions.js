@@ -2,7 +2,7 @@
 // circuit-actions.js
 import { state, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
-import { fetchWithTimeout } from './net.js';
+import { fetchRepoFile } from './repo-read.js';
 import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
 import { stripCircuitSignature } from './circuit-description.js';
@@ -14,7 +14,7 @@ import { showConfirm } from './modal.js';
 import { showToast } from './toast.js';
 import { generateHWID, getDerivedZone } from './utils.js';
 import { getStoredToken } from './github-sync.js';
-import { RAW_BASE, GITHUB_PATHS } from './config.js';
+import { GITHUB_PATHS } from './config.js';
 import { recordModification } from './backup-auto-local.js';
 import { schedulePush } from './gist-sync.js';
 import { eventBus } from './events.js';
@@ -67,7 +67,7 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
 
     const mapId = getActiveMapId();
     try {
-        const res = await fetchWithTimeout(`${RAW_BASE}/${GITHUB_PATHS.circuits(mapId)}?t=${Date.now()}`);
+        const res = await fetchRepoFile(GITHUB_PATHS.circuits(mapId));
         if (!res.ok) return null;
         // Filtré : sinon, juste après avoir supprimé un circuit, une relecture en
         // retard le signalerait comme « doublon » et empêcherait d'en recréer un

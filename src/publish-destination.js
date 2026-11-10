@@ -28,6 +28,7 @@ import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub, githubHttpErr
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { isCandidate, getPoiId } from './utils.js';
 import { saveAppState } from './database.js';
+import { assertGeojsonBaseCurrent, uploadGeojsonGuarded } from './publish-base.js';
 import { zonesFileText } from './zones-lighten.mjs';
 
 // Emballe un objet en File JSON indenté (uploadFileToGitHub lit un File → base64
@@ -207,6 +208,9 @@ export async function setDestinationPublished(id, onProgress = () => {}) {
     const entry = dest.maps?.[id];
     if (!entry) throw new Error('Cette destination est introuvable sur GitHub.');
     if (entry.status === 'published') throw new Error(`« ${entry.name || id} » est déjà publiée.`);
+    // Le geojson est réécrit depuis la carte chargée : elle doit être la version
+    // en ligne, sinon une publication récente repartirait en arrière (publish-base.js).
+    const onlineGeojsonSha = await assertGeojsonBaseCurrent(id);
 
     // Garde-fou candidat : mettre de côté les candidats non curés en local AVANT de
     // pousser le geojson public épuré (ils restent curables ensuite).
@@ -237,8 +241,8 @@ export async function setDestinationPublished(id, onProgress = () => {}) {
 
     // Push : geojson épuré D'ABORD, destinations.json (la visibilité) EN DERNIER.
     onProgress('Publication des lieux…');
-    await uploadFileToGitHub(jsonFile(geo, `${id}.geojson`), token, GITHUB_OWNER, GITHUB_REPO,
-        GITHUB_PATHS.geojson(id), `feat(dest): publication « ${label} » — lieux`);
+    await uploadGeojsonGuarded(jsonFile(geo, `${id}.geojson`), token, id,
+        `feat(dest): publication « ${label} » — lieux`, onlineGeojsonSha);
     onProgress('Mise à jour de la liste des destinations…');
     await uploadFileToGitHub(jsonFile(dest, 'destinations.json'), token, GITHUB_OWNER, GITHUB_REPO,
         GITHUB_PATHS.destinations(), `feat(dest): publication de « ${label} »`);
