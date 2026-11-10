@@ -2138,7 +2138,7 @@
         "description": "Église de la place Émile Vandervelde, rue Ferrer, dans le quartier de la Neuville, à Montignies-sur-Sambre.\nSelon la légende d'une photographie publiée sur Wikimedia Commons, elle a été construite en 1880 par l'architecte A. Quinet, en brique et pierre, dans un style de tendance néo-romane.\nSur place, une plaque à l'entrée la nomme « Eglise Saint-Pierre, Montignies-sur-Sambre, Neuville ».",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Église Saint-Pierre, photographie de Jmh2o, 15 juillet 2011 (Wikimedia Commons, CC BY-SA 3.0) | https://commons.wikimedia.org/wiki/File:Montignies-sur-Sambre-_rue_Ferrer_-_%C3%A9glise_Saint-Pierre.jpg\nWikipédia, « Neuville (métro léger de Charleroi) » | https://fr.wikipedia.org/wiki/Neuville_(m%C3%A9tro_l%C3%A9ger_de_Charleroi)",
+        "Source": "Église Saint-Pierre, photographie de Jmh2o, 15 juillet 2011 (Wikimedia Commons, CC BY-SA 3.0) | https://commons.wikimedia.org/wiki/File:Montignies-sur-Sambre-_rue_Ferrer_-_%C3%A9glise_Saint-Pierre.jpg\nWikipédia, « Neuville (métro léger de Charleroi) » | https://fr.wikipedia.org/wiki/Neuville_(m%C3%A9tro_l%C3%A9ger_de_Charleroi)\nHoraires : EgliseInfo, « Montignies-sur-Sambre ~ Saint-Pierre (Neuville) », consultés le 10 novembre 2026 | https://www.egliseinfo.be/lieu/60/montignies-sur-sambre/saint-pierre\nPlaque de l'église, relevée sur place le 5 novembre 2026",
         "maps_ref": "https://maps.app.goo.gl/3j5XiFrHDGHqYTyN9",
         "verified": true,
         "introuvableCarte": false,
@@ -2700,12 +2700,19 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
-        "Source": "Wikipédia, « Musée des Beaux-Arts de Charleroi » | https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Charleroi\nHoraires et tarifs : Charleroi Museum, « Tarifs, horaires et accès », consultés le 5 novembre 2026 | https://charleroi-museum.be/horaires-et-acces/",
+        "Source": "Wikipédia, « Musée des Beaux-Arts de Charleroi » | https://fr.wikipedia.org/wiki/Mus%C3%A9e_des_Beaux-Arts_de_Charleroi\nHoraires et tarifs : Charleroi Museum, « Tarifs, horaires et accès », consultés le 5 novembre 2026 | https://charleroi-museum.be/horaires-et-acces/\nPanneaux et cartels du musée, relevés sur place le 5 novembre 2026",
         "Zone": "Charleroi",
-        "description": "Musée du boulevard Pierre Mayence, dans la Ville-Haute de Charleroi.\nSelon Wikipédia, il occupe depuis le 16 décembre 2022 l'ancien bâtiment Defeld, autrefois écuries de la gendarmerie, transformé par le bureau d'architectes Goffart-Polomé ; la Tour Bleue de Jean Nouvel se dresse à côté.\nToujours selon Wikipédia, la collection de la Ville, commencée en 1889 et poursuivie à l'initiative de Jules Destrée, compte environ 4000 pièces, surtout d'artistes belges et wallons des 19ᵉ et 20ᵉ siècles, dont huit tableaux de René Magritte et des œuvres de François-Joseph Navez, Pierre Paulus et James Ensor. Quelque 120 œuvres sont exposées en permanence, selon un parcours chronologique qui va du néoclassicisme à l'art contemporain, en passant par le réalisme social et le surréalisme.\nTarifs annoncés par le musée : collections permanentes en entrée libre ; expositions temporaires 7,50 € (adulte) et 3,50 € (tarif réduit), gratuites le premier dimanche du mois.",
+        "description": "Musée du boulevard Pierre Mayence, dans la Ville-Haute de Charleroi.\nSelon Wikipédia, il occupe depuis le 16 décembre 2022 l'ancien bâtiment Defeld, autrefois écuries de la gendarmerie, transformé par le bureau d'architectes Goffart-Polomé ; la Tour Bleue de Jean Nouvel se dresse à côté.\nToujours selon Wikipédia, la collection de la Ville, commencée en 1889 et poursuivie à l'initiative de Jules Destrée, compte environ 4000 pièces, surtout d'artistes belges et wallons des 19ᵉ et 20ᵉ siècles, dont huit tableaux de René Magritte et des œuvres de François-Joseph Navez, Pierre Paulus et James Ensor. Quelque 120 œuvres sont exposées en permanence, selon un parcours chronologique qui va du néoclassicisme à l'art contemporain, en passant par le réalisme social et le surréalisme.\nSur place, un panneau retrace son histoire : la collection a été lancée en 1889 par le Comité Navez, qui offrit à la Ville un buste du peintre par le sculpteur Jean Hérain, et l'idée d'un musée est née de l'exposition internationale de Charleroi de 1911, à laquelle Jules Destrée a participé. Le musée a ensuite occupé le second étage du nouvel hôtel de ville, inauguré en octobre 1936, et a été ouvert au public de façon permanente des années 1980 aux années 2000, avant de passer par les salles du Palais des Beaux-Arts puis de rejoindre les anciennes écuries Defeld.\nParmi les toiles de Pierre Paulus, Jeunesse (1911) porte le label « Trésor classé » du patrimoine culturel mobilier de la Fédération Wallonie-Bruxelles ; un portrait de Jules Destrée, du même peintre, est exposé en dépôt permanent de l'Université du Travail de Charleroi.\nTarifs annoncés par le musée : collections permanentes en entrée libre ; expositions temporaires 7,50 € (adulte) et 3,50 € (tarif réduit), gratuites le premier dimanche du mois.",
         "Horaires": "Du mardi au vendredi de 9h00 à 17h00, samedi et dimanche de 10h00 à 18h00. Fermé le lundi, le 1er mai, les 25 et 26 décembre, les 1er et 2 janvier, et à midi les 24 et 31 décembre.",
         "lat": 50.4121574,
-        "lng": 4.4526004
+        "lng": 4.4526004,
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288445577.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288447287.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288448950.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288450307.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288452210.jpg"
+        ]
       }
     },
     {
