@@ -3643,7 +3643,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/bxmUT5ZznCsf9yvr8",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -3651,13 +3651,16 @@
         "mapsHasPhoto": true,
         "jalelChecked": false,
         "Zone": "Charleroi",
-        "description": "Beffroi de l'hôtel de ville de Charleroi, dans la Ville-Haute, près de la place du Manège.\nSelon Wikipédia, il a été inauguré en 1936 dans le style Art déco ; haut de 70 mètres, c'est le plus récent des beffrois de Wallonie. Bâti en béton armé, il repose sur des piliers munis de vérins hydrauliques qui permettent d'en régler l'aplomb, à cause des mouvements miniers du sous-sol.\nToujours selon Wikipédia, son carillon de 47 cloches joue à chaque quart d'heure un air de Jacques Bertrand, chansonnier carolorégien du 19ᵉ siècle.\nOpenStreetMap l'indique comme faisant partie des beffrois inscrits au patrimoine mondial de l'UNESCO en 1999.",
-        "Source": "Wikipédia, « Beffroi de l'hôtel de ville de Charleroi » | https://fr.wikipedia.org/wiki/Beffroi_de_l%27h%C3%B4tel_de_ville_de_Charleroi",
+        "description": "Beffroi de l'hôtel de ville de Charleroi, dans la Ville-Haute, près de la place du Manège.\nSelon Wikipédia, il a été inauguré en 1936 dans le style Art déco ; haut de 70 mètres, c'est le plus récent des beffrois de Wallonie. Bâti en béton armé, il repose sur des piliers munis de vérins hydrauliques qui permettent d'en régler l'aplomb, à cause des mouvements miniers du sous-sol.\nToujours selon Wikipédia, son carillon de 47 cloches joue à chaque quart d'heure un air de Jacques Bertrand, chansonnier carolorégien du 19ᵉ siècle.\nIl fait partie des beffrois de Belgique et de France inscrits au patrimoine mondial de l'UNESCO, dans le groupe des beffrois belges inscrits en 1999.",
+        "Source": "Wikipédia, « Beffroi de l'hôtel de ville de Charleroi » | https://fr.wikipedia.org/wiki/Beffroi_de_l%27h%C3%B4tel_de_ville_de_Charleroi\nWikipédia, « Beffrois de Belgique et de France » | https://fr.wikipedia.org/wiki/Beffrois_de_Belgique_et_de_France",
         "Sous-type": "Beffroi accolé",
         "État": "Conservé",
         "Accès": "Extérieur seulement",
         "lat": 50.4125544,
-        "lng": 4.4436702
+        "lng": 4.4436702,
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BRWS5WR93VM1BQWVN5GX_1794306481503.jpg"
+        ]
       }
     },
     {
