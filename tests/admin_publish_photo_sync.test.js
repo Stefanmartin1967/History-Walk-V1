@@ -169,4 +169,48 @@ describe('publishChanges — synchronisation photos (régression)', () => {
         // Le message de commit doit lui aussi refléter la réalité désormais.
         expect(geojsonUpload.message).toContain('1 photo(s)');
     });
+
+    // Régression 10/11/2026 (« Kiosque du parc Reine Astrid », Charleroi) : une
+    // photo ajoutée par la modale d'import à une fiche qui a DÉJÀ une photo
+    // publiée REMPLAÇAIT celle-ci. La modale ne pose que la photo en attente,
+    // sans recopier les photos publiées dans l'overlay userData.photos ; la
+    // fusion ne partait que de cet overlay (vide) → tableau publié = la seule
+    // nouvelle photo.
+    async function publishOnePhotoOn(feature) {
+        const poiId = feature.properties.HW_ID;
+        h.mockState.loadedFeatures = [feature];
+        h.pendingStore.set(poiId, [{ id: 'ph1', blob: new Blob(['x']), skipPublish: false }]);
+        diffData.pendingPhotos = { [poiId]: [{ id: 'ph1', skipPublish: false }] };
+        diffData.stats = { pendingPhotoCount: 1, poisModified: 1, photosAdded: 0 };
+
+        await publishChanges();
+
+        const geojsonUpload = h.uploadedFiles.find(u => u.path === 'public/djerba.geojson');
+        const published = JSON.parse(await geojsonUpload.file.text());
+        return published.features.find(f => f.properties.HW_ID === poiId).properties.photos;
+    }
+
+    it("ajoute la nouvelle photo APRÈS la photo déjà publiée (fiche publiée, overlay sans photos)", async () => {
+        const poiId = 'HW-TEST0000000000000002';
+        const feature = buildFeature(poiId);
+        feature.properties.photos = ['photos/poi_TEST_ancienne.jpg'];
+        feature.properties.userData = { verified: true }; // overlay sans clé photos
+        h.mockState.userData = { [poiId]: feature.properties.userData };
+
+        const photos = await publishOnePhotoOn(feature);
+
+        expect(photos).toEqual(['photos/poi_TEST_ancienne.jpg', 'photos/poi_TEST_123.jpg']);
+    });
+
+    it("respecte la liste de l'overlay quand l'admin l'a modifiée (photo publiée retirée)", async () => {
+        const poiId = 'HW-TEST0000000000000003';
+        const feature = buildFeature(poiId);
+        feature.properties.photos = ['photos/poi_TEST_a.jpg', 'photos/poi_TEST_b.jpg'];
+        feature.properties.userData = { photos: ['photos/poi_TEST_b.jpg'] };
+        h.mockState.userData = { [poiId]: feature.properties.userData };
+
+        const photos = await publishOnePhotoOn(feature);
+
+        expect(photos).toEqual(['photos/poi_TEST_b.jpg', 'photos/poi_TEST_123.jpg']);
+    });
 });

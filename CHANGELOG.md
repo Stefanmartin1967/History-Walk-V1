@@ -6,6 +6,12 @@
 
 ---
 
+- PUBLICATION : UNE PHOTO AJOUTÉE À UNE FICHE DÉJÀ ILLUSTRÉE NE REMPLACE PLUS LA PHOTO EN LIGNE (v3.7.495). Constaté par Stefan le 10/11/2026 sur « Kiosque du parc Reine Astrid » (Charleroi, publication `6d7ec71b`).
+  - Avant : à la publication, les nouvelles photos étaient fusionnées avec la seule liste locale de la fiche (`userData.photos`). La modale d'import ne pose que la photo en attente, sans recopier les photos publiées dans cette liste : la liste locale était vide, et le geojson publié ne gardait que la nouvelle photo. L'outil Flouter n'y est pour rien. Les fiches sans photo n'étaient pas touchées.
+  - Maintenant, `publishChanges` (admin-control-center.js) fusionne avec la liste courante de la fiche lue par `getPoiProp` : la liste locale si l'admin a retiré ou réordonné des photos, sinon les photos publiées. Une URL déjà présente n'est pas ajoutée deux fois.
+  - Test : `admin_publish_photo_sync.test.js` (fiche avec 1 photo publiée + 1 ajoutée → 2 photos ; liste locale réduite respectée).
+  - Fichiers perdus : aucun. Les fichiers retirés de la fiche restent dans les dépôts de photos. Historique relu : même schéma (une photo retirée, une ajoutée) sur « Mosquée Ben Mimoun » (Djerba) le 17/08 et le 14/10/2026, peut-être voulu (remplacement) : à confirmer par Stefan.
+
 - UNE PAGE FACEBOOK PAR DESTINATION (v3.7.494). Demandé par Stefan le 09/11/2026, après la création de la page « Heripia Wallonie ».
   - Avant : le bouton « Page Facebook » (menu Outils sur PC, Menu du dock sur mobile) ouvrait toujours la page Heripia de Djerba, adresse écrite en dur à deux endroits.
   - Maintenant, chaque destination porte sa page dans `destinations.json` (champ `facebook`) : Djerba garde la page Heripia, Wallonie ouvre « Heripia Wallonie ». `getActiveDestinationFacebook` (state.js) lit le lien de la destination active (http(s) seulement, comme le champ Facebook des fiches).
