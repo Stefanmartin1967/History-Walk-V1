@@ -5,7 +5,7 @@
 import { describe, it, expect } from 'vitest';
 import {
     categoryOfHighway, createSegmentIndex, addOverpassWays, classifyParts,
-    pendingZone, zoneQuery, boundsOf, boxesIntersect, formatKm, MATCH_M, ZONE_MARGIN_M,
+    pendingZone, zoneQuery, boundsOf, boxesIntersect, formatKm, wayTypesStatus, MATCH_M, ZONE_MARGIN_M,
 } from '../src/way-types.js';
 
 const LAT = 33.8;
@@ -140,5 +140,26 @@ describe('formatKm', () => {
     it('une décimale, virgule', () => {
         expect(formatKm(4120)).toBe('4,1 km');
         expect(formatKm(60)).toBe('0,1 km');
+    });
+});
+
+// Constat du 10/11/2026 (parcours visiteur, puis Stefan en navigation privée) :
+// sans clé overpass.ch, le serveur public saturé laissait « Types de voie
+// indisponibles — Réessayer » sous le tracé, sans que l'utilisateur y puisse rien.
+describe('wayTypesStatus', () => {
+    it('chargement : montré à tous', () => {
+        expect(wayTypesStatus({ loading: true, error: false }, false)).toBe('loading');
+        expect(wayTypesStatus({ loading: true, error: false }, true)).toBe('loading');
+    });
+
+    it('échec : montré à l\'admin seulement', () => {
+        expect(wayTypesStatus({ loading: false, error: true }, true)).toBe('error');
+        expect(wayTypesStatus({ loading: false, error: true }, false)).toBeNull();
+        expect(wayTypesStatus({ loading: false, error: true }, undefined)).toBeNull();
+    });
+
+    it('ni chargement ni échec, ou pas de tracé : rien', () => {
+        expect(wayTypesStatus({ loading: false, error: false }, true)).toBeNull();
+        expect(wayTypesStatus(null, true)).toBeNull();
     });
 });

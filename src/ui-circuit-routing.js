@@ -34,7 +34,7 @@ import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
 import { trackFingerprint } from './track-fingerprint.js';
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
-import { WAY_CATEGORIES, formatKm } from './way-types.js';
+import { WAY_CATEGORIES, formatKm, wayTypesStatus } from './way-types.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -259,8 +259,8 @@ function traceStatusHtml() {
 }
 
 // Ligne de résumé des types de voie (création, PC) : une entrée par catégorie
-// présente, puis l'état de la requête Overpass. Les passages restés en ligne
-// droite ont leur propre entrée. Vide tant qu'aucun tracé n'est coloré.
+// présente, puis l'état de la requête Overpass (l'échec : admin seulement, cf.
+// wayTypesStatus). Les passages restés en ligne droite ont leur propre entrée. Vide tant qu'aucun tracé n'est coloré.
 const WAY_SUMMARY = [...WAY_CATEGORIES, { key: 'droite', label: 'Ligne droite' }];
 const WAY_MIN_M = 50; // en dessous, « 0,0 km » : on n'affiche pas
 
@@ -276,10 +276,11 @@ function wayTypesHtml() {
         </ul>`
         : '';
     let msg = '';
-    if (v.loading) {
+    const status = wayTypesStatus(v, state.isAdmin);
+    if (status === 'loading') {
         msg = `<p class="trace-ways-msg"><i data-lucide="loader-circle" class="trace-ways-spin"></i>
             ${typed ? 'Types du passage modifié en cours de chargement…' : 'Types de voie en cours de chargement…'}</p>`;
-    } else if (v.error) {
+    } else if (status === 'error') {
         msg = `<p class="trace-ways-msg"><i data-lucide="cloud-off"></i>
             ${typed ? 'Types du passage modifié indisponibles' : 'Types de voie indisponibles'}
             <button class="trace-ways-retry" id="btn-ways-retry" type="button"><i data-lucide="rotate-cw"></i> Réessayer</button></p>`;

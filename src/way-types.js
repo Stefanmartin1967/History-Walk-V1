@@ -224,3 +224,23 @@ export function zoneQuery(box) {
 export function formatKm(m) {
     return (m / 1000).toFixed(1).replace('.', ',') + ' km';
 }
+
+// ---------- État de la requête affiché sous le tracé ----------
+
+/**
+ * Message d'état des types de voie à afficher sous le tracé.
+ *
+ * L'échec n'est montré qu'à l'admin : les types de voie sont un confort de
+ * création, et un utilisateur n'a pas de clé overpass.ch — il dépend du serveur
+ * public, souvent saturé. Lui afficher « indisponibles — Réessayer » signale une
+ * panne qu'il ne peut pas réparer ; son tracé reste simplement bleu (10/11/2026).
+ *
+ * @param {{loading?: boolean, error?: boolean}|null} view État de la requête (wayTypesView).
+ * @param {boolean} isAdmin Session admin.
+ * @returns {'loading'|'error'|null}
+ */
+export function wayTypesStatus(view, isAdmin) {
+    if (view?.loading) return 'loading';
+    if (view?.error && isAdmin) return 'error';
+    return null;
+}
