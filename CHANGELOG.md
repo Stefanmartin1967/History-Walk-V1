@@ -6,6 +6,10 @@
 
 ---
 
+- TRACÉ : L'ÉCHEC DES TYPES DE VOIE N'EST PLUS AFFICHÉ À L'UTILISATEUR (v3.7.498). Constaté le 10/11/2026 (parcours visiteur, puis Stefan en navigation privée) : sous le tracé, « Types de voie indisponibles — Réessayer », y compris après « Réessayer ». Un utilisateur n'a pas de clé overpass.ch ; il dépend du serveur public overpass-api.de, souvent saturé (502), et ne peut rien y faire. Décision de Stefan : ne rien lui montrer, son tracé reste bleu.
+  - `wayTypesStatus` (`src/way-types.js`) : le chargement reste montré à tous, l'échec à l'admin seulement (qui garde « Réessayer »). Si la requête aboutit, l'utilisateur voit la coloration et le résumé comme avant.
+  - Tests : `tests/way_types.test.js`.
+
 - MES CIRCUITS (PC) : « PROXIMITÉ » SANS POINT DE DÉPART TRIE PAR LONGUEUR, COMME SUR MOBILE (v3.7.497). Constaté le 10/11/2026 en rejouant le parcours d'un visiteur neuf : le circuit qu'il venait de créer restait 25e sur 25, sous les 24 officiels, et le bouton « Proximité » s'affichait allumé alors qu'il ne triait rien (aucune distance calculable sans point de départ → ordre d'entrée). Le mobile appliquait déjà « Court » dans ce cas (20/10/2026).
   - Règle unique dans `src/circuit-sort.js` (`getEffectiveCircuitSort`, `getBaseCircuitSort`), lue par la liste PC et la liste mobile : tri appliqué, bouton allumé du panneau et pastille des filtres. « Vérifiés d'abord » part lui aussi de « Court » sans point de départ (PC et mobile).
   - Tests : `tests/circuit_sort.test.js`.
