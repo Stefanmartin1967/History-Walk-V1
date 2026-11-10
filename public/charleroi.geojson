@@ -495,7 +495,7 @@
         "HW_ID": "HW-01M616BN3K13BABRTGB3HYS0KZ",
         "Temps_minutes": 0,
         "Prix_TND": 5,
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -509,7 +509,14 @@
         "Horaires": "Samedi de 10h00 à 13h00 ; du lundi au vendredi sur rendez-vous (Facebook, courriel ou téléphone 071 30 07 48).",
         "Facebook": "https://www.facebook.com/MuseeDesChasseursAPied",
         "lat": 50.4111114,
-        "lng": 4.4510098
+        "lng": 4.4510098,
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288926029.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288927704.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288929349.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288930927.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288932570.jpg"
+        ]
       }
     },
     {
@@ -2693,7 +2700,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/cnTtnwcgcTaLUXrs6",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
