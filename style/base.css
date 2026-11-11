@@ -699,6 +699,7 @@ body {
     justify-content: center;
     gap: 6px;
     align-self: center; /* centrage vertical dans le conteneur sidebar-tabs */
+    white-space: nowrap; /* « Mes Circuits » passait sur deux lignes à 1366 px (11/11/2026) */
 }
 
 .tab-button:hover { color: var(--ink); }

@@ -102,7 +102,7 @@ function renderToolbar() {
     toolbar.innerHTML = `
         <label class="mc-search">
             <i data-lucide="search"></i>
-            <input type="text" id="mc-search-input" placeholder="Rechercher un circuit ou un POI…" value="${escapeXml(searchQuery)}">
+            <input type="text" id="mc-search-input" placeholder="Circuit ou lieu…" aria-label="Rechercher un circuit ou un lieu" value="${escapeXml(searchQuery)}">
             <button type="button" class="mc-search-clear ${searchQuery ? '' : 'is-hidden'}" id="mc-search-clear" title="Effacer" aria-label="Effacer la recherche">
                 <i data-lucide="x"></i>
             </button>

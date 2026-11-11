@@ -2265,6 +2265,17 @@
     overflow: hidden;
 }
 #circuit-panel[data-mode="create"] .circuit-cover { display: none; }
+/* ÉCRAN BAS (petit portable, ~650 px utiles) : la photo d'en-tête de la fiche
+   et du circuit passe de 200 à 110 px. À 200 px elle ne laissait que 2 étapes
+   de circuit ou 3 lignes de description visibles (mesuré le 11/11/2026 à
+   1366 × 650). Au-dessus de 800 px de haut, rien ne change. La largeur
+   minimale écarte l'interface téléphone en portrait, qui a ses propres héros.
+   Placé APRÈS les deux règles de base (.poi-hero plus haut, .circuit-cover
+   juste au-dessus) : à spécificité égale, c'est l'ordre qui tranche. */
+@media (max-height: 800px) and (min-width: 769px) {
+    .poi-hero,
+    .circuit-cover { height: 110px; }
+}
 
 /* Cover avec photo POI (data-bg défini par applyCircuitHero — la photo
    est la première dispo parmi les POIs du circuit, gradient overlay pour

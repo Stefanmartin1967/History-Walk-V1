@@ -6,6 +6,13 @@
 
 ---
 
+- ÉCRAN BAS : PHOTO D'EN-TÊTE RÉDUITE, LIBELLÉS QUI NE SE COUPENT PLUS (v3.7.508). Captures à 100 % du 11/11/2026 : sur un petit portable (1366 × 650 utiles), la photo de 200 px ne laissait voir que 2 étapes d'un circuit et 3 lignes de description ; l'onglet « Mes Circuits » passait sur deux lignes et la recherche de circuits était coupée.
+  - `style/panels.css` : sous 800 px de haut (et au moins 769 px de large), `.poi-hero` et `.circuit-cover` passent de 200 à 110 px. Mesuré : 4 étapes visibles au lieu de 2. Au-dessus de 800 px, rien ne change (200 px à 801). Décision Stefan : réduite sur écran bas seulement.
+  - `.tab-button` : `white-space: nowrap`.
+  - Recherche de circuits (`src/ui-circuit-list.js`) : « Circuit ou lieu… » au lieu de « Rechercher un circuit ou un POI… » (92 px de texte pour 168 px de place à 1366 px), `aria-label` complet « Rechercher un circuit ou un lieu ».
+  - NON traité : la recherche de la barre du haut reste coupée sous ~1700 px (148 px de texte pour 40 px de place à 1366 px) ; elle dépend de la largeur de la barre, sujet réservé à Design. Cartes de circuit : en réflexion.
+  - `style.css?v=8.60`.
+
 - LÉGENDE REPENSÉE : FAMILLES DES FILTRES, TROIS COLONNES, SEULEMENT CE QUE LA DESTINATION CONTIENT (v3.7.507). Constat de Stefan le 11/11/2026 : avec 44 icônes, la légende sortait par le bas de l'écran (il fallait dézoomer à 67 %), « Catégories de lieux » était écrit comme « Mosquée », et elle s'ouvrait par-dessus le panneau Filtres. Maquette validée en trois passes.
   - `getLegendFamilies` (`src/info-popover.js`) : les catégories sont rangées dans les six familles de `taxonomy.js` (les mêmes que le panneau Filtres). Seules les icônes portées par un lieu visible de la destination sont montrées (`isShownToUser` + `getIconForFeature`) : 23 à Djerba au lieu de 44. Sans lieu chargé, tout est montré.
   - Une catégorie à plusieurs variantes présentes tient sur sa propre ligne, nom à gauche (fini les variantes éparpillées). La variante sans sous-type s'appelle « Autre ». Une seule variante présente : la catégorie tout court (« Château », pas « Château résidentiel »).
