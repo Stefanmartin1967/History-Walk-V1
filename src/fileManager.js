@@ -71,6 +71,24 @@ async function attachLocalDraft(exportData, mapId) {
     exportData.draftZones = await getDraftZones(mapId);
 }
 
+/**
+ * Nom d'un fichier de sauvegarde : `Heripia_<destination>_<legere|complete>_<date>`.
+ * Une seule règle pour le PC et le téléphone (11/11/2026). Avant : trois noms à
+ * l'ancienne marque (`HistoryWalk_Backup_Mobile_…`, `…_LITE_Mobile_…`,
+ * `HistoryWalk_FULL_PC_…`), « Mobile » sur un fichier fait au PC, la destination
+ * présente une fois sur trois. La restauration ne lit pas le nom : les anciens
+ * fichiers restent restaurables.
+ * @param {string} mapId
+ * @param {boolean} includePhotos true = complète (.json), false = légère (.txt)
+ * @param {Date} [now]
+ */
+export function backupFileName(mapId, includePhotos, now = new Date()) {
+    const p2 = (n) => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())}_${p2(now.getHours())}h${p2(now.getMinutes())}`;
+    const dest = String(mapId || 'destination').replace(/[^a-z0-9-]+/gi, '-');
+    return `Heripia_${dest}_${includePhotos ? 'complete' : 'legere'}_${stamp}.${includePhotos ? 'json' : 'txt'}`;
+}
+
 export async function saveUserData(forceFullMode = false) {
     if (!state.currentMapId) return showToast("Aucune carte chargée.", "error");
 
@@ -105,13 +123,7 @@ export async function saveUserData(forceFullMode = false) {
     });
     await attachLocalDraft(exportData, mapId);
 
-    const mode = includePhotos ? 'FULL_MASTER' : 'LITE_Mobile';
-    const now = new Date();
-    const localDate = new Date(now.getTime() - (now.getTimezoneOffset() * 60000));
-    const dateStr = localDate.toISOString().replace(/T/, '_').replace(/\..+/, '').replace(/:/g, '-');
-    const fileName = `HistoryWalk_Backup_${state.currentMapId}_${mode}_${dateStr}.json`;
-    
-    downloadJSON(exportData, fileName);
+    downloadJSON(exportData, backupFileName(mapId, includePhotos));
 }
 
 async function downloadJSON(data, filename) {
@@ -529,18 +541,10 @@ export async function exportDataForMobilePC() {
         const data = await prepareExportData(false);
         const jsonString = JSON.stringify(data, null, 2);
         
-        const now = new Date();
-        const timestamp = now.toISOString().slice(0, 10) + '_' + 
-                          now.getHours().toString().padStart(2, '0') + 'h' + 
-                          now.getMinutes().toString().padStart(2, '0');
-        
-        // CHANGEMENT ICI : On force l'extension .txt pour le Mobile
-        const fileName = `HistoryWalk_Backup_Mobile_${timestamp}.txt`;
-        
-        // CHANGEMENT ICI : On force le type 'text/plain'
-        downloadFile(fileName, jsonString, 'text/plain');
-        
-        showToast("Sauvegarde légère (.txt) prête à être partagée !", "success");
+        // .txt + text/plain : passe mieux par mail et messageries qu'un .json.
+        downloadFile(backupFileName(data.mapId, false), jsonString, 'text/plain');
+
+        showToast("Sauvegarde légère téléchargée", "success");
     } catch (err) {
         console.error("Erreur Export Lite:", err);
         showToast("Erreur lors de l'export léger", "error");
@@ -588,14 +592,8 @@ export async function exportFullBackupPC() {
         const data = await prepareExportData(true);
         const jsonString = JSON.stringify(data, null, 2);
         
-        const now = new Date();
-        const timestamp = now.toISOString().slice(0, 10) + '_' + 
-                          now.getHours().toString().padStart(2, '0') + 'h' + 
-                          now.getMinutes().toString().padStart(2, '0');
-        
-        const fileName = `HistoryWalk_FULL_PC_${timestamp}.json`;
-        downloadFile(fileName, jsonString, 'application/json');
-        showToast("Sauvegarde complète terminée", "success");
+        downloadFile(backupFileName(data.mapId, true), jsonString, 'application/json');
+        showToast("Sauvegarde complète téléchargée", "success");
     } catch (err) {
         console.error("Erreur Export Full:", err);
         showToast("Erreur lors de l'export complet", "error");
