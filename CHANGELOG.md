@@ -6,6 +6,10 @@
 
 ---
 
+- PANNEAU DU CIRCUIT (PC) : LE BOUTON « MARQUER COMME FAIT » SUIT ENFIN L'ÉTAT DE L'UTILISATEUR (v3.7.502). Constaté le 11/11/2026 en visiteur : après avoir coché un circuit officiel, la liste le montrait fait mais le bouton du panneau restait sur « Marquer comme fait » ; un second clic reproposait de tout cocher, sans moyen de décocher depuis le panneau.
+  - Cause : le bouton lisait le badge « testé » (`isCircuitTested`, posé par l'admin seulement) au lieu de l'état « fait » (`isCircuitCompleted`), que lisent la liste, la carte et le téléphone. Invisible en admin, où cocher « fait » pose aussi « testé ».
+  - `src/ui-circuit-page-events.js` : état et clic passent par `isCircuitCompleted`. Infobulle une fois coché : « Marquer comme non fait » (au lieu de « Marqué comme fait »), comme dans la liste.
+
 - VOCABULAIRE : UN CIRCUIT EST « FAIT », UN LIEU EST « VISITÉ » (v3.7.501). Règle confirmée par Stefan le 11/11/2026. Trois mots circulaient pour un circuit (fait, terminé, complété) et deux façons de dire « décocher ».
   - Liste des circuits sur téléphone : le cercle disait « Marquer comme visité » → « Marquer comme fait » / « Marquer comme non fait » selon l'état. Fiche circuit sur téléphone : « Décocher fait » → « Marquer comme non fait » (libellé lu par les lecteurs d'écran aligné lui aussi).
   - Fenêtres de confirmation : « Circuit Terminé » → « Circuit fait », « Réinitialisation » → « Circuit non fait ». Légende : « Circuit terminé » → « Circuit fait ». Menu du téléphone : « circuits complétés » → « circuits faits ». Liste filtrée vide : « Tous les circuits sont faits ».
