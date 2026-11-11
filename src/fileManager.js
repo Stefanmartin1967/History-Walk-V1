@@ -72,6 +72,30 @@ async function attachLocalDraft(exportData, mapId) {
 }
 
 /**
+ * Lieu créé par l'utilisateur sur une destination publiée : ajouté à la main
+ * (`HW-PC-`) ou importé (`auto_`). Les autres fiches viennent du site.
+ */
+export function isUserCreatedFeature(f) {
+    const id = String(f?.properties?.HW_ID || f?.id || '');
+    return id.startsWith('HW-PC-') || id.startsWith('auto_');
+}
+
+/**
+ * Lieux à embarquer dans `baseGeoJSON`.
+ *  - Légère sur une destination publiée : seulement les lieux créés par
+ *    l'utilisateur. La restauration ne relit rien d'autre de ce bloc (les fiches
+ *    officielles sont rechargées depuis le site) ; mesuré le 11/11/2026, la carte
+ *    entière pesait 775 Ko sur 839 dans la sauvegarde d'un visiteur.
+ *  - Brouillon local : tout, sa carte n'existe nulle part ailleurs.
+ *  - Complète : tout, inchangé.
+ */
+function featuresForBackup(mapId, includePhotos) {
+    const all = state.loadedFeatures || [];
+    if (includePhotos || state.destinations?.maps?.[mapId]?.custom) return all;
+    return all.filter(isUserCreatedFeature);
+}
+
+/**
  * Nom d'un fichier de sauvegarde : `Heripia_<destination>_<legere|complete>_<date>`.
  * Une seule règle pour le PC et le téléphone (11/11/2026). Avant : trois noms à
  * l'ancienne marque (`HistoryWalk_Backup_Mobile_…`, `…_LITE_Mobile_…`,
@@ -102,7 +126,7 @@ export async function saveUserData(forceFullMode = false) {
         mapId,
         baseGeoJSON: {
             type: "FeatureCollection",
-            features: state.loadedFeatures.map(f => {
+            features: featuresForBackup(mapId, includePhotos).map(f => {
                 const featureClone = JSON.parse(JSON.stringify(f));
                 const poiId = getPoiId(f);
                 if (state.userData[poiId]) {
@@ -287,10 +311,7 @@ export async function restoreBackup(json) {
         if (json.baseGeoJSON && json.baseGeoJSON.features) {
             const customFeatures = isDraftRestore
                 ? json.baseGeoJSON.features
-                : json.baseGeoJSON.features.filter(f => {
-                    const id = f.properties.HW_ID || f.id || "";
-                    return id.startsWith("HW-PC-") || id.startsWith("auto_");
-                });
+                : json.baseGeoJSON.features.filter(isUserCreatedFeature);
 
             if (customFeatures.length > 0) {
                 await saveAppState(`customPois_${mapId}`, customFeatures);
@@ -503,7 +524,7 @@ export async function prepareExportData(includePhotos = false) {
 
     const geojson = {
         type: 'FeatureCollection',
-        features: state.loadedFeatures.map(f => {
+        features: featuresForBackup(mapId, includePhotos).map(f => {
             const poiId = getPoiId(f);
             const finalUserData = { ...(state.userData[poiId] || {}) };
             // Les photos vivent dans le bloc userData racine (seul relu à l'import) ;

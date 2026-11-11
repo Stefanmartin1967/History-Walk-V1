@@ -269,9 +269,9 @@ describe('prepareExportData', () => {
     it('vide les photos quand includePhotos = false', async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = [
-            { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
+            { type: 'Feature', properties: { HW_ID: 'HW-PC-p1' }, geometry: null }
         ];
-        state.userData = { p1: { vu: true, photos: ['photo1.jpg', 'photo2.jpg'] } };
+        state.userData = { 'HW-PC-p1': { vu: true, photos: ['photo1.jpg', 'photo2.jpg'] } };
 
         const data = await prepareExportData(false);
         const feat = data.baseGeoJSON.features[0];
@@ -340,7 +340,7 @@ describe('prepareExportData', () => {
         ];
         state.userData = { p1: { vu: true }, p2: { vu: false } };
 
-        const data = await prepareExportData(false);
+        const data = await prepareExportData(true);
         expect(data.baseGeoJSON.features[0].properties.userData).toEqual({ vu: true });
         expect(data.baseGeoJSON.features[1].properties.userData).toEqual({ vu: false });
         expect(data.baseGeoJSON.features[0].properties.name).toBe('A');
@@ -474,6 +474,62 @@ describe('sauvegarde d\'un brouillon local (Option A)', () => {
         expect(data.draftDestination).toBeUndefined();
         expect(data.draftZones).toBeUndefined();
         expect(getDraftZones).not.toHaveBeenCalled();
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Mesuré le 11/11/2026 : la sauvegarde légère d'un visiteur pesait 839 Ko, dont
+// 775 Ko de carte que la restauration ne relit pas (elle ne garde que les lieux
+// créés par l'utilisateur). La légère n'embarque donc plus que ceux-là.
+describe("sauvegarde légère : carte réduite aux lieux créés par l'utilisateur", () => {
+    const features = () => [
+        { type: 'Feature', properties: { HW_ID: 'HW-01OFFICIEL000000000000001', name: 'Officiel' }, geometry: null },
+        { type: 'Feature', properties: { HW_ID: 'HW-PC-1', name: 'Créé à la main' }, geometry: null },
+        { type: 'Feature', properties: { HW_ID: 'auto_7', name: 'Importé' }, geometry: null }
+    ];
+    const ids = (data) => data.baseGeoJSON.features.map(f => f.properties.HW_ID);
+
+    it('légère, destination publiée : seulement les lieux créés', async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = features();
+        state.userData = { 'HW-01OFFICIEL000000000000001': { vu: true } };
+        const data = await prepareExportData(false);
+        expect(ids(data)).toEqual(['HW-PC-1', 'auto_7']);
+        // les notes sur les fiches officielles restent dans le bloc racine
+        expect(data.userData['HW-01OFFICIEL000000000000001']).toEqual({ vu: true });
+        expect(isValidBackup(data)).toBe(true);
+    });
+
+    it('légère sans aucun lieu créé : carte vide mais toujours valide', async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = [features()[0]];
+        const data = await prepareExportData(false);
+        expect(data.baseGeoJSON).toEqual({ type: 'FeatureCollection', features: [] });
+        expect(isValidBackup(data)).toBe(true);
+    });
+
+    it('complète : toute la carte, inchangé', async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = features();
+        const data = await prepareExportData(true);
+        expect(ids(data)).toHaveLength(3);
+    });
+
+    it("légère d'un brouillon local : toute la carte (elle n'existe nulle part ailleurs)", async () => {
+        state.currentMapId = 'venise';
+        state.destinations = { activeMapId: 'venise', maps: { venise: { name: 'Venise', custom: true } } };
+        state.loadedFeatures = features();
+        const data = await prepareExportData(false);
+        expect(ids(data)).toHaveLength(3);
+    });
+
+    it("aller-retour : les lieux créés d'une légère sont restaurés", async () => {
+        state.currentMapId = 'djerba';
+        state.loadedFeatures = features();
+        const data = await prepareExportData(false);
+        await restoreBackup(JSON.parse(JSON.stringify(data)));
+        const call = saveAppState.mock.calls.find((c) => c[0] === 'customPois_djerba');
+        expect(call[1].map((f) => f.properties.HW_ID)).toEqual(['HW-PC-1', 'auto_7']);
     });
 });
 

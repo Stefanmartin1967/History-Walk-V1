@@ -6,6 +6,12 @@
 
 ---
 
+- SAUVEGARDE LÉGÈRE : ELLE N'EMBARQUE PLUS TOUTE LA CARTE (v3.7.504). Mesuré le 11/11/2026 sur un visiteur avec un circuit : 839 Ko, dont 775 Ko de copie de la carte (453 fiches) que la restauration ne relit pas, puisqu'elle ne garde de ce bloc que les lieux créés par l'utilisateur et recharge les fiches officielles depuis le site.
+  - `featuresForBackup` (`src/fileManager.js`) : sur une destination publiée, la légère ne garde dans `baseGeoJSON` que les lieux créés par l'utilisateur (`HW-PC-`, `auto_`). Le bloc reste présent, vide s'il n'y en a pas : le format ne change pas, une ancienne version de l'app relit le fichier comme avant. Brouillon local : toute la carte (elle n'existe nulle part ailleurs). Complète : inchangée.
+  - S'applique aux trois chemins de la légère : PC, téléphone, sauvegarde automatique. Notes, états de visite et circuits : inchangés.
+  - `isUserCreatedFeature` : même règle à l'export et à la restauration. Tests : `tests/file_manager.test.js`.
+  - Sauvegarde automatique (`src/backup-auto-local.js`) : le verrou « une sauvegarde à la fois » était posé après la lecture de l'état, donc trop tard ; des vérifications lancées en même temps passaient toutes et pouvaient télécharger plusieurs fichiers d'un coup. Il est pris avant toute attente. Révélé par son test, qui ne passait que selon la durée de chargement de `fileManager.js`.
+
 - SAUVEGARDES : UN SEUL NOM DE FICHIER, À LA MARQUE HERIPIA (v3.7.503). Validé par Stefan le 11/11/2026. Avant, trois noms selon l'endroit : `HistoryWalk_Backup_Mobile_…txt` (légère au PC), `HistoryWalk_Backup_<destination>_LITE_Mobile_…` (légère au téléphone), `HistoryWalk_FULL_PC_…json` (complète). « Mobile » et « PC » désignaient l'usage prévu (fichier léger à passer sur un téléphone / transfert entre PC), pas l'appareil d'origine.
   - `backupFileName` (`src/fileManager.js`) : `Heripia_<destination>_legere_<date>.txt` et `Heripia_<destination>_complete_<date>.json`, date en heure locale partout. La restauration ne lit pas le nom : les anciens fichiers restent restaurables.
   - Messages : « Sauvegarde légère téléchargée » (au lieu de « prête à être partagée » sur PC), « Sauvegarde complète téléchargée ».
