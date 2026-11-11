@@ -76,22 +76,24 @@ export async function recordModification() {
 export async function checkAndTriggerAutoBackup() {
     if (state.isAdmin) return false;
     if (_backupInProgress) return false;
-
-    const s = await getBackupState();
-    const now = Date.now();
-
-    const reachedModifs = s.count >= MODIFS_THRESHOLD;
-    // Le critère "jours" ne s'applique QUE si un backup a déjà eu lieu une fois
-    // (lastTimestamp > 0). Sinon le 1er auto-backup d'un user fraîchement
-    // installé se déclencherait dès sa toute première modif (lastTimestamp=0
-    // donnant un "elapsed" infini), ce qui est trop agressif.
-    const elapsedDays = s.lastTimestamp > 0 ? (now - s.lastTimestamp) / DAY_MS : 0;
-    const reachedDays = s.lastTimestamp > 0 && s.count > 0 && elapsedDays >= DAYS_THRESHOLD;
-
-    if (!reachedModifs && !reachedDays) return false;
-
+    // Verrou pris AVANT le premier await : posé après la lecture de l'état, il
+    // laissait passer tous les appels lancés en même temps (ils avaient déjà
+    // franchi le test ci-dessus), d'où plusieurs sauvegardes d'un coup.
     _backupInProgress = true;
     try {
+        const s = await getBackupState();
+        const now = Date.now();
+
+        const reachedModifs = s.count >= MODIFS_THRESHOLD;
+        // Le critère "jours" ne s'applique QUE si un backup a déjà eu lieu une fois
+        // (lastTimestamp > 0). Sinon le 1er auto-backup d'un user fraîchement
+        // installé se déclencherait dès sa toute première modif (lastTimestamp=0
+        // donnant un "elapsed" infini), ce qui est trop agressif.
+        const elapsedDays = s.lastTimestamp > 0 ? (now - s.lastTimestamp) / DAY_MS : 0;
+        const reachedDays = s.lastTimestamp > 0 && s.count > 0 && elapsedDays >= DAYS_THRESHOLD;
+
+        if (!reachedModifs && !reachedDays) return false;
+
         const { saveUserData } = await import('./fileManager.js');
         await saveUserData(false); // mode LITE (pas les photos blobs)
 
