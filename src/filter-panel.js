@@ -673,6 +673,8 @@ function toggleSection(id) {
 export function openFilterPanel() {
     const panel = document.getElementById(PANEL_ID);
     if (!panel) return;
+    // Un seul ouvert à la fois avec la légende (elle écoute cet avis et se ferme).
+    eventBus.emit('topbar:popup-opening', { id: 'filters' });
     panel.classList.add('is-open');
     document.body.classList.add('hw-filter-open'); // décale les contrôles carte (Mode Données, CSS)
     populateCategoriesSection();
@@ -698,6 +700,10 @@ export function toggleFilterPanel() {
 // ─── Init ─────────────────────────────────────────────────────────────────
 
 export function setupFilterPanel() {
+    // La légende s'ouvre : le panneau se ferme (ils occupent la même place).
+    eventBus.on('topbar:popup-opening', ({ id }) => {
+        if (id === 'info') closeFilterPanel();
+    });
     const panel = document.getElementById(PANEL_ID);
     if (!panel) return;
 
