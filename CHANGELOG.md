@@ -6,6 +6,10 @@
 
 ---
 
+- SOUTIEN ET CONTACT AU NOM DE HERIPIA (v3.7.505). La page Buy Me a Coffee a changé d'adresse : l'ancien lien `buymeacoffee.com/history_walk` renvoyait « page introuvable » (constaté le 11/11/2026).
+  - Bouton « Soutenir » (menu PC `src/ui.js`, menu mobile `src/mobile-menu.js`) : `buymeacoffee.com/heripia`.
+  - `CONTACT_EMAIL` (`src/config.js`) : `contact@heripia.com` (mentions légales, bouton Contact, suggestion d'un lieu).
+
 - SAUVEGARDE LÉGÈRE : ELLE N'EMBARQUE PLUS TOUTE LA CARTE (v3.7.504). Mesuré le 11/11/2026 sur un visiteur avec un circuit : 839 Ko, dont 775 Ko de copie de la carte (453 fiches) que la restauration ne relit pas, puisqu'elle ne garde de ce bloc que les lieux créés par l'utilisateur et recharge les fiches officielles depuis le site.
   - `featuresForBackup` (`src/fileManager.js`) : sur une destination publiée, la légère ne garde dans `baseGeoJSON` que les lieux créés par l'utilisateur (`HW-PC-`, `auto_`). Le bloc reste présent, vide s'il n'y en a pas : le format ne change pas, une ancienne version de l'app relit le fichier comme avant. Brouillon local : toute la carte (elle n'existe nulle part ailleurs). Complète : inchangée.
   - S'applique aux trois chemins de la légère : PC, téléphone, sauvegarde automatique. Notes, états de visite et circuits : inchangés.

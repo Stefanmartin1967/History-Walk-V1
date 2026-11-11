@@ -131,7 +131,7 @@ export function initializeDomReferences() {
 
     if (DOM.btnBmcTopbar) {
         DOM.btnBmcTopbar.addEventListener('click', () => {
-            window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+            window.open('https://www.buymeacoffee.com/heripia', '_blank');
         });
     }
 

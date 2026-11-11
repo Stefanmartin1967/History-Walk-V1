@@ -16,7 +16,7 @@ describe('buildNewPlaceSuggestion', () => {
     it('sujet et adresse : nouveau lieu, destination, nom ; adresse de contact unique', () => {
         const { subject, url } = buildNewPlaceSuggestion(base);
         expect(subject).toBe('Heripia — Nouveau lieu [Djerba] : Mosquée Test');
-        expect(CONTACT_EMAIL).toBe('history.walk.007@gmail.com');
+        expect(CONTACT_EMAIL).toBe('contact@heripia.com');
         expect(url.startsWith(`mailto:${CONTACT_EMAIL}?subject=`)).toBe(true);
     });
 

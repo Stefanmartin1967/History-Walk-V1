@@ -195,7 +195,7 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-bmc')?.addEventListener('click', () => {
         // Ouverture SYNCHRONE, dans la pile d'appel du clic : différée, elle
         // sortirait du geste utilisateur et s'exposerait au blocage de pop-up.
-        window.open('https://www.buymeacoffee.com/history_walk', '_blank');
+        window.open('https://www.buymeacoffee.com/heripia', '_blank');
     });
     document.getElementById('mob-action-facebook')?.addEventListener('click', () => {
         const url = getActiveDestinationFacebook();

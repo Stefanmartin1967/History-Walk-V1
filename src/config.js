@@ -5,8 +5,8 @@
 // ============================================================
 
 // Adresse de contact (mentions légales, bouton Contact, suggestion d'un lieu).
-// L'ancienne adresse « History Walk » est gardée exprès (Stefan, 11/10/2026).
-export const CONTACT_EMAIL = 'history.walk.007@gmail.com';
+// Adresse au nom de Heripia depuis le 11/11/2026 (avant : l'ancienne adresse « History Walk »).
+export const CONTACT_EMAIL = 'contact@heripia.com';
 
 export const GITHUB_OWNER  = 'Stefanmartin1967';
 export const GITHUB_REPO   = 'History-Walk-V1';
