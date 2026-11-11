@@ -16,7 +16,7 @@
 
 import { state, setCustomDraftName } from './state.js';
 import { DOM } from './ui-dom.js';
-import { saveCircuitDraft, isCircuitTested } from './circuit.js';
+import { saveCircuitDraft, isCircuitCompleted } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
 import { handleCircuitVisitedToggle } from './circuit-actions.js';
 import { persistCircuit } from './circuit-store.js';
@@ -78,8 +78,11 @@ function initMarkDone() {
         e.preventDefault();
         if (!state.activeCircuitId) return;
 
-        const isCurrentlyTested = isCircuitTested(state.activeCircuitId);
-        const result = await handleCircuitVisitedToggle(state.activeCircuitId, isCurrentlyTested);
+        // État « fait » de l'UTILISATEUR (isCircuitCompleted), pas le badge « testé »
+        // posé par l'admin : un visiteur qui cochait voyait le bouton rester sur
+        // « Marquer comme fait » et se faisait reproposer de tout cocher (11/11/2026).
+        const isDone = isCircuitCompleted(getActiveCircuit());
+        const result = await handleCircuitVisitedToggle(state.activeCircuitId, isDone);
 
         if (result.success) {
             updateMarkDoneState();
@@ -99,9 +102,9 @@ function updateMarkDoneState() {
         return;
     }
 
-    const tested = isCircuitTested(state.activeCircuitId);
-    btn.classList.toggle('is-done', tested);
-    btn.title = tested ? 'Marqué comme fait' : 'Marquer comme fait';
+    const done = isCircuitCompleted(getActiveCircuit());
+    btn.classList.toggle('is-done', done);
+    btn.title = done ? 'Marquer comme non fait' : 'Marquer comme fait';
 }
 
 /* ============================================================
