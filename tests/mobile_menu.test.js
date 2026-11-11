@@ -9,7 +9,7 @@ const _hoisted = vi.hoisted(() => ({ adminToggleCallback: null }));
 vi.mock('../src/state.js', () => {
     // Refonte PR 4 : mobile-menu lit aussi state.loadedFeatures / officialCircuits
     // / myCircuits / officialCircuitsStatus pour calculer les sous-titres
-    // dynamiques (« X lieux visités · Y circuits complétés »).
+    // dynamiques (« X lieux visités · Y circuits faits »).
     const state = {
         isAdmin: false,
         loadedFeatures: [],

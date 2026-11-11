@@ -339,7 +339,7 @@ function renderCircuitView(container, fallbackList) {
                 <i data-lucide="qr-code"></i>
             </button>
             ${gpxBtnHtml}
-            <button class="cc-act ${isCompleted ? 'is-done' : ''}" id="cc-act-done" aria-label="Marquer comme fait" title="${isCompleted ? 'Décocher fait' : 'Marquer comme fait'}">
+            <button class="cc-act ${isCompleted ? 'is-done' : ''}" id="cc-act-done" aria-label="${isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait'}" title="${isCompleted ? 'Marquer comme non fait' : 'Marquer comme fait'}">
                 <i data-lucide="${isCompleted ? 'check-circle' : 'circle'}"></i>
             </button>
             <button class="cc-act ${isHidden ? 'is-hidden-circuit' : ''}" id="cc-act-hide" aria-label="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}" title="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}">

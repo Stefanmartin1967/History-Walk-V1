@@ -6,6 +6,10 @@
 
 ---
 
+- VOCABULAIRE : UN CIRCUIT EST « FAIT », UN LIEU EST « VISITÉ » (v3.7.501). Règle confirmée par Stefan le 11/11/2026. Trois mots circulaient pour un circuit (fait, terminé, complété) et deux façons de dire « décocher ».
+  - Liste des circuits sur téléphone : le cercle disait « Marquer comme visité » → « Marquer comme fait » / « Marquer comme non fait » selon l'état. Fiche circuit sur téléphone : « Décocher fait » → « Marquer comme non fait » (libellé lu par les lecteurs d'écran aligné lui aussi).
+  - Fenêtres de confirmation : « Circuit Terminé » → « Circuit fait », « Réinitialisation » → « Circuit non fait ». Légende : « Circuit terminé » → « Circuit fait ». Menu du téléphone : « circuits complétés » → « circuits faits ». Liste filtrée vide : « Tous les circuits sont faits ».
+
 - SOUTIEN : PLUS DE FENÊTRE « SOUTENIR LE PROJET » AVANT L'EXPORT GPX (v3.7.500). Décision de Stefan le 10/11/2026, « au moins pour le lancement » : le soutien reste dans le menu seulement (menu Outils sur PC, Menu sur mobile). Constaté le même jour en rejouant le parcours d'un visiteur : la fenêtre s'intercalait avant son premier export, avec « Offrir un café » plus visible que « Exporter le GPX ».
   - « Exporter le GPX » (menu ⋮ du bloc tracé) lance l'export directement. Retirés avec la fenêtre : `handleExportWithContribution`, `getActionLabel`, `recordSupportClick` et la clé `hw_last_support_click` (elle ne servait qu'à espacer la fenêtre de 30 jours), le style `.modal-contribution` / `#btn-contrib-*`, et les règles mortes `.modal-close-x` et `#sidebar-bmc-container`.
   - Tests : `ui_export.test.js` et `ui_sobriety.test.js` supprimés (ils ne testaient que la fenêtre).

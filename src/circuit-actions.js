@@ -183,13 +183,13 @@ export async function handleCircuitVisitedToggle(circuitId, currentStatus) {
     try {
         if (currentStatus) {
              // Il est coché, on veut le décocher
-             if (await showConfirm("Réinitialisation", "Voulez-vous vraiment décocher tous les lieux (remettre à 'Non visité') ?", "Tout décocher", "Annuler", true)) {
+             if (await showConfirm("Circuit non fait", "Voulez-vous vraiment décocher tous les lieux (remettre à 'Non visité') ?", "Tout décocher", "Annuler", true)) {
                  await setCircuitVisitedState(circuitId, false);
                  return { success: true, newState: false };
              }
         } else {
              // Il n'est pas coché, on veut le cocher
-             if (await showConfirm("Circuit Terminé", "Bravo ! Marquer tous les lieux de ce circuit comme visités ?", "Tout cocher", "Annuler")) {
+             if (await showConfirm("Circuit fait", "Bravo ! Marquer tous les lieux de ce circuit comme visités ?", "Tout cocher", "Annuler")) {
                  await setCircuitVisitedState(circuitId, true);
                  return { success: true, newState: true };
              }

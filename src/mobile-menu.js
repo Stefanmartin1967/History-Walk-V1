@@ -39,7 +39,7 @@ function computeSubtitles() {
 
     const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
     return {
-        carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit complété', 'circuits complétés')}`,
+        carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit fait', 'circuits faits')}`,
         backup: 'Légère (partage) ou Complète (locale)',
         scan: 'QR code partagé par un autre voyageur',
         reset: 'Supprime carnet & circuits hors-ligne',
