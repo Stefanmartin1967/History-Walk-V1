@@ -6,6 +6,11 @@
 
 ---
 
+- SAUVEGARDES : UN SEUL NOM DE FICHIER, À LA MARQUE HERIPIA (v3.7.503). Validé par Stefan le 11/11/2026. Avant, trois noms selon l'endroit : `HistoryWalk_Backup_Mobile_…txt` (légère au PC), `HistoryWalk_Backup_<destination>_LITE_Mobile_…` (légère au téléphone), `HistoryWalk_FULL_PC_…json` (complète). « Mobile » et « PC » désignaient l'usage prévu (fichier léger à passer sur un téléphone / transfert entre PC), pas l'appareil d'origine.
+  - `backupFileName` (`src/fileManager.js`) : `Heripia_<destination>_legere_<date>.txt` et `Heripia_<destination>_complete_<date>.json`, date en heure locale partout. La restauration ne lit pas le nom : les anciens fichiers restent restaurables.
+  - Messages : « Sauvegarde légère téléchargée » (au lieu de « prête à être partagée » sur PC), « Sauvegarde complète téléchargée ».
+  - Tests : `tests/file_manager.test.js`.
+
 - PANNEAU DU CIRCUIT (PC) : LE BOUTON « MARQUER COMME FAIT » SUIT ENFIN L'ÉTAT DE L'UTILISATEUR (v3.7.502). Constaté le 11/11/2026 en visiteur : après avoir coché un circuit officiel, la liste le montrait fait mais le bouton du panneau restait sur « Marquer comme fait » ; un second clic reproposait de tout cocher, sans moyen de décocher depuis le panneau.
   - Cause : le bouton lisait le badge « testé » (`isCircuitTested`, posé par l'admin seulement) au lieu de l'état « fait » (`isCircuitCompleted`), que lisent la liste, la carte et le téléphone. Invisible en admin, où cocher « fait » pose aussi « testé ».
   - `src/ui-circuit-page-events.js` : état et clic passent par `isCircuitCompleted`. Infobulle une fois coché : « Marquer comme non fait » (au lieu de « Marqué comme fait »), comme dans la liste.

@@ -90,6 +90,7 @@ import { showToast } from '../src/toast.js';
 import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState, saveCircuit, deleteCircuitsForMap } from '../src/database.js';
 import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
+    backupFileName,
     cleanDataForExport,
     isValidBackup,
     prepareExportData,
@@ -568,5 +569,24 @@ describe('restoreBackup — circuits', () => {
 
         expect(deleteCircuitsForMap).not.toHaveBeenCalled();
         expect(saveCircuit).not.toHaveBeenCalled();
+    });
+});
+
+// Règle unique de nommage (11/11/2026) : fini « HistoryWalk_Backup_Mobile_… » sur
+// un fichier fait au PC, et la destination absente du nom une fois sur trois.
+describe('backupFileName', () => {
+    const when = new Date(2026, 10, 9, 7, 5); // 9 novembre 2026, 07h05 (heure locale)
+
+    it('légère : Heripia_<destination>_legere_<date>.txt', () => {
+        expect(backupFileName('djerba', false, when)).toBe('Heripia_djerba_legere_2026-11-09_07h05.txt');
+    });
+
+    it('complète : Heripia_<destination>_complete_<date>.json', () => {
+        expect(backupFileName('charleroi', true, when)).toBe('Heripia_charleroi_complete_2026-11-09_07h05.json');
+    });
+
+    it('identifiant de destination absent ou exotique : nom de fichier sûr', () => {
+        expect(backupFileName(null, false, when)).toBe('Heripia_destination_legere_2026-11-09_07h05.txt');
+        expect(backupFileName('mon brouillon/1', false, when)).toBe('Heripia_mon-brouillon-1_legere_2026-11-09_07h05.txt');
     });
 });
