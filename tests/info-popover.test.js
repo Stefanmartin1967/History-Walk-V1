@@ -33,7 +33,7 @@ describe('showInfoPopover — création', () => {
 });
 
 describe('showInfoPopover — contenu légende', () => {
-    it('affiche les 3 lignes de polylines (Vol d\'oiseau / Tracé réel / Circuit terminé)', () => {
+    it('affiche les 3 lignes de polylines (Vol d\'oiseau / Tracé réel / Circuit fait)', () => {
         showInfoPopover();
         const items = document.querySelectorAll('.info-popover-legend-item');
         // 3 tracés (le sample cluster est désormais dans une grille séparée à 3
@@ -41,7 +41,7 @@ describe('showInfoPopover — contenu légende', () => {
         expect(items).toHaveLength(3);
         const labels = Array.from(document.querySelectorAll('.info-popover-legend-label'))
             .map(l => l.textContent.trim());
-        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit terminé']);
+        expect(labels).toEqual(['Vol d\'oiseau', 'Tracé réel', 'Circuit fait']);
     });
 
     it('chaque ligne a un label en gras et une description en dessous (pas de parenthèses)', () => {

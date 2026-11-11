@@ -3,7 +3,7 @@
 // "Légende" en PR PC-3, anciennement "Informations").
 //
 // Contenu (PR PC-3) :
-//   - Tracés de circuits : Vol d'oiseau (pointillé) / Tracé réel / Terminé
+//   - Tracés de circuits : Vol d'oiseau (pointillé) / Tracé réel / Fait
 //   - Catégories de POI : 15 marqueurs avec icônes (lus dynamiquement de
 //     poi-icons.js iconMap, donc auto-sync si on ajoute/retire une catégorie)
 //   - Clusters : explication du cercle avec chiffre au zoom out
@@ -104,8 +104,8 @@ function openPopover() {
             <div class="info-popover-legend-item">
                 <div class="legend-line-sample legend-line-sample--done"></div>
                 <div class="info-popover-legend-text">
-                    <span class="info-popover-legend-label">Circuit terminé</span>
-                    <span class="info-popover-legend-desc">Marqué comme fait</span>
+                    <span class="info-popover-legend-label">Circuit fait</span>
+                    <span class="info-popover-legend-desc">Coché par vous</span>
                 </div>
             </div>
         </div>

@@ -245,7 +245,7 @@ export function renderMobileCircuitsList() {
                 <article class="mc-card${isDone ? ' is-done' : ''}${isActive ? ' is-active' : ''}" data-flag="${flag}" data-id="${circuit.id}" role="button" tabindex="0">
                     <div class="mc-line1">
                         <h3 class="mc-title">${escapeHtml(displayName)}</h3>
-                        <button type="button" class="mc-done mobile-toggle-visited" data-id="${circuit.id}" data-visited="${isDone}" aria-label="Marquer comme visité" title="Marquer comme visité">
+                        <button type="button" class="mc-done mobile-toggle-visited" data-id="${circuit.id}" data-visited="${isDone}" aria-label="${isDone ? 'Marquer comme non fait' : 'Marquer comme fait'}" title="${isDone ? 'Marquer comme non fait' : 'Marquer comme fait'}">
                             <i data-lucide="${isDone ? 'check-circle' : 'circle'}"></i>
                         </button>
                     </div>
@@ -393,7 +393,7 @@ function pickEmptyHint() {
     if (filterTypeVerified) return 'Aucun circuit vérifié pour ces critères. Décoche "Vérifiés" pour élargir.';
     if (filterTypeOfficial) return 'Aucun officiel pour ces critères. Décoche "Officiels" pour voir aussi tes circuits perso.';
     if (filterTypeResto)    return 'Aucun circuit avec resto pour ces critères.';
-    if (filterCompletion === 'todo') return 'Bravo ! Tout est terminé.';
+    if (filterCompletion === 'todo') return 'Bravo ! Tous les circuits sont faits.';
     if (filterCompletion === 'done') return 'Aucun circuit n\'a encore été marqué « fait ».';
     if (state.activeFilters?.zone) return `Aucun circuit dans la zone « ${state.activeFilters.zone} ».`;
     return 'Aucun circuit avec ces filtres. Réinitialise pour tout voir.';
