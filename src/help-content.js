@@ -484,8 +484,8 @@ export const HELP_LIEU_SOURCE = {
 };
 
 /* === PANNEAU GLOBAL — le guide « Créer ou éditer un lieu » ===
-   Posé sur le « ? » du header de la modale richEditor (« Nouveau Lieu » /
-   « Éditer le Lieu »). La découvrabilité du clic droit relève d'un autre
+   Posé sur le « ? » du header de la modale richEditor (« Nouveau lieu » /
+   « Éditer le lieu »). La découvrabilité du clic droit relève d'un autre
    chantier (« Vue d'ensemble »). */
 export const GUIDE_LIEU = {
     title: 'Créer ou éditer un lieu',
@@ -509,12 +509,12 @@ export const GUIDE_LIEU = {
         {
             heading: `1 · Créer un lieu`,
             html: `<p><strong>Cliquez droit</strong> à l'endroit voulu sur la carte. Un
-                marqueur apparaît avec la question <strong>« Nouveau Lieu ? »</strong> :</p>
+                marqueur apparaît avec la question <strong>« Nouveau lieu ? »</strong> :</p>
                 <ul class="help-list">
                     <li><strong>glissez</strong> le marqueur pour ajuster la position ;</li>
                     <li><em>Maps</em> et <em>OSM</em> ouvrent l'endroit pour <strong>vérifier</strong> ;</li>
                     <li>cliquez <strong>« Valider cette position »</strong> → la fiche
-                        <strong>« Nouveau Lieu »</strong> s'ouvre.</li>
+                        <strong>« Nouveau lieu »</strong> s'ouvre.</li>
                 </ul>
                 <p class="help-muted">Deux autres entrées mènent à la même fiche : des
                 <strong>coordonnées GPS</strong> collées dans la recherche (puis Entrée), et
@@ -523,7 +523,7 @@ export const GUIDE_LIEU = {
         {
             heading: `2 · Éditer un lieu`,
             html: `<p>Sur la fiche d'un lieu, le bouton <strong>« Éditer »</strong> ouvre le
-                formulaire <strong>« Éditer le Lieu »</strong> (mêmes champs, déjà remplis).</p>`,
+                formulaire <strong>« Éditer le lieu »</strong> (mêmes champs, déjà remplis).</p>`,
         },
         {
             heading: `3 · L'essentiel pour enregistrer`,

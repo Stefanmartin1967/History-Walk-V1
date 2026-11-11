@@ -1,6 +1,6 @@
 // mobile-new-place.js
 // Création d'un lieu sur mobile à partir de la position GPS : fenêtre
-// « Nouveau Lieu » + création du POI en attente. Partagé par le (+) du dock
+// « Nouveau lieu » + création du POI en attente. Partagé par le (+) du dock
 // (mobile-nav.js) et le bouton « Nouveau lieu » de la carte du suivi
 // (mobile-follow.js, 06/11/2026) — module à part pour éviter un import
 // circulaire entre ces deux-là.
@@ -13,7 +13,7 @@ import { showToast } from './toast.js';
 import { openHwModal, closeModal } from './modal.js';
 
 // ─── Ajout d'un POI par GPS (refonte PR 6 chantier design) ──────────────────
-// Modale « Nouveau Lieu » avec preview GPS visible (pulse animé + coords en
+// Modale « Nouveau lieu » avec preview GPS visible (pulse animé + coords en
 // temps réel) avant de confirmer. L'acquisition GPS démarre dès l'ouverture
 // de la modale, l'utilisateur voit où il est avant de cliquer « Capturer ».
 //
@@ -78,7 +78,7 @@ export function showNewPlaceModal() {
         openHwModal({
             icon: 'map-pin',
             size: 'sm',
-            title: 'Nouveau Lieu',
+            title: 'Nouveau lieu',
             body: content,
             footer: footer,
         }).then(() => finish(null));

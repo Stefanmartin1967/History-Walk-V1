@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 //
 // Bande « Filtres actifs » (PC, 11/10/2026) : une puce par filtre actif, chacune
-// retirable, plus « Tout effacer » ; cachée sans filtre. Re-rendue à chaque
+// retirable, plus « Tout réinitialiser » ; cachée sans filtre. Re-rendue à chaque
 // data:filtered. La logique des filtres (source unique) est testée dans
 // active_filters.test.js : ici, le rendu et le câblage des clics.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -34,17 +34,17 @@ describe('bande « Filtres actifs »', () => {
         expect(band().children).toHaveLength(0);
     });
 
-    it('une puce par filtre, avec sa croix nommée, et « Tout effacer »', () => {
+    it('une puce par filtre, avec sa croix nommée, et « Tout réinitialiser »', () => {
         active = [{ id: 'zone', label: 'Zone : Midoun' }, { id: 'categorie:Mosquée', label: 'Mosquée' }];
         setupActiveFiltersBand();
         expect(band().hidden).toBe(false);
         const chips = [...band().querySelectorAll('.hw-filter-chip')];
         expect(chips.map(c => c.textContent.trim())).toEqual(['Zone : Midoun', 'Mosquée']);
         expect(chips[1].querySelector('button').getAttribute('aria-label')).toBe('Retirer le filtre Mosquée');
-        expect(band().querySelector('.hw-active-filters__clear').textContent).toBe('Tout effacer');
+        expect(band().querySelector('.hw-active-filters__clear').textContent).toBe('Tout réinitialiser');
     });
 
-    it('la croix retire CE filtre ; « Tout effacer » réinitialise tout', () => {
+    it('la croix retire CE filtre ; « Tout réinitialiser » réinitialise tout', () => {
         active = [{ id: 'zone', label: 'Zone : Midoun' }, { id: 'vus', label: 'Lieux visités : masqués' }];
         setupActiveFiltersBand();
         band().querySelector('[data-remove="vus"]').click();

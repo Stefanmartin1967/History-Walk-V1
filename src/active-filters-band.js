@@ -4,7 +4,7 @@
 // visiteur qui voyait une carte à moitié vide ne savait pas QUEL filtre la
 // vidait : le bouton « Filtres (n) » ne disait que combien, et une info-bulle
 // n'existe pas au toucher. Dès qu'un filtre est actif, une puce par filtre
-// apparaît, chacune retirable, plus « Tout effacer ».
+// apparaît, chacune retirable, plus « Tout réinitialiser ».
 //
 // Source unique : getActiveFilters (filter-panel.js), la même que le compteur
 // de la barre du haut et le panneau. Rendu à chaque data:filtered (émis par
@@ -39,7 +39,7 @@ function render(band) {
                 <button type="button" class="hw-filter-chip__remove" data-remove="${escapeHtml(id)}"
                         aria-label="Retirer le filtre ${escapeHtml(label)}"><i data-lucide="x"></i></button>
             </span>`).join('')}
-        <button type="button" class="hw-active-filters__clear" data-clear>Tout effacer</button>`;
+        <button type="button" class="hw-active-filters__clear" data-clear>Tout réinitialiser</button>`;
     createIcons({ icons: appIcons, root: band });
 }
 

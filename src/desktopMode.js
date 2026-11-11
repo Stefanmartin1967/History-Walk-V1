@@ -322,7 +322,7 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
     const popupContent = document.createElement('div');
     popupContent.className = 'ghost-popup';
     popupContent.innerHTML = `
-        <div class="ghost-popup-title">Nouveau Lieu ?</div>
+        <div class="ghost-popup-title">Nouveau lieu ?</div>
         <div class="ghost-popup-links">
             <button type="button" class="ghost-popup-link" data-provider="gmaps">
                 <i data-lucide="map-pin"></i><span>Maps</span>

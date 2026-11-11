@@ -635,7 +635,7 @@ function refreshAllMeta() {
     refreshResetButton();
 }
 
-// « Tout réinitialiser » du panneau et « Tout effacer » de la bande (même geste).
+// « Tout réinitialiser » du panneau et de la bande (même geste, même mot).
 export function resetAll() {
     // Toutes les lignes « État de la fiche » repassent à leur défaut, y compris
     // celles de la checklist et les photos de travail : « Tout réinitialiser »

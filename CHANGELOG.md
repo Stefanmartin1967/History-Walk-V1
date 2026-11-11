@@ -6,6 +6,12 @@
 
 ---
 
+- LÉGENDE, BANDE DE FILTRES, TITRES DE L'ÉDITEUR : TROIS RETOUCHES DÉCIDÉES À DEUX (v3.7.506). Restes du handoff « retouches testeurs » tranchés par Stefan le 11/11/2026, sans passer par Design.
+  - Bouton Légende (`src/map.js`) : retour au carré de la pile, icône seule, info-bulle « Légende ». Le bouton libellé (#1006) débordait sur le panneau Filtres ouvert. État « légende ouverte » conservé (`aria-expanded`). Bloc `.hw-legend-btn` retiré de `style/components/leaflet-controls.css`.
+  - Bande « Filtres actifs » (PC) : « Tout effacer » → « Tout réinitialiser », comme les quatre autres endroits ; bande alignée sur le (+) de la carte (`top: 20px`, mesuré). Le cas admin à 13 puces sur deux lignes est laissé tel quel.
+  - Titres : « Nouveau lieu », « Éditer le lieu », « Nouveau lieu ? » (minuscule), dans l'éditeur, la fenêtre mobile, la bulle du clic droit et l'aide. Le nom par défaut d'un lieu créé (« Nouveau Lieu », donnée) n'est pas touché.
+  - `style.css?v=8.58`.
+
 - SOUTIEN ET CONTACT AU NOM DE HERIPIA (v3.7.505). La page Buy Me a Coffee a changé d'adresse : l'ancien lien `buymeacoffee.com/history_walk` renvoyait « page introuvable » (constaté le 11/11/2026).
   - Bouton « Soutenir » (menu PC `src/ui.js`, menu mobile `src/mobile-menu.js`) : `buymeacoffee.com/heripia`.
   - `CONTACT_EMAIL` (`src/config.js`) : `contact@heripia.com` (mentions légales, bouton Contact, suggestion d'un lieu).
