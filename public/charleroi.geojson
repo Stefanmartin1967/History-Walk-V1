@@ -36,7 +36,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/cWuHVK4RLNKqyQeN6",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -48,7 +48,11 @@
         "Source": "Wikipédia, « Monument aux martyrs à Charleroi » | https://fr.wikipedia.org/wiki/Monument_aux_martyrs_%C3%A0_Charleroi",
         "Sous-type": "Aux morts",
         "État": "Conservé",
-        "Accès": "Extérieur seulement"
+        "Accès": "Extérieur seulement",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BMT0WVS0MA2RAVJMWM45_1794382348633.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BMT0WVS0MA2RAVJMWM45_1794382350497.jpg"
+        ]
       }
     },
     {
@@ -3156,7 +3160,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/rbFFm8tEk9mdrGKv5",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -3168,7 +3172,13 @@
         "description": "Église de la rue de Castel Rodrigo, à Charleroi.\nSelon la légende de photographies publiées sur Wikimedia Commons, c'est l'ancienne chapelle dite « du Rempart », construite en 1819 ; elle a abrité la statue de Notre-Dame du Rempart jusqu'en 1908, année où celle-ci a été transférée boulevard de l'Yser. Elle est aujourd'hui un lieu de culte catholique ukrainien de rite byzantin.\nSelon la liste des rues de Charleroi sur Wikipédia, la rue de Castel Rodrigo s'appelait autrefois rue de la Chapelle.\nSur place, une affiche sur la porte, en ukrainien et en français, présente l'« Église gréco-catholique ukrainienne » et annonce la Sainte Liturgie tous les dimanches et aux grandes fêtes, à 10h00.",
         "Source": "Chapelle dite « du Rempart », photographie de Jmh2o, 20 juin 2020 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_%C3%89glise_Byzantine_Catholique_Ukrainienne_-_01.jpg\nWikipédia, « Liste des rues de Charleroi » | https://fr.wikipedia.org/wiki/Liste_des_rues_de_Charleroi\nAffiche de l'église, relevée sur place le 5 novembre 2026",
         "lat": 50.412807,
-        "lng": 4.4442152
+        "lng": 4.4442152,
+        "État": "En activité",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BR65D8YBDMH18F2M2ZR8_1794382339729.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BR65D8YBDMH18F2M2ZR8_1794382341598.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BR65D8YBDMH18F2M2ZR8_1794382343263.jpg"
+        ]
       }
     },
     {
@@ -3257,8 +3267,8 @@
         "HW_ID": "HW-01M616BR98326G65D6Z2R942JM",
         "Temps_minutes": 0,
         "Prix_TND": 0,
-        "Source": "Wikipédia, « Maison Mattot » | https://fr.wikipedia.org/wiki/Maison_Mattot",
-        "verified": false,
+        "Source": "Wikipédia, « Maison Mattot » | https://fr.wikipedia.org/wiki/Maison_Mattot\nWikipédia, « Maternité Reine Astrid » | https://fr.wikipedia.org/wiki/Maternit%C3%A9_Reine_Astrid",
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -3269,7 +3279,10 @@
         "Sous-type": "Demeure",
         "État": "Conservé",
         "Accès": "Extérieur seulement",
-        "description": "Maison du boulevard Frans Dewandre, à Charleroi.\nSelon Wikipédia, cette maison de ville moderniste a été dessinée en 1937 par l'architecte Marcel Leborgne pour le docteur Henri Mattot, gynécologue et directeur de la maternité Reine Astrid voisine : un cabinet de consultation au rez-de-chaussée, un appartement pour une personne seule au premier étage.\nToujours selon Wikipédia, ses deux premiers niveaux sont habillés de briques en grès de Guérin ; la verrière du cabinet s'incurve doucement et la grande baie du premier étage forme une légère saillie vers le boulevard, avec un garde-corps métallique en forme de bastingage.\nSelon la même source, le second étage a été agrandi en 1955, et Leborgne avait aussi dessiné tout le mobilier, dont il ne reste que des éléments encastrés. La maison jouxte l'immeuble Moreau et fait face à l'immeuble Henry, deux œuvres du même architecte. Elle figure à l'inventaire du patrimoine immobilier culturel de Wallonie."
+        "description": "Maison du boulevard Frans Dewandre, à Charleroi.\nSelon Wikipédia, cette maison de ville moderniste a été dessinée en 1937 par l'architecte Marcel Leborgne pour le docteur Henri Mattot, gynécologue et directeur de la maternité Reine Astrid, que Leborgne avait élevée tout près la même année et qui a été démolie en 1988 : un cabinet de consultation au rez-de-chaussée, un appartement pour une personne seule au premier étage.\nToujours selon Wikipédia, ses deux premiers niveaux sont habillés de briques en grès de Guérin ; la verrière du cabinet s'incurve doucement et la grande baie du premier étage forme une légère saillie vers le boulevard, avec un garde-corps métallique en forme de bastingage.\nSelon la même source, le second étage a été agrandi en 1955, et Leborgne avait aussi dessiné tout le mobilier, dont il ne reste que des éléments encastrés. La maison jouxte l'immeuble Moreau et fait face à l'immeuble Henry, deux œuvres du même architecte. Elle figure à l'inventaire du patrimoine immobilier culturel de Wallonie.",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BR98326G65D6Z2R942JM_1794382352020.jpg"
+        ]
       }
     },
     {
@@ -4522,7 +4535,7 @@
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "maps_ref": "https://maps.app.goo.gl/EhXQmCJnufhALPhG8",
-        "verified": false,
+        "verified": true,
         "introuvableCarte": false,
         "descriptionPublic": true,
         "osmChecked": true,
@@ -4535,8 +4548,12 @@
         "Sous-type": "Mémorial",
         "État": "Conservé",
         "Accès": "Extérieur seulement",
-        "description": "Monument de la rue de la Régence, à Charleroi.\nSelon des photographies publiées sur Wikimedia Commons, son inscription le dédie aux prisonniers politiques victimes du nazisme et porte la signature de la régionale de Charleroi de la Confédération nationale des prisonniers politiques et ayants droit (C.N.P.P.A).",
-        "Source": "Monument « Aux prisonniers politiques », photographie de Jmh2o, 3 avril 2022 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_aux_prisonniers_politiques_-_2022-04-03_-_01.jpg"
+        "description": "Monument de la rue de la Régence, à Charleroi.\nSur un pilier de pierre, une plaque de bronze porte l'inscription « Aux prisonniers politiques victimes du nazisme », suivie de « Régionale de Charleroi C.N.P.P.A. ».\nSelon la légende d'une photographie publiée sur Wikimedia Commons, ces initiales désignent la Confédération nationale des prisonniers politiques et ayants droit.",
+        "Source": "Inscription du monument, relevée sur place le 5 novembre 2026\nMonument « Aux prisonniers politiques », photographie de Jmh2o, 3 avril 2022 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_aux_prisonniers_politiques_-_2022-04-03_-_01.jpg",
+        "photos": [
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6B70SY3K8NKFJTEAH828SSC_1794382344971.jpg",
+          "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M6B70SY3K8NKFJTEAH828SSC_1794382346847.jpg"
+        ]
       }
     },
     {
