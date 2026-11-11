@@ -194,30 +194,9 @@
    désormais openHwModal({ size: 'md' }) — la classe .gamification-modal
    et son override max-width n'ont plus d'utilité. */
 
-/* --- CONTRIBUTION MODAL STYLES (Minimalist & Themed) --- */
+/* Texte des modales historiques (.custom-modal-box) */
 .custom-modal-box {
-    /* Base styles are already good, but let's ensure text readability */
     color: var(--ink);
-}
-
-#btn-contrib-bmc:hover {
-    transform: translateY(-2px);
-    /* Lueur tirée du MÊME token que le bouton (--hw-amber, cf. sa règle de base et
-       son border en color-mix). Elle était en #FBB03B codé en dur, soit un ambre
-       plus jaune que celui de la palette (--warn-500 #C2861E) : au survol, le halo
-       ne correspondait pas au bouton qu'il entourait. */
-    box-shadow: 0 6px 12px color-mix(in oklab, var(--hw-amber) 40%, transparent) !important;
-    filter: brightness(1.05);
-}
-
-#btn-contrib-bmc:active {
-    transform: translateY(0);
-}
-
-#btn-contrib-export:hover {
-    background: var(--surface-muted) !important;
-    border-color: var(--brand) !important;
-    color: var(--brand) !important;
 }
 
 /* (Règles #btn-bmc-sidebar retirées le 07/09/2026 : ce bouton n'existe nulle part
@@ -256,114 +235,6 @@
     }
     #btn-bmc-topbar {
         padding: 0 10px; /* Square-ish aspect */
-    }
-}
-
-/* --- MODALE : COMPACITÉ ET CENTRAGE (Version 5px strict) --- */
-
-.custom-modal-box.modal-contribution {
-    display: flex;
-    flex-direction: column;
-    align-items: center; /* Centre horizontalement tout le contenu (titre, texte, boutons) */
-    padding: 12px 16px 5px 16px !important; /* 5px en bas pour l'espace final */
-    max-width: 380px;
-}
-
-/* 1. Espace titre -> texte (5px) */
-.custom-modal-box.modal-contribution .custom-modal-title {
-    margin-bottom: 5px !important;
-    text-align: center;
-    width: 100%;
-}
-
-/* FIX DU CONTENEUR MESSAGE (Suppression des sauts de ligne fantômes) */
-.custom-modal-box.modal-contribution .custom-modal-message {
-    white-space: normal !important; /* Écrase le pre-wrap global */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 0 !important; /* On gère l'espacement via les enfants */
-}
-
-/* 2 & 3. Centrage texte description et espace -> bouton (5px) */
-.custom-modal-box.modal-contribution p {
-    font-size: 15px;
-    color: var(--ink);
-    line-height: 1.4;
-    text-align: center;
-    margin-top: 0 !important;
-    margin-bottom: 5px !important;
-    line-height: 1.3;
-}
-
-/* 4 & 5 & 6. Bouton Jaune, taille réduite et espacement */
-#btn-contrib-bmc {
-    background-color: var(--hw-amber-soft) !important; /* tinte ambre theme-aware (cf. topbar) */
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent) !important;
-    color: var(--hw-amber) !important;
-    font-weight: 700;
-    font-size: 15px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    /* Réduction largeur : on diminue le padding latéral (gauche/droite) */
-    padding: 6px 15px !important;
-    width: auto !important; /* Le bouton s'adapte au texte au lieu de prendre toute la largeur */
-    margin-bottom: 5px !important; /* Espace entre les deux boutons */
-    min-width: 240px; /* Uniformiser largeur */
-    justify-content: center !important; /* Centrer le contenu (icône + texte) */
-}
-
-/* Bouton Exporter (Réduction largeur) */
-#btn-contrib-export {
-    background: var(--surface);
-    color: var(--ink);
-    border: 2px solid var(--line);
-    padding: 6px 15px !important;
-    width: auto !important;
-    margin-bottom: 0 !important; /* Pour respecter les 5px de padding du conteneur */
-    min-width: 240px; /* Uniformiser largeur */
-    justify-content: center !important; /* Centrer le contenu */
-}
-
-.modal-close-x {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: transparent;
-    border: none;
-    font-size: 24px;
-    line-height: 1;
-    color: var(--ink-soft);
-    cursor: pointer;
-    padding: 0 5px;
-}
-
-.modal-close-x:hover {
-    color: var(--ink);
-}
-
-/* Clean up old sidebar styles */
-#sidebar-bmc-container {
-    display: none;
-}
-
-/* --- 7. ADAPTATION MOBILE --- */
-@media (max-width: 768px) {
-    .custom-modal-box.modal-contribution {
-        width: 85% !important;
-        padding: 10px 10px 5px 10px !important;
-    }
-
-    /* Sur mobile, on garde les boutons larges pour faciliter le clic au doigt */
-    #btn-contrib-bmc, #btn-contrib-export {
-        width: 100% !important;
-        padding: 12px !important;
-    }
-
-    .modal-close-x {
-        top: 5px !important;
-        right: 5px !important;
-        padding: 10px !important; /* Larger touch target */
     }
 }
 

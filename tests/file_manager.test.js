@@ -90,11 +90,9 @@ import { showToast } from '../src/toast.js';
 import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState, saveCircuit, deleteCircuitsForMap } from '../src/database.js';
 import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
-    getActionLabel,
     cleanDataForExport,
     isValidBackup,
     prepareExportData,
-    recordSupportClick,
     saveUserData,
     restoreBackup
 } from '../src/fileManager.js';
@@ -116,46 +114,6 @@ beforeEach(() => {
     resetState();
     vi.clearAllMocks();
     localStorage.clear();
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-describe('getActionLabel', () => {
-    it('retourne le libellé GPX', () => {
-        expect(getActionLabel('gpx')).toBe('Exporter le GPX');
-    });
-
-    it('retourne le libellé Circuits', () => {
-        expect(getActionLabel('circuits')).toBe('Exporter les Circuits');
-    });
-
-    it('retourne le libellé Backup', () => {
-        expect(getActionLabel('backup')).toBe('Continuer la Sauvegarde');
-    });
-
-    it('retourne le libellé par défaut pour un type inconnu', () => {
-        expect(getActionLabel('unknown')).toBe('Continuer');
-        expect(getActionLabel(undefined)).toBe('Continuer');
-        expect(getActionLabel('')).toBe('Continuer');
-    });
-});
-
-// ─────────────────────────────────────────────────────────────────────────────
-describe('recordSupportClick', () => {
-    it('écrit un timestamp dans localStorage sous la clé hw_last_support_click', () => {
-        const before = Date.now();
-        recordSupportClick();
-        const stored = localStorage.getItem('hw_last_support_click');
-        expect(stored).not.toBeNull();
-        const ts = parseInt(stored, 10);
-        expect(ts).toBeGreaterThanOrEqual(before);
-        expect(ts).toBeLessThanOrEqual(Date.now());
-    });
-
-    it('écrase la valeur précédente lors d\'appels répétés', () => {
-        localStorage.setItem('hw_last_support_click', '12345');
-        recordSupportClick();
-        expect(localStorage.getItem('hw_last_support_click')).not.toBe('12345');
-    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
