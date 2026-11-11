@@ -640,11 +640,11 @@
    Handoff Claude Design « retouches testeurs », sujet 5 (11/10/2026). En tête
    de carte, à droite des contrôles Leaflet (même repère que le panneau :
    absolute dans #map). Une puce par filtre actif, retirable, + « Tout
-   effacer ». Masquée sans filtre ([hidden]), quand le panneau Filtres est
+   réinitialiser ». Masquée sans filtre ([hidden]), quand le panneau Filtres est
    ouvert (il montre déjà tout), et sur téléphone (bande dédiée, PR suivante). */
 .hw-active-filters {
     position: absolute;
-    top: 12px;
+    top: 20px; /* même hauteur que le (+) de la pile (mesuré : 20 px sous le haut de la carte) */
     left: 72px; /* dégage la pile de contrôles Leaflet */
     z-index: 1000;
     display: flex;

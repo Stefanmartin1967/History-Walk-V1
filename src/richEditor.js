@@ -900,7 +900,7 @@ function showModal() {
     openHwModal({
         size: 'lg',
         icon: isCreate ? 'map-pin-plus' : 'edit-3',
-        title: isCreate ? 'Nouveau Lieu' : 'Éditer le Lieu',
+        title: isCreate ? 'Nouveau lieu' : 'Éditer le lieu',
         subheader: RICH_POI_SUBHEADER_HTML,
         body: RICH_POI_BODY_HTML,
         footer: RICH_POI_FOOTER_HTML,

@@ -2,7 +2,7 @@
 
 > **Statut** : brouillon pour relecture. Deviendra la source unique de l'aide « ? »
 > in-app (`src/help-content.js` → `GUIDE_LIEU`), posée dans le header de la modale
-> richEditor (« Nouveau Lieu » / « Éditer le Lieu »).
+> richEditor (« Nouveau lieu » / « Éditer le lieu »).
 > **Conventions de rédaction** : cf. mémoire `feedback_doc_writing_conventions`
 > (Heripia · cliquer [PC] · importer/déposer · « et/ou » · phrases courtes ·
 > concret · vocabulaire technique juste · actif + réassurance · « • » dans les schémas).
@@ -16,8 +16,8 @@
 
 ## Le guide « Créer ou éditer un lieu » (panneau global « ? »)
 
-**Emplacement du « ? »** : header de la modale (à côté du titre « Nouveau Lieu » /
-« Éditer le Lieu » et de la croix).
+**Emplacement du « ? »** : header de la modale (à côté du titre « Nouveau lieu » /
+« Éditer le lieu » et de la croix).
 
 **Intro :** Chaque lieu a une **fiche** : nom, catégorie, descriptions, infos pratiques,
 position. Vous **créez** un nouveau lieu, ou vous **enrichissez** un lieu existant. Tout
@@ -31,16 +31,16 @@ Un lieu se décrit par une fiche. Deux façons d'y arriver : **créer** un nouve
 
 ### 1 · Créer un lieu
 **Cliquez droit** à l'endroit voulu sur la carte. Un marqueur apparaît avec la question
-**« Nouveau Lieu ? »** :
+**« Nouveau lieu ? »** :
 - **glissez** le marqueur pour ajuster la position *(« Glissez pour ajuster »)* ;
 - *Maps* et *OSM* ouvrent l'endroit sur Google Maps et/ou OpenStreetMap pour **vérifier** ;
-- cliquez **« Valider cette position »** → la fiche **« Nouveau Lieu »** s'ouvre.
+- cliquez **« Valider cette position »** → la fiche **« Nouveau lieu »** s'ouvre.
 
 *Deux autres entrées mènent à la même fiche : des **coordonnées GPS** collées dans la recherche
 (puis Entrée), et le bouton **« Créer un lieu »** de l'import photo.*
 
 ### 2 · Éditer un lieu
-Sur la fiche d'un lieu, le bouton **« Éditer »** ouvre le formulaire **« Éditer le Lieu »**
+Sur la fiche d'un lieu, le bouton **« Éditer »** ouvre le formulaire **« Éditer le lieu »**
 (mêmes champs, déjà remplis).
 
 ### 3 · L'essentiel pour enregistrer
@@ -130,7 +130,7 @@ Lieu ? » + « Glissez pour ajuster » + liens Maps/OSM + bouton « Valider cett
 propose rien), `ui-photo-batch.js` (« Créer un lieu »).
 
 **Modale** (`richEditor.js`) : `openHwModal` — icône `map-pin-plus` (création) /
-`edit-3` (édition), titre **« Nouveau Lieu »** / **« Éditer le Lieu »**, `size: 'lg'`,
+`edit-3` (édition), titre **« Nouveau lieu »** / **« Éditer le lieu »**, `size: 'lg'`,
 `closeOnBackdrop: false`.
 
 **Champs** (`RICH_POI_BODY_HTML`) : Nom (FR)* (`rich-poi-name-fr`) · Nom (AR) · Catégorie
