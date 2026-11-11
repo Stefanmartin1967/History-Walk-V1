@@ -247,7 +247,7 @@ describe('renderMobileMenu — listeners boutons standards', () => {
         // Synchrone volontairement : différer l'ouverture derrière l'import
         // dynamique la sortirait du geste utilisateur et l'exposerait au blocage
         // de pop-up. Ne pas « moderniser » ce test avec un await.
-        expect(window.open).toHaveBeenCalledWith('https://www.buymeacoffee.com/history_walk', '_blank');
+        expect(window.open).toHaveBeenCalledWith('https://www.buymeacoffee.com/heripia', '_blank');
     });
 });
 

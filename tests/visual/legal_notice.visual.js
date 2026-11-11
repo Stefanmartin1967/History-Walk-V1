@@ -53,7 +53,7 @@ test.describe('Desktop — Mentions légales', () => {
         await expect(modal).toContainText('OpenStreetMap');
 
         // Email
-        await expect(modal.locator('a[href="mailto:history.walk.007@gmail.com"]')).toBeVisible();
+        await expect(modal.locator('a[href="mailto:contact@heripia.com"]')).toBeVisible();
     });
 
     test('3 — croix du header referme la modale', async ({ page }) => {
