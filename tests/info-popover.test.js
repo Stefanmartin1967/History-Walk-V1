@@ -1,11 +1,14 @@
 // @vitest-environment jsdom
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { showInfoPopover } from '../src/info-popover.js';
+import { showInfoPopover, getLegendFamilies } from '../src/info-popover.js';
+import { state } from '../src/state.js';
 
 beforeEach(() => {
     document.body.innerHTML = '';
     localStorage.clear();
+    state.loadedFeatures = [];
+    state.hiddenPoiIds = [];
     // L'icône anchor doit exister pour que le popover puisse se positionner
     const anchor = document.createElement('button');
     anchor.id = 'btn-legend';
@@ -70,33 +73,19 @@ describe('showInfoPopover — contenu légende', () => {
 });
 
 describe('showInfoPopover — sections ajoutées en PR PC-3', () => {
-    it('contient une section "Catégories de lieux" avec les 40 icônes (sous-types inclus)', () => {
+    it('sans lieu chargé : toutes les icônes (44), rangées dans les six familles des filtres', () => {
         showInfoPopover();
         const txt = document.getElementById('info-popover').textContent;
         expect(txt).toContain('Catégories de lieux');
-        // Légende exhaustive (chantier 21/05/2026) : chaque icône distincte est
-        // affichée, sous-types inclus. 18 catégories mono + Mosquée (5) +
-        // Église (2) + Chapelle (2) + Artisanat (4) = 31 entrées (27 du handoff
-        // #22 + voûtes en berceau, 24/10/2026 + chapelles et potale, 01/11/2026)
-        // + Château (3) + Monument (3) + Vestige industriel (3) le 05/11/2026 = 40
-        // + Édifice civil (4) = 44.
-        const items = document.querySelectorAll('.info-popover-cat-item');
-        expect(items).toHaveLength(44);
-        // Les 8 catégories à sous-types ont un en-tête de sous-groupe dédié.
-        const subgroups = document.querySelectorAll('.info-popover-cat-subgroup');
-        expect(subgroups).toHaveLength(8);
-        const subgroupTitles = Array.from(
-            document.querySelectorAll('.info-popover-cat-subgroup-title')
-        ).map(el => el.textContent);
-        expect(subgroupTitles).toEqual(['Mosquée', 'Église', 'Chapelle', 'Château', 'Monument', 'Vestige industriel', 'Édifice civil', 'Artisanat']);
-        // Variantes de sous-types représentatives présentes.
+        expect(document.querySelectorAll('.info-popover-cat-item')).toHaveLength(44);
+        const families = Array.from(document.querySelectorAll('.info-popover-family-title')).map(el => el.textContent);
+        expect(families).toEqual(['Lieux de culte', 'Site historique', 'Architecture traditionnelle', 'Culture & découvertes', 'Manger & boire', 'Services & commodités']);
+        // Les 8 catégories à sous-types ont chacune leur ligne, nommée.
+        const rowNames = Array.from(document.querySelectorAll('.info-popover-cat-rowname')).map(el => el.textContent).filter(Boolean);
+        expect(rowNames.sort()).toEqual(['Artisanat', 'Chapelle', 'Château', 'Monument', 'Mosquée', 'Vestige industriel', 'Édifice civil', 'Église'].sort());
         expect(txt).toContain('À minaret');
-        expect(txt).toContain('Catholique');
         expect(txt).toContain('Huilerie');
-        expect(txt).toContain('Atelier');
-        // Catégories mono toujours là.
         expect(txt).toContain('Restaurant');
-        expect(txt).toContain('Fortification');
     });
 
     it('contient une section "Regroupements" avec 3 samples cluster (vert/jaune/rouge)', () => {
@@ -209,5 +198,38 @@ describe('showInfoPopover — robustesse', () => {
     it('ne plante pas si l\'anchor #btn-legend est absent', () => {
         document.body.innerHTML = ''; // anchor retiré
         expect(() => showInfoPopover()).not.toThrow();
+    });
+});
+
+// Refonte du 11/11/2026 (maquette validée par Stefan) : la légende listait les
+// 44 icônes de l'app quelle que soit la destination, variantes éparpillées.
+describe('getLegendFamilies — seulement ce que la destination contient', () => {
+    const poi = (id, cat, sub) => ({ properties: { HW_ID: id, 'Catégorie': cat, ...(sub ? { 'Sous-type': sub } : {}) } });
+
+    it("ne garde que les icônes portées par un lieu, et tait les familles vides", () => {
+        const fams = getLegendFamilies([poi('a', 'Potale'), poi('b', 'Musée')]);
+        expect(fams.map(f => f.family)).toEqual(['Lieux de culte', 'Culture & découvertes']);
+        expect(fams[0].singles.map(s => s.label)).toEqual(['Potale']);
+        expect(fams[0].rows).toEqual([]);
+    });
+
+    it("plusieurs variantes présentes : une ligne au nom de la catégorie, variantes ensemble", () => {
+        const [culte] = getLegendFamilies([poi('a', 'Mosquée', 'À minaret'), poi('b', 'Mosquée', 'À coupoles'), poi('c', 'Mosquée')]);
+        expect(culte.rows).toHaveLength(1);
+        expect(culte.rows[0].category).toBe('Mosquée');
+        // La variante sans sous-type s'appelle « Autre », pas « Mosquée » une 2e fois.
+        expect(culte.rows[0].variants.map(v => v.label)).toEqual(['À minaret', 'À coupoles', 'Autre']);
+    });
+
+    it("une seule variante présente : la catégorie tout court (« Château », pas son sous-type par défaut)", () => {
+        const [site] = getLegendFamilies([poi('a', 'Château'), poi('b', 'Château')]);
+        expect(site.rows).toEqual([]);
+        expect(site.singles.map(s => s.label)).toEqual(['Château']);
+    });
+
+    it("un lieu supprimé par l'utilisateur ne fait pas apparaître son icône", () => {
+        state.hiddenPoiIds = ['b'];
+        const fams = getLegendFamilies([poi('a', 'Potale'), poi('b', 'Musée')]);
+        expect(fams.map(f => f.family)).toEqual(['Lieux de culte']);
     });
 });

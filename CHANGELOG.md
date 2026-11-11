@@ -6,6 +6,14 @@
 
 ---
 
+- LÉGENDE REPENSÉE : FAMILLES DES FILTRES, TROIS COLONNES, SEULEMENT CE QUE LA DESTINATION CONTIENT (v3.7.507). Constat de Stefan le 11/11/2026 : avec 44 icônes, la légende sortait par le bas de l'écran (il fallait dézoomer à 67 %), « Catégories de lieux » était écrit comme « Mosquée », et elle s'ouvrait par-dessus le panneau Filtres. Maquette validée en trois passes.
+  - `getLegendFamilies` (`src/info-popover.js`) : les catégories sont rangées dans les six familles de `taxonomy.js` (les mêmes que le panneau Filtres). Seules les icônes portées par un lieu visible de la destination sont montrées (`isShownToUser` + `getIconForFeature`) : 23 à Djerba au lieu de 44. Sans lieu chargé, tout est montré.
+  - Une catégorie à plusieurs variantes présentes tient sur sa propre ligne, nom à gauche (fini les variantes éparpillées). La variante sans sous-type s'appelle « Autre ». Une seule variante présente : la catégorie tout court (« Château », pas « Château résidentiel »).
+  - Fenêtre de 640 px, trois colonnes, tracés côte à côte. Elle s'ouvre à droite de la pile de boutons, depuis le haut de la carte, et sa hauteur est bornée au bas de l'écran (elle défile au-delà) : plus jamais coupée. Avant : sous le bouton, hauteur fixée à « écran − 100 px ».
+  - Icônes centrées face à leur libellé (`centerIcons`, mesure du dessin réel) : « Artisanat » tombait 5 px trop bas, « Curiosité » 3 px trop haut. La carte n'est pas touchée.
+  - Un seul ouvert à la fois : ouvrir la légende referme le panneau Filtres, et l'inverse (`topbar:popup-opening`, ids `info` et `filters`).
+  - Tests : `tests/info-popover.test.js` (+4). `style.css?v=8.59`.
+
 - LÉGENDE, BANDE DE FILTRES, TITRES DE L'ÉDITEUR : TROIS RETOUCHES DÉCIDÉES À DEUX (v3.7.506). Restes du handoff « retouches testeurs » tranchés par Stefan le 11/11/2026, sans passer par Design.
   - Bouton Légende (`src/map.js`) : retour au carré de la pile, icône seule, info-bulle « Légende ». Le bouton libellé (#1006) débordait sur le panneau Filtres ouvert. État « légende ouverte » conservé (`aria-expanded`). Bloc `.hw-legend-btn` retiré de `style/components/leaflet-controls.css`.
   - Bande « Filtres actifs » (PC) : « Tout effacer » → « Tout réinitialiser », comme les quatre autres endroits ; bande alignée sur le (+) de la carte (`top: 20px`, mesuré). Le cas admin à 13 puces sur deux lignes est laissé tel quel.

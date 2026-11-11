@@ -1192,9 +1192,11 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
 }
 
 /* ── INFO POPOVER — Légende (renommée en PR PC-3 : tracés + catégories + clusters) ──── */
+/* Largeur 640 px, trois colonnes (refonte du 11/11/2026). max-width et
+   max-height sont posés par info-popover.js d'après la place réelle : la
+   fenêtre ne dépasse jamais l'écran, elle défile. */
 .info-popover {
-    width: 360px; max-width: calc(100vw - 16px);
-    max-height: calc(100vh - 100px);
+    width: 640px;
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 12px;
@@ -1252,11 +1254,45 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
     margin: 4px 0;
 }
 
-/* ── Catégories de POI (PR PC-3) — grille 2 colonnes des 15 catégories ──── */
+/* ── Tracés : les trois côte à côte ── */
+.info-popover-lines {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 14px;
+}
+
+/* ── Catégories de lieux, par famille (les six du panneau Filtres) ──
+   Une ligne par catégorie à sous-types : nom à gauche, variantes à droite.
+   Les catégories simples de la famille suivent, sans nom de ligne. */
+.info-popover-family {
+    display: flex; flex-direction: column; gap: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--line);
+}
+.info-popover-family-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--smallcaps-color);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+.info-popover-cat-row {
+    display: grid;
+    grid-template-columns: 118px 1fr;
+    gap: 10px;
+    align-items: start;
+}
+.info-popover-cat-rowname {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 28px; /* hauteur d'une icône : le nom s'aligne sur la 1re ligne */
+    white-space: nowrap;
+}
 .info-popover-cat-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px 12px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px 12px;
 }
 .info-popover-cat-item {
     display: flex; align-items: center; gap: 8px;
@@ -1283,21 +1319,6 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
     text-overflow: ellipsis;
 }
 
-/* ── Sous-groupes des catégories à sous-types (chantier légende exhaustive,
-   21/05/2026) : les catégories mono restent dans la grille plate au-dessus ;
-   Mosquée / Église / Artisanat ont un en-tête + leurs variantes en grille. ── */
-.info-popover-cat-subgroup {
-    margin-top: 10px;
-}
-.info-popover-cat-subgroup-title {
-    font-size: 0.74rem;
-    font-weight: 700;
-    color: var(--ink-soft);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
-}
-
 /* ── Clusters (PR PC-3 + audit Claude Design) ─────────────────────────────
    Les 3 samples reproduisent les couleurs réelles de Leaflet.markercluster
    par défaut (small / medium / large), que HW n'override pas. Sémantique
@@ -1306,8 +1327,14 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
    Leaflet, pas à des tokens HW (qui changeraient par thème et créeraient
    un mensonge visuel entre carte et légende).
 */
+.info-popover-clusters {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+}
 .info-popover-cluster-intro {
-    margin: 0 0 8px;
+    margin: 0;
     font-size: 0.82rem;
     line-height: 1.45;
     color: var(--ink-soft);
@@ -1315,7 +1342,7 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
 .info-popover-cluster-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
+    gap: 18px;
     align-items: start;
     justify-items: center;
 }
