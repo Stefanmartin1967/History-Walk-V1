@@ -6,6 +6,14 @@
 
 ---
 
+- POLICE SPECTRAL ENFIN CHARGÉE (v3.7.512). Sujet 8 du handoff Claude Design « écran bas » (12/11/2026), décision Stefan : charger Spectral. `--font-serif` l'annonçait depuis le début, mais aucun fichier n'existait : l'app affichait Georgia partout où le serif était prévu.
+  - `public/fonts/spectral/` : graisse 700 seulement, sous-ensembles latin (23 Ko) et latin-ext (21 Ko), woff2 tirés de `@fontsource/spectral` 5.3.0 (aucune dépendance ajoutée), licence OFL jointe (`OFL.txt`).
+  - `style/tokens.css` : deux `@font-face` avec `unicode-range` et `font-display: swap`, Georgia en repli. Le sous-ensemble latin est préchargé (`index.html`), le latin-ext ne se charge que si une page en a besoin.
+  - Hors ligne : `woff2` ajouté aux `globPatterns` du service worker (`vite.config.js`) ; les deux fichiers sont dans le précache du build.
+  - Concerne les noms propres : titre du cartel (700) et nom d'étape (600, rendu en 700 comme Georgia le faisait). Pas d'arabe dans Spectral : « ع » et les noms arabes restent sur la police système.
+  - Mesuré : « Mausolée Cheikh Yahia El Izmartni » à 24 px fait 389 px en Spectral contre 428 en Georgia (−9 %), donc moins de noms sur deux lignes.
+  - `style.css?v=8.64`.
+
 - FINITIONS : « SOUTENIR », PLACE DE L'AMBRE, FILET DES FICHES (v3.7.511). Lot 3 du handoff Claude Design « écran bas » (12/11/2026), sujets 5 et 6.
   - « Soutenir le projet » (`#btn-bmc-topbar`, menu Outils) : une ligne comme ses voisines. Plus de fond, bord et texte ambre ni d'ombre (double contour au soleil) ; seul le cœur la distingue (trait `--brand-ink`, remplissage `--brand-soft`).
   - Règle de l'ambre : il ne veut plus dire que « attention », via `--warn-*` (réglés pour les 4 moments). Relevé des 26 usages hors administration :
