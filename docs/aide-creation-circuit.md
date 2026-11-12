@@ -65,7 +65,10 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   sentiers, un peu plus long)*. Pour chacune : distance, D+, kilomètres **repassés** et
   kilomètres par type de voie ; les écarts de Chemins avec Direct sont marqués **mieux**
   ou **moins bien**. **« Ajuster »** règle la **force** de Chemins *(0 sans effet, 1 par
-  défaut, 3 très fort)*.
+  défaut, 3 très fort)* et **« Éviter de repasser »** : ne pas revenir par la même voie
+  quand une autre existe, pour les deux variantes, avec un **poids** *(léger, net, fort :
+  gros détours)*. Chaque passage est alors tracé à son tour, plus lentement avec
+  brouter.de.
 - Cliquez une variante *(ou sa ligne sur la carte)*, puis **« Utiliser cette
   variante »**. **« Annuler »** ne change rien.
 - Résultat : **« Itinéraire tracé »**, la **distance réelle**, et une ligne qui rappelle
@@ -82,7 +85,8 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   le guider.
 - **« Re-tracer l'itinéraire »** : si vous changez les lieux après coup, le tracé est
   signalé **« séquence modifiée »** *(« Tracé à mettre à jour »)*. Re-tracez pour le
-  remettre à jour : seuls les passages modifiés sont recalculés, avec la même variante.
+  remettre à jour : seuls les passages modifiés sont recalculés, avec la même variante
+  *(sans « éviter de repasser »)*.
 - **« Tout re-tracer »** *(menu ⋮)* : rouvre « Choisir l'itinéraire » ; la variante
   retenue recalcule **tous** les passages et efface vos ajustements.
 
@@ -176,7 +180,9 @@ est resté en ligne droite » / « Ajouter un point de passage ».
 Direct « Le plus court raisonnable. C'est le calcul d'aujourd'hui. » · Chemins « Préfère pistes et
 sentiers aux routes et rues, quitte à marcher un peu plus. » · « Calcul en cours · passage N sur N » ·
 Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » au-delà de 100 m) ·
-« Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » · « Calculé par
+« Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » / « Éviter de
+repasser » / « Poids » (Léger 5 · Net 100 · Fort 1000) / « Plus lent avec brouter.de : chaque
+passage est demandé à part. » · « Calculé par
 BRouter de ce PC » ou « brouter.de · BRouter de ce PC indisponible » · « Réessayer » · « Annuler » ·
 « Utiliser cette variante ». Carte d'état pendant la comparaison : « Choix de l'itinéraire » /
 « 2 variantes ».

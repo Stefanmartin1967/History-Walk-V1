@@ -6,6 +6,14 @@
 
 ---
 
+- ITINÉRAIRE : « ÉVITER DE REPASSER » (v3.7.523). PR 3 sur 3 du comparateur de tracé (handoff Claude Design du 12/11/2026).
+  - « Ajuster » du panneau « Choisir l'itinéraire » gagne un interrupteur « Éviter de repasser » (ne pas revenir par la même voie quand une autre existe, pour les deux variantes) et son poids en trois crans : Léger 5 · Net 100 (défaut) · Fort 1000. Chaque changement recalcule les deux variantes ; résumé « force 1 · éviter de repasser » ; note « Plus lent avec brouter.de : chaque passage est demandé à part. » quand BRouter de ce PC ne répond pas.
+  - Moteur (`circuit-routing.js`) : avec « éviter », les passages sont tracés à la suite, chacun évitant le tracé déjà calculé (`&polylines=`, poids en fin de ligne), privé des 150 m autour des deux bouts du passage (sinon BRouter ignore la ligne, constat du banc d'essai), un point tous les 15 m, 600 points au plus vers brouter.de (3000 en local). Vers brouter.de, un appel toutes les 1,2 s ; sur « Please, retry later! », jusqu'à 3 nouveaux essais (3, 6, 9 s) — pour tous les appels à brouter.de.
+  - Le circuit garde `routing.avoid` / `routing.weight` ; la ligne de la carte d'état dit « éviter de repasser ». Le re-tracé partiel et l'édition d'un passage gardent la variante mais n'évitent pas (décision de Stefan pour l'édition).
+  - Aide (section 4 et 5) et `docs/aide-creation-circuit.md` à jour.
+  - Vérifié sur l'aperçu (Braa → Hadher Bach) : BRouter de ce PC, interrupteur + poids Fort → passages à la suite, `polylines=…,1000` sur les deux variantes ; Chemins retenue → `routing` { avoid: true, weight: 1000 } et ligne « Chemins · force 1 · éviter de repasser · BRouter de ce PC ». brouter.de (PC bloqué dans la page) : note « plus lent » affichée, appels espacés de 1,2 s, poids 100, deux variantes prêtes. Aucune erreur en console.
+  - Tests : `tests/circuit_routing_avoid.test.js` (+9) ; le test « brouter.de limite » de `route_stats.test.js` y est déplacé (minuteries simulées).
+
 - DÉMARRAGE : SECOURS QUAND LA PAGE S'OUVRE SANS STYLE APRÈS UN DÉPLOIEMENT (v3.7.522). Vu par Stefan les 11 et 12/11/2026, juste après un déploiement : page brute (ni style ni code, tout le HTML caché visible), réparée en rechargeant.
   - Cause prouvée : chaque déploiement GitHub Pages remplace tout le site ; les fichiers de la version précédente (`/assets/main-*.js`, `main-*.css`) répondent 404 (mesuré sur heripia.com avec ceux de v3.7.520). Une ancienne `index.html` servie à ce moment ne trouve plus ses fichiers. Par où cette ancienne page arrive (cache du navigateur, copie précachée) n'est pas prouvé.
   - Correctif (choix de Stefan) : `public/boot-guard.js`, chargé en tête de page avant les fichiers principaux. Si `main-*.js` ou `main-*.css` échoue, il vide la copie précachée (caches « workbox-precache » seulement : tuiles, photos et données hors-ligne intactes), désinscrit le service worker et recharge UNE fois par onglet. Hors ligne, il ne fait rien.

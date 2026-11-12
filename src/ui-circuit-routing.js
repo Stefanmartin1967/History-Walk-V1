@@ -284,6 +284,7 @@ function variantLineHtml() {
     const r = normalizeRouting(saved);
     const parts = [`<b>${ROUTING_VARIANTS[r.variant].label}</b>`];
     if (r.variant === 'chemins') parts.push(`force ${String(r.force).replace('.', ',')}`);
+    if (r.avoid) parts.push('éviter de repasser');
     if (saved.engine) parts.push(engineLabel(saved.engine));
     return `<p class="trace-variant">${parts.join('<span class="trace-variant-dot" aria-hidden="true"></span>')}</p>`;
 }

@@ -5,7 +5,7 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import {
     waysFromMessages, addWays, repassedMeters, compareToDirect, formatKmDelta, emptyWays,
 } from '../src/route-stats.js';
-import { routeCircuit, routePoints } from '../src/circuit-routing.js';
+import { routeCircuit } from '../src/circuit-routing.js';
 
 // En-tête réel des messages BRouter (colonnes utiles : Distance, WayTags).
 const HEAD = ['Longitude', 'Latitude', 'Elevation', 'Distance', 'CostPerKm', 'ElevCost', 'TurnCost', 'NodeCost', 'InitialCost', 'WayTags', 'NodeTags', 'Time', 'Energy'];
@@ -98,9 +98,6 @@ describe('routeCircuit — types de voie, motif d’échec, progression', () => 
         expect(r.segments[0].error).toBe('BRouter de ce PC ne répond pas.');
         expect(r.ways['non-classe']).toBeGreaterThan(900);
     });
-
-    it('brouter.de qui limite le débit : message dédié', async () => {
-        globalThis.fetch = vi.fn().mockResolvedValue({ ok: false, status: 503, text: async () => 'Please, retry later!' });
-        await expect(routePoints([[10, 33.8], [10.01, 33.8]])).rejects.toThrow('brouter.de limite les demandes.');
-    });
+    // brouter.de qui limite le débit : nouveaux essais et message dédié,
+    // cf. tests/circuit_routing_avoid.test.js (minuteries simulées).
 });
