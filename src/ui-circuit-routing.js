@@ -17,7 +17,7 @@
 // « Éditer l'itinéraire » ouvre le focus mode niveau 2 (circuit-focus.js).
 // Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026.
 import { state } from './state.js';
-import { routeCircuit, routeChangedSegments } from './circuit-routing.js';
+import { routeCircuit, routeChangedSegments, normalizeRouting, resolveEngine, engineLabel, ROUTING_VARIANTS } from './circuit-routing.js';
 import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
 import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
@@ -44,7 +44,7 @@ const BLOCK_ID = 'circuit-trace-block';
 let tracing = false; // calcul BRouter en cours (évite les doubles clics)
 // Dernier re-tracé, pour « Revenir au tracé précédent » : un re-tracé s'enregistre
 // aussitôt, ceci est le seul retour en arrière hors Centre de contrôle. Session
-// seulement. { circuitId, prevTrack, prevAscend, prevBasisKey, prevSegments, newFp }
+// seulement. { circuitId, prevTrack, prevAscend, prevRouting, prevBasisKey, prevSegments, newFp }
 let lastRetrace = null;
 
 function inCreation() {
@@ -246,6 +246,7 @@ function traceStatusHtml() {
                         <span class="trace-pill">${warn ? failTxt : 'Tracé réel'}</span></h4>
                     ${distTxt ? `<p>${distTxt}</p>` : ''}
                     ${wayTypesHtml()}
+                    ${variantLineHtml()}
                 </div>
             </div>
             <div class="trace-status-actions">
@@ -256,6 +257,19 @@ function traceStatusHtml() {
             </div>
         </div>
         ${warn ? failNote() : ''}${phoneHintHtml()}`;
+}
+
+// Ligne « variante · réglages · moteur » sous les types de voie (handoff Claude
+// Design « Choisir l'itinéraire », 12/11/2026) : une ligne sobre, rien pour un
+// circuit tracé avant que la variante soit mémorisée.
+function variantLineHtml() {
+    const saved = activeCircuit()?.routing;
+    if (!saved || !ROUTING_VARIANTS[saved.variant]) return '';
+    const r = normalizeRouting(saved);
+    const parts = [`<b>${ROUTING_VARIANTS[r.variant].label}</b>`];
+    if (r.variant === 'chemins') parts.push(`force ${String(r.force).replace('.', ',')}`);
+    if (saved.engine) parts.push(engineLabel(saved.engine));
+    return `<p class="trace-variant">${parts.join('<span class="trace-variant-dot" aria-hidden="true"></span>')}</p>`;
 }
 
 // Rappel sous la carte d'état, pour un circuit de l'utilisateur : il n'existe que
@@ -352,6 +366,7 @@ async function runTrace({ keepUnchanged = false } = {}) {
         circuitId: String(state.activeCircuitId),
         prevTrack,
         prevAscend: Number.isFinite(prevCircuit.ascend) ? prevCircuit.ascend : null,
+        prevRouting: prevCircuit.routing || null,
         prevBasisKey: state.routeBasisKey,
         prevSegments: state.routeSegments,
     } : null;
@@ -359,10 +374,15 @@ async function runTrace({ keepUnchanged = false } = {}) {
     updateTraceBlock(); // spinner
 
     try {
+        // Variante du circuit (Direct si aucune n'est mémorisée) et moteur :
+        // BRouter de ce PC s'il répond, sinon brouter.de.
+        const routing = normalizeRouting(prevCircuit?.routing);
+        const engine = await resolveEngine();
+        const opts = { routing, base: engine.base };
         const prev = keepUnchanged ? previousRoute(prevTrack) : null;
         const result = prev
-            ? await routeChangedSegments(state.currentCircuit, state.currentCircuit.map(getPoiId), prev)
-            : await routeCircuit(state.currentCircuit);
+            ? await routeChangedSegments(state.currentCircuit, state.currentCircuit.map(getPoiId), prev, opts)
+            : await routeCircuit(state.currentCircuit, {}, opts);
         const { realTrack, segments } = result;
         // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
         // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
@@ -371,7 +391,7 @@ async function runTrace({ keepUnchanged = false } = {}) {
             ? prevCircuit.ascend : result.ascend;
         state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
         // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
-        await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
+        await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend, routing: { ...routing, engine: engine.key } });
         // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
         // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
         if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
@@ -407,7 +427,7 @@ async function undoRetrace() {
     const u = lastRetrace;
     lastRetrace = null;
     try {
-        await saveAndExportCircuit(u.prevTrack, { stayInCreation: true, ascend: u.prevAscend });
+        await saveAndExportCircuit(u.prevTrack, { stayInCreation: true, ascend: u.prevAscend, routing: u.prevRouting });
     } catch (e) {
         console.error('[routing] retour au tracé précédent échoué :', e);
         showToast("Impossible de rétablir le tracé précédent.", 'error');

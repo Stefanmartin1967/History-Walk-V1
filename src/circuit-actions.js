@@ -267,7 +267,7 @@ export function warnIfNameTaken(name, selfId) {
     return true;
 }
 
-export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null } = {}) {
+export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null, routing } = {}) {
     if (state.currentCircuit.length === 0) return;
 
     // 1. Nom : même source que l'en-tête (getCircuitTitle), jamais le texte du
@@ -330,6 +330,14 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         // re-tracé met à jour les deux ; un réimport GPX (realTrack absent) garde
         // l'ascend existant.
         circuitToSave.ascend = Number.isFinite(ascend) ? ascend : null;
+        // Variante et moteur qui ont calculé ce tracé ({ variant, force, engine },
+        // cf. circuit-routing). Comme le D+, elle accompagne le realTrack. Non
+        // fournie (édition d'un passage) : celle du circuit reste ; null (retour
+        // au tracé d'avant une variante) : retirée.
+        if (routing !== undefined) {
+            if (routing) circuitToSave.routing = routing;
+            else delete circuitToSave.routing;
+        }
     }
 
     // B1 — Vérification anti-doublon à la source (admin uniquement, skip silencieux

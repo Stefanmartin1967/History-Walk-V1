@@ -10,11 +10,91 @@
 // navigateur (CORS ouvert), sans clé ni backend — adapté au paradigme PWA
 // statique d'Heripia. Online-only : la création de circuit se fait sur PC, le
 // vol d'oiseau reste le repli hors-ligne / si BRouter est indisponible.
+//
+// Moteur (12/11/2026, chantier comparateur de tracé) : BRouter peut aussi
+// tourner SUR LE PC de l'auteur (C:\BRouter, port 17777 : mêmes réponses que
+// brouter.de, sans limite de débit). `resolveEngine()` le sonde et retombe sur
+// brouter.de s'il ne répond pas. Les fonctions de routage ne sondent rien
+// elles-mêmes : l'appelant (UI) résout le moteur et passe son `base`.
 import { getAccessPoint } from './utils.js';
 import { fetchWithTimeout } from './net.js';
 
-const BROUTER_URL = 'https://brouter.de/brouter';
+export const PUBLIC_BROUTER_URL = 'https://brouter.de/brouter';
+export const LOCAL_BROUTER_URL = 'http://localhost:17777/brouter';
 export const DEFAULT_PROFILE = 'hiking-beta'; // profil rando piéton validé sur Djerba
+
+// Variantes de calcul. « Direct » = le calcul historique (hiking-beta).
+// « Chemins » = hiking-mountain, dont l'Offroad_factor rend routes et rues plus
+// chères et les chemins de terre moins chers ; sa « force » (0 sans effet,
+// 1 par défaut, 3 très fort) est cet Offroad_factor.
+export const ROUTING_VARIANTS = {
+    direct: { label: 'Direct', profile: DEFAULT_PROFILE },
+    chemins: { label: 'Chemins', profile: 'hiking-mountain', forceParam: 'Offroad_factor' },
+};
+export const DEFAULT_FORCE = 1;
+export const FORCE_MAX = 3;
+
+/**
+ * Réglages de calcul d'un circuit, nettoyés : variante connue (sinon Direct),
+ * force bornée à [0, 3] et arrondie au dixième (Chemins seulement).
+ * @param {Object} [routing]  `circuit.routing` tel qu'enregistré (ou absent).
+ * @returns {{variant: 'direct'|'chemins', force?: number}}
+ */
+export function normalizeRouting(routing) {
+    const variant = routing && ROUTING_VARIANTS[routing.variant] ? routing.variant : 'direct';
+    if (variant !== 'chemins') return { variant };
+    const raw = Number(routing.force);
+    const force = Number.isFinite(raw)
+        ? Math.round(Math.min(FORCE_MAX, Math.max(0, raw)) * 10) / 10
+        : DEFAULT_FORCE;
+    return { variant, force };
+}
+
+// Paramètres d'URL BRouter d'une variante : `&profile=…` (+ `&profile:<param>=<force>`).
+export function routingQuery(routing) {
+    const r = normalizeRouting(routing);
+    const v = ROUTING_VARIANTS[r.variant];
+    let q = `&profile=${encodeURIComponent(v.profile)}`;
+    if (v.forceParam) q += `&profile:${v.forceParam}=${r.force}`;
+    return q;
+}
+
+// --- Moteur : BRouter de ce PC ou brouter.de ---------------------------------
+const ENGINES = {
+    local: { key: 'local', base: LOCAL_BROUTER_URL, label: 'BRouter de ce PC' },
+    public: { key: 'brouter.de', base: PUBLIC_BROUTER_URL, label: 'brouter.de' },
+};
+export function engineLabel(key) {
+    return key === 'local' ? ENGINES.local.label : ENGINES.public.label;
+}
+
+// Résultat de la dernière sonde, gardé une minute : l'édition d'un passage
+// route souvent, inutile de sonder à chaque fois.
+const ENGINE_TTL_MS = 60000;
+const PROBE_TIMEOUT_MS = 1500;
+let engineCache = null; // { engine, at }
+
+/** Oublie le moteur retenu : la prochaine résolution sonde à nouveau. */
+export function forgetEngine() { engineCache = null; }
+
+/**
+ * BRouter de ce PC s'il répond, sinon brouter.de. Toute réponse HTTP compte
+ * (le point sondé est hors carte, BRouter répond par une erreur) : seul un
+ * serveur muet, absent ou bloqué (CSP, navigateur) fait retomber sur brouter.de.
+ * @returns {Promise<{key: 'local'|'brouter.de', base: string, label: string}>}
+ */
+export async function resolveEngine() {
+    if (engineCache && Date.now() - engineCache.at < ENGINE_TTL_MS) return engineCache.engine;
+    let engine = ENGINES.public;
+    try {
+        await fetchWithTimeout(`${LOCAL_BROUTER_URL}?lonlats=0,0|0.001,0&profile=${DEFAULT_PROFILE}&format=geojson`, {}, PROBE_TIMEOUT_MS);
+        engine = ENGINES.local;
+    } catch (e) {
+        // Serveur local éteint ou injoignable : brouter.de.
+    }
+    engineCache = { engine, at: Date.now() };
+    return engine;
+}
 
 // Ancre de routage d'un POI : point d'accès au tracé si défini/valide, sinon
 // coordonnées réelles du POI. Renvoie [lon, lat].
@@ -68,18 +148,25 @@ function toLonLats(points) {
 }
 
 /**
+ * Options de routage communes aux fonctions ci-dessous.
+ * @typedef {Object} RouteOptions
+ * @property {Object} [routing]  Variante ({ variant, force }) — défaut : Direct.
+ * @property {string} [base]     URL du moteur (résolue par resolveEngine) — défaut : brouter.de.
+ */
+
+/**
  * Route une séquence de points [lon, lat] via BRouter.
  * @param {number[][]} points  Liste ordonnée de [lon, lat] (≥ 2).
- * @param {string} [profile]   Profil BRouter (défaut : hiking-beta).
+ * @param {RouteOptions} [opts]
  * @returns {Promise<{realTrack: number[][], distanceKm: number, durationMin: number}>}
  *   `realTrack` au format [[lat, lon], …], prêt à être posé sur `circuit.realTrack`.
  * @throws {Error} message lisible si réseau KO ou tracé absent.
  */
-export async function routePoints(points, profile = DEFAULT_PROFILE) {
+export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL } = {}) {
     if (!Array.isArray(points) || points.length < 2) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
-    const url = `${BROUTER_URL}?lonlats=${toLonLats(points)}&profile=${encodeURIComponent(profile)}&format=geojson&alternativeidx=0`;
+    const url = `${base}?lonlats=${toLonLats(points)}${routingQuery(routing)}&format=geojson&alternativeidx=0`;
 
     let resp;
     try {
@@ -87,6 +174,10 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
         // classique, mais ne doit pas pendre indéfiniment sur un serveur muet.
         resp = await fetchWithTimeout(url, {}, 20000);
     } catch (e) {
+        if (base === LOCAL_BROUTER_URL) {
+            forgetEngine(); // éteint en cours de route : le prochain calcul ressonde
+            throw new Error('BRouter de ce PC ne répond pas.');
+        }
         throw new Error('BRouter est injoignable — vérifiez la connexion internet.');
     }
     if (!resp.ok) {
@@ -123,13 +214,13 @@ export async function routePoints(points, profile = DEFAULT_PROFILE) {
  * **ligne droite** entre les vias — l'« échec partiel » du niveau 2 : le
  * circuit reste traçable, le segment est juste signalé.
  * @param {number[][]} vias  Liste ordonnée [lon, lat] (ancre départ, …waypoints, ancre arrivée).
- * @param {string} [profile]
+ * @param {RouteOptions} [opts]
  * @returns {Promise<{ok: boolean, coords: number[][], distanceKm: number, durationMin: number}>}
  *   `coords` au format [[lat, lon], …].
  */
-async function routeSegment(vias, profile = DEFAULT_PROFILE) {
+async function routeSegment(vias, opts = {}) {
     try {
-        const { realTrack, distanceKm, durationMin, ascend } = await routePoints(vias, profile);
+        const { realTrack, distanceKm, durationMin, ascend } = await routePoints(vias, opts);
         return { ok: true, coords: realTrack, distanceKm, durationMin, ascend };
     } catch (e) {
         // Repli ligne droite : on garde la séquence des vias telle quelle.
@@ -179,18 +270,18 @@ export function segmentsAscend(segments) {
  * segment touché en édition (niveau 2).
  * @param {Object[]} features  Features POI dans l'ordre du circuit.
  * @param {Object} [waypointsBySeg]  { [indexSegment]: [{lat, lng}] } — points de passage.
- * @param {string} [profile]
+ * @param {RouteOptions} [opts]
  * @returns {Promise<{realTrack: number[][], distanceKm: number, durationMin: number,
  *   segments: {coords:number[][], ok:boolean, distanceKm:number}[], failedSegments: number[]}>}
  */
-export async function routeCircuit(features, waypointsBySeg = {}, profile = DEFAULT_PROFILE) {
+export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
     const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
     if (anchors.length < 2) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
     const tasks = [];
     for (let i = 0; i < anchors.length - 1; i++) {
-        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), profile));
+        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), opts));
     }
     const segments = await Promise.all(tasks);
     const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
@@ -211,14 +302,14 @@ export async function routeCircuit(features, waypointsBySeg = {}, profile = DEFA
  * @param {Object[]} features  Séquence complète des POIs du circuit.
  * @param {number} i  Index du segment (POI i → POI i+1).
  * @param {Object} waypointsBySeg  { [indexSegment]: [{lat, lng}] }.
- * @param {string} [profile]
+ * @param {RouteOptions} [opts]
  * @param {Object} [anchorOverrides]  { [indexPOI]: [lon, lat] } — ancres déplacées
  *   EN SESSION (drapeaux d'accès glissés en focus, non encore persistés) qui
  *   priment sur l'accessPoint enregistré, pour re-router sur la position live.
  */
-export async function routeOneSegment(features, i, waypointsBySeg = {}, profile = DEFAULT_PROFILE, anchorOverrides = {}) {
+export async function routeOneSegment(features, i, waypointsBySeg = {}, opts = {}, anchorOverrides = {}) {
     const anchors = (features || []).map((f, idx) => anchorOverrides[idx] || anchorOf(f)).filter(isValidLonLat);
-    return routeSegment(segmentVias(anchors, waypointsBySeg, i), profile);
+    return routeSegment(segmentVias(anchors, waypointsBySeg, i), opts);
 }
 
 // Distance approchée (m) entre un point de tracé [lat, lon] et une ancre
@@ -321,14 +412,14 @@ function segmentsMatchTrack(segments, realTrack, nAnchors) {
  * @param {{ids:string[], features:Object[], realTrack:number[][], segments?:Object[]}} prev
  *   Tracé précédent : séquence routée, son realTrack enregistré et, si la session
  *   les connaît, ses segments.
- * @param {string} [profile]
+ * @param {RouteOptions} [opts]
  * @returns {Promise<Object>} Même forme que routeCircuit, plus `keptCount` et
  *   `reroutedCount`. `ascend` est null si un passage conservé n'a pas d'altitude.
  */
-export async function routeChangedSegments(features, ids, prev, profile = DEFAULT_PROFILE) {
+export async function routeChangedSegments(features, ids, prev, opts = {}) {
     const anchors = (features || []).map(anchorOf);
     if (anchors.length < 2 || !anchors.every(isValidLonLat) || !Array.isArray(ids) || ids.length !== anchors.length) {
-        const full = await routeCircuit(features, {}, profile);
+        const full = await routeCircuit(features, {}, opts);
         return { ...full, keptCount: 0, reroutedCount: full.segments.length };
     }
 
@@ -361,7 +452,7 @@ export async function routeChangedSegments(features, ids, prev, profile = DEFAUL
             keptCount++;
             tasks.push(Promise.resolve({ ...seg }));
         } else {
-            tasks.push(routeSegment(segmentVias(anchors, {}, i), profile));
+            tasks.push(routeSegment(segmentVias(anchors, {}, i), opts));
         }
     }
     const segments = await Promise.all(tasks);
