@@ -6,6 +6,14 @@
 
 ---
 
+- CIRCUITS EN BOUCLE : LA PUBLICATION GARDE LE RETOUR AU DÉPART (v3.7.516). Signalé par Stefan (12/11/2026) : « j'ai le souvenir d'avoir perdu le retour… il s'était retiré de la liste des lieux ».
+  - Cause : à la publication, `buildCircuitIndexEntry` (src/admin-control-center.js) dédoublonnait les poiIds (`new Set`), comme `scripts/generate-circuit-index.js`. Un circuit fait avec « Boucler » répète son 1er lieu à la fin : ce retour disparaissait de l'index. Rechargé depuis l'index, le circuit n'avait plus son dernier lieu, et re-tracer ou éditer faisait disparaître le dernier passage. Introduit par #624 (22/05/2026), qui corrigeait un faux « modifié » permanent dans le centre de contrôle.
+  - « Boucler » et recliquer le 1er lieu passent par le même `addPoiToCircuit` : aucune différence côté création, ni à l'enregistrement local.
+  - Correctif : poiIds publiés tels quels (`buildCircuitIndexEntry`), même règle dans le script (`matchWaypointsToPois` garde l'ordre et les répétitions des `<wpt>`, `findPOIsOnTrack` repart de cette liste). Le diff du centre de contrôle compare les séquences complètes (`admin-diff-engine.js`) : une boucle publiée avant le correctif ressort en « Étapes » (3 → 4 étapes), la republier rétablit le retour.
+  - Vérifié sur les données publiées : « Boucle autour de Rym Beach via le mausolée Lella Hadhria » (GPX : 3 lieux, index : 2) et « Boucle autour du Rym Beach » (GPX : 7, index : 6) retrouvent leur retour au recalcul ; aucun autre circuit n'est changé par ce correctif. Ces deux circuits sont à republier depuis le centre de contrôle.
+  - Constat à part, NON corrigé ici : le script de réparation (`npm run update-circuits`) recalcule déjà autrement 5 circuits (Sidi Zayed → Saint-Joseph, Ennasr → Grande mosquée de Midoun, Saint-Pierre → Maison Mattot, Vieux tank → El Monchar, Methred → Néapolis), avant comme après ce correctif. Ne pas le lancer sans vérifier.
+  - Tests : `tests/circuit-index-entry.test.js`, `tests/circuit-poi-order.test.js`, `tests/admin_diff_engine.test.js` (boucle gardée, répétitions des `<wpt>`, boucle publiée sans retour signalée).
+
 - OUTIL TRACE : PAS D'APPEL AU GÉOPORTAIL HORS DE WALLONIE (v3.7.515). Complément de #1091, poussé après son merge (12/11/2026).
   - Le Géoportail ne couvre que la Wallonie : pour une trace de Djerba, ses plans revenaient vides. Le tronçon est toujours listé, avec la mention « Hors de Wallonie : pas de plan de l'Atlas ni de cadastre ». Le contrôle OSM (hors OSM, voies fermées) reste fait.
   - Vérifié sur la marche enregistrée Sidi Yati → Ancienne mosquée de Midoun (2 tronçons hors OSM, aucun appel au Géoportail) et sur la trace enregistrée de Mellet (inchangée). Tests : 10/10.

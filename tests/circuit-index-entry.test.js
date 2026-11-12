@@ -111,12 +111,20 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(e.file).toBe('hammamet/Mon Circuit.gpx');
     });
 
-    it('dédoublonne les poiIds (circuit en boucle) pour matcher l\'Action', () => {
-        // Boucle : étape 1 = étape 4 (retour au départ) → poiIds [A,B,C,A].
-        // generate-circuit-index.js dédoublonne via Set → [A,B,C]. On aligne.
+    it('GARDE le retour d\'un circuit en boucle (poiIds tels quels)', () => {
+        // Boucle (« Boucler ») : étape 1 = étape 4 (retour au départ) → [A,B,C,A].
+        // Jusqu'au 12/11/2026 on dédoublonnait ([A,B,C]) : la publication perdait
+        // le retour. generate-circuit-index.js garde aussi les répétitions.
         const e = buildCircuitIndexEntry(
             { id: 'i', name: 'Boucle', poiIds: ['A', 'B', 'C', 'A'] }, [], 'djerba'
         );
-        expect(e.poiIds).toEqual(['A', 'B', 'C']);
+        expect(e.poiIds).toEqual(['A', 'B', 'C', 'A']);
+    });
+
+    it('ne modifie pas le tableau poiIds du circuit', () => {
+        const circuit = { id: 'i', name: 'n', poiIds: ['A', 'B', 'A'] };
+        const e = buildCircuitIndexEntry(circuit, [], 'djerba');
+        e.poiIds.push('Z');
+        expect(circuit.poiIds).toEqual(['A', 'B', 'A']);
     });
 });
