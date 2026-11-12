@@ -60,9 +60,19 @@ Tout est enregistré à la saisie.
 Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
 - Heripia route le circuit avec **BRouter**, qui **suit les chemins piétons** : il
   transforme le trait « à vol d'oiseau » en **trace réellement marchable**.
-- Résultat : **« Itinéraire tracé »** et la **distance réelle**.
+- Le panneau **« Choisir l'itinéraire »** s'ouvre à gauche de la carte avec deux
+  variantes : **Direct** *(le plus court raisonnable)* et **Chemins** *(préfère pistes et
+  sentiers, un peu plus long)*. Pour chacune : distance, D+, kilomètres **repassés** et
+  kilomètres par type de voie ; les écarts de Chemins avec Direct sont marqués **mieux**
+  ou **moins bien**. **« Ajuster »** règle la **force** de Chemins *(0 sans effet, 1 par
+  défaut, 3 très fort)*.
+- Cliquez une variante *(ou sa ligne sur la carte)*, puis **« Utiliser cette
+  variante »**. **« Annuler »** ne change rien.
+- Résultat : **« Itinéraire tracé »**, la **distance réelle**, et une ligne qui rappelle
+  la variante et le moteur : **BRouter de ce PC** s'il tourne sur votre ordinateur, sinon
+  **brouter.de**.
 
-*C'est « Tracer l'itinéraire » qui enregistre le circuit avec son tracé.*
+*C'est « Utiliser cette variante » qui enregistre le circuit avec son tracé.*
 
 ### 5 · Ajuster le tracé
 - **« Éditer l'itinéraire »** : ajoutez des **points de passage** *(cliquez sur la
@@ -72,7 +82,9 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   le guider.
 - **« Re-tracer l'itinéraire »** : si vous changez les lieux après coup, le tracé est
   signalé **« séquence modifiée »** *(« Tracé à mettre à jour »)*. Re-tracez pour le
-  remettre à jour.
+  remettre à jour : seuls les passages modifiés sont recalculés, avec la même variante.
+- **« Tout re-tracer »** *(menu ⋮)* : rouvre « Choisir l'itinéraire » ; la variante
+  retenue recalcule **tous** les passages et efface vos ajustements.
 
 ### 6 · Apporter ou afficher une trace existante
 - **« Importer un GPX »** : apporte une trace GPX *(Wikiloc, GPS…)* **comme itinéraire
@@ -107,7 +119,8 @@ changement → ré-attachés à chaque rendu).
 **« ? » Tracer** — sur le hint « BRouter suit les chemins piétons… »
 > **Tracer l'itinéraire** — BRouter calcule un chemin qui **suit les voies piétonnes**
 > (rues, sentiers). Il remplace le trait **« à vol d'oiseau »** (la ligne droite entre vos
-> lieux) par une **trace réellement marchable**, et donne la **vraie distance**.
+> lieux) par une **trace réellement marchable**, et donne la **vraie distance**. Deux
+> variantes vous sont proposées, **Direct** et **Chemins** : vous retenez celle qui convient.
 
 **« ? » Calque** — sur le chip « Calque de référence »
 > **Calque de référence** — Une trace GPX (Wikiloc, GPS…) affichée **en fond**, comme
@@ -158,6 +171,15 @@ les chemins piétons pour transformer le vol d'oiseau en trace marchable. » · 
 Studio », « Exporter le GPX » · périmé : « Tracé à mettre à jour » / « séquence modifiée » ·
 échec partiel : « Tracé presque complet » / « N segments droits » + note furet « Un passage
 est resté en ligne droite » / « Ajouter un point de passage ».
+
+**Comparateur** (`src/circuit-compare.js`) : « Choisir l'itinéraire » · « N lieux · N passages » ·
+Direct « Le plus court raisonnable. C'est le calcul d'aujourd'hui. » · Chemins « Préfère pistes et
+sentiers aux routes et rues, quitte à marcher un peu plus. » · « Calcul en cours · passage N sur N » ·
+Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » au-delà de 100 m) ·
+« Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » · « Calculé par
+BRouter de ce PC » ou « brouter.de · BRouter de ce PC indisponible » · « Réessayer » · « Annuler » ·
+« Utiliser cette variante ». Carte d'état pendant la comparaison : « Choix de l'itinéraire » /
+« 2 variantes ».
 
 **Barre d'actions** (`index.html` ~338-369, handlers `src/ui-circuit-editor.js`) :
 « Boucler le circuit » (ajoute le 1ᵉʳ lieu à la fin) · « Importer un GPX » (trace réelle du

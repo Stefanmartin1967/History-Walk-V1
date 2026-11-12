@@ -210,6 +210,18 @@
   --way-zone-width:      2px;   /* voies de la zone, sous le tracé */
   --way-zone-halo-width: 1px;
   --way-zone-opacity:    0.6;
+  /* Variantes d'itinéraire — comparateur « Choisir l'itinéraire » (PC). Fixes
+     comme --way-* : le fond de carte ne suit pas le moment. Distinctes de l'azur
+     du tracé, de la prune des rues, de la chartreuse des sentiers et de l'olive
+     du « fait », en teinte ET en clarté (validées par Stefan, 12/11/2026). */
+  --variant-direct:        #3F3AC4;  /* indigo */
+  --variant-chemins:       #0A8F6A;  /* émeraude */
+  --variant-halo:          var(--way-halo-light);
+  --variant-width:         6px;      /* variante sélectionnée, dessus */
+  --variant-halo-width:    2px;
+  --variant-width-muted:   4px;      /* l'autre, dessous */
+  --variant-muted-opacity: 0.55;
+  --cv-panel-width:        392px;
   --gps-dot:  var(--azur-500);
   --gps-ring: #FFFFFF;
   --marker-stroke: 2px;
@@ -258,6 +270,13 @@
 
   --shadow:      var(--shadow-panel);
   --shadow-soft: var(--shadow-card);
+
+  /* Repère « mieux / moins bien que Direct » du comparateur d'itinéraire :
+     sémantiques minérales du moment (jamais l'ambre). */
+  --delta-mieux-fg: var(--ok-fg);
+  --delta-mieux-bg: var(--ok-soft);
+  --delta-moins-fg: var(--danger-fg);
+  --delta-moins-bg: var(--danger-soft);
 }
 
 /* ============================================================

@@ -18,6 +18,7 @@
 // elles-mêmes : l'appelant (UI) résout le moteur et passe son `base`.
 import { getAccessPoint } from './utils.js';
 import { fetchWithTimeout } from './net.js';
+import { waysFromMessages, addWays } from './route-stats.js';
 
 export const PUBLIC_BROUTER_URL = 'https://brouter.de/brouter';
 export const LOCAL_BROUTER_URL = 'http://localhost:17777/brouter';
@@ -152,6 +153,8 @@ function toLonLats(points) {
  * @typedef {Object} RouteOptions
  * @property {Object} [routing]  Variante ({ variant, force }) — défaut : Direct.
  * @property {string} [base]     URL du moteur (résolue par resolveEngine) — défaut : brouter.de.
+ * @property {(done: number, total: number) => void} [onProgress]  routeCircuit : appelé à
+ *   l'arrivée de chaque passage (compteur « passage 3 sur 5 » du comparateur).
  */
 
 /**
@@ -181,6 +184,10 @@ export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL }
         throw new Error('BRouter est injoignable — vérifiez la connexion internet.');
     }
     if (!resp.ok) {
+        // brouter.de limite le débit : il répond « Please, retry later! ».
+        let body = '';
+        try { body = typeof resp.text === 'function' ? await resp.text() : ''; } catch (e) { /* corps illisible */ }
+        if (/retry later/i.test(body)) throw new Error('brouter.de limite les demandes.');
         throw new Error(`BRouter n'a pas pu calculer l'itinéraire (erreur ${resp.status}).`);
     }
 
@@ -204,8 +211,10 @@ export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL }
     const distanceKm = props['track-length'] ? (+props['track-length']) / 1000 : 0;
     const durationMin = props['total-time'] ? Math.round((+props['total-time']) / 60) : 0;
     const ascend = pickAscend(props);
+    // Mètres par type de voie (messages BRouter), pour le comparateur ; null si absents.
+    const ways = waysFromMessages(props);
 
-    return { realTrack, distanceKm, durationMin, ascend };
+    return { realTrack, distanceKm, durationMin, ascend, ways };
 }
 
 /**
@@ -220,12 +229,13 @@ export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL }
  */
 async function routeSegment(vias, opts = {}) {
     try {
-        const { realTrack, distanceKm, durationMin, ascend } = await routePoints(vias, opts);
-        return { ok: true, coords: realTrack, distanceKm, durationMin, ascend };
+        const { realTrack, distanceKm, durationMin, ascend, ways } = await routePoints(vias, opts);
+        return { ok: true, coords: realTrack, distanceKm, durationMin, ascend, ways };
     } catch (e) {
         // Repli ligne droite : on garde la séquence des vias telle quelle.
+        // `error` : le motif, pour le comparateur (« BRouter de ce PC ne répond pas. »).
         const coords = vias.map(([lon, lat]) => [lat, lon]);
-        return { ok: false, coords, distanceKm: polylineKm(coords), durationMin: 0, ascend: null };
+        return { ok: false, coords, distanceKm: polylineKm(coords), durationMin: 0, ascend: null, error: e && e.message };
     }
 }
 
@@ -280,8 +290,14 @@ export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
     const tasks = [];
-    for (let i = 0; i < anchors.length - 1; i++) {
-        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), opts));
+    const total = anchors.length - 1;
+    let done = 0;
+    for (let i = 0; i < total; i++) {
+        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), opts).then((seg) => {
+            done++;
+            if (typeof opts.onProgress === 'function') opts.onProgress(done, total);
+            return seg;
+        }));
     }
     const segments = await Promise.all(tasks);
     const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
@@ -290,6 +306,8 @@ export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
         distanceKm: segmentsDistanceKm(segments),
         durationMin: segments.reduce((sum, s) => sum + (s.durationMin || 0), 0),
         ascend: segmentsAscend(segments),
+        // Mètres par type de voie : un passage en ligne droite compte en « Non classé ».
+        ways: addWays(...segments.map(s => s.ok && s.ways ? s.ways : { 'non-classe': (s.distanceKm || 0) * 1000 })),
         segments,
         failedSegments,
     };
