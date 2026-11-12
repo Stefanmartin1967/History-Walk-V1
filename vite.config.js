@@ -27,7 +27,8 @@ export default defineConfig({
       workbox: {
         // Les fichiers .geojson sont exclus du precache (CacheFirst trop agressif)
         // et gérés en NetworkFirst via runtimeCaching ci-dessous.
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp}'],
+        // woff2 : police Spectral (public/fonts/spectral), lisible hors ligne.
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,webp,woff2}'],
         // og-image.png (720 KB) : utilisée par les scrapers sociaux, inutile hors-ligne.
         // screenshots/ : fiche d'installation PWA uniquement, inutile hors-ligne.
         //
