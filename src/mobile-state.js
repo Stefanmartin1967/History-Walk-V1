@@ -16,7 +16,11 @@ let _allCircuitsOrdered = []; // Liste ordonnée pour le swipe entre circuits
 // ─── Getters / Setters ────────────────────────────────────────────────────────
 
 export function getCurrentView() { return currentView; }
-export function setCurrentView(v) { currentView = v; }
+export function setCurrentView(v) {
+    currentView = v;
+    // La bande de filtres n'appartient qu'à la liste « Mes Circuits ».
+    if (v !== 'circuits') setMobileFilterStrip('');
+}
 
 export function getMobileSort() { return mobileSort; }
 export function setMobileSort(s) { mobileSort = s; }
@@ -121,11 +125,21 @@ export function clearMobileViewFooter() {
     setMobileViewFooter('');
 }
 
-/** Reset des 2 slots dynamiques (header + view-footer). À appeler avant de
- *  switcher de vue pour partir d'un état propre. */
+/** Bande « Filtres actifs » au-dessus du dock (vue Mes Circuits). Vide =
+ *  cachée. */
+export function setMobileFilterStrip(html) {
+    const strip = document.getElementById('mobile-filter-strip');
+    if (!strip) return;
+    strip.innerHTML = html || '';
+    strip.hidden = !html;
+}
+
+/** Reset des slots dynamiques (header + view-footer + bande de filtres). À
+ *  appeler avant de switcher de vue pour partir d'un état propre. */
 export function resetMobileSlots() {
     clearMobileHeaderSlot();
     clearMobileViewFooter();
+    setMobileFilterStrip('');
 }
 
 // ─── Navigation historique mobile (pattern proactif C7) ──────────────────────

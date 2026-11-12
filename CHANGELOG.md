@@ -6,6 +6,14 @@
 
 ---
 
+- TÉLÉPHONE : LES FILTRES ACTIFS DE « MES CIRCUITS » SE VOIENT ET SE RETIRENT (v3.7.513). Lot 2 du handoff Claude Design « écran bas » (12/11/2026). Le bouton réglages de l'en-tête disait COMBIEN de filtres étaient actifs, jamais LESQUELS.
+  - Bande `#mobile-filter-strip` au-dessus du dock, dans la vue Mes Circuits seulement : une puce de 44 px par filtre (Officiels, Vérifiés, Avec resto, distance « 3 → 12 km », zone, À faire / Faits, Cachés, Tri), toucher la puce retire le filtre, « Tout réinitialiser » au bout. Défile de côté ; cachée sans filtre et dès qu'on quitte la liste (`resetMobileSlots`, `setCurrentView`).
+  - `getActiveMobileFilters` (`src/mobile-circuits.js`) : source unique de la pastille du bouton réglages et de la bande ; `removeMobileFilter` remet un filtre à son défaut.
+  - Constat préalable : sur téléphone, les filtres de la carte (panneau PC) ne sont jamais réglés ; les filtres réels sont ceux de la liste. La bande montre donc ceux-là. Décision Stefan : le bouton « Filtre » du dock garde sa bascule Tout / À faire, sans pastille.
+  - Bug corrigé au passage : en « À faire », le bouton du dock devenait VIDE. L'icône `list-check` n'existe pas dans `appIcons` (c'est `list-checks`) ; corrigé dans `mobile-nav.js`. Le bouton est aussi resynchronisé quand « À faire » est retiré par une puce ou par « Tout réinitialiser » (il restait allumé).
+  - Vérifié sur l'aperçu en 375 × 812 : puces de 44 px à 61 px au-dessus du dock, défilement, retrait.
+  - Tests : `tests/mobile_filter_strip.test.js` (+6). `style.css?v=8.65`.
+
 - POLICE SPECTRAL ENFIN CHARGÉE (v3.7.512). Sujet 8 du handoff Claude Design « écran bas » (12/11/2026), décision Stefan : charger Spectral. `--font-serif` l'annonçait depuis le début, mais aucun fichier n'existait : l'app affichait Georgia partout où le serif était prévu.
   - `public/fonts/spectral/` : graisse 700 seulement, sous-ensembles latin (23 Ko) et latin-ext (21 Ko), woff2 tirés de `@fontsource/spectral` 5.3.0 (aucune dépendance ajoutée), licence OFL jointe (`OFL.txt`).
   - `style/tokens.css` : deux `@font-face` avec `unicode-range` et `font-display: swap`, Georgia en repli. Le sous-ensemble latin est préchargé (`index.html`), le latin-ext ne se charge que si une page en a besoin.

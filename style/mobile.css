@@ -1443,3 +1443,68 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
     border-top: 1px solid var(--border-filet);
     box-shadow: 0 -8px 20px -12px rgba(20, 42, 67, 0.18);
 }
+
+/* ─── Filtres actifs de « Mes Circuits » : bande de puces au-dessus du dock ───
+   Handoff Claude Design « écran bas », lot 2 (12/11/2026). Le bouton réglages
+   de l'en-tête disait COMBIEN de filtres, jamais LESQUELS. Une puce par filtre
+   (getActiveMobileFilters, mobile-circuits.js), toute la puce est la cible
+   (44 px) et retire son filtre ; « Tout réinitialiser » au bout. Défile de
+   côté ; cachée sans filtre et hors de la liste (resetMobileSlots). */
+.m-filter-strip {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: var(--space-sm) var(--space-md);
+    background: var(--paper);
+    border-top: var(--border-filet);
+}
+.m-filter-strip[hidden] { display: none; }
+.m-filter-strip::-webkit-scrollbar { display: none; }
+.m-chip {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-sm);
+    height: var(--tap-min);
+    padding: 0 calc(var(--space-sm) + var(--space-xs)) 0 var(--space-md);
+    border: var(--border-filet-strong);
+    border-radius: var(--radius-pill);
+    background: var(--paper-raised);
+    color: var(--ink);
+    font: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--weight-semibold);
+    white-space: nowrap;
+    cursor: pointer;
+}
+.m-chip svg {
+    width: calc(var(--space-md) + var(--space-2xs));
+    height: calc(var(--space-md) + var(--space-2xs));
+    color: var(--ink-soft);
+}
+.m-chip:active {
+    background: var(--brand-soft);
+    border-color: var(--brand);
+}
+.m-chip:focus-visible,
+.m-chip-reset:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+}
+.m-chip-reset {
+    flex: none;
+    height: var(--tap-min);
+    padding: 0 var(--space-sm);
+    border: 0;
+    background: transparent;
+    color: var(--brand-ink);
+    font: inherit;
+    font-size: var(--font-size-base);
+    font-weight: var(--weight-semibold);
+    text-decoration: underline;
+    text-underline-offset: var(--space-2xs);
+    white-space: nowrap;
+    cursor: pointer;
+}

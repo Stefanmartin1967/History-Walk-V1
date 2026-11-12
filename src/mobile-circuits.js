@@ -30,6 +30,7 @@ import {
     pushMobileLevel,
     setMobileHeaderSlot,
     clearMobileViewFooter,
+    setMobileFilterStrip,
 } from './mobile-state.js';
 import { eventBus } from './events.js';
 
@@ -192,6 +193,9 @@ export function renderMobileCircuitsList() {
         </div>
     `;
     setMobileHeaderSlot(sanitizeHTML(headerHtml));
+    bindFilterStrip();
+    renderFilterStrip();
+    syncDockFilterButton();
 
     // ─── Body : liste des cartes circuit ──────────────────────────────────────
     let html = `<div class="mobile-list-container" id="mobile-circuits-list">`;
@@ -365,20 +369,108 @@ export function renderMobileCircuitsList() {
     }
 }
 
-// ─── Compteur de filtres actifs (pour le badge n) ────────────────────────────
-function countActiveFilters() {
-    let n = 0;
-    if (filterTypeOfficial) n++;
-    if (filterTypeVerified) n++;
-    if (filterTypeResto)    n++;
-    if (filterCompletion !== 'all') n++;
-    if (filterVisibility !== 'visible') n++;
-    if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) n++;
-    if (state.activeFilters?.zone) n++;
+// ─── Filtres actifs : une entrée par filtre ──────────────────────────────────
+// Source unique du badge n (bouton réglages) et de la bande de puces au-dessus
+// du dock (handoff Claude Design « écran bas », lot 2, 12/11/2026). Libellés
+// repris du panneau de filtres.
+const SORT_LABELS = { proximity_asc: 'Proximité', dist_asc: 'Court', dist_desc: 'Long', verified_first: 'Vérifiés d\'abord' };
+
+export function getActiveMobileFilters() {
+    const out = [];
+    if (filterTypeOfficial) out.push({ id: 'official', label: 'Officiels' });
+    if (filterTypeVerified) out.push({ id: 'verified', label: 'Vérifiés' });
+    if (filterTypeResto)    out.push({ id: 'resto', label: 'Avec resto' });
+    if (filterMinKm > 0 || filterMaxKm < DIST_MAX_KM) {
+        out.push({ id: 'distance', label: `${filterMinKm} → ${filterMaxKm} km` });
+    }
+    if (state.activeFilters?.zone) out.push({ id: 'zone', label: state.activeFilters.zone });
+    if (filterCompletion !== 'all') {
+        out.push({ id: 'completion', label: filterCompletion === 'todo' ? 'À faire' : 'Faits' });
+    }
+    if (filterVisibility !== 'visible') {
+        out.push({ id: 'visibility', label: filterVisibility === 'hidden' ? 'Cachés' : 'Cachés compris' });
+    }
     // Le tri ne compte que s'il diverge du tri par défaut, comparés tous deux
     // tels qu'appliqués : sans point de départ, choisir « Court » revient au défaut.
-    if (getEffectiveSort() !== getEffectiveSort(DEFAULT_MOBILE_SORT)) n++;
-    return n;
+    const sort = getEffectiveSort();
+    if (sort !== getEffectiveSort(DEFAULT_MOBILE_SORT)) {
+        out.push({ id: 'sort', label: `Tri : ${SORT_LABELS[sort] || sort}` });
+    }
+    return out;
+}
+
+function countActiveFilters() {
+    return getActiveMobileFilters().length;
+}
+
+// Retire UN filtre (id d'une entrée de getActiveMobileFilters) : il repasse à
+// son défaut, comme le ferait le panneau.
+export function removeMobileFilter(id) {
+    if (id === 'official') filterTypeOfficial = false;
+    else if (id === 'verified') filterTypeVerified = false;
+    else if (id === 'resto') filterTypeResto = false;
+    else if (id === 'distance') { filterMinKm = 0; filterMaxKm = DIST_MAX_KM; }
+    else if (id === 'zone') setActiveFilter('zone', null);
+    else if (id === 'completion') {
+        filterCompletion = 'all';
+        setFilterCompleted(false);
+        lastSeenStateFilterCompleted = false;
+    }
+    else if (id === 'visibility') filterVisibility = 'visible';
+    else if (id === 'sort') setMobileSort(DEFAULT_MOBILE_SORT);
+    else return;
+    renderMobileCircuitsList();
+    if (sheetOpen) renderFilterSheetBody();
+}
+
+function renderFilterStrip() {
+    const filters = getActiveMobileFilters();
+    if (filters.length === 0) { setMobileFilterStrip(''); return; }
+    setMobileFilterStrip(`
+        ${filters.map(({ id, label }) => `
+            <button type="button" class="m-chip" data-remove="${escapeHtml(id)}"
+                    aria-label="Retirer le filtre ${escapeHtml(label)}">
+                <span>${escapeHtml(label)}</span><i data-lucide="x"></i>
+            </button>`).join('')}
+        <button type="button" class="m-chip-reset" data-clear>Tout réinitialiser</button>`);
+    const strip = document.getElementById('mobile-filter-strip');
+    if (strip) createIcons({ icons: appIcons, root: strip });
+}
+
+// Un seul écouteur (la bande est un élément fixe d'index.html, son contenu
+// est remplacé à chaque rendu). Au clavier, le focus passe à la première puce
+// restante, sinon au bouton réglages de l'en-tête.
+let filterStripBound = false;
+function bindFilterStrip() {
+    const strip = document.getElementById('mobile-filter-strip');
+    if (!strip || filterStripBound) return;
+    filterStripBound = true;
+    strip.addEventListener('click', (e) => {
+        const remove = e.target.closest('[data-remove]');
+        const clear = e.target.closest('[data-clear]');
+        if (!remove && !clear) return;
+        const byKeyboard = e.detail === 0;
+        if (remove) removeMobileFilter(remove.dataset.remove);
+        else resetAllMobileFilters();
+        if (byKeyboard) {
+            const next = strip.hidden ? document.getElementById('mobile-mc-filter-btn')
+                : strip.querySelector('.m-chip, .m-chip-reset');
+            next?.focus();
+        }
+    });
+}
+
+// Le bouton « Filtre » du dock bascule Tout / À faire (mobile-nav.js) et
+// n'était mis à jour qu'à son propre clic : retirer « À faire » depuis une
+// puce ou tout réinitialiser le laissait allumé. Resynchronisé à chaque rendu.
+function syncDockFilterButton() {
+    const btn = document.getElementById('btn-mobile-filter');
+    if (!btn) return;
+    const on = Boolean(state.filterCompleted);
+    if (btn.classList.contains('is-filter-active') === on) return;
+    btn.classList.toggle('is-filter-active', on);
+    btn.innerHTML = `<i data-lucide="${on ? 'list-checks' : 'list'}"></i><span>${on ? 'A faire' : 'Tout'}</span>`;
+    createIcons({ icons: appIcons, root: btn });
 }
 
 // Tri réellement appliqué (règle partagée avec le PC, cf. circuit-sort.js).

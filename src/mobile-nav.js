@@ -201,7 +201,7 @@ export function initMobileMode() {
 
             setFilterCompleted(!state.filterCompleted);
 
-            const iconName = state.filterCompleted ? 'list-check' : 'list';
+            const iconName = state.filterCompleted ? 'list-checks' : 'list'; // list-checks : seule variante dans appIcons (list-check donnait un bouton vide)
             const labelText = state.filterCompleted ? 'A faire' : 'Tout';
 
             newFilterBtn.classList.toggle('is-filter-active', state.filterCompleted);
