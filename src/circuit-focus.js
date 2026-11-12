@@ -22,6 +22,7 @@ import { state } from './state.js';
 import { map, updatePolylines, clearMapLines, trackRenderer } from './map.js';
 import {
     anchorOf, routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm, segmentsAscend,
+    normalizeRouting, resolveEngine,
 } from './circuit-routing.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
@@ -201,7 +202,12 @@ async function rerouteSegment(i) {
     _rerouting++;
     renderBar();
     try {
-        const seg = await routeOneSegment(features(), i, waypointsBySeg(), undefined, anchorOverrides());
+        // Même variante que le tracé (mémorisée sur le circuit, Direct sinon) ;
+        // « éviter de repasser » ne s'applique pas à un passage retouché à la
+        // main (décision de Stefan, 12/11/2026).
+        const routing = normalizeRouting(getActiveCircuit()?.routing);
+        const { base } = await resolveEngine();
+        const seg = await routeOneSegment(features(), i, waypointsBySeg(), { routing, base }, anchorOverrides());
         state.routeSegments[i] = seg;
     } catch (e) {
         console.error('[focus] re-route segment', i, e);

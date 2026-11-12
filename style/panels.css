@@ -2822,6 +2822,23 @@
 .trace-ways-retry:hover { text-decoration: underline; }
 .trace-ways-retry:focus-visible { outline: none; box-shadow: var(--focus-ring); }
 
+/* Variante qui a calculé le tracé (« Chemins · force 1 · BRouter de ce PC ») :
+   une ligne en encre faible sous les types de voie (handoff « Choisir
+   l'itinéraire », 12/11/2026). Préfixe .trace-status-txt : passe avant la règle
+   des <p> de la carte (marge, couleur). */
+.trace-status-txt .trace-variant {
+    margin: var(--space-xs) 0 0;
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: var(--space-xs) var(--space-sm);
+    font-size: var(--font-size-xs);
+    color: var(--ink-faint);
+}
+.trace-variant b { font-weight: var(--weight-semibold); color: var(--ink-soft); }
+.trace-variant-dot {
+    width: 3px; height: 3px; border-radius: var(--radius-pill);
+    background: currentColor; flex-shrink: 0;
+}
+
 /* Action primaire « Ajuster le tracé » (ouvre le focus mode / niveau 2) */
 .btn-adjust {
     flex: 1; border: 1px solid color-mix(in oklab, var(--brand) 35%, var(--line));

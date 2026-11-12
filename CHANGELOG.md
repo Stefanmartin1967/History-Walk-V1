@@ -6,6 +6,14 @@
 
 ---
 
+- ITINÉRAIRE : BROUTER DE CE PC ET VARIANTE MÉMORISÉE (v3.7.520). PR 1 sur 3 du comparateur de tracé (handoff Claude Design « Choisir l'itinéraire », 12/11/2026, `.claude/handoff-comparateur-trace/`). Rien ne change pour un tracé « Direct » ; le panneau de choix arrive en PR 2.
+  - Moteur : l'app trace avec BRouter de ce PC (`http://localhost:17777`, ajouté au `connect-src`) s'il répond, sinon brouter.de comme avant (`resolveEngine`, circuit-routing.js : sonde de 1,5 s, résultat gardé une minute, oublié si le PC cesse de répondre).
+  - Variantes : Direct (hiking-beta) et Chemins (hiking-mountain + `Offroad_factor` = force, 0 à 3 au dixième). `routePoints`, `routeCircuit`, `routeOneSegment` et `routeChangedSegments` reçoivent `{ routing, base }` au lieu d'un nom de profil.
+  - Le circuit garde `routing` ({ variant, force, engine }) avec son tracé, comme le D+ ; « Tracer », « Re-tracer » (partiel), « Tout re-tracer » et l'édition d'un passage réutilisent la variante du circuit ; « Revenir au tracé précédent » rétablit aussi l'ancienne.
+  - Carte d'état du tracé : une ligne « Direct · BRouter de ce PC » / « Chemins · force 1 · brouter.de » sous les types de voie (`.trace-variant`, panels.css). Rien pour un circuit tracé avant.
+  - Vérifié sur l'aperçu (Braa → Hadher Bach) : appels sur localhost:17777, ligne « Direct · BRouter de ce PC » ; variante Chemins force 2 posée sur le circuit puis « Tout re-tracer » : appels `hiking-mountain&profile:Offroad_factor=2`, ligne « Chemins · force 2 · BRouter de ce PC », toujours là après rechargement.
+  - Tests : `tests/circuit_routing_variant.test.js` (+13).
+
 - CENTRE DE CONTRÔLE : « ANNULER » SUR UN CIRCUIT NOUVEAU LE MET À LA CORBEILLE (v3.7.519). Vu dans une vidéo de Stefan le 12/11/2026 : sur un circuit jamais publié, « Annuler » retirait la ligne, qui revenait une demi-seconde plus tard ; le bouton ne faisait rien, et « Tout publier » l'aurait publié.
   - Cause : pour un circuit, « Annuler » ne savait que revenir à la version publiée ; un circuit absent de l'index n'était volontairement pas touché, et le recalcul du diff le reproposait en NOUVEAU.
   - Correctif (choix de Stefan : la corbeille) : confirmation « Ne pas publier ce circuit », puis mise à la corbeille par le même point de suppression que la page du circuit (`performCircuitDeletion`) ; récupérable depuis la Corbeille de Mes circuits. Info-bulle du bouton adaptée. Même logique que les lieux créés (06/11).
