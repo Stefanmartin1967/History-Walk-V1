@@ -13,7 +13,7 @@ import { restoreCircuit, deleteCircuitById } from './database.js';
 import { showToast } from './toast.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { renderExplorerList } from './ui-circuit-list.js';
+import { eventBus } from './events.js';
 
 function escapeHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => (
@@ -122,7 +122,7 @@ function attachListeners() {
             await restoreDeletedCircuit(id);
             setTimeout(() => {
                 rerender();
-                renderExplorerList();
+                refreshCircuitList();
             }, 250);
         });
     });
@@ -130,6 +130,14 @@ function attachListeners() {
     root.querySelectorAll('[data-action="delete"]').forEach(btn => {
         btn.addEventListener('click', () => openConfirm(btn.dataset.id));
     });
+}
+
+// Liste « Mes circuits » ET sa barre d'outils : la pastille de la corbeille vit
+// dans la barre. renderExplorerList() seul ne redessinait que la liste : après
+// une suppression définitive ou une restauration, la pastille gardait l'ancien
+// nombre jusqu'au changement d'onglet (vu le 12/11/2026).
+function refreshCircuitList() {
+    eventBus.emit('ui:render-explorer-list');
 }
 
 async function restoreDeletedCircuit(circuitId) {
@@ -205,7 +213,7 @@ function openConfirm(circuitId) {
         close();
         await permanentlyDeleteCircuit(circuitId);
         rerender();
-        renderExplorerList();
+        refreshCircuitList();
     });
 }
 

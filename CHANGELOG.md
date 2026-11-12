@@ -6,6 +6,12 @@
 
 ---
 
+- CORBEILLE DES CIRCUITS : LA PASTILLE SE MET À JOUR TOUT DE SUITE (v3.7.517). Vu par Stefan le 12/11/2026 : après « Supprimer définitivement », la pastille « 1 » de la corbeille restait jusqu'au changement d'onglet.
+  - Cause : après une suppression définitive ou une restauration, `circuit-trash-ui.js` appelait `renderExplorerList()`, qui ne redessine que la liste. La pastille vit dans la barre d'outils (`renderToolbar`), qui n'était redessinée qu'au changement d'onglet.
+  - Correctif : la corbeille émet `ui:render-explorer-list`, qui redessine la barre ET la liste (`renderAll`, ui-circuit-list.js), comme ui-details.js et ui-sidebar.js.
+  - Vérifié sur l'aperçu : pastille « 1 », suppression définitive, plus de pastille, aucune erreur en console.
+  - Tests : `tests/circuit_trash_ui.test.js` (+2, suppression et restauration ; tous deux échouaient avant le correctif).
+
 - CIRCUITS EN BOUCLE : LA PUBLICATION GARDE LE RETOUR AU DÉPART (v3.7.516). Signalé par Stefan (12/11/2026) : « j'ai le souvenir d'avoir perdu le retour… il s'était retiré de la liste des lieux ».
   - Cause : à la publication, `buildCircuitIndexEntry` (src/admin-control-center.js) dédoublonnait les poiIds (`new Set`), comme `scripts/generate-circuit-index.js`. Un circuit fait avec « Boucler » répète son 1er lieu à la fin : ce retour disparaissait de l'index. Rechargé depuis l'index, le circuit n'avait plus son dernier lieu, et re-tracer ou éditer faisait disparaître le dernier passage. Introduit par #624 (22/05/2026), qui corrigeait un faux « modifié » permanent dans le centre de contrôle.
   - « Boucler » et recliquer le 1er lieu passent par le même `addPoiToCircuit` : aucune différence côté création, ni à l'enregistrement local.
