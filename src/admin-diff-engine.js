@@ -444,24 +444,21 @@ export async function prepareDiffData(adminDraft) {
                 changes.push({ key: 'Description', old: remoteDesc || '—', new: localDesc || '—' });
             }
 
-            // Comparaison des étapes (ordre + contenu), sur poiIds DÉDOUBLONNÉS.
-            // L'index distant porte des poiIds dédoublonnés (Set), aussi bien
-            // écrit par l'app que régénéré par generate-circuit-index.js
-            // → un circuit en BOUCLE (étape 1 = étape
-            // N, ex. retour au point de départ) a N poiIds en local mais N-1
-            // dans l'index. Sans dédoublonnage, le diff signalerait à tort une
-            // « modification » permanente sur tout circuit en boucle (bug
-            // observé 21/05/2026). On compare donc les séquences uniques
-            // (1re occurrence préservée), ce qui matche le comportement du script.
-            const dedup = (ids) => [...new Set(ids || [])];
-            const localIds = dedup(local.poiIds).join(',');
-            const remoteIds = dedup(remote.poiIds).join(',');
+            // Comparaison des étapes (ordre + contenu), séquences COMPLÈTES.
+            // Depuis le 12/11/2026, l'index garde les répétitions (retour d'une
+            // boucle), écrit par l'app comme régénéré par generate-circuit-index.js.
+            // Avant (#624, 21/05/2026), on dédoublonnait des deux côtés : le diff
+            // ne voyait donc jamais qu'une boucle publiée avait perdu son retour.
+            // Une boucle publiée avant le correctif (retour absent de l'index)
+            // ressort ici en « Étapes » : la republier rétablit le retour.
+            const localIds = (local.poiIds || []).join(',');
+            const remoteIds = (remote.poiIds || []).join(',');
 
             if (localIds !== remoteIds) {
                 changes.push({
                     key: 'Étapes',
-                    old: `${dedup(remote.poiIds).length} étapes`,
-                    new: `${dedup(local.poiIds).length} étapes`
+                    old: `${(remote.poiIds || []).length} étapes`,
+                    new: `${(local.poiIds || []).length} étapes`
                 });
             }
 

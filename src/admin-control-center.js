@@ -45,10 +45,13 @@ import { openControlCenterModal, renderTab, closeCCModal, syncFooterAndNavCount 
  */
 export function buildCircuitIndexEntry(circuit, features, mapId) {
     const distance = (getRealDistance(circuit) / 1000).toFixed(1) + ' km';
-    // poiIds dédoublonnés (1re occurrence) pour matcher generate-circuit-index.js
-    // (qui dédoublonne via Set). Sinon un circuit en boucle aurait des poiIds
-    // différents entre l'index écrit par l'app et celui d'une régénération.
-    const poiIds = [...new Set(circuit.poiIds || [])];
+    // poiIds TELS QUELS, répétitions comprises. Un circuit en boucle (« Boucler »)
+    // répète son 1er lieu à la fin : ce retour EST une étape. Jusqu'au 12/11/2026
+    // on dédoublonnait ici (#624, pour s'aligner sur le script) et la publication
+    // retirait le retour de la liste des lieux : un circuit rechargé depuis
+    // l'index perdait son dernier passage au re-tracé (Rym Beach, 2 boucles).
+    // generate-circuit-index.js garde lui aussi les répétitions (même règle).
+    const poiIds = [...(circuit.poiIds || [])];
     const entry = {
         id: circuit.id,
         name: circuit.name,

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-const { findPOIsOnTrack } = require('../scripts/generate-circuit-index.js');
+const { findPOIsOnTrack, matchWaypointsToPois } = require('../scripts/generate-circuit-index.js');
 
 // Non-régression de l'ordre des poiIds produit par generate-circuit-index.js.
 // findPOIsOnTrack DOIT préserver l'ordre des waypoints (= priorityIds, dérivé du
@@ -49,6 +49,22 @@ describe('findPOIsOnTrack — ordre canonique (waypoints), pas tri-par-tracé', 
             [33.0030, 11.0030], // C
         ];
         expect(findPOIsOnTrack(track, pois, ['A', 'B', 'C'])).toEqual(['A', 'B', 'C']);
+    });
+
+    it('BOUCLE fermée (« Boucler ») : le retour au départ est GARDÉ en dernière étape', () => {
+        // 12/11/2026 : le GPX porte les <wpt> A, B, C, A ; l'index perdait le 2e A.
+        const pois = [poi('A', 11.0000, 33.0000), poi('B', 11.0030, 33.0000), poi('C', 11.0030, 33.0030)];
+        const track = [[33.0000, 11.0000], [33.0000, 11.0030], [33.0030, 11.0030], [33.0000, 11.0000]];
+        expect(findPOIsOnTrack(track, pois, ['A', 'B', 'C', 'A'])).toEqual(['A', 'B', 'C', 'A']);
+    });
+
+    it('matchWaypointsToPois garde l\'ordre ET les répétitions des <wpt>', () => {
+        const pois = [
+            { properties: { HW_ID: 'A', 'Nom du site FR': 'Rym Beach' }, geometry: { coordinates: [11.046, 33.826] } },
+            { properties: { HW_ID: 'B', 'Nom du site FR': 'Mausolée Lella Hadhria' }, geometry: { coordinates: [11.059, 33.799] } },
+        ];
+        const wpts = [{ name: 'Rym Beach' }, { name: 'Mausolée Lella Hadhria' }, { name: 'Rym Beach' }];
+        expect(matchWaypointsToPois(wpts, pois)).toEqual(['A', 'B', 'A']);
     });
 
     it('écarte un POI prioritaire trop loin du tracé (> 2 km), garde l\'ordre des autres', () => {

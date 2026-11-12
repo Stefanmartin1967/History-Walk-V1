@@ -101,8 +101,11 @@ function extractWaypoints(gpxContent) {
     return wpts;
 }
 
+// Renvoie les lieux des <wpt> DANS L'ORDRE, répétitions comprises : le retour
+// d'une boucle (1er lieu répété à la fin) est une étape (12/11/2026 ; avant, un
+// Set le retirait et la publication perdait le retour).
 function matchWaypointsToPois(wpts, poiFeatures) {
-    const matchedIds = new Set();
+    const matchedIds = [];
 
     wpts.forEach(wpt => {
         if (!wpt.name) return;
@@ -125,11 +128,11 @@ function matchWaypointsToPois(wpts, poiFeatures) {
         }
 
         if (match) {
-            matchedIds.add(match.properties.HW_ID);
+            matchedIds.push(match.properties.HW_ID);
         }
     });
 
-    return Array.from(matchedIds);
+    return matchedIds;
 }
 
 function calculateTrackDistance(coords) {
@@ -310,9 +313,9 @@ function findPOIsOnTrack(trackPoints, poiFeatures, priorityIds = []) {
 
     // ORDRE CANONIQUE = ordre des waypoints (= ordre de sélection de l'admin).
     // generateGPXString écrit les <wpt> dans l'ordre de circuit.poiIds, et
-    // matchWaypointsToPois renvoie priorityIds dans ce même ordre (dédoublonné,
-    // 1re occurrence). On préserve donc cet ordre, AU LIEU de trier par position
-    // sur le tracé.
+    // matchWaypointsToPois renvoie priorityIds dans ce même ordre, RÉPÉTITIONS
+    // COMPRISES (retour d'une boucle, 12/11/2026). On préserve donc cet ordre, AU
+    // LIEU de trier par position sur le tracé.
     //
     // Pourquoi pas le tri par tracé : c'était un VESTIGE de l'ancienne découverte
     // par PROXIMITÉ (le script ramassait tous les POIs proches du tracé, sans
@@ -324,9 +327,11 @@ function findPOIsOnTrack(trackPoints, poiFeatures, priorityIds = []) {
     // fin et se retrouvait trié en dernier. Conséquences : l'index ne
     // correspondait plus à l'ordre local (faux positif « modifié » permanent dans
     // le CC admin) et la boucle s'affichait en démarrant au mauvais POI côté user.
-    matchedPOIs.sort((a, b) => priorityIds.indexOf(a.id) - priorityIds.indexOf(b.id));
-
-    return matchedPOIs.map(p => p.id);
+    // matchedPOIs ne contient chaque lieu qu'une fois (un par POI du GeoJSON) :
+    // on repart de priorityIds pour garder l'ordre ET les répétitions, en ne
+    // retenant que les lieux trouvés près du tracé.
+    const trouves = new Set(matchedPOIs.map(p => p.id));
+    return priorityIds.filter(id => trouves.has(id));
 }
 
 function processDirectory(mapId, zones, destinations) {
@@ -534,5 +539,6 @@ module.exports = {
     extractWaypoints,
     extractTrackPoints,
     unescapeXml,
-    findPOIsOnTrack
+    findPOIsOnTrack,
+    matchWaypointsToPois
 };
