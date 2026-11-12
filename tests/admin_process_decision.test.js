@@ -36,6 +36,7 @@ const h = vi.hoisted(() => {
         fetchWithTimeoutSpy: vi.fn(),
         revertCircuitToPublishedSpy: vi.fn(() => Promise.resolve()),
         removeUnpublishedPoiSpy: vi.fn(() => Promise.resolve()),
+        performCircuitDeletionSpy: vi.fn(() => Promise.resolve({ success: true })),
     };
 });
 
@@ -155,6 +156,11 @@ vi.mock('../src/admin-control-ui.js', () => ({
 // Import dynamique depuis admin-control-center (création annulée).
 vi.mock('../src/data.js', () => ({
     removeUnpublishedPoi: (id) => h.removeUnpublishedPoiSpy(id)
+}));
+
+// Import dynamique depuis admin-control-center (circuit NOUVEAU annulé → corbeille).
+vi.mock('../src/circuit-actions.js', () => ({
+    performCircuitDeletion: (id) => h.performCircuitDeletionSpy(id)
 }));
 
 // L'import doit venir après les mocks
@@ -380,5 +386,50 @@ describe("processDecision — scope='poi' : annuler une CRÉATION non publiée",
         expect(h.showConfirmSpy).not.toHaveBeenCalled();
         expect(h.removeUnpublishedPoiSpy).not.toHaveBeenCalled();
         expect(setUserDataSpy).toHaveBeenCalled();
+    });
+});
+
+// Régression du 12/11/2026 (vidéo de Stefan) : « Annuler » sur un circuit
+// NOUVEAU (jamais publié) ne faisait rien — la ligne disparaissait puis revenait
+// au recalcul du diff, et « Tout publier » l'aurait publié. Désormais :
+// confirmation, puis corbeille (récupérable), par le même point de suppression
+// que la page du circuit.
+describe("processDecision — scope='circuit' : annuler un circuit NOUVEAU", () => {
+    beforeEach(() => {
+        vi.clearAllMocks();
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(true));
+        h.performCircuitDeletionSpy.mockImplementation(() => Promise.resolve({ success: true }));
+        diffData.circuits = [{ id: 'HW-neuf', name: 'Boucle de test', isCreation: true, changes: [] }];
+        document.body.innerHTML = '<div id="cc-diff-item-HW-neuf"></div>';
+    });
+
+    it("après confirmation : le circuit part à la corbeille, la ligne disparaît, le diff est recalculé", async () => {
+        await processDecision('HW-neuf', 'refuse', 'circuit');
+
+        expect(h.showConfirmSpy).toHaveBeenCalledTimes(1);
+        expect(h.showConfirmSpy.mock.calls[0][1]).toContain('Boucle de test');
+        expect(h.performCircuitDeletionSpy).toHaveBeenCalledWith('HW-neuf');
+        expect(document.getElementById('cc-diff-item-HW-neuf')).toBeNull();
+        expect(prepareDiffDataSpy).toHaveBeenCalled();
+        expect(h.revertCircuitToPublishedSpy).not.toHaveBeenCalled();
+    });
+
+    it("« Garder » : rien ne bouge", async () => {
+        h.showConfirmSpy.mockImplementation(() => Promise.resolve(false));
+
+        await processDecision('HW-neuf', 'refuse', 'circuit');
+
+        expect(h.performCircuitDeletionSpy).not.toHaveBeenCalled();
+        expect(document.getElementById('cc-diff-item-HW-neuf')).not.toBeNull();
+    });
+
+    it("une MODIFICATION d'un circuit publié garde le chemin habituel (version publiée)", async () => {
+        diffData.circuits = [{ id: 'HW-off', name: 'Nom publié', changes: [] }];
+        h.fetchWithTimeoutSpy.mockResolvedValue({ ok: true, json: async () => ([{ id: 'HW-off', name: 'Nom publié', poiIds: ['a'] }]) });
+
+        await processDecision('HW-off', 'refuse', 'circuit');
+
+        expect(h.performCircuitDeletionSpy).not.toHaveBeenCalled();
+        expect(h.revertCircuitToPublishedSpy).toHaveBeenCalled();
     });
 });

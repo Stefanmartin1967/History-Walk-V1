@@ -6,6 +6,12 @@
 
 ---
 
+- CENTRE DE CONTRÔLE : « ANNULER » SUR UN CIRCUIT NOUVEAU LE MET À LA CORBEILLE (v3.7.519). Vu dans une vidéo de Stefan le 12/11/2026 : sur un circuit jamais publié, « Annuler » retirait la ligne, qui revenait une demi-seconde plus tard ; le bouton ne faisait rien, et « Tout publier » l'aurait publié.
+  - Cause : pour un circuit, « Annuler » ne savait que revenir à la version publiée ; un circuit absent de l'index n'était volontairement pas touché, et le recalcul du diff le reproposait en NOUVEAU.
+  - Correctif (choix de Stefan : la corbeille) : confirmation « Ne pas publier ce circuit », puis mise à la corbeille par le même point de suppression que la page du circuit (`performCircuitDeletion`) ; récupérable depuis la Corbeille de Mes circuits. Info-bulle du bouton adaptée. Même logique que les lieux créés (06/11).
+  - Vérifié sur l'aperçu : confirmation affichée, circuit à la corbeille, message « Circuit placé dans la Corbeille — il ne sera pas publié », pastille de la corbeille à jour, aucune erreur en console.
+  - Tests : `tests/admin_process_decision.test.js` (+3, dont 2 échouaient avant le correctif).
+
 - CIRCUITS : UN NOM NE PEUT PLUS SERVIR À DEUX CIRCUITS (v3.7.518). Constaté le 12/11/2026 sur les deux boucles de Rym Beach : après « Boucler », toutes deux se sont appelées « Boucle autour de Rym Beach ». Le GPX publié porte le nom du circuit (`public/circuits/<dest>/<nom>.gpx`) : la 2e a écrasé le fichier de la 1re, puis renommer l'une a supprimé le fichier de l'autre (index pointant vers un GPX absent). Règles décidées avec Stefan :
   - Nom AUTOMATIQUE déjà pris : on ajoute « via <lieu du milieu> » au circuit en cours, jamais à l'autre ; lieu voisin si besoin, « (2) » en dernier recours (`src/circuit-name.js`, branché dans `generateCircuitName`). Le « via » systématique d'avant le 03/06 ne revient pas : seulement en cas de doublon.
   - Nom TAPÉ À LA MAIN déjà pris : pas changé ; avertissement à l'enregistrement et au renommage (`warnIfNameTaken`, circuit-actions.js).
