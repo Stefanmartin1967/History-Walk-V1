@@ -188,12 +188,13 @@
     color: var(--ink);
     font-weight: 500;
 }
+/* Resto : neutre, l'icône porte le sens (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)). */
 .mc-resto {
-    color: var(--hw-amber);
-    background: var(--hw-amber-soft);
+    color: var(--ink);
+    background: var(--surface-muted);
     font-weight: 600;
 }
-.mc-resto svg { width: 11px; height: 11px; }
+.mc-resto svg { width: 11px; height: 11px; color: var(--ink-soft); }
 /* « N lieux non vus » — circuit fait qui garde des lieux jamais vus (cf. .va-unseen). */
 .mc-unseen {
     background: var(--surface-muted);
@@ -901,7 +902,7 @@
     flex-shrink: 0;
 }
 .search-cat-ico svg { width: 16px; height: 16px; }
-.search-cat-ico.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.search-cat-ico.amber { background: var(--surface-muted); color: var(--ink-soft); }
 .search-cat-ico.ok { background: var(--ok-soft); color: var(--ok-fg); }
 .search-cat-ico.muted { background: var(--surface-muted); color: var(--ink-soft); }
 .search-cat-label {

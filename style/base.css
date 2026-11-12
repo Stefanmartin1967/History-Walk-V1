@@ -355,7 +355,7 @@ body {
 /* Ligne « Candidat à curer » (réunif C1b) : cachée sauf pour un candidat Scout.
    [hidden] doit l'emporter sur le display:flex de .fiche-row. */
 .fiche-row[hidden] { display: none !important; }
-#rich-poi-candidate-row .lbl .t { color: var(--hw-amber, #D97706); }
+#rich-poi-candidate-row .lbl .t { color: var(--warn-fg); } /* candidat = attention */
 
 /* Mobile : paires repliées en 1 colonne (standard formulaire mobile).
    Indispensable car la grille 1fr 1fr déborde sinon : les <input>/<select>
@@ -3027,7 +3027,10 @@ input[type=range] {
 #offline-banner {
     display: none;
     position: fixed; top: 0; left: 0; right: 0; z-index: 99998;
-    background: var(--hw-amber); color: var(--hw-amber-soft);
+    /* Ambre légitime (« attention »), en tokens sémantiques réglés pour les
+       4 moments (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)). */
+    background: var(--warn-soft); color: var(--warn-fg);
+    border-bottom: var(--filet-width) solid var(--warn-fg);
     font-size: 0.8rem; font-weight: 600;
     text-align: center; padding: 6px 16px;
     letter-spacing: 0.02em;
