@@ -388,7 +388,10 @@ async function main(args) {
     };
     const horsOsm = tronconsHorsOsm(ech).map(t => garnir(t, false));
     const fermes = tronconsFermes(ech).map(t => garnir(t, true));
+    // Le Géoportail ne couvre que la Wallonie : ailleurs (Djerba…), pas d'appel inutile.
+    const enWallonie = (e) => e.lat > 49.45 && e.lat < 50.85 && e.lon > 2.8 && e.lon < 6.45;
     for (const [t, type] of [...fermes.map(t => [t, 'fermée']), ...horsOsm.map(t => [t, 'hors OSM'])]) {
+        if (!enWallonie(t.ech[0])) { t.geo = { erreurs: ['Hors de Wallonie : pas de plan de l\'Atlas ni de cadastre.'] }; continue; }
         console.log(`Géoportail : tronçon ${type} km ${t.ech[0].km.toFixed(2)}…`);
         t.geo = await geoportail(t, t.ways, points);
     }
