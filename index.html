@@ -45,7 +45,7 @@
          dès le 1er paint du #hw-boot-splash. -->
     <link rel="preload" as="image" href="icons/icon-512-maskable.png" type="image/png">
 
-    <link rel="stylesheet" href="style.css?v=8.60">
+    <link rel="stylesheet" href="style.css?v=8.61">
     <!-- Mon Espace user (refonte V3 23/05/2026 : 2 onglets Sauvegarde+Corbeille).
          Lien direct car les @imports CSS dans style.css sont cachés par Vite en
          dev — voir note historique sur le boot splash en bas de style.css. -->
@@ -131,9 +131,18 @@
         <div class="topbar-center">
             <div class="search-container">
                 <i data-lucide="search" class="search-icon"></i>
-                <input type="search" id="search-input" placeholder="Rechercher un lieu..." aria-label="Rechercher un lieu">
+                <input type="search" id="search-input" placeholder="Rechercher un lieu…" aria-label="Rechercher un lieu">
+                <!-- Palier étroit (barre < 932 px) : referme la recherche ouverte
+                     par la loupe (topbar-v2.js setupSearchToggle). -->
+                <button type="button" class="btn hw-search-close" id="hw-search-close"
+                        title="Fermer la recherche" aria-label="Fermer la recherche"><i data-lucide="x"></i></button>
                 <div class="search-results is-hidden" id="search-results"></div>
             </div>
+            <!-- Palier étroit : loupe à la place du champ, qui s'ouvre alors sur
+                 toute la barre (handoff Claude Design « écran bas », 12/11/2026). -->
+            <button type="button" class="btn hw-search-toggle" id="hw-search-toggle"
+                    title="Rechercher un lieu" aria-label="Rechercher un lieu"
+                    aria-controls="search-input" aria-expanded="false"><i data-lucide="search"></i></button>
         </div>
 
         <div class="topbar-right">
@@ -149,37 +158,48 @@
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
-            <!-- Cluster « préférences » : moment, langue des noms, plein écran
-                 (« Que faire ? » est passé à gauche ; la Légende vit dans les
-                 contrôles de carte). -->
-
-            <!-- Bascule de moment (segmenté persistant) : 4 moments en émojis,
-                 toujours visibles dans la lisière (affordance persistante, pas un
-                 popup). Câblé par topbar-v2.js setupMomentToggle. Remplace l'ancien
-                 dropdown thème. -->
-            <div class="hw-moment-toggle" role="group" aria-label="Moment de la journée">
-                <button type="button" class="hw-moment-seg" data-theme="matin"
-                        title="Matin" aria-label="Matin" aria-pressed="false"><span aria-hidden="true">🌅</span></button>
-                <button type="button" class="hw-moment-seg" data-theme="plein-soleil"
-                        title="Plein soleil" aria-label="Plein soleil" aria-pressed="false"><span aria-hidden="true">☀️</span></button>
-                <button type="button" class="hw-moment-seg" data-theme="ombre"
-                        title="Ombre" aria-label="Ombre" aria-pressed="false"><span aria-hidden="true">🌿</span></button>
-                <button type="button" class="hw-moment-seg" data-theme="nuit"
-                        title="Nuit" aria-label="Nuit" aria-pressed="false"><span aria-hidden="true">🌙</span></button>
+            <!-- Cluster « préférences de lecture » : moment + langue des noms.
+                 Côte à côte quand la barre a la place ; au palier étroit (barre
+                 < 932 px) ils passent dans un menu ouvert par « Lecture »
+                 (topbar-v2.js setupLectureMenu, CSS en fin de topbar-v2.css).
+                 Plein écran : dans la pile de contrôles de la carte (map.js). -->
+            <div class="hw-prefs" id="hw-prefs">
+                <button type="button" class="btn hw-lecture-btn" id="hw-lecture-btn"
+                        title="Moment et langue des noms" aria-label="Moment et langue des noms"
+                        aria-haspopup="true" aria-expanded="false" aria-controls="hw-prefs-pop">
+                    <span class="hw-lecture-emo" id="hw-lecture-emo" aria-hidden="true">☀️</span>
+                    <span class="hw-lecture-lng" id="hw-lecture-lng" aria-hidden="true">FR</span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
+                <div class="hw-prefs-pop" id="hw-prefs-pop">
+                    <div class="hw-prefs-grp">
+                        <span class="hw-prefs-ttl" aria-hidden="true">Moment</span>
+                        <!-- Bascule de moment (segmenté persistant) : 4 moments en
+                             émojis. Câblé par topbar-v2.js setupMomentToggle. -->
+                        <div class="hw-moment-toggle" role="group" aria-label="Moment de la journée">
+                            <button type="button" class="hw-moment-seg" data-theme="matin"
+                                    title="Matin" aria-label="Matin" aria-pressed="false"><span aria-hidden="true">🌅</span></button>
+                            <button type="button" class="hw-moment-seg" data-theme="plein-soleil"
+                                    title="Plein soleil" aria-label="Plein soleil" aria-pressed="false"><span aria-hidden="true">☀️</span></button>
+                            <button type="button" class="hw-moment-seg" data-theme="ombre"
+                                    title="Ombre" aria-label="Ombre" aria-pressed="false"><span aria-hidden="true">🌿</span></button>
+                            <button type="button" class="hw-moment-seg" data-theme="nuit"
+                                    title="Nuit" aria-label="Nuit" aria-pressed="false"><span aria-hidden="true">🌙</span></button>
+                        </div>
+                    </div>
+                    <div class="hw-prefs-grp">
+                        <span class="hw-prefs-ttl" aria-hidden="true">Noms des lieux</span>
+                        <!-- Bascule globale de langue des NOMS patrimoniaux (FR ⇄ AR).
+                             Câblée par topbar-v2.js setupNamesToggle. -->
+                        <div class="names-toggle" role="group" aria-label="Langue des noms de lieux">
+                            <button type="button" class="names-btn" data-lang="fr"
+                                    title="Noms en français" aria-label="Noms en français" aria-pressed="true">FR</button>
+                            <button type="button" class="names-btn" data-lang="ar"
+                                    title="الأسماء بالعربية" aria-label="Noms en arabe" aria-pressed="false"><span class="scr">ع</span></button>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            <!-- Bascule globale de langue des NOMS patrimoniaux (FR ⇄ AR) — à côté
-                 du moment : les 2 conditions de lecture (lumière + langue). Câblée
-                 par topbar-v2.js setupNamesToggle. Périmètre = noms de lieux only. -->
-            <div class="names-toggle" role="group" aria-label="Langue des noms de lieux">
-                <button type="button" class="names-btn" data-lang="fr"
-                        title="Noms en français" aria-label="Noms en français" aria-pressed="true">FR</button>
-                <button type="button" class="names-btn" data-lang="ar"
-                        title="الأسماء بالعربية" aria-label="Noms en arabe" aria-pressed="false"><span class="scr">ع</span></button>
-            </div>
-
-            <!-- (Bouton plein écran déplacé dans le menu Outils, section
-                 « Affichage », le 11/10/2026 : place pour « Que faire ? ».) -->
 
             <div class="hw-topbar-separator" aria-hidden="true"></div>
 
@@ -225,15 +245,8 @@
                         <i data-lucide="qr-code"></i> Partager Progression
                     </button>
 
-                    <!-- Plein écran (Fullscreen API) : était dans la barre du haut
-                         jusqu'au 11/10/2026, déplacé ici pour faire place à
-                         « Que faire ? ». Libellé et icône pilotés par
-                         src/fullscreen-toggle.js (maximize ↔ minimize). -->
-                    <div class="tools-menu-section-title">Affichage</div>
-                    <button class="tools-menu-item" id="btn-fullscreen-toggle" type="button"
-                            aria-pressed="false">
-                        <i data-lucide="maximize"></i> Plein écran
-                    </button>
+                    <!-- (Plein écran : quitté le menu le 12/11/2026 pour la pile de
+                         contrôles de la carte, map.js FullscreenControl.) -->
 
                     <!-- (Réintroduction du bouton « Sauvegarder » en PR2,
                          migré en PR3 (06/06/2026) vers `save-modal-ui.js` qui

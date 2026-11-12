@@ -6,7 +6,6 @@
 import { DOM } from './ui-dom.js';
 import { setupSearch } from './searchManager.js';
 import { setupTabs } from './ui-sidebar.js';
-import { setupFullscreenToggle } from './fullscreen-toggle.js';
 
 // PR 3 (refonte topbar Claude Design) : les anciens boutons filtres
 // (#btn-filter-zones, #btn-categories, #btn-filter-vus, #btn-filter-planifies,
@@ -19,7 +18,8 @@ export function setupDesktopUIListeners() {
     // (cf. LegendControl dans map.js — PR harmonisation PC). Le listener click
     // est attaché directement sur le link Leaflet au moment de sa création.
 
-    setupFullscreenToggle();
+    // (Plein écran : bouton de la pile de la carte depuis le 12/11/2026,
+    // câblé à sa création dans map.js.)
 
     document.addEventListener('click', (e) => {
         if (!e.target.closest('#btn-tools-menu') && !e.target.closest('#tools-menu-content')) {

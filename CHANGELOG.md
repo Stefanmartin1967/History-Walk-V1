@@ -6,6 +6,16 @@
 
 ---
 
+- ÉCRAN BAS : LA BARRE DU HAUT TIENT DE 1024 À 1920 PX (v3.7.509). Premier lot du handoff Claude Design « écran bas » (canvas du 12/11/2026, décisions de Stefan le même jour). Sur un portable (1366 × 650 utiles), la recherche du haut n'avait que 40 px et la barre prenait 72 px de haut.
+  - Hauteur : token `--topbar-h` (tokens.css) partagé par `.topbar`, `#map` et `.sidebar-tabs`. 72 px, 56 px quand la fenêtre fait 800 px de haut ou moins (`--topbar-h-low`), 40 px en PWA installée (inchangé). Sélecteur de destination 46 → 44 px sous 800 px. Menu des destinations calé sur la barre (64 px à 72, inchangé).
+  - Largeur : container query « topbar » sur `.topbar` (fin de `style/topbar-v2.css`), seuils sur la largeur utile de la barre. Large (barre ≥ 1132 px, ex. 1920) : barre complète, inchangée. Moyen (932–1131, ex. 1366 et 1536) : « Filtres » et « GOD MODE » en icône, la pastille du compte reste. Étroit (< 932, ex. 1280 et 1024) : loupe qui ouvre la recherche sur toute la barre (croix ou Échap pour refermer), et bouton « Lecture » (émoji du moment + FR/ع) qui ouvre les deux bascules dans un menu. Mêmes boutons déplacés par la mise en page, rien n'est dupliqué.
+  - Mesuré : recherche 246 px à 1366 × 650 (« Rechercher un lieu… » en entier), 298 à 1536 × 740, 300 à 1920 × 950 ; aucune largeur ne déborde (1024, 1280, 1366, 1536, 1920).
+  - « Que faire ? » garde son libellé partout : repli mesuré `fitTourLabel` / `.is-compact` retiré.
+  - « Plein écran » quitte le menu Outils pour le bas de la pile de contrôles de la carte (`FullscreenControl`, `src/map.js`), icône seule, info-bulle et `aria-pressed` selon l'état. PC seulement.
+  - Onglets du panneau : largeur selon le libellé (`flex: 1 1 auto`).
+  - Tests : `tests/topbar_v2.test.js` (ex-`topbar_tour_label`, loupe et « Lecture »), `tests/fullscreen_toggle.test.js` réécrit. `style.css?v=8.61`.
+  - Pas encore fait (PR suivantes) : cartes de circuit resserrées sous 800 px, puces de filtres sur téléphone, finitions (Soutenir, ambre, filet des fiches, Spectral).
+
 - ÉCRAN BAS : PHOTO D'EN-TÊTE RÉDUITE, LIBELLÉS QUI NE SE COUPENT PLUS (v3.7.508). Captures à 100 % du 11/11/2026 : sur un petit portable (1366 × 650 utiles), la photo de 200 px ne laissait voir que 2 étapes d'un circuit et 3 lignes de description ; l'onglet « Mes Circuits » passait sur deux lignes et la recherche de circuits était coupée.
   - `style/panels.css` : sous 800 px de haut (et au moins 769 px de large), `.poi-hero` et `.circuit-cover` passent de 200 à 110 px. Mesuré : 4 étapes visibles au lieu de 2. Au-dessus de 800 px, rien ne change (200 px à 801). Décision Stefan : réduite sur écran bas seulement.
   - `.tab-button` : `white-space: nowrap`.

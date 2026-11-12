@@ -379,8 +379,14 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 72px; /* Harmonized height (aligné avec sidebar-tabs) */
+    /* --topbar-h (tokens.css) : 72 px, 56 px sous 800 px de haut (bloc
+       « ÉCRAN BAS » plus bas), 40 px en PWA installée. Partagée avec #map et
+       .sidebar-tabs (handoff Claude Design « écran bas », 12/11/2026). */
+    height: var(--topbar-h);
     padding: 0 16px;
+    /* Paliers de largeur (« ÉCRAN BAS ») : réglés sur la largeur DE LA BARRE,
+       qui dépend aussi du panneau latéral, pas sur celle de la fenêtre. */
+    container: topbar / inline-size;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -437,11 +443,12 @@ body {
 .search-container {
     position: relative;
     width: 100%;
-    max-width: 450px;
+    max-width: 300px;
+    margin-left: 16px;
     flex-shrink: 1;
-    /* 170px (et non 200) : même raison que .topbar-left — la recherche cède
-       un peu de place sur les écrans étroits (11/10/2026). */
-    min-width: 170px;
+    /* « Rechercher un lieu… » lisible en entier (148 px de texte + icône).
+       Sous cette largeur, la barre passe au palier étroit (loupe). */
+    min-width: var(--search-min);
 }
 
 .search-icon {
@@ -463,7 +470,7 @@ body {
     background-color: transparent;
     padding: 0 16px 0 48px;
     color: var(--ink);
-    font-size: 16px;
+    font-size: var(--font-size-input);
     transition: background-color .15s ease, border-color .15s ease;
 }
 
@@ -602,7 +609,7 @@ body {
 
 #map {
     position: absolute;
-    top: 72px; /* Aligné à la topbar (et sidebar-tabs) */
+    top: var(--topbar-h); /* Aligné à la topbar (et sidebar-tabs) */
     left: 0;
     right: 0;
     bottom: 0;
@@ -677,13 +684,16 @@ body {
        continue d'un bord à l'autre (fin du deux-tons). */
     background-color: var(--brand-surface-bg);
     border-bottom: var(--border-filet);
-    height: 72px; /* Aligné avec la topbar PR 8 */
-    padding: 12px;
+    height: var(--topbar-h); /* Aligné avec la topbar PR 8 */
+    padding: 0 12px;
+    align-items: center;
     flex-shrink: 0;
 }
 
 .tab-button {
-    flex: 1;
+    /* Largeur selon le libellé (et non flex: 1, trois parts égales) :
+       « Mes Circuits 24 » a besoin de plus de place que « Lieu ». */
+    flex: 1 1 auto;
     height: 42px; /* Aligné avec les .btn de la topbar */
     padding: 0 12px;
     border: none;
@@ -2092,12 +2102,6 @@ input[type=range] {
     display: none !important;
 }
 
-/* Ajustement Recherche pour Header Gauche */
-.search-container {
-    max-width: 300px;
-    margin-left: 16px;
-}
-
 /* CSS du wizard "Mode Sélection" supprimé (point #5 audit Stefan) :
    modale absorbée par le filtre topbar global. */
 
@@ -3144,6 +3148,36 @@ input[type=range] {
 }
 
 /* ============================================================
+   ÉCRAN BAS — barre du haut PC (handoff Claude Design « écran bas », 12/11/2026)
+   ============================================================
+   1. HAUTEUR : fenêtre de 800 px de haut ou moins (même seuil que la photo
+      d'en-tête, panels.css) → barre et onglets du panneau à 56 px au lieu de
+      72. La carte suit (#map top: var(--topbar-h)). Au-dessus, rien ne change.
+   2. LARGEUR : paliers réglés sur la largeur de la barre (container query
+      « topbar », posée sur .topbar) :
+      - large, barre ≥ 1132 px (1920 × …) : barre complète ;
+      - moyen, 932–1131 px (1366, 1536) : « Filtres » et « GOD MODE » en icône ;
+      - étroit, < 932 px (1024, 1280) : la recherche devient une loupe qui
+        ouvre un champ sur toute la barre, moment + langue des noms se rangent
+        derrière le bouton « Lecture » (topbar-v2.js).
+      Remplace le repli mesuré de « Que faire ? » (fitTourLabel, retiré) : son
+      libellé reste visible partout.
+   Les paliers de largeur vivent à la fin de topbar-v2.css (chargée après
+   base.css, avec les composants qu'ils replient). La PWA installée (bloc
+   suivant) garde sa barre à 40 px. */
+/* Pas de « min-width: 769px » ici : la barre et la carte sont masquées sur
+   l'affichage mobile, le token n'y sert pas (et la frontière 768/769 est
+   réservée aux requêtes partagées, tests/layout_mode_css.test.js). */
+@media (max-height: 800px) {
+    :root {
+        --topbar-h: var(--topbar-h-low);
+    }
+    .topbar .hw-dest-selector {
+        height: var(--control-h-md);
+    }
+}
+
+/* ============================================================
    MODE PWA INSTALLÉ — display: standalone
    ============================================================
    Quand l'app est lancée en standalone (PWA installée), Chrome
@@ -3154,6 +3188,9 @@ input[type=range] {
    Mode navigateur : non touché (cette media query ne s'active
    qu'en mode installé). */
 @media (display-mode: standalone) {
+    :root {
+        --topbar-h: 40px;
+    }
     .topbar {
         height: 40px;
         padding: 0 12px;
