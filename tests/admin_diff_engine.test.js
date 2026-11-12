@@ -13,6 +13,14 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 global.fetch = vi.fn();
 
+// Liste des fichiers GPX publiés (12/11/2026) : null par défaut = inconnue, donc
+// aucun « fichier manquant » signalé. Un test la remplit pour simuler un GPX absent.
+const repoDir = vi.hoisted(() => ({ files: null }));
+vi.mock('../src/repo-read.js', async (importOriginal) => ({
+    ...(await importOriginal()),
+    listRepoDir: vi.fn(async () => repoDir.files),
+}));
+
 vi.mock('../src/state.js', () => {
     const mod = ({
     state: {
@@ -305,6 +313,59 @@ describe('Admin Diff Engine', () => {
             expect(result.circuits.length).toBe(1);
             const ch = result.circuits[0].changes.find(c => c.key === 'Étapes');
             expect(ch).toEqual({ key: 'Étapes', old: '3 étapes', new: '4 étapes' });
+        });
+
+        it("signale un circuit dont le GPX publié a disparu du dépôt", async () => {
+            // 12/11/2026 : le renommage d'une boucle homonyme a supprimé ce fichier.
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'tag', name: 'Boucle autour de Rym Beach', poiIds: ['A', 'B', 'A'], file: 'djerba/Boucle autour de Rym Beach.gpx' }
+                ]) });
+            });
+            state.officialCircuits = [{ id: 'tag', name: 'Boucle autour de Rym Beach', poiIds: ['A', 'B', 'A'], realTrack: [[10.1, 11.2], [10.2, 11.3]] }];
+            repoDir.files = new Set(['Boucle autour de Rym Beach via Lella Hadhria.gpx']);
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+            repoDir.files = null;
+
+            expect(result.circuits.length).toBe(1);
+            expect(result.circuits[0].changes).toContainEqual({ key: 'Fichier GPX', old: 'absent du dépôt', new: 'republié' });
+        });
+
+        it("ne signale rien quand le GPX est bien là", async () => {
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'tag', name: 'Boucle', poiIds: ['A', 'B', 'A'], file: 'djerba/Boucle.gpx' }
+                ]) });
+            });
+            state.officialCircuits = [{ id: 'tag', name: 'Boucle', poiIds: ['A', 'B', 'A'], realTrack: [[10.1, 11.2], [10.2, 11.3]] }];
+            repoDir.files = new Set(['Boucle.gpx']);
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+            repoDir.files = null;
+
+            expect(result.circuits.length).toBe(0);
+        });
+
+        it("prévient d'un nom en double sur un NOUVEAU circuit", async () => {
+            global.fetch.mockImplementation((url) => {
+                if (url.includes('.geojson')) return Promise.resolve({ ok: true, json: async () => ({ features: [] }) });
+                if (url.includes('tested_')) return Promise.resolve({ ok: true, json: async () => ({}) });
+                if (url.includes('.json')) return Promise.resolve({ ok: true, json: async () => ([
+                    { id: 'pub', name: 'Boucle autour de Rym Beach', poiIds: ['A', 'B', 'A'] }
+                ]) });
+            });
+            state.officialCircuits = [{ id: 'pub', name: 'Boucle autour de Rym Beach', poiIds: ['A', 'B', 'A'], realTrack: [[10.1, 11.2], [10.2, 11.3]] }];
+            state.myCircuits = [{ id: 'neuf', name: 'boucle autour de RYM beach', poiIds: ['A', 'C', 'A'], realTrack: [[1, 1], [2, 2]] }];
+
+            const result = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            const neuf = result.circuits.find(c => c.id === 'neuf');
+            expect(neuf.changes.some(ch => ch.key === 'Nom en double' && ch.old.includes('Boucle autour de Rym Beach'))).toBe(true);
         });
 
         it('signale BIEN un vrai changement d\'étapes (POI ajouté)', async () => {

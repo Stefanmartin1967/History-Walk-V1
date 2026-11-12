@@ -1,10 +1,11 @@
 import { state, getActiveMapId} from './state.js';
-import { fetchRepoFile } from './repo-read.js';
+import { fetchRepoFile, listRepoDir } from './repo-read.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
+import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { countFramed } from './photo-focus.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { pendingRejectedCount } from './rejected.js';
@@ -110,6 +111,20 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
 // l'index, puis, pour un circuit publié avant ce champ, son GPX relu sur le
 // serveur. Ce dernier cas ne concerne qu'une copie locale d'officiel (sinon le
 // tracé local vient lui-même du GPX publié et l'empreinte est déjà connue).
+/**
+ * Ajoute une ligne « Nom en double » si le nom du circuit (= son fichier GPX) est
+ * déjà porté par un autre circuit, local ou publié. La publication le refusera
+ * (admin-control-center.js) : on le dit AVANT, dans la liste des modifications.
+ */
+function noteNameClash(changes, local, localCircuits, remoteCircuits) {
+    const other = findCircuitWithSameName(local.name, localCircuits, local.id)
+        || (remoteCircuits || []).find(r => String(r.id) !== String(local.id)
+            && normalizeCircuitName(r.name) === normalizeCircuitName(local.name));
+    if (other) {
+        changes.push({ key: 'Nom en double', old: `déjà pris par « ${other.name} »`, new: 'à renommer avant publication' });
+    }
+}
+
 async function publishedFingerprintFor(remote) {
     const known = publishedTrackFingerprint(remote.id) || remote.trackHash;
     if (known) return known;
@@ -397,6 +412,12 @@ export async function prepareDiffData(adminDraft) {
     // une version que l'écrivain ne publiera pas.
     const localCircuits = getAllCircuits();
 
+    // Fichiers GPX réellement présents (une requête). null = inconnu : on ne
+    // signale alors aucun fichier manquant plutôt qu'un faux positif.
+    const publishedFiles = remoteCircuits.length > 0
+        ? await listRepoDir(`public/circuits/${encodeURIComponent(mapId)}`)
+        : null;
+
     // 1. Nouveaux & Modifiés
     for (const local of localCircuits) {
         // --- FILTRE STRICT : PAS DE PUBLICATION SANS TRACE RÉELLE NI POUR LES SUPPRIMÉS ---
@@ -418,10 +439,12 @@ export async function prepareDiffData(adminDraft) {
                 continue;
             }
             // Cas : Nouveau Circuit (Validé avec trace réelle)
+            const changes = [{ key: 'STATUT', old: 'Inexistant', new: 'NOUVEAU' }];
+            noteNameClash(changes, local, localCircuits, remoteCircuits);
             diffData.circuits.push({
                 id: local.id,
                 name: local.name,
-                changes: [{ key: 'STATUT', old: 'Inexistant', new: 'NOUVEAU' }],
+                changes,
                 isCreation: true
             });
         } else {
@@ -475,7 +498,15 @@ export async function prepareDiffData(adminDraft) {
                 });
             }
 
+            // GPX publié introuvable alors que l'index le cite (12/11/2026 : supprimé
+            // par le renommage d'un circuit homonyme). Le republier le réécrit.
+            const remoteFile = remote.file ? String(remote.file).split('/').pop() : null;
+            if (publishedFiles && remoteFile && !publishedFiles.has(remoteFile)) {
+                changes.push({ key: 'Fichier GPX', old: 'absent du dépôt', new: 'republié' });
+            }
+
             if (changes.length > 0) {
+                noteNameClash(changes, local, localCircuits, remoteCircuits);
                 diffData.circuits.push({
                     id: local.id,
                     name: local.name,

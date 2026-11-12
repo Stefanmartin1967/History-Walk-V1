@@ -6,6 +6,15 @@
 
 ---
 
+- CIRCUITS : UN NOM NE PEUT PLUS SERVIR À DEUX CIRCUITS (v3.7.518). Constaté le 12/11/2026 sur les deux boucles de Rym Beach : après « Boucler », toutes deux se sont appelées « Boucle autour de Rym Beach ». Le GPX publié porte le nom du circuit (`public/circuits/<dest>/<nom>.gpx`) : la 2e a écrasé le fichier de la 1re, puis renommer l'une a supprimé le fichier de l'autre (index pointant vers un GPX absent). Règles décidées avec Stefan :
+  - Nom AUTOMATIQUE déjà pris : on ajoute « via <lieu du milieu> » au circuit en cours, jamais à l'autre ; lieu voisin si besoin, « (2) » en dernier recours (`src/circuit-name.js`, branché dans `generateCircuitName`). Le « via » systématique d'avant le 03/06 ne revient pas : seulement en cas de doublon.
+  - Nom TAPÉ À LA MAIN déjà pris : pas changé ; avertissement à l'enregistrement et au renommage (`warnIfNameTaken`, circuit-actions.js).
+  - Publication : un circuit dont le nom (= fichier) est déjà pris n'est pas publié, le reste l'est, avec un message ; le centre de contrôle l'annonce avant, ligne « Nom en double ». Casse et accents ignorés (deux tels fichiers n'en font qu'un sous Windows).
+  - Renommage : l'ancien GPX n'est plus supprimé s'il sert encore à un autre circuit de l'index.
+  - Centre de contrôle : un circuit dont le GPX a disparu du dépôt ressort en « Fichier GPX : absent du dépôt → republié » (une seule lecture de la liste des fichiers, `listRepoDir`, repo-read.js). Avant, le diff comparait des empreintes et ne voyait rien.
+  - Vérifié sur l'aperçu : Rym Beach > Phare > Rym Beach donne « Boucle autour de Rym Beach » si le nom est libre, « … via Phare de Taguermess » s'il est pris ; avertissement affiché pour « boucle autour de rym beach VIA LE PHARE » (homonyme d'un circuit publié). Aucune erreur en console.
+  - Tests : `tests/circuit_name.test.js` (+9), `tests/publish_circuit_name.test.js` (+4, dont 2 échouaient avant le correctif), `tests/admin_diff_engine.test.js` (+3), `tests/circuit.test.js` (+2).
+
 - CORBEILLE DES CIRCUITS : LA PASTILLE SE MET À JOUR TOUT DE SUITE (v3.7.517). Vu par Stefan le 12/11/2026 : après « Supprimer définitivement », la pastille « 1 » de la corbeille restait jusqu'au changement d'onglet.
   - Cause : après une suppression définitive ou une restauration, `circuit-trash-ui.js` appelait `renderExplorerList()`, qui ne redessine que la liste. La pastille vit dans la barre d'outils (`renderToolbar`), qui n'était redessinée qu'au changement d'onglet.
   - Correctif : la corbeille émet `ui:render-explorer-list`, qui redessine la barre ET la liste (`renderAll`, ui-circuit-list.js), comme ui-details.js et ui-sidebar.js.

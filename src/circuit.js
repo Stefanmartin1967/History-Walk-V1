@@ -23,7 +23,8 @@ import { schedulePushTestedToGitHub, rememberTestedSteps } from './tested-sync.j
 // microtask, APRÈS notifyCircuitChanged (rendu des drapeaux) → snapshot cadenas
 // trop tard, drapeaux des POI préexistants non verrouillés (fix v3.7.308).
 import { markEditingStart, getDirtyCount } from './circuit-flags.js';
-import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
+import { getActiveCircuit, findCircuitById, getAllCircuits } from './circuit-lookup.js';
+import { takenCircuitNames, uniqueAutoCircuitName } from './circuit-name.js';
 import { persistCircuit } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { rememberPublishedTrack } from './track-fingerprint.js';
@@ -669,10 +670,14 @@ export function generateCircuitName() {
     const startPoi = getPoiName(circuit[0]);
     const endPoi = getPoiName(circuit[circuit.length - 1]);
 
-    if (getPoiId(circuit[0]) === getPoiId(circuit[circuit.length - 1])) {
-        return `Boucle autour de ${startPoi}`;
-    }
-    return `Circuit de ${startPoi} à ${endPoi}`;
+    const base = getPoiId(circuit[0]) === getPoiId(circuit[circuit.length - 1])
+        ? `Boucle autour de ${startPoi}`
+        : `Circuit de ${startPoi} à ${endPoi}`;
+    // Nom déjà pris par un AUTRE circuit de la destination (12/11/2026) : on ajoute
+    // « via <lieu du milieu> » à celui-ci, jamais à l'autre (cf. circuit-name.js).
+    // Le circuit en cours (édité) est exclu par son id ; une création n'en a pas.
+    const taken = takenCircuitNames(getAllCircuits(), state.activeCircuitId);
+    return uniqueAutoCircuitName(base, circuit.map(getPoiName), taken);
 }
 
 // --- FONCTION POUR VIDER LE BROUILLON (Version Majordome + UI) ---

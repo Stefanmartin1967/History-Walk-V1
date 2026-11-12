@@ -18,7 +18,7 @@ import { state, setCustomDraftName } from './state.js';
 import { DOM } from './ui-dom.js';
 import { saveCircuitDraft, isCircuitCompleted } from './circuit.js';
 import { updateTransportSummary } from './circuit-view.js';
-import { handleCircuitVisitedToggle } from './circuit-actions.js';
+import { handleCircuitVisitedToggle, warnIfNameTaken } from './circuit-actions.js';
 import { persistCircuit } from './circuit-store.js';
 import { getPoiId } from './data.js';
 import { setCircuitHidden } from './circuit-actions.js';
@@ -293,7 +293,8 @@ async function renameLoadedCircuit(id, name) {
     if (!circuit) return;
     await persistCircuit({ ...circuit, name: trimmed });
     eventBus.emit('circuit:list-updated');
-    showToast('Circuit renommé.', 'success', 1500);
+    // Nom en double : le toast d'avertissement remplace la confirmation.
+    if (!warnIfNameTaken(trimmed, id)) showToast('Circuit renommé.', 'success', 1500);
 }
 
 function initTitleEdit() {
@@ -355,6 +356,9 @@ function initTitleEdit() {
                 if (isCreate) {
                     setCustomDraftName(newValue || null);
                     saveCircuitDraft();
+                    // En création/édition, le nom n'entre dans le circuit qu'à
+                    // l'enregistrement ; on prévient dès la saisie s'il est pris.
+                    if (newValue) warnIfNameTaken(newValue, state.activeCircuitId);
                 } else {
                     // Consultation admin : renommage du circuit chargé (même ID).
                     renameLoadedCircuit(state.activeCircuitId, newValue);

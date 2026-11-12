@@ -4,7 +4,8 @@ import { state, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits
 import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchRepoFile } from './repo-read.js';
 import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
-import { findCircuitById } from './circuit-lookup.js';
+import { findCircuitById, getAllCircuits } from './circuit-lookup.js';
+import { findCircuitWithSameName } from './circuit-name.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { persistCircuit } from './circuit-store.js';
 import { clearCircuit, setCircuitVisitedState, getCircuitTitle, saveCircuitDraft } from './circuit.js';
@@ -255,6 +256,17 @@ export function getZonesData() {
 // automatiquement (l'export est explicite) et accepte un `realTrack` calculé
 // par BRouter. `stayInCreation` : appelée par « Tracer » → on reste en mode
 // création pour ajuster/re-tracer (sinon on repasse en consultation).
+/**
+ * Prévient si `name` est déjà porté par un autre circuit de la destination.
+ * @returns {boolean} true si le nom est pris
+ */
+export function warnIfNameTaken(name, selfId) {
+    const other = findCircuitWithSameName(name, getAllCircuits(), selfId);
+    if (!other) return false;
+    showToast(`Un autre circuit s'appelle déjà « ${other.name} ». Changez ce nom : deux circuits au même nom ne peuvent pas être publiés.`, 'warning', 7000);
+    return true;
+}
+
 export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null } = {}) {
     if (state.currentCircuit.length === 0) return;
 
@@ -266,6 +278,13 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
 
     // Circuit édité (perso OU officiel), null pour une création.
     const existing = state.activeCircuitId ? findCircuitById(state.activeCircuitId) : null;
+
+    // Nom déjà porté par un autre circuit de la destination : seul un nom TAPÉ À
+    // LA MAIN peut l'être (le nom automatique est rendu unique, circuit-name.js).
+    // On enregistre quand même (local, sans risque) mais on prévient : la
+    // publication sera refusée tant que le nom reste en double, car les deux
+    // circuits écriraient le même fichier GPX (12/11/2026).
+    warnIfNameTaken(circuitName, existing ? existing.id : null);
 
     // Description et transport viennent du brouillon SEULEMENT s'il concerne ce
     // circuit ; sinon on garde ceux du circuit. Avant le 12/09/2026, faute de
