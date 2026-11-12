@@ -259,7 +259,9 @@ export const HELP_TRACER = {
         piétonnes</strong> <span class="help-muted">(rues, sentiers)</span>.</p>
         <p>Il remplace le trait <strong>« à vol d'oiseau »</strong> (la ligne droite entre
         vos lieux) par une <strong>trace réellement marchable</strong>, et donne la
-        <strong>vraie distance</strong>.</p>`,
+        <strong>vraie distance</strong>.</p>
+        <p>Deux variantes vous sont proposées, <strong>Direct</strong> et
+        <strong>Chemins</strong> : vous retenez celle qui convient.</p>`,
 };
 
 /* === ANCRE — « ? » sur le chip « Calque de référence » === */
@@ -363,14 +365,27 @@ export const GUIDE_CIRCUIT = {
                 apparaît.</p>
                 <p>Heripia route le circuit avec <strong>BRouter</strong>, qui <strong>suit les
                 chemins piétons</strong> : il transforme le trait « à vol d'oiseau » en
-                <strong>trace réellement marchable</strong>. Résultat : <strong>« Itinéraire
-                tracé »</strong> et la <strong>distance réelle</strong>.</p>
+                <strong>trace réellement marchable</strong>.</p>
+                <p>Le panneau <strong>« Choisir l'itinéraire »</strong> s'ouvre à gauche de la carte
+                avec deux variantes : <strong>Direct</strong> <span class="help-muted">(le plus
+                court raisonnable)</span> et <strong>Chemins</strong> <span class="help-muted">(préfère
+                pistes et sentiers, un peu plus long)</span>. Pour chacune : distance, D+,
+                kilomètres <strong>repassés</strong> et kilomètres par type de voie ; les écarts de
+                Chemins avec Direct sont marqués <strong>mieux</strong> ou <strong>moins
+                bien</strong>. <strong>« Ajuster »</strong> règle la <strong>force</strong> de
+                Chemins <span class="help-muted">(0 sans effet, 1 par défaut, 3 très
+                fort)</span>.</p>
+                <p>Cliquez une variante <span class="help-muted">(ou sa ligne sur la carte)</span>,
+                puis <strong>« Utiliser cette variante »</strong>. <strong>« Annuler »</strong> ne
+                change rien. La variante retenue est rappelée sous le tracé, avec le moteur :
+                <strong>BRouter de ce PC</strong> s'il tourne sur votre ordinateur, sinon
+                <strong>brouter.de</strong>.</p>
                 <p>Le tracé se colore selon le <strong>type de voie</strong> : route, rue, piste,
                 sentier ou non classé <span class="help-muted">(voies d'OpenStreetMap)</span>. La
                 carte du tracé donne les kilomètres de chacun. Ces couleurs ne servent qu'à la
                 création : en consultation, le tracé reste bleu.</p>
-                <p class="help-muted">C'est « Tracer l'itinéraire » qui enregistre le circuit avec
-                son tracé.</p>`,
+                <p class="help-muted">C'est « Utiliser cette variante » qui enregistre le circuit
+                avec son tracé.</p>`,
         },
         {
             heading: `5 · Ajuster le tracé`,
@@ -388,13 +403,15 @@ export const GUIDE_CIRCUIT = {
                     <li><strong>« Re-tracer l'itinéraire »</strong> : si vous changez les lieux après
                         coup, le tracé est signalé <strong>« séquence modifiée »</strong>
                         <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
-                        le remettre à jour : seuls les passages modifiés sont recalculés, les
-                        autres gardent leurs ajustements.</li>
+                        le remettre à jour : seuls les passages modifiés sont recalculés, avec la
+                        même variante, les autres gardent leurs ajustements.</li>
                     <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
-                        recalcule <strong>tous</strong> les passages et efface vos ajustements.</li>
+                        rouvre « Choisir l'itinéraire » ; la variante retenue recalcule
+                        <strong>tous</strong> les passages et efface vos ajustements.</li>
                     <li><strong>« Revenir au tracé précédent »</strong> <span class="help-muted">(menu ⋮,
-                        juste après un re-tracé)</span> : un re-tracé est enregistré aussitôt ; ce
-                        bouton rétablit le tracé d'avant, ajustements compris.</li>
+                        juste après un re-tracé)</span> : un re-tracé est enregistré dès que vous
+                        retenez une variante ; ce bouton rétablit le tracé d'avant, ajustements et
+                        variante compris.</li>
                 </ul>`,
         },
         {

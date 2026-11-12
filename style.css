@@ -13,6 +13,7 @@
      explorer-card.css  — carte explorateur (modale stats + iframe impression)
      filter-panel.css   — panneau de filtres unifié (refonte Claude Design)
      topbar-v2.css      — refonte topbar : destination selector + Filtres unique
+     circuit-compare.css — panneau « Choisir l'itinéraire » (comparateur de tracé, PC)
    ============================================================ */
 
 @import "./style/base.css";
@@ -30,6 +31,7 @@
 @import "./style/mobile-follow.css";
 @import "./style/osm-pass.css";
 @import "./style/circuit-focus.css";
+@import "./style/circuit-compare.css";
 @import "./style/mode-donnees.css";
 @import "./style/scout.css";
 @import "./style/help.css";

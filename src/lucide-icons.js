@@ -32,6 +32,7 @@ import {
     Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation,
     Waypoints, // points de passage (routing in-app niveau 2)
     Layers,    // calque de référence (routing in-app PR3)
+    Settings2, Monitor, // comparateur d'itinéraire : « Ajuster », moteur BRouter de ce PC
 
     // Médias
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
@@ -103,7 +104,7 @@ export const appIcons = {
     Archive,
     GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
-    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints, Layers,
+    Map, MapPin, MapPinOff, MapPinPlus, Route, Split, Globe, Compass, Navigation, Waypoints, Layers, Settings2, Monitor,
 
     Camera, Image, ImageOff, ImagePlus, ImageDown, ImageUp,
     Mic, MicOff, Volume2, Play,

@@ -390,8 +390,13 @@ function teardown({ keepSegments = false } = {}) {
 
 // Overlay des segments en échec HORS focus (pointillé gris sur le tracé bleu).
 // Piloté par state.routeSegments ; appelé après un Tracer et à la sortie du focus.
-export function refreshFailOverlay() {
+/** Retire les passages en ligne droite de la carte (comparateur d'itinéraire). */
+export function clearFailOverlay() {
     if (_failLayer) { _failLayer.remove(); _failLayer = null; }
+}
+
+export function refreshFailOverlay() {
+    clearFailOverlay();
     if (state.circuitFocusActive || !inCreation()) return;
     const segs = state.routeSegments;
     if (!Array.isArray(segs) || !segs.some(s => s && !s.ok)) return;

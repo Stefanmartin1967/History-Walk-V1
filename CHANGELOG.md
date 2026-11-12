@@ -6,13 +6,22 @@
 
 ---
 
+- ITINÉRAIRE : PANNEAU « CHOISIR L'ITINÉRAIRE » (v3.7.521). PR 2 sur 3 du comparateur de tracé (handoff Claude Design du 12/11/2026, `.claude/handoff-comparateur-trace/`).
+  - « Tracer l'itinéraire » (1er tracé) et « Tout re-tracer » ouvrent un panneau à gauche de la carte : Direct et Chemins calculés en même temps, chacun avec distance, D+, km repassés et km par type de voie (barre + colonnes, « Non classé » au-delà de 100 m) ; écarts de Chemins avec Direct marqués mieux / moins bien (`--delta-*`, sans ambre). « Ajuster » : curseur de force de Chemins (0 à 3, au dixième), qui recalcule Chemins. Ligne du moteur (BRouter de ce PC / brouter.de).
+  - Carte : une ligne par variante (`--variant-direct` indigo, `--variant-chemins` émeraude, liseré blanc) ; la sélectionnée dessus et plus épaisse, le survol d'une carte met sa ligne en avant, un clic sur une ligne la sélectionne. Le tracé en place et ses couleurs par type de voie s'effacent le temps de la comparaison ; les boutons de carte passent à droite du panneau.
+  - Présélection : la variante du circuit, sinon Chemins (décision de Stefan). « Utiliser cette variante » enregistre le tracé comme avant (calque « Tracé précédent », « Revenir au tracé précédent ») ; « Annuler », Échap ou la croix ne changent rien. Lieux modifiés ou sortie de l'édition pendant la comparaison : elle se ferme.
+  - Échec d'une variante (« BRouter de ce PC ne répond pas. », « brouter.de limite les demandes. ») : carte en pointillé avec « Réessayer », l'autre variante sélectionnée d'office. Une variante avec des passages en ligne droite reste choisissable, avec un avertissement.
+  - Code : `src/circuit-compare.js` (panneau + lignes), `src/route-stats.js` (km par type de voie depuis les messages BRouter, km repassés, écarts), `style/circuit-compare.css`, tokens `--variant-*` / `--delta-*` / `--cv-panel-width` ; `routeCircuit` remonte `ways`, le motif d'échec d'un passage et sa progression. Aide (section 4 et 5, « ? » Tracer) et `docs/aide-creation-circuit.md` à jour.
+  - Vérifié sur l'aperçu (Braa → Hadher Bach, BRouter de ce PC) : panneau, survol, sélection par la carte et par la carte de variante, curseur à 0,6 (recalcul `Offroad_factor=0.6`), Annuler (ancien tracé intact), Utiliser Direct (variante enregistrée, « Revenir » proposé), échec simulé de Chemins puis Réessayer, Échap ; Plein soleil et Nuit, Voyager et Satellite. Non exercé : un tout premier tracé (circuit sans tracé), le moteur brouter.de.
+  - Tests : `tests/route_stats.test.js` (+12).
+
 - ITINÉRAIRE : BROUTER DE CE PC ET VARIANTE MÉMORISÉE (v3.7.520). PR 1 sur 3 du comparateur de tracé (handoff Claude Design « Choisir l'itinéraire », 12/11/2026, `.claude/handoff-comparateur-trace/`). Rien ne change pour un tracé « Direct » ; le panneau de choix arrive en PR 2.
   - Moteur : l'app trace avec BRouter de ce PC (`http://localhost:17777`, ajouté au `connect-src`) s'il répond, sinon brouter.de comme avant (`resolveEngine`, circuit-routing.js : sonde de 1,5 s, résultat gardé une minute, oublié si le PC cesse de répondre).
   - Variantes : Direct (hiking-beta) et Chemins (hiking-mountain + `Offroad_factor` = force, 0 à 3 au dixième). `routePoints`, `routeCircuit`, `routeOneSegment` et `routeChangedSegments` reçoivent `{ routing, base }` au lieu d'un nom de profil.
   - Le circuit garde `routing` ({ variant, force, engine }) avec son tracé, comme le D+ ; « Tracer », « Re-tracer » (partiel), « Tout re-tracer » et l'édition d'un passage réutilisent la variante du circuit ; « Revenir au tracé précédent » rétablit aussi l'ancienne.
   - Carte d'état du tracé : une ligne « Direct · BRouter de ce PC » / « Chemins · force 1 · brouter.de » sous les types de voie (`.trace-variant`, panels.css). Rien pour un circuit tracé avant.
   - Vérifié sur l'aperçu (Braa → Hadher Bach) : appels sur localhost:17777, ligne « Direct · BRouter de ce PC » ; variante Chemins force 2 posée sur le circuit puis « Tout re-tracer » : appels `hiking-mountain&profile:Offroad_factor=2`, ligne « Chemins · force 2 · BRouter de ce PC », toujours là après rechargement.
-  - Tests : `tests/circuit_routing_variant.test.js` (+13).
+  - Tests : `tests/circuit_routing_variant.test.js` (+12).
 
 - CENTRE DE CONTRÔLE : « ANNULER » SUR UN CIRCUIT NOUVEAU LE MET À LA CORBEILLE (v3.7.519). Vu dans une vidéo de Stefan le 12/11/2026 : sur un circuit jamais publié, « Annuler » retirait la ligne, qui revenait une demi-seconde plus tard ; le bouton ne faisait rien, et « Tout publier » l'aurait publié.
   - Cause : pour un circuit, « Annuler » ne savait que revenir à la version publiée ; un circuit absent de l'index n'était volontairement pas touché, et le recalcul du diff le reproposait en NOUVEAU.

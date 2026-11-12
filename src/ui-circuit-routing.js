@@ -18,7 +18,8 @@
 // Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026.
 import { state } from './state.js';
 import { routeCircuit, routeChangedSegments, normalizeRouting, resolveEngine, engineLabel, ROUTING_VARIANTS } from './circuit-routing.js';
-import { enterCircuitFocus, refreshFailOverlay } from './circuit-focus.js';
+import { enterCircuitFocus, refreshFailOverlay, clearFailOverlay } from './circuit-focus.js';
+import { openRouteCompare, isComparing, cancelRouteCompare } from './circuit-compare.js';
 import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
@@ -46,6 +47,9 @@ let tracing = false; // calcul BRouter en cours (évite les doubles clics)
 // aussitôt, ceci est le seul retour en arrière hors Centre de contrôle. Session
 // seulement. { circuitId, prevTrack, prevAscend, prevRouting, prevBasisKey, prevSegments, newFp }
 let lastRetrace = null;
+// Séquence de lieux au moment d'ouvrir le comparateur : si elle change pendant
+// la comparaison, les variantes ne valent plus rien → la comparaison se ferme.
+let compareKey = null;
 
 function inCreation() {
     return state.isCircuitCreationMode || state.editingMode;
@@ -103,6 +107,18 @@ export function updateTraceBlock() {
                         <h4>Édition du tracé en cours</h4>
                         <p>Ajustez l'itinéraire sur la carte ; terminez ou annulez depuis la barre en bas.</p>
                         ${wayTypesHtml()}
+                    </div>
+                </div>
+            </div>` + chip;
+    } else if (isComparing()) {
+        // Le panneau « Choisir l'itinéraire » est ouvert à gauche de la carte.
+        el.innerHTML = `
+            <div class="trace-status">
+                <div class="trace-status-head">
+                    <div class="trace-status-ico"><i data-lucide="route"></i></div>
+                    <div class="trace-status-txt">
+                        <h4>Choix de l'itinéraire <span class="trace-pill">2 variantes</span></h4>
+                        <p>Comparez-les sur la carte, puis retenez-en une.</p>
                     </div>
                 </div>
             </div>` + chip;
@@ -346,15 +362,9 @@ function previousRoute(prevTrack) {
     return { ids, features, realTrack: prevTrack, segments: state.routeSegments };
 }
 
-// keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
-// paire de lieux a changé sont recalculés, les autres gardent leurs ajustements.
-// Sans lui : tous les passages sont recalculés (1ᵉʳ tracé, « Tout re-tracer »).
-async function runTrace({ keepUnchanged = false } = {}) {
-    if (tracing) return;
-    if (!state.currentCircuit || state.currentCircuit.length < 2) {
-        showToast('Ajoutez au moins 2 lieux pour tracer un itinéraire.', 'warning');
-        return;
-    }
+// Tracé en place avant un calcul : de quoi l'afficher en calque après coup et
+// revenir en arrière (« Revenir au tracé précédent »).
+function traceContext() {
     // Point 5 : capture l'ANCIEN tracé (copie) AVANT qu'il soit écrasé, pour
     // l'afficher en calque (comparaison avant/après) après le re-tracé.
     const prevCircuit = activeCircuit();
@@ -370,54 +380,111 @@ async function runTrace({ keepUnchanged = false } = {}) {
         prevBasisKey: state.routeBasisKey,
         prevSegments: state.routeSegments,
     } : null;
+    return { prevCircuit, prevTrack, undo };
+}
+
+// keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
+// paire de lieux a changé sont recalculés, avec la variante du circuit, les
+// autres gardent leurs ajustements. Sans lui (1ᵉʳ tracé, « Tout re-tracer ») :
+// le comparateur « Choisir l'itinéraire » s'ouvre.
+async function runTrace({ keepUnchanged = false } = {}) {
+    if (tracing || isComparing()) return;
+    if (!state.currentCircuit || state.currentCircuit.length < 2) {
+        showToast('Ajoutez au moins 2 lieux pour tracer un itinéraire.', 'warning');
+        return;
+    }
+    const ctx = traceContext();
+    if (!keepUnchanged) { startCompare(ctx); return; }
     tracing = true;
     updateTraceBlock(); // spinner
 
     try {
         // Variante du circuit (Direct si aucune n'est mémorisée) et moteur :
         // BRouter de ce PC s'il répond, sinon brouter.de.
-        const routing = normalizeRouting(prevCircuit?.routing);
+        const routing = normalizeRouting(ctx.prevCircuit?.routing);
         const engine = await resolveEngine();
         const opts = { routing, base: engine.base };
-        const prev = keepUnchanged ? previousRoute(prevTrack) : null;
+        const prev = previousRoute(ctx.prevTrack);
         const result = prev
             ? await routeChangedSegments(state.currentCircuit, state.currentCircuit.map(getPoiId), prev, opts)
             : await routeCircuit(state.currentCircuit, {}, opts);
-        const { realTrack, segments } = result;
-        // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
-        // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
-        // partielle, comme « Terminer » en édition du tracé (circuit-focus.js).
-        const ascend = (prev && !Number.isFinite(result.ascend) && Number.isFinite(prevCircuit?.ascend))
-            ? prevCircuit.ascend : result.ascend;
-        state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
-        // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
-        await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend, routing: { ...routing, engine: engine.key } });
-        // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
-        // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
-        if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
-        // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
-        // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
-        // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait
-        // inopérante → le badge « à re-tracer » / « séquence modifiée » ne sortait
-        // jamais quand on changeait les lieux après coup. Même ordre que
-        // circuit-focus.js (pose après l'édition du tracé).
-        state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
-        lastRetrace = undo ? { ...undo, newFp: trackFingerprint(realTrack) } : null;
-        tracing = false;
-        updatePolylines();    // dessine le tracé bleu (real-track-polyline)
-        refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
-        renderCircuitPanel(); // breadcrumb (distance réelle) + déclenche updateTraceBlock via 'circuit:updated'
-        const nFail = failedCount();
-        const kept = result.keptCount || 0;
-        if (nFail > 0) showToast(`Tracé calculé — ${nFail > 1 ? nFail + ' passages' : '1 passage'} en ligne droite`, 'info');
-        else if (kept > 0) showToast(`Tracé mis à jour ✓ — ${plural(result.reroutedCount, 'passage recalculé', 'passages recalculés')}, ${plural(kept, 'conservé', 'conservés')}`, 'success');
-        else showToast('Itinéraire tracé ✓', 'success');
+        await applyTraceResult(ctx, { result, routing, engine, prev });
     } catch (e) {
-        tracing = false;
-        console.error('[routing] runTrace a échoué :', e);
-        showToast(e && e.message ? e.message : "BRouter n'a pas pu tracer l'itinéraire.", 'error');
-        updateTraceBlock(); // restaure le bouton
+        traceFailed(e);
     }
+}
+
+function traceFailed(e) {
+    tracing = false;
+    console.error('[routing] tracé échoué :', e);
+    showToast(e && e.message ? e.message : "BRouter n'a pas pu tracer l'itinéraire.", 'error');
+    updatePolylines();
+    refreshFailOverlay();
+    updateTraceBlock(); // restaure le bouton
+}
+
+// Ouvre « Choisir l'itinéraire » : le tracé en place (et ses passages droits)
+// s'efface le temps de la comparaison, les deux variantes le remplacent.
+function startCompare(ctx) {
+    compareKey = currentPoiKey();
+    state.realTrackPolyline?.remove();
+    state.orthodromicPolyline?.remove();
+    clearFailOverlay();
+    openRouteCompare({
+        features: state.currentCircuit,
+        // Variante mémorisée sur le circuit, sinon Chemins (décision de Stefan, 12/11/2026).
+        initial: ctx.prevCircuit?.routing || { variant: 'chemins' },
+        onApply: async ({ result, routing, engine }) => {
+            tracing = true;
+            updateTraceBlock();
+            try {
+                await applyTraceResult(ctx, { result, routing, engine, prev: null });
+            } catch (e) {
+                traceFailed(e);
+            }
+        },
+        onCancel: () => {
+            // Rien n'a changé : le tracé d'avant revient tel quel (ou rien au 1er tracé).
+            updatePolylines();
+            refreshFailOverlay();
+            updateTraceBlock();
+        },
+    });
+    updateTraceBlock();
+}
+
+// Enregistre un tracé calculé (variante retenue au comparateur, ou re-tracé
+// partiel) et remet la carte et le panneau à jour.
+async function applyTraceResult({ prevCircuit, prevTrack, undo }, { result, routing, engine, prev }) {
+    const { realTrack, segments } = result;
+    // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
+    // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
+    // partielle, comme « Terminer » en édition du tracé (circuit-focus.js).
+    const ascend = (prev && !Number.isFinite(result.ascend) && Number.isFinite(prevCircuit?.ascend))
+        ? prevCircuit.ascend : result.ascend;
+    state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
+    // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
+    await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend, routing: { ...routing, engine: engine.key } });
+    // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
+    // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
+    if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
+    // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
+    // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
+    // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait
+    // inopérante → le badge « à re-tracer » / « séquence modifiée » ne sortait
+    // jamais quand on changeait les lieux après coup. Même ordre que
+    // circuit-focus.js (pose après l'édition du tracé).
+    state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
+    lastRetrace = undo ? { ...undo, newFp: trackFingerprint(realTrack) } : null;
+    tracing = false;
+    updatePolylines();    // dessine le tracé bleu (real-track-polyline)
+    refreshFailOverlay(); // segments en échec en pointillé (le cas échéant)
+    renderCircuitPanel(); // breadcrumb (distance réelle) + déclenche updateTraceBlock via 'circuit:updated'
+    const nFail = failedCount();
+    const kept = result.keptCount || 0;
+    if (nFail > 0) showToast(`Tracé calculé — ${nFail > 1 ? nFail + ' passages' : '1 passage'} en ligne droite`, 'info');
+    else if (kept > 0) showToast(`Tracé mis à jour ✓ — ${plural(result.reroutedCount, 'passage recalculé', 'passages recalculés')}, ${plural(kept, 'conservé', 'conservés')}`, 'success');
+    else showToast('Itinéraire tracé ✓', 'success');
 }
 
 // Rétablit le tracé d'avant le dernier re-tracé, tel quel (points de passage et
@@ -518,6 +585,11 @@ export function initCircuitRoutingUI() {
     // Re-render à chaque changement du circuit (ajout/retrait POI, chargement,
     // tracé). notifyCircuitChanged() émet 'circuit:updated' sur window.
     window.addEventListener('circuit:updated', updateTraceBlock);
+    // Lieux changés, autre circuit ouvert ou sortie de la création pendant la
+    // comparaison : les variantes ne correspondent plus, on ferme sans rien changer.
+    window.addEventListener('circuit:updated', () => {
+        if (isComparing() && (!inCreation() || currentPoiKey() !== compareKey)) cancelRouteCompare();
+    });
     window.addEventListener('circuit:way-types', updateTraceBlock); // types de voie arrivés / échec
     updateTraceBlock();
 }
