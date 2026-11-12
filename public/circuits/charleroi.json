@@ -27,5 +27,25 @@
       "HW-01M616BR98326G65D6Z2R942JM"
     ],
     "trackHash": "277-43351a13"
+  },
+  {
+    "id": "HW-01M78J0A4WQP1MFP6K9CN9GZ3F",
+    "name": "Boucle autour de Église Notre-Dame",
+    "file": "charleroi/Boucle autour de Église Notre-Dame.gpx",
+    "description": "",
+    "distance": "8.3 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Villers-la-Ville",
+    "poiIds": [
+      "HW-01M6EV4ZREXDF263DBM6FD9DRR",
+      "HW-01M6EV51FF6DC7QDXZH3FGY7EZ",
+      "HW-01M6PM2GMNNXDSYBJ3Z510A2AY",
+      "HW-01M6EV4R39PXXJCZZF9SFTT4YE",
+      "HW-01M6EV4Q90RMB7FNAG29MEME0X",
+      "HW-01M6EV4VSRVJH56R9RZ6X5T5GM",
+      "HW-01M6EV4ZREXDF263DBM6FD9DRR"
+    ],
+    "trackHash": "208-2af9b39b"
   }
 ]
