@@ -78,6 +78,34 @@ export function repoFileSha(resp) {
 }
 
 /**
+ * Noms des fichiers d'un dossier du dépôt (API Contents, jeton requis).
+ * Une seule requête pour tout le dossier. null sans jeton ou si l'API ne répond
+ * pas : l'appelant ne doit alors rien conclure (« absent » ≠ « inconnu »).
+ * Sert au centre de contrôle à repérer un circuit dont le GPX publié a disparu
+ * (12/11/2026 : le diff ne voyait rien, il compare des empreintes).
+ * @param {string} path dossier dans le dépôt (segments déjà encodés si besoin)
+ * @returns {Promise<Set<string>|null>}
+ */
+export async function listRepoDir(path) {
+    let token = null;
+    try { token = getStoredToken(); } catch { /* pas de stockage */ }
+    if (!token) return null;
+    try {
+        const resp = await fetchWithTimeout(apiUrl(path), {
+            cache: 'no-store',
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github+json' },
+        });
+        if (!resp.ok) return null;
+        const items = await resp.json();
+        if (!Array.isArray(items)) return null;
+        return new Set(items.filter(it => it && it.type === 'file').map(it => it.name));
+    } catch (e) {
+        console.warn(`[repo-read] liste du dossier ${path} illisible`, e);
+        return null;
+    }
+}
+
+/**
  * SHA git ACTUEL d'un fichier du dépôt (requête HEAD, sans télécharger).
  * null si le fichier n'existe pas. Lève une erreur si GitHub ne répond pas :
  * l'appelant ne doit pas conclure « à jour » sans réponse.

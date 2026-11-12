@@ -1,6 +1,7 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, setTestedCircuit, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits } from './circuit-lookup.js';
+import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
@@ -878,6 +879,8 @@ async function publishChanges() {
                 // (étapes ajoutées ou réordonnées — règle dans tested-sync.js).
                 const testedSteps = await getTestedSteps(mapId);
                 const unverified = [];
+                // Circuits non publiés : leur nom (= leur fichier GPX) est déjà pris.
+                const blockedByName = [];
 
                 for (const c of circuitChanges) {
                     circuitProgress++;
@@ -914,6 +917,19 @@ async function publishChanges() {
 
                     const oldEntry = index.find(e => String(e.id) === String(local.id));
                     const isNew = !oldEntry;
+
+                    // Nom = fichier GPX : refusé s'il est déjà pris par un autre circuit
+                    // (index publié ou circuit local), casse et accents ignorés. Sans ce
+                    // contrôle, le second écrasait le GPX du premier (12/11/2026, boucles
+                    // de Rym Beach). Le circuit reste en attente, le reste est publié.
+                    const newFile = `${mapId}/${local.name}.gpx`;
+                    const clash = index.find(e => String(e.id) !== String(local.id)
+                            && normalizeCircuitName(e.file) === normalizeCircuitName(newFile))
+                        || findCircuitWithSameName(local.name, allLocal, local.id);
+                    if (clash) {
+                        blockedByName.push(local.name);
+                        continue;
+                    }
                     const cid = String(local.id);
                     if (!isNew && state.testedCircuits?.[cid] === true) {
                         const walked = testedSteps[cid] || oldEntry.poiIds;
@@ -930,7 +946,12 @@ async function publishChanges() {
                     rememberPublishedTrack(local.id, local.realTrack);
 
                     // 2. Renommage → supprimer l'ancien fichier GPX (sinon doublon dans l'index régénéré).
-                    if (oldEntry?.file && oldEntry.file !== `${mapId}/${local.name}.gpx`) {
+                    //    SAUF s'il sert encore à un autre circuit de l'index : le 12/11/2026,
+                    //    renommer une boucle de Rym Beach a supprimé le GPX de l'autre.
+                    const oldFileStillUsed = !!oldEntry?.file && index.some(e =>
+                        String(e.id) !== String(local.id)
+                        && normalizeCircuitName(e.file) === normalizeCircuitName(oldEntry.file));
+                    if (oldEntry?.file && oldEntry.file !== newFile && !oldFileStillUsed) {
                         try { await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_REPO, `public/circuits/${oldEntry.file}`, `feat(circuit): renommage — retrait ancien fichier`); }
                         catch (e) { console.warn('[CC] suppression ancien GPX échec:', oldEntry.file, e); }
                     }
@@ -941,6 +962,11 @@ async function publishChanges() {
                     const i = index.findIndex(e => String(e.id) === String(local.id));
                     if (i > -1) index[i] = newEntry; else index.push(newEntry);
                     indexDirty = true;
+                }
+
+                if (blockedByName.length > 0) {
+                    const liste = blockedByName.map(n => `« ${n} »`).join(', ');
+                    showToast(`Non publié${blockedByName.length > 1 ? 's' : ''} : ${liste} — un autre circuit porte déjà ce nom. Renommez-le, puis republiez.`, 'warning', 10000);
                 }
 
                 // 4. Commit de l'index mis à jour (cohérence immédiate).

@@ -338,6 +338,22 @@ describe('generateCircuitName', () => {
         expect(generateCircuitName()).toBe('Boucle autour de A');
     });
 
+    // 12/11/2026 : un nom = un fichier GPX publié, il doit être unique.
+    it('nom déjà pris par un AUTRE circuit : « via » le lieu du milieu', () => {
+        state.officialCircuits = [{ id: 'o1', name: 'Boucle autour de A', poiIds: [] }];
+        state.activeCircuitId = null; // création
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'M'), poi('p1', 'A')];
+        expect(generateCircuitName()).toBe('Boucle autour de A via M');
+    });
+
+    it("le circuit en cours d'édition ne se gêne pas lui-même", () => {
+        state.officialCircuits = [{ id: 'o1', name: 'Boucle autour de A', poiIds: [] }];
+        state.activeCircuitId = 'o1';
+        state.currentCircuit = [poi('p1', 'A'), poi('p2', 'M'), poi('p1', 'A')];
+        expect(generateCircuitName()).toBe('Boucle autour de A');
+        state.activeCircuitId = null;
+    });
+
     it('inclut un restaurant en extrémité (exclusion resto retirée le 07/06)', () => {
         // Un circuit qui finit à un resto DOIT le nommer ainsi : le nom décrit le
         // parcours réel. Avant, le resto était exclu → on nommait d'après une
