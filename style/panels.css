@@ -203,39 +203,20 @@
    — ni dans index.html ni généré en JS. Même famille de fantôme que #btn-bmc,
    retiré de ui.js en PR #953. Le CSS mort échappe à knip, qui ne lit pas les
    sélecteurs.) */
-/* --- TOPBAR BMC BUTTON (Soutenir le projet) --- */
+/* --- « Soutenir le projet » (#btn-bmc-topbar), ligne du menu Outils ---
+   Une ligne comme ses voisines (.tools-menu-item) : plus d'habit de bouton
+   autonome (fond, bord et texte ambre + ombre = double contour au soleil).
+   Seul le cœur la distingue : trait terracotta, remplissage --brand-soft.
+   Handoff Claude Design « écran bas », 12/11/2026. */
 #btn-bmc-topbar {
-    background-color: var(--hw-amber-soft); /* tinte ambre theme-aware (discret) */
-    color: var(--hw-amber);
-    border: 1px solid color-mix(in oklab, var(--hw-amber) 30%, transparent);
-    font-weight: 700;
-    box-shadow: var(--shadow-card);
-    transition: all 0.2s ease;
-    flex-shrink: 0; /* Important: Ne pas écraser */
-    margin-right: 8px; /* Espace avec le bouton Outils */
+    font-weight: var(--weight-semibold);
 }
-
 #btn-bmc-topbar svg {
-    color: var(--hw-amber);
-    fill: var(--hw-amber);
-    width: 20px;
-    height: 20px;
+    color: var(--brand-ink);
+    fill: var(--brand-soft);
 }
-
-#btn-bmc-topbar:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-soft);
-    background-color: color-mix(in oklab, var(--hw-amber) 18%, var(--surface));
-}
-
-/* RESPONSIVE: On small PC screens, hide text but keep icon */
-@media (max-width: 1100px) {
-    #btn-bmc-topbar span {
-        display: none;
-    }
-    #btn-bmc-topbar {
-        padding: 0 10px; /* Square-ish aspect */
-    }
+#btn-bmc-topbar:hover svg {
+    color: var(--brand);
 }
 
 /* ================================================
@@ -451,10 +432,12 @@
 }
 /* Réunif C1b : pastille « à curer » sur un candidat Scout (admin). Coin opposé
    au flagdot (haut-gauche), teinte ambre, pour repérer la file de tri. */
+/* Ambre légitime : « candidat à curer » est un signal d'attention (admin).
+   Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026) : --warn-* seulement. */
 .hw-poi-canddot {
     position: absolute; left: -2px; top: 0; z-index: 5;
     width: 14px; height: 14px; border-radius: 50%;
-    background: var(--hw-amber, #D97706);
+    background: var(--warn-fg);
     border: 2px solid var(--surface);
     box-shadow: var(--shadow-card);
 }
@@ -726,7 +709,9 @@
 /* Sections */
 .poi-section {
     padding: 18px 24px;
-    border-bottom: 1px solid var(--surface-muted);
+    /* Filet du cartel (et non --surface-muted, couleur du fond du panneau,
+       presque invisible en Matin et Ombre). Handoff « écran bas », 12/11/2026. */
+    border-bottom: var(--border-filet);
 }
 .poi-section:last-of-type { border-bottom: none; }
 .poi-section-title {
@@ -746,7 +731,7 @@
     align-items: center;
     gap: 8px;
 }
-.poi-section-title .ttl-text svg { width: 12px; height: 12px; color: var(--hw-amber); }
+.poi-section-title .ttl-text svg { width: 12px; height: 12px; color: var(--smallcaps-color); }
 .poi-section-title .ttl-action {
     background: none;
     border: none;
@@ -826,8 +811,9 @@
     height: 34px;
     border-radius: 10px;
     flex-shrink: 0;
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber);
+    /* Repère neutre (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)) : encre, plus d'ambre. */
+    background: var(--surface-muted);
+    color: var(--ink-soft);
     display: grid;
     place-items: center;
 }
@@ -871,7 +857,8 @@
 }
 .poi-toggle:hover { border-color: var(--line); }
 .poi-toggle.is-on { background: var(--brand-soft); border-color: rgba(59,130,246,0.3); }
-.poi-toggle.is-on.amber { background: var(--hw-amber-soft); border-color: rgba(217,119,6,0.3); }
+/* « Incontournable » = mise en avant → marque, pas ambre (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)). */
+.poi-toggle.is-on.amber { background: var(--brand-soft); border-color: var(--brand); }
 /* Icône toggle harmonisée avec Mes Circuits / Circuit (audit Stefan #1) :
    pattern circle/check-circle-2 (Apple Reminders / Todoist).
    Vert quand "Visité" actif, ambre quand "Incontournable" (star) actif. */
@@ -890,7 +877,7 @@
     stroke-width: 2;
 }
 .poi-toggle.is-on .poi-toggle-icon { color: var(--ok); }
-.poi-toggle.is-on.amber .poi-toggle-icon { color: var(--hw-amber); fill: var(--hw-amber); }
+.poi-toggle.is-on.amber .poi-toggle-icon { color: var(--brand); fill: var(--brand); }
 .poi-toggle .lab-text { font-weight: 600; color: var(--ink); flex: 1; }
 .poi-toggle .lab-hint { font-size: 12px; color: var(--ink-soft); font-weight: 400; display: block; margin-top: 1px; }
 
@@ -1544,7 +1531,7 @@
 .fchk .ico-leading svg { width: 13px; height: 13px; }
 .fchk .ico-leading.brand { background: var(--brand-soft); color: var(--brand); }
 .fchk .ico-leading.ok { background: rgba(16, 185, 129, 0.12); color: var(--ok); }
-.fchk .ico-leading.amber { background: var(--hw-amber-soft); color: var(--hw-amber); }
+.fchk .ico-leading.amber { background: var(--surface-muted); color: var(--ink-soft); } /* Resto : neutre */
 
 /* ─── Slider distance ─── */
 .fslider {
@@ -2443,7 +2430,7 @@
     margin-bottom: 6px;
 }
 .cp-breadcrumb .sep { opacity: 0.5; }
-.cp-breadcrumb .star { color: var(--hw-amber); }
+.cp-breadcrumb .star { color: var(--brand); }
 
 /* Titre */
 .cp-title-wrap {

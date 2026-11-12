@@ -68,10 +68,11 @@
     white-space: nowrap;
 }
 .photo-grid-comp-toggle .lucide { width: 14px; height: 14px; flex-shrink: 0; }
+/* Information, pas alerte : puce neutre (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)). */
 .photo-grid-comp-toggle.comp-optimized {
-    background: var(--hw-amber-soft);
-    color: var(--hw-amber);
-    border-color: var(--hw-amber);
+    background: var(--surface-muted);
+    color: var(--ink);
+    border-color: var(--filet-strong);
 }
 .photo-grid-comp-toggle.comp-optimized:hover {
     filter: brightness(0.97);

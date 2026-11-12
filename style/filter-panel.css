@@ -558,9 +558,10 @@
     transition: all 0.12s;
 }
 
+/* « Incontournable » coché = mise en avant → marque (Règle de l'ambre (handoff Claude Design « écran bas », 12/11/2026)). */
 .hw-fp-incontournable.is-checked {
-    background: var(--hw-amber-soft);
-    border-color: var(--warn);
+    background: var(--brand-soft);
+    border-color: var(--brand);
 }
 
 .hw-fp-incontournable input {
@@ -574,8 +575,8 @@
 }
 
 .hw-fp-incontournable.is-checked .hw-fp-checkbox-box {
-    background: var(--warn);
-    border-color: var(--warn);
+    background: var(--brand);
+    border-color: var(--brand);
 }
 
 .hw-fp-incontournable-label {
@@ -589,7 +590,7 @@
 }
 
 .hw-fp-incontournable.is-checked .hw-fp-incontournable-label {
-    color: var(--hw-amber);
+    color: var(--brand-ink);
 }
 
 .hw-fp-incontournable-label svg {

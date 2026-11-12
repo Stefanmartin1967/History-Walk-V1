@@ -6,6 +6,17 @@
 
 ---
 
+- FINITIONS : « SOUTENIR », PLACE DE L'AMBRE, FILET DES FICHES (v3.7.511). Lot 3 du handoff Claude Design « écran bas » (12/11/2026), sujets 5 et 6.
+  - « Soutenir le projet » (`#btn-bmc-topbar`, menu Outils) : une ligne comme ses voisines. Plus de fond, bord et texte ambre ni d'ombre (double contour au soleil) ; seul le cœur la distingue (trait `--brand-ink`, remplissage `--brand-soft`).
+  - Règle de l'ambre : il ne veut plus dire que « attention », via `--warn-*` (réglés pour les 4 moments). Relevé des 26 usages hors administration :
+    - gardés en `--warn-*` : bandeau « hors ligne » (fond `--warn-soft`, texte `--warn-fg` au lieu d'une barre ambre pleine), repères « candidat à curer » de l'admin (pastille sur la carte, ligne de l'éditeur) ;
+    - passés à la marque (mise en avant) : « Incontournable » du panneau Filtres et de la fiche, étoile du fil d'Ariane du circuit ;
+    - passés à l'encre (repère neutre) : pastille Resto sur téléphone, icône Resto des filtres de circuits, icône de résultat de recherche, icônes des faits et des titres de section de la fiche, étiquette « optimisée » de la grille de photos.
+  - Restent : `admin-cc.css` (13, administration, hors périmètre), deux commentaires, et `.cc-empty .ill::before` (classe absente du code, règle morte). Les alias `--hw-amber*` restent donc dans tokens.css.
+  - Sections de la fiche (`.poi-section`) : séparateur `--border-filet` au lieu de `1px solid var(--surface-muted)`, couleur du fond du panneau, presque invisible en Matin et Ombre.
+  - `style.css?v=8.63`.
+  - Pas encore fait : police Spectral (sujet 8, fichiers à récupérer), cohérence panneau Filtres / panneau latéral (sujet 7) et tri des ombres (sujet 9), non dessinés par Design.
+
 - ÉCRAN BAS : CARTES DE CIRCUIT RESSERRÉES SOUS 800 PX DE HAUT (v3.7.510). Deuxième lot du handoff Claude Design « écran bas » (12/11/2026). Décision Stefan : sous 800 px de haut seulement, les cartes actuelles restent sur grand écran.
   - Sous 800 px de haut (et au moins 769 px de large, bloc de la photo d'en-tête dans `style/panels.css`) : carte en grille, trois rangées. Titre ; lieux · km · zone avec le statut en petites capitales du cartel à droite ; Resto et « non vus » seulement s'ils existent. Chiffre en pastille et mot à côté (12 px au lieu de 10,5 dessous). Rien n'est retiré. Une zone longue passe à la ligne au lieu de déborder.
   - Mesuré à 1366 × 650 : 68 px (titre sur 1 ligne), 84 (2 lignes), + 26 avec Resto ; 6 circuits entiers visibles au lieu de 3. À 1920 × 950 : 122 px, comme avant.
