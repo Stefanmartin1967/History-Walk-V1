@@ -32,6 +32,7 @@ vi.mock('../src/circuit-view.js', () => ({ updateTransportSummary: vi.fn() }));
 vi.mock('../src/circuit-actions.js', () => ({
     handleCircuitVisitedToggle: vi.fn(),
     setCircuitHidden: vi.fn(),
+    warnIfNameTaken: vi.fn(() => false), // nom libre (cf. circuit-name.js)
 }));
 vi.mock('../src/circuit-store.js', () => ({ persistCircuit: (...a) => persistCircuit(...a) }));
 vi.mock('../src/data.js', () => ({ getPoiId: vi.fn() }));
