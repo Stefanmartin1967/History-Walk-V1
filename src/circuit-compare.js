@@ -10,7 +10,7 @@
 // via onApply (variante retenue + son résultat) ou onCancel.
 import L from 'leaflet';
 import { map, trackRenderer } from './map.js';
-import { routeCircuit, resolveEngine, normalizeRouting, ROUTING_VARIANTS, DEFAULT_FORCE, FORCE_MAX } from './circuit-routing.js';
+import { routeCircuit, resolveEngine, normalizeRouting, ROUTING_VARIANTS, DEFAULT_FORCE, FORCE_MAX, AVOID_WEIGHTS, DEFAULT_AVOID_WEIGHT } from './circuit-routing.js';
 import { WAY_KEYS, repassedMeters, compareToDirect, WAY_BETTER, formatKmDelta } from './route-stats.js';
 import { WAY_CATEGORIES, formatKm } from './way-types.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -55,6 +55,9 @@ export async function openRouteCompare({ features, initial, onApply, onCancel })
         selected: init.variant,
         // Force mémorisée si le circuit l'a (même s'il est en Direct), sinon 1.
         force: normalizeRouting({ variant: 'chemins', force: initial?.force ?? DEFAULT_FORCE }).force,
+        // « Éviter de repasser » (vaut pour les deux variantes) et son poids.
+        avoid: init.avoid === true,
+        weight: init.weight || DEFAULT_AVOID_WEIGHT,
         adjustOpen: false,
         hover: null,
         fitted: false,
@@ -86,7 +89,7 @@ function newRun() {
 
 // --- Calcul --------------------------------------------------------------
 function routingFor(variant) {
-    return normalizeRouting(variant === 'chemins' ? { variant, force: cv.force } : { variant });
+    return normalizeRouting({ variant, force: cv.force, avoid: cv.avoid, weight: cv.weight });
 }
 
 async function compute(variant) {
@@ -252,7 +255,22 @@ function buildPanel() {
                             </div>
                         </div>
                     </div>
-                    <p class="cv-row-hint">Chaque changement recalcule Chemins.</p>
+                    <div class="cv-row cv-row--sep">
+                        <div class="cv-row-top">
+                            <label class="cv-row-l" for="cv-avoid">Éviter de repasser</label>
+                            <span class="cv-switch"><input id="cv-avoid" type="checkbox" role="switch"><span aria-hidden="true"></span></span>
+                        </div>
+                        <p class="cv-row-hint">Ne pas revenir par la même voie quand une autre existe. Vaut pour les deux variantes.</p>
+                        <p class="cv-slow" hidden><i data-lucide="clock"></i><span>Plus lent avec brouter.de : chaque passage est demandé à part.</span></p>
+                    </div>
+                    <div class="cv-row cv-row--weight">
+                        <div class="cv-row-top"><span class="cv-row-l" id="cv-weight-l">Poids</span></div>
+                        <div class="cv-seg-ctl" role="radiogroup" aria-labelledby="cv-weight-l">
+                            ${AVOID_WEIGHTS.map((w, i) => `<button type="button" role="radio" data-act="weight" data-w="${w}">${['Léger', 'Net', 'Fort'][i]}<small>${w}</small></button>`).join('')}
+                        </div>
+                        <p class="cv-row-hint">Fort : quitte à faire de gros détours. S'il n'y a pas d'autre voie, le tracé repasse quand même.</p>
+                    </div>
+                    <p class="cv-row-hint">La force recalcule Chemins ; « éviter de repasser » et son poids recalculent les deux.</p>
                 </div>
             </div>
             <p class="cv-engine"></p>
@@ -279,7 +297,7 @@ function buildPanel() {
 
     const range = el.querySelector('#cv-force');
     range.value = String(cv.force);
-    syncForce();
+    syncAdjust();
     createIcons({ icons: appIcons, root: el });
     render();
 }
@@ -298,6 +316,14 @@ function onPanelClick(e) {
     if (act === 'cancel') { cancelRouteCompare(); return; }
     if (act === 'apply') { apply(); return; }
     if (act === 'retry') { retry(e.target.closest('[data-variant]').dataset.variant); return; }
+    if (act === 'weight') {
+        const w = Number(e.target.closest('[data-w]').dataset.w);
+        if (!cv.avoid || w === cv.weight) return;
+        cv.weight = w;
+        syncAdjust();
+        VARIANTS.forEach(v => compute(v));
+        return;
+    }
     if (act === 'adjust') {
         cv.adjustOpen = !cv.adjustOpen;
         const btn = cv.panel.querySelector('.cv-adjust-head');
@@ -313,15 +339,21 @@ function onPanelChange(e) {
         const f = normalizeRouting({ variant: 'chemins', force: e.target.value }).force;
         if (f === cv.force) return;
         cv.force = f;
-        syncForce();
+        syncAdjust();
         compute('chemins');
+        return;
+    }
+    if (e.target.id === 'cv-avoid') {
+        cv.avoid = e.target.checked;
+        syncAdjust();
+        VARIANTS.forEach(v => compute(v));
     }
 }
 
 // Pendant le glissé : la valeur et la piste suivent, sans recalcul.
 function onPanelInput(e) {
     if (e.target.id !== 'cv-force') return;
-    syncForce(Number(e.target.value));
+    syncAdjust(Number(e.target.value));
 }
 
 function onPanelHover(e) {
@@ -343,13 +375,24 @@ function select(variant) {
     render();
 }
 
-// Valeur affichée, partie remplie de la piste, résumé « Ajuster ».
-function syncForce(live) {
-    const f = Number.isFinite(live) ? live : cv.force;
-    const range = cv.panel.querySelector('#cv-force');
-    range.style.setProperty('--pct', `${(f / FORCE_MAX) * 100}%`);
-    cv.panel.querySelector('.cv-range-val').textContent = fmtForce(f);
-    cv.panel.querySelector('.cv-sum').textContent = `force ${fmtForce(cv.force)}`;
+// Contrôles d'« Ajuster » et son résumé : force (valeur et partie remplie de la
+// piste), interrupteur, poids (grisé s'il n'y a rien à éviter), note brouter.de.
+function syncAdjust(liveForce) {
+    const f = Number.isFinite(liveForce) ? liveForce : cv.force;
+    const p = cv.panel;
+    p.querySelector('#cv-force').style.setProperty('--pct', `${(f / FORCE_MAX) * 100}%`);
+    p.querySelector('.cv-range-val').textContent = fmtForce(f);
+    p.querySelector('.cv-sum').textContent = `force ${fmtForce(cv.force)} · ${cv.avoid ? 'éviter de repasser' : 'repasser permis'}`;
+    p.querySelector('#cv-avoid').checked = cv.avoid;
+    p.querySelector('.cv-switch').classList.toggle('is-on', cv.avoid);
+    p.querySelector('.cv-row--weight').classList.toggle('is-off', !cv.avoid);
+    p.querySelectorAll('[data-act="weight"]').forEach(b => {
+        const on = Number(b.dataset.w) === cv.weight;
+        b.classList.toggle('is-on', on);
+        b.setAttribute('aria-checked', String(on));
+        b.disabled = !cv.avoid;
+    });
+    p.querySelector('.cv-slow').hidden = !(cv.avoid && cv.engine && cv.engine.key !== 'local');
 }
 
 function renderEngine() {
@@ -358,6 +401,7 @@ function renderEngine() {
         ? '<i data-lucide="monitor"></i><span>Calculé par <b>BRouter de ce PC</b></span>'
         : '<i data-lucide="globe"></i><span>Calculé par <b>brouter.de</b> · BRouter de ce PC indisponible</span>';
     createIcons({ icons: appIcons, root: p });
+    syncAdjust(); // la note « plus lent avec brouter.de » dépend du moteur
 }
 
 function render() {

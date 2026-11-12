@@ -374,7 +374,11 @@ export const GUIDE_CIRCUIT = {
                 Chemins avec Direct sont marqués <strong>mieux</strong> ou <strong>moins
                 bien</strong>. <strong>« Ajuster »</strong> règle la <strong>force</strong> de
                 Chemins <span class="help-muted">(0 sans effet, 1 par défaut, 3 très
-                fort)</span>.</p>
+                fort)</span> et <strong>« Éviter de repasser »</strong> : ne pas revenir par la
+                même voie quand une autre existe, pour les deux variantes, avec un
+                <strong>poids</strong> <span class="help-muted">(léger, net, fort : gros
+                détours)</span>. Chaque passage est alors tracé à son tour, ce qui est plus lent
+                avec brouter.de.</p>
                 <p>Cliquez une variante <span class="help-muted">(ou sa ligne sur la carte)</span>,
                 puis <strong>« Utiliser cette variante »</strong>. <strong>« Annuler »</strong> ne
                 change rien. La variante retenue est rappelée sous le tracé, avec le moteur :
@@ -404,7 +408,8 @@ export const GUIDE_CIRCUIT = {
                         coup, le tracé est signalé <strong>« séquence modifiée »</strong>
                         <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
                         le remettre à jour : seuls les passages modifiés sont recalculés, avec la
-                        même variante, les autres gardent leurs ajustements.</li>
+                        même variante <span class="help-muted">(sans « éviter de
+                        repasser »)</span>, les autres gardent leurs ajustements.</li>
                     <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
                         rouvre « Choisir l'itinéraire » ; la variante retenue recalcule
                         <strong>tous</strong> les passages et efface vos ajustements.</li>

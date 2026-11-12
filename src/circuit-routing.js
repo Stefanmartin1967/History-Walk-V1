@@ -34,21 +34,33 @@ export const ROUTING_VARIANTS = {
 };
 export const DEFAULT_FORCE = 1;
 export const FORCE_MAX = 3;
+// « Éviter de repasser » : poids de la pénalité posée sur les voies déjà
+// parcourues (5 léger, 100 net, 1000 fort : gros détours). S'il n'y a pas
+// d'autre voie, BRouter repasse quand même.
+export const AVOID_WEIGHTS = [5, 100, 1000];
+export const DEFAULT_AVOID_WEIGHT = 100;
 
 /**
  * Réglages de calcul d'un circuit, nettoyés : variante connue (sinon Direct),
- * force bornée à [0, 3] et arrondie au dixième (Chemins seulement).
+ * force bornée à [0, 3] et arrondie au dixième (Chemins seulement), et
+ * « éviter de repasser » avec son poids (seulement s'il est activé).
  * @param {Object} [routing]  `circuit.routing` tel qu'enregistré (ou absent).
- * @returns {{variant: 'direct'|'chemins', force?: number}}
+ * @returns {{variant: 'direct'|'chemins', force?: number, avoid?: true, weight?: number}}
  */
 export function normalizeRouting(routing) {
     const variant = routing && ROUTING_VARIANTS[routing.variant] ? routing.variant : 'direct';
-    if (variant !== 'chemins') return { variant };
-    const raw = Number(routing.force);
-    const force = Number.isFinite(raw)
-        ? Math.round(Math.min(FORCE_MAX, Math.max(0, raw)) * 10) / 10
-        : DEFAULT_FORCE;
-    return { variant, force };
+    const out = { variant };
+    if (variant === 'chemins') {
+        const raw = Number(routing.force);
+        out.force = Number.isFinite(raw)
+            ? Math.round(Math.min(FORCE_MAX, Math.max(0, raw)) * 10) / 10
+            : DEFAULT_FORCE;
+    }
+    if (routing && routing.avoid === true) {
+        out.avoid = true;
+        out.weight = AVOID_WEIGHTS.includes(Number(routing.weight)) ? Number(routing.weight) : DEFAULT_AVOID_WEIGHT;
+    }
+    return out;
 }
 
 // Paramètres d'URL BRouter d'une variante : `&profile=…` (+ `&profile:<param>=<force>`).
@@ -58,6 +70,58 @@ export function routingQuery(routing) {
     let q = `&profile=${encodeURIComponent(v.profile)}`;
     if (v.forceParam) q += `&profile:${v.forceParam}=${r.force}`;
     return q;
+}
+
+// Distance approchée (m) entre deux points [lat, lon].
+function metersBetween(a, b) {
+    const dx = (b[1] - a[1]) * Math.cos(((a[0] + b[0]) / 2) * Math.PI / 180) * 111320;
+    const dy = (b[0] - a[0]) * 110540;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+// Autour des deux bouts d'un passage, la ligne à éviter est retirée : BRouter
+// IGNORE une ligne à éviter qui passe par le départ ou l'arrivée du passage
+// (constaté le 12/11/2026 sur le banc d'essai). Le départ est toujours au bout
+// du tracé précédent.
+const AVOID_END_CLEARANCE_M = 150;
+const AVOID_STEP_M = 15;        // un point tous les 15 m suffit
+// Les demandes partent en GET : brouter.de en accepte 600 points au plus ;
+// BRouter de ce PC n'a pas cette limite, on garde tout de même une borne.
+const AVOID_MAX_POINTS = { public: 600, local: 3000 };
+
+/**
+ * Paramètre `&polylines=` qui fait éviter à BRouter le tracé déjà parcouru.
+ * @param {number[][]} track  Tracé déjà parcouru, [[lat, lon], …].
+ * @param {number[][]} vias   Points du passage à tracer, [lon, lat] (départ … arrivée).
+ * @param {number} weight     Poids de la pénalité.
+ * @param {number} maxPoints  Nombre total de points envoyés, au plus.
+ * @returns {string}  '' si rien à éviter.
+ */
+export function avoidPolylinesQuery(track, vias, weight, maxPoints) {
+    if (!Array.isArray(track) || track.length < 2 || !Array.isArray(vias) || vias.length < 2) return '';
+    const ends = [vias[0], vias[vias.length - 1]].map(([lon, lat]) => [lat, lon]);
+    const pieces = [];
+    let cur = [];
+    for (const q of track) {
+        if (ends.some(e => metersBetween(e, q) < AVOID_END_CLEARANCE_M)) {
+            // Trou autour d'un bout : un morceau = une ligne, sans relier les trous.
+            if (cur.length > 1) pieces.push(cur);
+            cur = [];
+            continue;
+        }
+        if (!cur.length || metersBetween(cur[cur.length - 1], q) >= AVOID_STEP_M) cur.push(q);
+    }
+    if (cur.length > 1) pieces.push(cur);
+    const total = pieces.reduce((s, m) => s + m.length, 0);
+    if (!total) return '';
+    const keep = total > maxPoints ? maxPoints / total : 1;
+    const lines = pieces
+        .map(m => (keep < 1
+            ? m.filter((_, i) => i === m.length - 1 || Math.floor(i * keep) !== Math.floor((i - 1) * keep))
+            : m))
+        .filter(m => m.length > 1)
+        .map(m => m.map(q => `${q[1].toFixed(6)},${q[0].toFixed(6)}`).join(',') + ',' + weight);
+    return lines.length ? '&polylines=' + lines.join('|') : '';
 }
 
 // --- Moteur : BRouter de ce PC ou brouter.de ---------------------------------
@@ -155,7 +219,17 @@ function toLonLats(points) {
  * @property {string} [base]     URL du moteur (résolue par resolveEngine) — défaut : brouter.de.
  * @property {(done: number, total: number) => void} [onProgress]  routeCircuit : appelé à
  *   l'arrivée de chaque passage (compteur « passage 3 sur 5 » du comparateur).
+ * @property {number[][]} [avoidTrack]  routePoints : tracé déjà parcouru à éviter
+ *   ([[lat, lon], …]), pris en compte si la variante a « éviter de repasser ».
  */
+
+// brouter.de limite le débit (« Please, retry later! ») : jusqu'à 3 nouvelles
+// tentatives, espacées de 3, 6 puis 9 s. Rien de tel avec BRouter de ce PC.
+const RETRY_DELAYS_MS = [3000, 6000, 9000];
+// Passages tracés à la suite (« éviter de repasser ») vers brouter.de : un appel
+// toutes les 1,2 s au plus, comme sur le banc d'essai.
+const PUBLIC_SPACING_MS = 1200;
+const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
 /**
  * Route une séquence de points [lon, lat] via BRouter.
@@ -165,30 +239,39 @@ function toLonLats(points) {
  *   `realTrack` au format [[lat, lon], …], prêt à être posé sur `circuit.realTrack`.
  * @throws {Error} message lisible si réseau KO ou tracé absent.
  */
-export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL } = {}) {
+export async function routePoints(points, { routing, base = PUBLIC_BROUTER_URL, avoidTrack = null } = {}) {
     if (!Array.isArray(points) || points.length < 2) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
-    const url = `${base}?lonlats=${toLonLats(points)}${routingQuery(routing)}&format=geojson&alternativeidx=0`;
+    const r = normalizeRouting(routing);
+    const local = base === LOCAL_BROUTER_URL;
+    const avoid = r.avoid && avoidTrack
+        ? avoidPolylinesQuery(avoidTrack, points, r.weight, local ? AVOID_MAX_POINTS.local : AVOID_MAX_POINTS.public)
+        : '';
+    const url = `${base}?lonlats=${toLonLats(points)}${routingQuery(r)}${avoid}&format=geojson&alternativeidx=0`;
 
     let resp;
-    try {
-        // 20 s : un routage long (nombreux points) peut être plus lent qu'une API
-        // classique, mais ne doit pas pendre indéfiniment sur un serveur muet.
-        resp = await fetchWithTimeout(url, {}, 20000);
-    } catch (e) {
-        if (base === LOCAL_BROUTER_URL) {
-            forgetEngine(); // éteint en cours de route : le prochain calcul ressonde
-            throw new Error('BRouter de ce PC ne répond pas.');
+    for (let attempt = 0; ; attempt++) {
+        try {
+            // 20 s : un routage long (nombreux points) peut être plus lent qu'une API
+            // classique, mais ne doit pas pendre indéfiniment sur un serveur muet.
+            resp = await fetchWithTimeout(url, {}, 20000);
+        } catch (e) {
+            if (local) {
+                forgetEngine(); // éteint en cours de route : le prochain calcul ressonde
+                throw new Error('BRouter de ce PC ne répond pas.');
+            }
+            throw new Error('BRouter est injoignable — vérifiez la connexion internet.');
         }
-        throw new Error('BRouter est injoignable — vérifiez la connexion internet.');
-    }
-    if (!resp.ok) {
+        if (resp.ok) break;
         // brouter.de limite le débit : il répond « Please, retry later! ».
         let body = '';
         try { body = typeof resp.text === 'function' ? await resp.text() : ''; } catch (e) { /* corps illisible */ }
-        if (/retry later/i.test(body)) throw new Error('brouter.de limite les demandes.');
-        throw new Error(`BRouter n'a pas pu calculer l'itinéraire (erreur ${resp.status}).`);
+        if (!/retry later/i.test(body)) {
+            throw new Error(`BRouter n'a pas pu calculer l'itinéraire (erreur ${resp.status}).`);
+        }
+        if (attempt >= RETRY_DELAYS_MS.length) throw new Error('brouter.de limite les demandes.');
+        await wait(RETRY_DELAYS_MS[attempt]);
     }
 
     let gj;
@@ -289,17 +372,30 @@ export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
     if (anchors.length < 2) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
-    const tasks = [];
     const total = anchors.length - 1;
     let done = 0;
-    for (let i = 0; i < total; i++) {
-        tasks.push(routeSegment(segmentVias(anchors, waypointsBySeg, i), opts).then((seg) => {
-            done++;
-            if (typeof opts.onProgress === 'function') opts.onProgress(done, total);
-            return seg;
-        }));
+    const progress = (seg) => {
+        done++;
+        if (typeof opts.onProgress === 'function') opts.onProgress(done, total);
+        return seg;
+    };
+    let segments;
+    if (normalizeRouting(opts.routing).avoid) {
+        // « Éviter de repasser » : chaque passage est tracé à son tour, en évitant
+        // les voies des passages précédents. Vers brouter.de, les appels sont
+        // espacés (débit limité) ; BRouter de ce PC n'a pas de limite.
+        segments = [];
+        let walked = [];
+        for (let i = 0; i < total; i++) {
+            if (i > 0 && opts.base !== LOCAL_BROUTER_URL) await wait(PUBLIC_SPACING_MS);
+            const seg = progress(await routeSegment(segmentVias(anchors, waypointsBySeg, i), { ...opts, avoidTrack: walked }));
+            segments.push(seg);
+            walked = buildRealTrack(segments);
+        }
+    } else {
+        segments = await Promise.all(Array.from({ length: total }, (_, i) =>
+            routeSegment(segmentVias(anchors, waypointsBySeg, i), opts).then(progress)));
     }
-    const segments = await Promise.all(tasks);
     const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
     return {
         realTrack: buildRealTrack(segments),
