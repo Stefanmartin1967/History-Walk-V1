@@ -22,7 +22,7 @@ body.mode-donnees-active.md-poi-open .right-sidebar,
 body.mode-donnees-active.md-poi-open .hw-sidebar,
 body.mode-donnees-active.md-poi-open #right-sidebar { display: flex !important; }
 
-/* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top:72px).
+/* Sidebar masquée → la carte prend toute la largeur (sous la topbar, top: var(--topbar-h)).
    Fiche ouverte → la carte laisse la place normale à la sidebar (même valeur
    qu'en navigation courante, cf. base.css, bloc #map de l'affichage bureau). */
 body.mode-donnees-active #map { right: 0 !important; }

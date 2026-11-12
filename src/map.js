@@ -16,6 +16,7 @@ import { showInfoPopover } from './info-popover.js';
 import { getActiveCircuit, findCircuitById } from './circuit-lookup.js';
 import { onNetworkBack } from './network-status.js';
 import { isMobileView } from './mobile-state.js';
+import { bindFullscreenButton, isFullscreenSupported } from './fullscreen-toggle.js';
 
 export { iconMap, getIconHtml, getIconForFeature };
 
@@ -226,6 +227,27 @@ export function initMap(initialCenter = DEFAULT_CENTER, initialZoom = DEFAULT_ZO
         }
     });
     map.addControl(new LegendControl());
+
+    // --- BOUTON PLEIN ÉCRAN (bas de la pile) ---
+    // Handoff Claude Design « écran bas » (12/11/2026) : quitte le menu Outils.
+    // C'est un réglage de la vue, et le plus gros gain de hauteur sur un petit
+    // portable. PC seulement (la PWA mobile est déjà plein écran).
+    if (!isMobileView() && isFullscreenSupported()) {
+        const FullscreenControl = L.Control.extend({
+            options: { position: 'topleft' },
+            onAdd: function() {
+                const container = L.DomUtil.create('div', 'leaflet-bar leaflet-control');
+                const link = L.DomUtil.create('a', 'leaflet-control-custom', container);
+                link.href = '#';
+                link.id = 'leaflet-btn-fullscreen';
+                link.role = 'button';
+                L.DomEvent.disableClickPropagation(container);
+                bindFullscreenButton(link); // icône, info-bulle, aria-pressed
+                return container;
+            }
+        });
+        map.addControl(new FullscreenControl());
+    }
 
     // Initialisation des icônes après ajout
     createIcons({ icons: appIcons });

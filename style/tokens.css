@@ -152,6 +152,15 @@
   --control-h-lg: 52px;
   --tap-min: 44px;
 
+  /* Barre du haut PC + onglets du panneau latéral : UNE hauteur partagée
+     (handoff Claude Design « écran bas », 12/11/2026). 72 px par défaut,
+     56 px quand la fenêtre fait 800 px de haut ou moins (base.css), 40 px en
+     PWA installée. --search-min : « Rechercher un lieu… » lisible en entier. */
+  --topbar-h:     72px;
+  --topbar-h-low: 56px;   /* contrôle 44 + 2 × 6 */
+  --search-min:   212px;
+  --font-size-input: 16px; /* champs de saisie : évite le zoom iOS */
+
   /* Tracé & GPS (épais ≥ 2px, lisible au soleil) */
   --trace-width:       5px;
   --trace-color:       var(--azur-500);

@@ -43,7 +43,6 @@ export function refreshFiltersButton() {
     // a11y : aria-pressed reflète l'état "filtres appliqués". aria-expanded
     // reflète l'ouverture du panneau (mis à jour ailleurs).
     btn.setAttribute('aria-pressed', n > 0 ? 'true' : 'false');
-    fitTourLabel(); // la pastille change la largeur du bouton → la place disponible aussi
 }
 
 // ─── Dropdown destination ──────────────────────────────────────────────────
@@ -163,7 +162,6 @@ export function renderDestinationMenu(destinations, activeMapId) {
         const { code } = inferCountryAndFlag(activeDest);
         if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
         if (selectorFlagEl) selectorFlagEl.textContent = code;
-        fitTourLabel(); // le nom de la destination change la place disponible
     }
 
     // Génère le HTML du menu : entrée active en premier, puis les autres.
@@ -248,6 +246,7 @@ function updateMomentToggleActive() {
         seg.classList.toggle('is-active', on);
         seg.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    updateLectureButton();
 }
 
 function setupMomentToggle() {
@@ -274,6 +273,7 @@ function updateNamesToggleActive() {
         btn.classList.toggle('is-active', on);
         btn.setAttribute('aria-pressed', on ? 'true' : 'false');
     });
+    updateLectureButton();
 }
 
 function setupNamesToggle() {
@@ -295,34 +295,89 @@ function setupNamesToggle() {
 // Le bouton « Mon Espace » topbar a été retiré en PR2 dissolution (06/06/2026) —
 // la Sauvegarde a migré dans le menu Outils, cf. ui.js btn-tools-backup.
 
+// « Que faire ? » garde son libellé à toutes les largeurs : ce sont les
+// paliers de la barre (fin de topbar-v2.css) qui font la place. Le repli
+// mesuré du libellé (fitTourLabel, 11/10/2026) a été retiré le 12/11/2026.
 function setupTourButton() {
     const btn = document.getElementById('btn-tour');
     if (btn) btn.addEventListener('click', () => showWelcomeAgain());
-
-    // Repli du libellé quand la barre manque de place (cf. fitTourLabel) :
-    // à chaque changement de taille de la barre, et une fois les polices
-    // chargées (elles changent la largeur des libellés).
-    const bar = document.querySelector('.topbar');
-    if (btn && bar && typeof ResizeObserver === 'function') {
-        new ResizeObserver(fitTourLabel).observe(bar);
-    }
-    document.fonts?.ready?.then(fitTourLabel);
-    fitTourLabel();
 }
 
-// « Que faire ? » : la barre du haut n'a que la largeur de la carte (fenêtre
-// moins le panneau latéral). Mesuré le 11/10/2026 : à 1366 px elle tient de
-// justesse avec le libellé, à 1280 px non. Plutôt qu'un seuil en px, fragile
-// (nom de la destination, « Filtres (n) »…), on MESURE : libellé déplié, la
-// barre déborde-t-elle ? Si oui, il se replie (icône encadrée + info-bulle).
-// Observer la barre seule ne boucle pas : sa largeur ne dépend pas de son
-// contenu, seul son débordement en dépend.
-function fitTourLabel() {
+// ─── Palier étroit (barre < 932 px, fin de topbar-v2.css) ──────────────────
+// Handoff Claude Design « écran bas » (12/11/2026). Le CSS décide QUAND ces
+// boutons existent (container query) ; ici on ne gère que l'ouverture.
+
+// Loupe : ouvre le champ de recherche sur toute la barre (.is-search-open).
+// La croix ou Échap dans le champ la referment ; le focus revient à la loupe.
+function setSearchOpen(open) {
     const bar = document.querySelector('.topbar');
-    const btn = document.getElementById('btn-tour');
-    if (!bar || !btn) return;
-    btn.classList.remove('is-compact');
-    if (bar.scrollWidth > bar.clientWidth) btn.classList.add('is-compact');
+    const toggle = document.getElementById('hw-search-toggle');
+    if (!bar || !toggle) return;
+    bar.classList.toggle('is-search-open', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open) document.getElementById('search-input')?.focus();
+    else toggle.focus();
+}
+
+export function setupSearchToggle() {
+    const toggle = document.getElementById('hw-search-toggle');
+    if (!toggle) return;
+    toggle.addEventListener('click', () => setSearchOpen(true));
+    document.getElementById('hw-search-close')?.addEventListener('click', () => setSearchOpen(false));
+    document.getElementById('search-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && document.querySelector('.topbar.is-search-open')) setSearchOpen(false);
+    });
+}
+
+// « Lecture » : moment + langue des noms rangés dans un menu. Le bouton montre
+// l'émoji du moment courant et la langue ; il est resynchronisé par les deux
+// segmentés (updateMomentToggleActive / updateNamesToggleActive).
+function updateLectureButton() {
+    const emo = document.getElementById('hw-lecture-emo');
+    const lng = document.getElementById('hw-lecture-lng');
+    const seg = document.querySelector(`.hw-moment-seg[data-theme="${getCurrentTheme()}"]`);
+    if (emo && seg) emo.textContent = seg.textContent.trim();
+    if (lng) {
+        const ar = getCurrentPatrimonialLang() === 'ar';
+        lng.textContent = ar ? 'ع' : 'FR';
+        lng.classList.toggle('scr', ar);
+    }
+}
+
+function isLectureOpen() {
+    return Boolean(document.getElementById('hw-prefs')?.classList.contains('is-open'));
+}
+
+function setLectureOpen(open) {
+    const wrap = document.getElementById('hw-prefs');
+    const btn = document.getElementById('hw-lecture-btn');
+    if (!wrap || !btn) return;
+    if (open) eventBus.emit('topbar:popup-opening', { id: 'lecture' });
+    wrap.classList.toggle('is-open', open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+export function setupLectureMenu() {
+    const wrap = document.getElementById('hw-prefs');
+    const btn = document.getElementById('hw-lecture-btn');
+    if (!wrap || !btn) return;
+    btn.addEventListener('click', () => setLectureOpen(!isLectureOpen()));
+    // Listeners du document : relire les éléments par id à chaque événement
+    // (pas de référence figée à l'installation).
+    document.addEventListener('click', (e) => {
+        const current = document.getElementById('hw-prefs');
+        if (isLectureOpen() && current && !current.contains(e.target)) setLectureOpen(false);
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isLectureOpen()) {
+            setLectureOpen(false);
+            document.getElementById('hw-lecture-btn')?.focus();
+        }
+    });
+    eventBus.on('topbar:popup-opening', ({ id }) => {
+        if (id !== 'lecture' && isLectureOpen()) setLectureOpen(false);
+    });
+    updateLectureButton();
 }
 
 // ─── Coordination des popups topbar (1 seul ouvert à la fois) ─────────────
@@ -368,6 +423,8 @@ export function setupTopbarV2() {
     setupTourButton();
     setupMomentToggle();
     setupNamesToggle();
+    setupSearchToggle();
+    setupLectureMenu();
 
     // Coordination popups topbar : 1 seul ouvert à la fois (cf. fix #6).
     setupTopbarPopupCoordination();

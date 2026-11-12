@@ -1,26 +1,34 @@
 // fullscreen-toggle.js
-// Entrée « Plein écran » du menu Outils, via Fullscreen API. Bascule l'icône
-// maximize↔minimize, le libellé et l'aria-pressed selon l'état réel
+// Bouton « Plein écran » (Fullscreen API), carré de la pile de contrôles de la
+// carte (map.js FullscreenControl). Bascule l'icône maximize↔minimize,
+// l'info-bulle / nom accessible et l'aria-pressed selon l'état réel
 // (resynchronisé via fullscreenchange, donc cohérent même si l'utilisateur
-// sort via Échap ou F11). Bouton de la barre du haut jusqu'au 11/10/2026,
-// déplacé dans le menu pour faire place à « Que faire ? ».
+// sort via Échap ou F11).
 //
-// PC-only : la PWA mobile est déjà plein écran (display: standalone), donc
-// l'entrée n'a pas de sens là-bas. Le menu Outils n'est pas rendu sur mobile.
+// Historique : bouton de la barre du haut jusqu'au 11/10/2026, puis entrée du
+// menu Outils (place pour « Que faire ? »), puis la pile de la carte le
+// 12/11/2026 (handoff Claude Design « écran bas ») : c'est un réglage de la
+// vue, et sur un petit portable il est le plus gros gain de hauteur.
+//
+// PC-only : la PWA mobile est déjà plein écran (display: standalone) ; map.js
+// n'ajoute pas le bouton sur mobile.
 
 import { createIcons, appIcons } from './lucide-icons.js';
-
-const BTN_ID = 'btn-fullscreen-toggle';
 
 function isFullscreen() {
     return Boolean(document.fullscreenElement);
 }
 
+export function isFullscreenSupported() {
+    return typeof document.documentElement.requestFullscreen === 'function';
+}
+
 function updateButtonState(btn) {
     const on = isFullscreen();
-    const icon = on ? 'minimize' : 'maximize';
-    // Libellé visible (entrée de menu) : il porte aussi le nom accessible.
-    btn.innerHTML = `<i data-lucide="${icon}"></i> ${on ? 'Quitter le plein écran' : 'Plein écran'}`;
+    const label = on ? 'Quitter le plein écran' : 'Plein écran';
+    btn.innerHTML = `<i data-lucide="${on ? 'minimize' : 'maximize'}"></i>`;
+    btn.title = label;
+    btn.setAttribute('aria-label', label);
     btn.setAttribute('aria-pressed', String(on));
     createIcons({ icons: appIcons, root: btn });
 }
@@ -39,17 +47,13 @@ async function toggle() {
     }
 }
 
-export function setupFullscreenToggle() {
-    const btn = document.getElementById(BTN_ID);
+// Câble un bouton existant (le lien Leaflet de la pile). Appelé une fois.
+export function bindFullscreenButton(btn) {
     if (!btn) return;
-
-    // Fullscreen API : support universel desktop (Chrome/Edge/Firefox/Safari).
-    // Sur les rares navigateurs sans support, on masque le bouton.
-    if (!document.documentElement.requestFullscreen) {
-        btn.hidden = true;
-        return;
-    }
-
-    btn.addEventListener('click', toggle);
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        toggle();
+    });
     document.addEventListener('fullscreenchange', () => updateButtonState(btn));
+    updateButtonState(btn);
 }
