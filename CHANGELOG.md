@@ -14,6 +14,7 @@
   - Pièges réglés : la projection en multipoint perd les doublons et décale l'ordre (un point par géométrie) ; le lien d'image renvoyé par `f=json` expire parfois (« Invalid URL ») → image demandée directement.
   - Une voie fermée n'est signalée que si aucune voie ouverte ne passe à moins de 15 m : sur la trace enregistrée par Stefan, la jonction Rue de Chassart / chemin privé donnait 80 m signalés à tort.
   - Rejoué sur la trace enregistrée par Stefan le 8/11 : rien à signaler. Le fléchage passait par la Rue de Chassart, pas par le Sentier n° 28 (+300 m environ par rapport à la trace de l'organisateur).
+  - Hors de Wallonie (Djerba), le Géoportail n'est pas interrogé : le rapport le dit, le contrôle OSM reste fait.
   - Tests : `tests/check_trace_osm.test.js` (+10). Aucun changement dans l'app.
 
 - TÉLÉPHONE : LES FILTRES ACTIFS DE « MES CIRCUITS » SE VOIENT ET SE RETIRENT (v3.7.513). Lot 2 du handoff Claude Design « écran bas » (12/11/2026). Le bouton réglages de l'en-tête disait COMBIEN de filtres étaient actifs, jamais LESQUELS.
