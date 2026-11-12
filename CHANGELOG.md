@@ -6,6 +6,14 @@
 
 ---
 
+- OUTIL : CONTRÔLE D'UNE TRACE GPX CONTRE OSM ET L'ATLAS DES CHEMINS VICINAUX (v3.7.514). Demande de Stefan (12/11/2026) après la marche ADEPS de Mellet : 660 m de la trace passaient par deux chemins marqués `access=private` sur OSM (ways 23315812 et 33142766), que BRouter refuse, alors que l'Atlas de 1841 y montre le « Sentier n° 28 » sans modification enregistrée. « On va avoir souvent ce genre de souci. »
+  - `npm run trace -- <fichier.gpx>` (`scripts/check-trace-osm.mjs`) : charge les voies OSM autour de la trace (Overpass, trois serveurs en repli), repère les tronçons à plus de 20 m de toute voie et ceux qui suivent une voie fermée au marcheur (`access=private/no` sans `foot=yes`, ou `foot=private/no`).
+  - Pour chaque tronçon repéré, interroge le Géoportail de Wallonie (services ArcGIS REST) : plan de l'Atlas de 1841 et cadastre 2025 avec la trace et la voie OSM dessinées dessus, modifications de l'Atlas enregistrées sur la zone, parcelles traversées, lien vers le Géoportail.
+  - Écrit un rapport HTML autonome à côté du GPX (`<nom>.controle-osm.html`, images incluses). N'écrit rien d'autre.
+  - Rejoué sur Mellet : les deux chemins privés tombent sur le Sentier n° 28 ; les 514 m « hors OSM » du Sentier de la Couronne sont une imprécision de la trace Wikiloc (le sentier OSM suit la bande publique du cadastre).
+  - Pièges réglés : la projection en multipoint perd les doublons et décale l'ordre (un point par géométrie) ; le lien d'image renvoyé par `f=json` expire parfois (« Invalid URL ») → image demandée directement.
+  - Tests : `tests/check_trace_osm.test.js` (+9). Aucun changement dans l'app.
+
 - TÉLÉPHONE : LES FILTRES ACTIFS DE « MES CIRCUITS » SE VOIENT ET SE RETIRENT (v3.7.513). Lot 2 du handoff Claude Design « écran bas » (12/11/2026). Le bouton réglages de l'en-tête disait COMBIEN de filtres étaient actifs, jamais LESQUELS.
   - Bande `#mobile-filter-strip` au-dessus du dock, dans la vue Mes Circuits seulement : une puce de 44 px par filtre (Officiels, Vérifiés, Avec resto, distance « 3 → 12 km », zone, À faire / Faits, Cachés, Tri), toucher la puce retire le filtre, « Tout réinitialiser » au bout. Défile de côté ; cachée sans filtre et dès qu'on quitte la liste (`resetMobileSlots`, `setCurrentView`).
   - `getActiveMobileFilters` (`src/mobile-circuits.js`) : source unique de la pastille du bouton réglages et de la bande ; `removeMobileFilter` remet un filtre à son défaut.

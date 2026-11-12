@@ -10,6 +10,7 @@
     "update-circuits": "node scripts/generate-circuit-index.js",
     "screenshots": "node scripts/capture-screenshots.mjs",
     "gabarit": "node scripts/check-gabarit.mjs",
+    "trace": "node scripts/check-trace-osm.mjs",
     "test": "vitest",
     "knip": "knip"
   },
