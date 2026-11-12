@@ -6,6 +6,13 @@
 
 ---
 
+- ÉCRAN BAS : CARTES DE CIRCUIT RESSERRÉES SOUS 800 PX DE HAUT (v3.7.510). Deuxième lot du handoff Claude Design « écran bas » (12/11/2026). Décision Stefan : sous 800 px de haut seulement, les cartes actuelles restent sur grand écran.
+  - Sous 800 px de haut (et au moins 769 px de large, bloc de la photo d'en-tête dans `style/panels.css`) : carte en grille, trois rangées. Titre ; lieux · km · zone avec le statut en petites capitales du cartel à droite ; Resto et « non vus » seulement s'ils existent. Chiffre en pastille et mot à côté (12 px au lieu de 10,5 dessous). Rien n'est retiré. Une zone longue passe à la ligne au lieu de déborder.
+  - Mesuré à 1366 × 650 : 68 px (titre sur 1 ligne), 84 (2 lignes), + 26 avec Resto ; 6 circuits entiers visibles au lieu de 3. À 1920 × 950 : 122 px, comme avant.
+  - `src/ui-circuit-list.js` : Resto et « non vus » sortent de `.va-meta` vers un nouveau `.va-extra`, créé seulement s'il a un contenu. Grand écran : la carte passe en flex-wrap en ligne, même rendu qu'avant (Resto reste dans la rangée des pastilles).
+  - Toutes tailles : survol, focus clavier et sélection en tokens (fini le bleu hérité) ; pastille Resto neutre (plus d'ambre) ; statut en `--brand-ink` / `--verified`, lisibles en Nuit ; demi-pixels arrondis (titre 14,5 → 15, mots 10,5 → 11). Piège noté dans le CSS : la règle globale `.num` (pastilles d'étape, 28 × 28) s'applique aussi aux chiffres des cartes.
+  - `style.css?v=8.62`.
+
 - ÉCRAN BAS : LA BARRE DU HAUT TIENT DE 1024 À 1920 PX (v3.7.509). Premier lot du handoff Claude Design « écran bas » (canvas du 12/11/2026, décisions de Stefan le même jour). Sur un portable (1366 × 650 utiles), la recherche du haut n'avait que 40 px et la barre prenait 72 px de haut.
   - Hauteur : token `--topbar-h` (tokens.css) partagé par `.topbar`, `#map` et `.sidebar-tabs`. 72 px, 56 px quand la fenêtre fait 800 px de haut ou moins (`--topbar-h-low`), 40 px en PWA installée (inchangé). Sélecteur de destination 46 → 44 px sous 800 px. Menu des destinations calé sur la barre (64 px à 72, inchangé).
   - Largeur : container query « topbar » sur `.topbar` (fin de `style/topbar-v2.css`), seuils sur la largeur utile de la barre. Large (barre ≥ 1132 px, ex. 1920) : barre complète, inchangée. Moyen (932–1131, ex. 1366 et 1536) : « Filtres » et « GOD MODE » en icône, la pastille du compte reste. Étroit (< 932, ex. 1280 et 1024) : loupe qui ouvre la recherche sur toute la barre (croix ou Échap pour refermer), et bouton « Lecture » (émoji du moment + FR/ع) qui ouvre les deux bascules dans un menu. Mêmes boutons déplacés par la mise en page, rien n'est dupliqué.
