@@ -6,6 +6,10 @@
 
 ---
 
+- OUTIL TRACE : PAS D'APPEL AU GÉOPORTAIL HORS DE WALLONIE (v3.7.515). Complément de #1091, poussé après son merge (12/11/2026).
+  - Le Géoportail ne couvre que la Wallonie : pour une trace de Djerba, ses plans revenaient vides. Le tronçon est toujours listé, avec la mention « Hors de Wallonie : pas de plan de l'Atlas ni de cadastre ». Le contrôle OSM (hors OSM, voies fermées) reste fait.
+  - Vérifié sur la marche enregistrée Sidi Yati → Ancienne mosquée de Midoun (2 tronçons hors OSM, aucun appel au Géoportail) et sur la trace enregistrée de Mellet (inchangée). Tests : 10/10.
+
 - OUTIL : CONTRÔLE D'UNE TRACE GPX CONTRE OSM ET L'ATLAS DES CHEMINS VICINAUX (v3.7.514). Demande de Stefan (12/11/2026) après la marche ADEPS de Mellet : 660 m de la trace passaient par deux chemins marqués `access=private` sur OSM (ways 23315812 et 33142766), que BRouter refuse, alors que l'Atlas de 1841 y montre le « Sentier n° 28 » sans modification enregistrée. « On va avoir souvent ce genre de souci. »
   - `npm run trace -- <fichier.gpx>` (`scripts/check-trace-osm.mjs`) : charge les voies OSM autour de la trace (Overpass, trois serveurs en repli), repère les tronçons à plus de 20 m de toute voie et ceux qui suivent une voie fermée au marcheur (`access=private/no` sans `foot=yes`, ou `foot=private/no`).
   - Pour chaque tronçon repéré, interroge le Géoportail de Wallonie (services ArcGIS REST) : plan de l'Atlas de 1841 et cadastre 2025 avec la trace et la voie OSM dessinées dessus, modifications de l'Atlas enregistrées sur la zone, parcelles traversées, lien vers le Géoportail.
