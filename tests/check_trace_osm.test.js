@@ -61,6 +61,11 @@ describe('check-trace-osm — comparaison trace / voies', () => {
         const v = voiesSuivies(ech);
         expect(v.map(s => s.way.id)).toEqual([2, 1]);
     });
+    it('ne signale pas une voie privée qui longe une voie libre à moins de 15 m', () => {
+        const route = way(3, { highway: 'unclassified' }, [4.510, 4.520], 50.50005);   // ~5,5 m au nord
+        const e = associer([{ lat: 50.5, lon: 4.511 }, { lat: 50.5, lon: 4.519 }], [PRIVE, route]);
+        expect(tronconsFermes(e)).toEqual([]);
+    });
     it('rien à signaler quand tout est sur une voie libre', () => {
         const e = associer([{ lat: 50.5, lon: 4.501 }, { lat: 50.5, lon: 4.509 }], [LIBRE]);
         expect(tronconsHorsOsm(e)).toEqual([]);

@@ -12,7 +12,9 @@
   - Écrit un rapport HTML autonome à côté du GPX (`<nom>.controle-osm.html`, images incluses). N'écrit rien d'autre.
   - Rejoué sur Mellet : les deux chemins privés tombent sur le Sentier n° 28 ; les 514 m « hors OSM » du Sentier de la Couronne sont une imprécision de la trace Wikiloc (le sentier OSM suit la bande publique du cadastre).
   - Pièges réglés : la projection en multipoint perd les doublons et décale l'ordre (un point par géométrie) ; le lien d'image renvoyé par `f=json` expire parfois (« Invalid URL ») → image demandée directement.
-  - Tests : `tests/check_trace_osm.test.js` (+9). Aucun changement dans l'app.
+  - Une voie fermée n'est signalée que si aucune voie ouverte ne passe à moins de 15 m : sur la trace enregistrée par Stefan, la jonction Rue de Chassart / chemin privé donnait 80 m signalés à tort.
+  - Rejoué sur la trace enregistrée par Stefan le 8/11 : rien à signaler. Le fléchage passait par la Rue de Chassart, pas par le Sentier n° 28 (+300 m environ par rapport à la trace de l'organisateur).
+  - Tests : `tests/check_trace_osm.test.js` (+10). Aucun changement dans l'app.
 
 - TÉLÉPHONE : LES FILTRES ACTIFS DE « MES CIRCUITS » SE VOIENT ET SE RETIRENT (v3.7.513). Lot 2 du handoff Claude Design « écran bas » (12/11/2026). Le bouton réglages de l'en-tête disait COMBIEN de filtres étaient actifs, jamais LESQUELS.
   - Bande `#mobile-filter-strip` au-dessus du dock, dans la vue Mes Circuits seulement : une puce de 44 px par filtre (Officiels, Vérifiés, Avec resto, distance « 3 → 12 km », zone, À faire / Faits, Cachés, Tri), toucher la puce retire le filtre, « Tout réinitialiser » au bout. Défile de côté ; cachée sans filtre et dès qu'on quitte la liste (`resetMobileSlots`, `setCurrentView`).

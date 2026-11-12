@@ -105,7 +105,10 @@ export function associer(points, ways) {
         }
     }
     const plusProche = (p) => {
-        let best = { d: Infinity, way: null };
+        // dLibre : distance à la voie OUVERTE la plus proche. Une voie privée qui longe
+        // ou croise une route publique ne doit pas être signalée (cas de la jonction
+        // Rue de Chassart / chemin privé, sur la trace enregistrée de Mellet).
+        let best = { d: Infinity, way: null, dLibre: Infinity };
         const [cx, cy] = cle(p[0], p[1]).split(',').map(Number);
         for (let r = 0; r <= 3; r++) {               // anneaux de cellules, jusqu'à ~300 m
             for (let i = cx - r; i <= cx + r; i++)
@@ -113,10 +116,11 @@ export function associer(points, ways) {
                     if (Math.max(Math.abs(i - cx), Math.abs(j - cy)) !== r) continue;
                     for (const s of grille.get(`${i},${j}`) || []) {
                         const d = distSegment(p, s.a, s.b);
-                        if (d < best.d) best = { d, way: s.way };
+                        if (d < best.d) { best.d = d; best.way = s.way; }
+                        if (d < best.dLibre && !estFermeeAuMarcheur(s.way.tags)) best.dLibre = d;
                     }
                 }
-            if (best.d <= r * CELL) break;            // rien de plus proche hors de l'anneau
+            if (r >= 1 && best.d <= r * CELL) break;  // rien de plus proche hors de l'anneau (et dLibre sûr jusqu'à 100 m)
         }
         return best;
     };
@@ -160,7 +164,7 @@ export function tronconsOu(ech, test, trou = 0) {
 
 export const tronconsHorsOsm = (ech) => tronconsOu(ech, e => e.d > SEUIL_HORS_OSM);
 export const tronconsFermes = (ech) =>
-    tronconsOu(ech, e => e.d <= SEUIL_SUR_VOIE && estFermeeAuMarcheur(e.way?.tags), 30);
+    tronconsOu(ech, e => e.d <= SEUIL_SUR_VOIE && estFermeeAuMarcheur(e.way?.tags) && e.dLibre > SEUIL_SUR_VOIE, 30);
 
 /** Longueur suivie (m) par voie, de la plus longue à la plus courte. */
 export function voiesSuivies(ech) {
