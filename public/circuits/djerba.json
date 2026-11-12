@@ -186,9 +186,9 @@
   },
   {
     "id": "HW-01M28T9V3EP7SNPM7VV38HEXQ7",
-    "name": "Boucle autour du Rym Beach",
-    "file": "djerba/Boucle autour du Rym Beach.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
+    "name": "Boucle autour de Rym Beach",
+    "file": "djerba/Boucle autour de Rym Beach.gpx",
+    "description": "",
     "distance": "8.0 km",
     "isOfficial": true,
     "hasRealTrack": true,
@@ -199,8 +199,10 @@
       "HW-01K77WPE671G6V27VYYNMJV2NC",
       "HW-01KZH0VGSJV12DKGE1N725T34M",
       "HW-01K77WPE6770BXCP2SW1Z2DTA2",
-      "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3"
-    ]
+      "HW-01M1RTWE1A2DVRQ2T0ZPYTFKX3",
+      "HW-01K77WPE67RPHVJVH6A0PC0ZWD"
+    ],
+    "trackHash": "362-34fe252b"
   },
   {
     "id": "HW-01M2A1A3DETTZ20WXYY7EG9DB6",
@@ -242,17 +244,19 @@
   },
   {
     "id": "HW-01M2NNDA0Y21T4ANXGTSZ4X1QM",
-    "name": "Boucle autour de Rym Beach via le mausolée Lella Hadhria",
-    "file": "djerba/Boucle autour de Rym Beach via le mausolée Lella Hadhria.gpx",
+    "name": "Boucle autour de Rym Beach",
+    "file": "djerba/Boucle autour de Rym Beach.gpx",
     "description": "Boucle du Rym Beach au mausolée Lella Hadhria, dont il ne reste que des vestiges. Le parcours alterne petite route et pistes ; au retour, une piste en bord de sebkha peut être boueuse après la pluie.",
-    "distance": "7.7 km",
+    "distance": "7.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Midoun",
     "poiIds": [
       "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
-      "HW-01M1PGKC4GDW390CEFN4RWMS0V"
-    ]
+      "HW-01M1PGKC4GDW390CEFN4RWMS0V",
+      "HW-01K77WPE67RPHVJVH6A0PC0ZWD"
+    ],
+    "trackHash": "326-4664410f"
   },
   {
     "id": "HW-01M2NSAMPXGM9C950KMRVXBK3V",
