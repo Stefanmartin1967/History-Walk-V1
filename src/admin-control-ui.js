@@ -1626,7 +1626,9 @@ function renderItemGroup(title, items, kind, opts) {
         const isCircuit = opts.scope === 'circuit';
         const refuseTitle = item.isDeletion
             ? (isCircuit ? 'Restaurer ce circuit' : 'Restaurer ce lieu')
-            : (opts.scope === 'photos' ? 'Retirer les photos pending de ce lieu' : 'Effacer cette modification locale');
+            : (isCircuit && item.isCreation)
+                ? 'Ne pas publier : le circuit va dans la corbeille'
+                : (opts.scope === 'photos' ? 'Retirer les photos pending de ce lieu' : 'Effacer cette modification locale');
         const refuseLabel = item.isDeletion ? 'Restaurer' : 'Annuler';
         const refuseIcon  = item.isDeletion ? 'rotate-ccw' : 'x';
         const showEdit    = opts.showEdit && !item.isDeletion && !item.isMigration;

@@ -407,6 +407,46 @@ async function cancelUnpublishedCreation(id) {
     }
 }
 
+// « Annuler » sur un circuit créé sur cet appareil et jamais publié (NOUVEAU) :
+// il n'a pas de version publiée à laquelle revenir. Avant le 12/11/2026, le
+// bouton ne faisait rien (la ligne disparaissait puis revenait au recalcul du
+// diff, cf. vidéo de Stefan) et « Tout publier » l'aurait publié. Désormais :
+// confirmation, puis CORBEILLE (récupérable), comme « Supprimer » depuis sa page.
+// Une corbeille plutôt qu'une suppression définitive : le circuit n'existe
+// nulle part ailleurs.
+async function cancelUnpublishedCircuit(id) {
+    const item = diffData.circuits.find(c => String(c.id) === String(id));
+    const name = item?.name || 'Ce circuit';
+    const ok = await showConfirm(
+        "Ne pas publier ce circuit",
+        `« ${name} » n'a jamais été publié. Il ira dans la Corbeille de Mes circuits : il ne sera pas publié, et vous pourrez le restaurer.`,
+        "Mettre à la corbeille",
+        "Garder",
+        true
+    );
+    if (!ok) return;
+
+    const card = document.getElementById(`cc-diff-item-${id}`);
+    if (card) card.remove();
+
+    // Import dynamique : même point de suppression que la page du circuit.
+    const { performCircuitDeletion } = await import('./circuit-actions.js');
+    const result = await performCircuitDeletion(id);
+    if (result?.success) {
+        eventBus.emit('circuit:list-updated');
+        showToast("Circuit placé dans la Corbeille — il ne sera pas publié", "info");
+    } else {
+        showToast(result?.message || "Impossible de retirer ce circuit", "error");
+    }
+
+    try {
+        await prepareDiffAndPurge();
+        renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip });
+    } catch (e) {
+        console.warn('[CC] prepareDiffData/renderTab after circuit cancel failed:', e);
+    }
+}
+
 /**
  * Refuser une modification ou supprimer un sous-ensemble de l'état pending.
  *
@@ -437,6 +477,12 @@ export const processDecision = async (id, decision, scope = 'poi') => {
     // lui-même. Retirer la seule ligne du brouillon le laissait sur l'appareil,
     // et « Tout publier » (qui repart de tous les lieux de l'appareil) le
     // publiait quand même (06/11/2026, Charleroi).
+    // Même chose pour un circuit NOUVEAU (jamais publié) : corbeille.
+    if (scope === 'circuit' && diffData.circuits.some(c => String(c.id) === String(id) && c.isCreation)) {
+        await cancelUnpublishedCircuit(id);
+        return;
+    }
+
     if (scope === 'poi' && diffData.pois.some(p => p.id === id && p.isCreation)) {
         await cancelUnpublishedCreation(id);
         return;
