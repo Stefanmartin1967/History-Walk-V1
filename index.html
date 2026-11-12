@@ -39,6 +39,9 @@
 
     <!-- Bootstrap thème : applique data-theme depuis localStorage AVANT le CSS
          pour éviter le FOUC maritime au démarrage (cf. theme-bootstrap.js). -->
+    <!-- Secours au démarrage : recharge proprement si les fichiers principaux
+         d'une ancienne version ont disparu après un déploiement (public/boot-guard.js). -->
+    <script src="boot-guard.js"></script>
     <script src="theme-bootstrap.js"></script>
 
     <!-- Préchargement du logo de splash (mascotte furet) pour qu'il soit prêt

@@ -6,6 +6,12 @@
 
 ---
 
+- DÉMARRAGE : SECOURS QUAND LA PAGE S'OUVRE SANS STYLE APRÈS UN DÉPLOIEMENT (v3.7.522). Vu par Stefan les 11 et 12/11/2026, juste après un déploiement : page brute (ni style ni code, tout le HTML caché visible), réparée en rechargeant.
+  - Cause prouvée : chaque déploiement GitHub Pages remplace tout le site ; les fichiers de la version précédente (`/assets/main-*.js`, `main-*.css`) répondent 404 (mesuré sur heripia.com avec ceux de v3.7.520). Une ancienne `index.html` servie à ce moment ne trouve plus ses fichiers. Par où cette ancienne page arrive (cache du navigateur, copie précachée) n'est pas prouvé.
+  - Correctif (choix de Stefan) : `public/boot-guard.js`, chargé en tête de page avant les fichiers principaux. Si `main-*.js` ou `main-*.css` échoue, il vide la copie précachée (caches « workbox-precache » seulement : tuiles, photos et données hors-ligne intactes), désinscrit le service worker et recharge UNE fois par onglet. Hors ligne, il ne fait rien.
+  - Vérifié sur une vraie build : version A servie par son service worker, site remplacé par une version B (fichiers de A en 404, serveur statique), fichiers principaux de A retirés du précache. Témoin, secours empêché : page brute identique à la capture de Stefan. Secours actif : rechargement unique, version B affichée, caches hors-ligne conservés.
+  - Tests : `tests/boot_guard.test.js` (+8).
+
 - ITINÉRAIRE : PANNEAU « CHOISIR L'ITINÉRAIRE » (v3.7.521). PR 2 sur 3 du comparateur de tracé (handoff Claude Design du 12/11/2026, `.claude/handoff-comparateur-trace/`).
   - « Tracer l'itinéraire » (1er tracé) et « Tout re-tracer » ouvrent un panneau à gauche de la carte : Direct et Chemins calculés en même temps, chacun avec distance, D+, km repassés et km par type de voie (barre + colonnes, « Non classé » au-delà de 100 m) ; écarts de Chemins avec Direct marqués mieux / moins bien (`--delta-*`, sans ambre). « Ajuster » : curseur de force de Chemins (0 à 3, au dixième), qui recalcule Chemins. Ligne du moteur (BRouter de ce PC / brouter.de).
   - Carte : une ligne par variante (`--variant-direct` indigo, `--variant-chemins` émeraude, liseré blanc) ; la sélectionnée dessus et plus épaisse, le survol d'une carte met sa ligne en avant, un clic sur une ligne la sélectionne. Le tracé en place et ses couleurs par type de voie s'effacent le temps de la comparaison ; les boutons de carte passent à droite du panneau.
