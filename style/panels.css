@@ -1734,23 +1734,33 @@
     padding: 14px 14px 12px 18px;
     cursor: pointer;
     transition: 0.15s;
+    /* Rangées en flex-wrap (12/11/2026) : titre et statut à 100 %, pastilles
+       (.va-meta) puis occasionnelles (.va-extra) côte à côte, qui passent à
+       la ligne faute de place. Même rendu qu'avant le bloc .va-extra. Sous
+       800 px de haut, la carte passe en grille (fin de fichier). */
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    column-gap: 10px;
+    row-gap: 8px;
     position: relative;
     overflow: hidden;
     /* Pas de shrink dans le flex column de .va-list, sinon les cartes
        sont compressées à leur min-height (35px) et clippent le contenu. */
     flex-shrink: 0;
 }
+/* États en tokens (12/11/2026) : fini le bleu hérité rgba(59,130,246,…). */
 .va-card:hover {
-    border-color: rgba(59, 130, 246, 0.4);
-    box-shadow: 0 4px 14px -8px rgba(20, 42, 67, 0.18);
-    transform: translateY(-1px);
+    border-color: var(--filet-strong);
+    box-shadow: var(--shadow-card);
+}
+.va-card:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
 }
 .va-card.is-active {
     background: var(--brand-soft);
-    border-color: rgba(59, 130, 246, 0.4);
+    border-color: var(--brand);
 }
 
 /* Ruban gauche — système de marquage */
@@ -1768,12 +1778,13 @@
 
 /* Ligne 1 — titre + toggle "fait" */
 .va-line1 {
+    flex: 0 0 100%;
     display: flex;
     align-items: flex-start;
     gap: 10px;
 }
 .va-title {
-    font-size: 14.5px;
+    font-size: var(--font-size-base);
     font-weight: 700;
     color: var(--ink);
     line-height: 1.32;
@@ -1810,7 +1821,9 @@
    Sans ça, la zone (sans libellé en dessous) se retrouve centrée à mi-hauteur
    du va-stat (qui a chiffre + libellé), ce qui décale visuellement la zone
    à hauteur du libellé "POI" plutôt que du chiffre. */
-.va-meta {
+.va-meta,
+.va-extra {
+    flex: 0 1 auto;
     display: flex;
     align-items: flex-start;
     flex-wrap: wrap;
@@ -1840,7 +1853,7 @@
     font-feature-settings: "tnum" 1;
 }
 .va-stat .unit {
-    font-size: 10.5px;
+    font-size: var(--smallcaps-size);
     color: var(--ink-soft);
     letter-spacing: 0.02em;
     line-height: 1;
@@ -1858,19 +1871,20 @@
     font-size: 11.5px;
     font-weight: 500;
 }
-/* Pastille resto amber */
+/* Pastille Resto : neutre, l'icône porte le sens (l'ambre est réservé à
+   « attention », handoff Claude Design « écran bas », 12/11/2026). */
 .va-resto {
     display: inline-flex;
     align-items: center;
     gap: 4px;
-    color: var(--hw-amber);
-    background: var(--hw-amber-soft);
+    color: var(--ink);
+    background: var(--surface-muted);
     padding: 5px 10px;
     border-radius: 999px;
     font-size: 11.5px;
     font-weight: 600;
 }
-.va-resto svg { width: 11px; height: 11px; }
+.va-resto svg { width: 12px; height: 12px; color: var(--ink-soft); }
 /* « N lieux non vus » — circuit fait qui garde des lieux jamais vus.
    Même gabarit que la zone ; texte en ton « à faire » (brand) pour signaler
    ce qui reste, sans alarme. */
@@ -1878,7 +1892,7 @@
     display: inline-flex;
     align-items: center;
     background: var(--surface-muted);
-    color: var(--brand-2, var(--brand));
+    color: var(--brand-ink);
     padding: 5px 10px;
     border-radius: 999px;
     font-size: 11.5px;
@@ -1887,11 +1901,12 @@
 
 /* Ligne 3 — flag textuel typographique */
 .va-flag {
+    flex: 0 0 100%;
     display: flex;
     align-items: center;
     gap: 8px;
     font-family: ui-monospace, "SF Mono", Menlo, monospace;
-    font-size: 10.5px;
+    font-size: var(--smallcaps-size);
     letter-spacing: 0.1em;
     text-transform: uppercase;
     font-weight: 600;
@@ -1902,8 +1917,9 @@
     border-radius: 50%;
     background: currentColor;
 }
-.va-card[data-flag="official"] .va-flag { color: var(--brand-2); }
-.va-card[data-flag="verified"] .va-flag { color: var(--ok); }
+/* --brand-ink / --verified (et non --brand-2 / --ok) : lisibles en Nuit. */
+.va-card[data-flag="official"] .va-flag { color: var(--brand-ink); }
+.va-card[data-flag="verified"] .va-flag { color: var(--verified); }
 .va-card[data-flag="none"] .va-flag { display: none; }
 
 /* ─── Empty state ─── */
@@ -2275,6 +2291,71 @@
 @media (max-height: 800px) and (min-width: 769px) {
     .poi-hero,
     .circuit-cover { height: 110px; }
+
+    /* Cartes de « Mes Circuits » resserrées (handoff Claude Design « écran
+       bas », 12/11/2026, décision Stefan : sous 800 px de haut seulement).
+       Trois rangées : titre ; lieux · km · zone avec le statut à droite ;
+       Resto et « non vus » seulement s'ils existent. Rien n'est retiré.
+       ≈ 70 px (titre sur 1 ligne) / 84 (2 lignes), + 26 avec .va-extra,
+       au lieu de 122 / 136. */
+    .va-list {
+        padding: var(--space-sm);
+        gap: calc(var(--space-xs) + var(--space-2xs));
+    }
+    .va-card {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        /* Deux rangées nommées ; .va-extra crée la 3e seulement s'il existe
+           (une rangée nommée vide coûterait quand même un écart de 6 px). */
+        grid-template-areas: "l1 l1" "meta flag";
+        column-gap: var(--space-sm);
+        row-gap: calc(var(--space-xs) + var(--space-2xs));
+        padding: var(--space-sm) calc(var(--space-sm) + var(--space-xs)) var(--space-sm) var(--space-md);
+        border-radius: var(--radius-md);
+    }
+    .va-card::before { width: var(--liseret-width); }
+    .va-line1 { grid-area: l1; gap: var(--space-sm); }
+    .va-meta,
+    .va-extra {
+        align-items: center;
+        gap: var(--space-xs) var(--space-sm);
+    }
+    .va-meta { grid-area: meta; min-width: 0; }
+    .va-extra { grid-column: 1 / -1; }
+    /* Chiffre en pastille, mot à droite (12 px au lieu de 11 dessous). */
+    .va-stat {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--space-xs);
+    }
+    /* width/height auto : la règle globale .num (pastilles d'étape, 28 × 28)
+       s'applique aussi ici. */
+    .va-stat .num {
+        width: auto;
+        min-width: 0;
+        height: calc(var(--space-lg) - var(--space-xs));
+        display: inline-flex;
+        align-items: center;
+        padding: 0 var(--space-sm);
+    }
+    .va-stat .unit { font-size: var(--font-size-xs); }
+    .va-zone,
+    .va-resto,
+    .va-unseen {
+        min-height: calc(var(--space-lg) - var(--space-xs));
+        padding: 0 var(--space-sm);
+    }
+    /* Statut : petites capitales du cartel, aligné à droite de la rangée. */
+    .va-flag {
+        grid-area: flag;
+        align-self: center;
+        white-space: nowrap;
+        gap: var(--space-xs);
+        font-family: var(--font-sans);
+        font-size: var(--smallcaps-size);
+        font-weight: var(--smallcaps-weight);
+        letter-spacing: var(--smallcaps-tracking);
+    }
 }
 
 /* Cover avec photo POI (data-bg défini par applyCircuitHero — la photo

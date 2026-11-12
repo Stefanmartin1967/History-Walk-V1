@@ -816,18 +816,31 @@ function createCircuitCard(c) {
     if (c._zoneName) {
         metaPieces.push(`<span class="va-zone">${escapeXml(c._zoneName)}</span>`);
     }
-    if (c._hasRestaurant) {
-        metaPieces.push(`<span class="va-resto"><i data-lucide="utensils"></i>Resto</span>`);
-    }
-    // Circuit « fait » qui garde des lieux jamais vus (cf. formatUnseenLabel).
-    const unseenLabel = formatUnseenLabel(c);
-    if (unseenLabel) {
-        metaPieces.push(`<span class="va-unseen">${unseenLabel}</span>`);
-    }
     const line2 = document.createElement('div');
     line2.className = 'va-meta';
     line2.innerHTML = metaPieces.join('');
     card.appendChild(line2);
+
+    // Pastilles occasionnelles (Resto, lieux non vus) : bloc à part, créé
+    // seulement s'il a un contenu. Grand écran : il reste dans la rangée des
+    // pastilles (flex-wrap de .va-card). Sous 800 px de haut : il prend sa
+    // propre rangée (grille de .va-card, panels.css). Handoff Claude Design
+    // « écran bas », 12/11/2026.
+    const extraPieces = [];
+    if (c._hasRestaurant) {
+        extraPieces.push(`<span class="va-resto"><i data-lucide="utensils"></i>Resto</span>`);
+    }
+    // Circuit « fait » qui garde des lieux jamais vus (cf. formatUnseenLabel).
+    const unseenLabel = formatUnseenLabel(c);
+    if (unseenLabel) {
+        extraPieces.push(`<span class="va-unseen">${unseenLabel}</span>`);
+    }
+    if (extraPieces.length) {
+        const extra = document.createElement('div');
+        extra.className = 'va-extra';
+        extra.innerHTML = extraPieces.join('');
+        card.appendChild(extra);
+    }
 
     // Ligne 3 — flag textuel typographique
     if (flag !== 'none') {
