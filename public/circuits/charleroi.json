@@ -51,21 +51,20 @@
   },
   {
     "id": "HW-01M79T9DN23YH7MBC3TC5Z517P",
-    "name": "Boucle autour de Grotte des Sarrasins",
-    "file": "charleroi/Boucle autour de Grotte des Sarrasins.gpx",
+    "name": "Boucle autour de Église Saint-Benoît",
+    "file": "charleroi/Boucle autour de Église Saint-Benoît.gpx",
     "description": "",
-    "distance": "11.0 km",
+    "distance": "8.5 km",
     "isOfficial": true,
     "hasRealTrack": true,
-    "zone": "Gerpinnes",
+    "zone": "Ham-sur-Heure-Nalinnes",
     "poiIds": [
-      "HW-01M616BNAR8FA2THSPYGTF9HF6",
+      "HW-01M6EV6W5QVEX5YRFVH681CNNG",
       "HW-01M616BMWMN6G8EK4FWJHFASM2",
       "HW-01M6EV6TWYARPA1DW5W6HWW9PN",
       "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
-      "HW-01M6EV6W5QVEX5YRFVH681CNNG",
-      "HW-01M616BNAR8FA2THSPYGTF9HF6"
+      "HW-01M6EV6W5QVEX5YRFVH681CNNG"
     ],
-    "trackHash": "264-d01d2a41"
+    "trackHash": "203-10ee6874"
   }
 ]
