@@ -8,6 +8,11 @@
 // (variantes + points) validé par Stefan le 13/11/2026 (maquette « Panneau
 // Itinéraire »).
 //
+// Comme GPX Studio (vidéo de Stefan, 13/11/2026) : des POIGNÉES aux tournants
+// du tracé choisi — en glisser une la change en point de passage, ses deux
+// voisines aussi, pour que seul ce bout bouge — et on peut APPUYER SUR LE TRACÉ
+// ET TIRER : le point suit la souris, posé au relâché, voisines épinglées.
+//
 // Points de passage : « Poser un point » est actif dès l'ouverture. Un point
 // posé, glissé ou retiré recalcule son seul passage : tout de suite pour la
 // variante choisie ; pour l'autre, en arrière-plan avec BRouter de ce PC, à la
@@ -27,7 +32,7 @@ import {
 } from './circuit-routing.js';
 import { WAY_KEYS, repassedMeters, compareToDirect, WAY_BETTER, formatKmDelta } from './route-stats.js';
 import { WAY_CATEGORIES, formatKm } from './way-types.js';
-import { nearestPassage, insertionIndex } from './passage-order.js';
+import { nearestPassage, insertionIndex, locateOnTrack, turningPoints, pinsAround } from './passage-order.js';
 import { paintZoneWaysLoading } from './circuit-way-types.js';
 import { toggleReferenceLayer, isReferenceVisible } from './circuit-reference-layer.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -89,12 +94,17 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
         tok: { direct: 0, chemins: 0 },
         lines: { direct: null, chemins: null },
         markers: null,
+        handles: null,     // calque des poignées du tracé choisi
+        handleData: {},    // { [passage]: [{lat, lng, along}] }
+        suppressClick: false, // un tracé tiré : le clic qui suit n'est pas un point
+        dragCleanup: null,
         zone: null,
         onApply, onCancel,
         panel: null,
         applying: false,
     };
     buildPanel();
+    cv.handles = L.layerGroup().addTo(map);
     cv.markers = L.layerGroup().addTo(map);
     cv.zone = L.layerGroup().addTo(map);
     map.on('click', onMapClick);
@@ -138,6 +148,7 @@ function selectedSegments() {
 }
 
 function onMapClick(e) {
+    if (cv && cv.suppressClick) { cv.suppressClick = false; return; }
     if (!cv || !cv.addMode || cv.applying) return;
     const segs = selectedSegments();
     if (!segs || !segs.length) return; // rien de calculé encore : rien où poser
@@ -164,6 +175,7 @@ function clearPassage(seg) {
 // l'autre en arrière-plan (BRouter de ce PC) ou à la demande (brouter.de).
 function pointsChanged(segs) {
     drawMarkers();
+    drawHandles();
     const other = VARIANTS.find(v => v !== cv.selected);
     segs.forEach(seg => updatePassage(cv.selected, seg));
     const o = cv.runs[other];
@@ -222,6 +234,109 @@ function drawMarkers() {
         m.on('click', () => removePoint(p.id)); // Leaflet annule le click après un glissé
         cv.markers.addLayer(m);
     });
+}
+
+// Mètres entre deux {lat, lng} (équirectangulaire, assez précis ici).
+function meters(a, b) {
+    const kx = 111320 * Math.cos(a.lat * Math.PI / 180);
+    return Math.hypot((a.lng - b.lng) * kx, (a.lat - b.lat) * 110540);
+}
+
+// Poignées discrètes aux tournants de la variante choisie (passage-order.js),
+// pas trop près d'un point déjà posé ; rien sur un passage resté en ligne droite.
+function drawHandles() {
+    if (!cv || !cv.handles) return;
+    cv.handles.clearLayers();
+    cv.handleData = {};
+    const segs = selectedSegments();
+    if (!segs) return;
+    segs.forEach((s, seg) => {
+        if (!s || !s.ok) return;
+        const pts = cv.points.filter(p => p.seg === seg);
+        const hs = turningPoints(s.coords).filter(h => !pts.some(p => meters(p, h) < 40));
+        cv.handleData[seg] = hs;
+        hs.forEach(h => {
+            const m = L.marker([h.lat, h.lng], {
+                draggable: true, zIndexOffset: 1200, title: 'Glisser pour reprendre le tracé',
+                icon: L.divIcon({ className: 'wp-handle', html: '<span class="wp-handle-dot"></span>', iconSize: [14, 14], iconAnchor: [7, 7] }),
+            });
+            m.on('dragend', () => pullFrom(seg, h, m.getLatLng()));
+            cv.handles.addLayer(m);
+        });
+    });
+}
+
+// Reprend le tracé du passage `seg` : un point part de `anchor` (sur le tracé)
+// et va en `to`. Les poignées voisines deviennent des points elles aussi, pour
+// que seul ce bout du passage change — sauf si un point posé tient déjà ce côté.
+function pullFrom(seg, anchor, to) {
+    const segs = selectedSegments();
+    const coords = segs?.[seg]?.coords;
+    if (!coords) return;
+    const here = locateOnTrack(coords, anchor);
+    if (!here) return;
+    const alongs = [];
+    let from = 0;
+    cv.points.filter(p => p.seg === seg).forEach(p => {
+        const hit = locateOnTrack(coords, p, from);
+        if (hit) { alongs.push(hit.along); from = hit.idx; }
+    });
+    // La poignée tirée elle-même n'est pas sa propre voisine (sa position
+    // recalculée sur le tracé peut différer de quelques centimètres).
+    const others = (cv.handleData[seg] || []).filter(h => h !== anchor && Math.abs(h.along - here.along) > 5);
+    const { before, after } = pinsAround(others, alongs, here.along);
+    // Chaque point est rangé à sa place sur le tracé actuel, puis le point tiré
+    // part à sa nouvelle position.
+    const add = (pos) => {
+        const pt = { id: newPointId(), seg, lat: pos.lat, lng: pos.lng };
+        cv.points.splice(insertionIndex(cv.points, seg, coords, pos), 0, pt);
+        return pt;
+    };
+    if (before) add(before);
+    const moved = add({ lat: anchor.lat, lng: anchor.lng });
+    if (after) add(after);
+    moved.lat = to.lat;
+    moved.lng = to.lng;
+    pointsChanged([seg]);
+}
+
+// Appuyer sur le tracé choisi et tirer : un point suit la souris, posé au
+// relâché (pullFrom). Sans mouvement, c'est un simple clic (poser / choisir).
+function startLineDrag(variant, start) {
+    if (!cv || variant !== cv.selected || cv.applying) return;
+    const segs = selectedSegments();
+    if (!segs) return;
+    // La carte ne bouge pas pendant qu'on tire.
+    map.dragging.disable();
+    const startPt = map.latLngToContainerPoint(start);
+    const ghost = L.marker(start, {
+        interactive: false, zIndexOffset: 1400,
+        icon: L.divIcon({ className: 'wp-marker', html: '<span class="wp-ring"></span>', iconSize: [18, 18], iconAnchor: [9, 9] }),
+    });
+    let moved = false;
+    const onMove = (ev) => {
+        if (!moved && ev.containerPoint.distanceTo(startPt) < 5) return;
+        if (!moved) { moved = true; ghost.addTo(map); }
+        ghost.setLatLng(ev.latlng);
+    };
+    const end = () => {
+        map.off('mousemove', onMove);
+        document.removeEventListener('mouseup', onUp);
+        map.dragging.enable();
+        ghost.remove();
+        if (cv) cv.dragCleanup = null;
+    };
+    const onUp = () => {
+        end();
+        if (!moved || !cv) return;
+        cv.suppressClick = true;
+        setTimeout(() => { if (cv) cv.suppressClick = false; }, 400);
+        const seg = nearestPassage(segs, start);
+        pullFrom(seg, { lat: start.lat, lng: start.lng }, ghost.getLatLng());
+    };
+    map.on('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+    cv.dragCleanup = end;
 }
 
 function syncAddMode() {
@@ -296,7 +411,7 @@ function setResult(variant, result) {
     run.stats = statsOf(result);
     drawLine(variant);
     restyleLines();
-    if (variant === cv.selected) drawZone();
+    if (variant === cv.selected) { drawZone(); drawHandles(); }
 }
 
 function fail(run, message) {
@@ -347,6 +462,14 @@ function drawLine(variant) {
     line.on('mouseover', () => setHover(variant));
     line.on('mouseout', () => setHover(null));
     const group = L.layerGroup([halo, line]).addTo(map);
+    // Tirer le tracé : on prend l'appui dès le « pointerdown » sur la ligne,
+    // avant que Leaflet ne commence à faire glisser la carte (il écoute ce même
+    // événement sur la carte).
+    line.getElement()?.addEventListener('pointerdown', (ev) => {
+        if (ev.pointerType !== 'mouse' || ev.button !== 0 || !cv || variant !== cv.selected) return;
+        ev.stopPropagation();
+        startLineDrag(variant, map.mouseEventToLatLng(ev));
+    });
     cv.lines[variant] = { group, halo, line };
 }
 
@@ -406,7 +529,7 @@ function buildPanel() {
                         <button class="pp-tool" type="button" data-act="ways" aria-pressed="true"><i data-lucide="route"></i>Voies</button>
                         <button class="pp-tool" type="button" data-act="layer" aria-pressed="false"><i data-lucide="layers"></i>Calque</button>
                     </div>
-                    <p class="pp-hint">Cliquez sur le tracé pour poser un point, puis glissez-le sur le chemin voulu. Cliquez un point pour le retirer. Les deux variantes passent par vos points.</p>
+                    <p class="pp-hint">Tirez le tracé ou une de ses poignées vers le chemin voulu ; un clic sur le tracé pose un point. Cliquez un point pour le retirer. Les deux variantes passent par vos points.</p>
                     <ul class="pp-list"></ul>
                 </div>
             </div>
@@ -482,6 +605,8 @@ function teardown() {
     if (!cv) return;
     VARIANTS.forEach(removeLine);
     map?.off('click', onMapClick);
+    if (cv.dragCleanup) cv.dragCleanup();
+    cv.handles?.remove();
     cv.markers?.remove();
     cv.zone?.remove();
     document.removeEventListener('keydown', cv.keyHandler);
@@ -564,6 +689,7 @@ function select(variant) {
     if (cv.runs[variant].stale) compute(variant);
     restyleLines();
     drawZone();
+    drawHandles();
     render();
 }
 

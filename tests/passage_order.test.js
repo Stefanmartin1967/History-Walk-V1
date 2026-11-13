@@ -85,3 +85,46 @@ describe('insertionIndex — ordre du parcours', () => {
         expect(insertionIndex(list, 0, up, { lat: LAT0 + 10 * D, lng: LON_W - 0.00085 })).toBe(1);
     });
 });
+
+// --- Poignées (13/11/2026) ---
+import { turningPoints, pinsAround } from '../src/passage-order.js';
+
+describe('turningPoints', () => {
+    // Un L : 1 km vers le nord, puis 1 km vers l'est (points tous les ~11 m).
+    const kx = 111320 * Math.cos(50.4 * Math.PI / 180);
+    const north = Array.from({ length: 91 }, (_, i) => [50.4 + i * 0.0001, 4.4]);
+    const east = Array.from({ length: 90 }, (_, i) => [50.4 + 90 * 0.0001, 4.4 + ((i + 1) * 11) / kx]);
+    const L = [...north, ...east];
+
+    it('une poignée au coin, et des intermédiaires sur les longues lignes droites', () => {
+        const h = turningPoints(L);
+        // Le coin (≈ 1000 m) est une poignée.
+        expect(h.some(p => Math.abs(p.along - 998) < 30)).toBe(true);
+        // Aucune près des bouts, écart entre deux ≤ 450 m.
+        const total = 2 * 998;
+        expect(h.every(p => p.along > 80 && p.along < total - 80)).toBe(true);
+        const gaps = [0, ...h.map(p => p.along), total].slice(1).map((a, i, arr) => a - ([0, ...h.map(p => p.along)][i]));
+        expect(Math.max(...gaps)).toBeLessThanOrEqual(460);
+        // Dans l'ordre du parcours.
+        expect(h.map(p => p.along)).toEqual([...h.map(p => p.along)].sort((a, b) => a - b));
+    });
+
+    it('tracé court ou dégénéré : aucune poignée', () => {
+        expect(turningPoints([[50, 4], [50.001, 4]])).toEqual([]);
+        expect(turningPoints(north.slice(0, 12))).toEqual([]);
+    });
+});
+
+describe('pinsAround', () => {
+    const H = [{ along: 200 }, { along: 500 }, { along: 800 }];
+    it('les deux poignées voisines', () => {
+        expect(pinsAround(H, [], 600)).toEqual({ before: H[1], after: H[2] });
+    });
+    it('un point de passage plus proche tient déjà ce côté', () => {
+        expect(pinsAround(H, [550], 600)).toEqual({ before: null, after: H[2] });
+        expect(pinsAround(H, [700], 600)).toEqual({ before: H[1], after: null });
+    });
+    it('au-delà de la dernière poignée : rien après', () => {
+        expect(pinsAround(H, [], 900)).toEqual({ before: H[2], after: null });
+    });
+});

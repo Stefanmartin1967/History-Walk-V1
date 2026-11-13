@@ -6,6 +6,14 @@
 
 ---
 
+- ITINÉRAIRE : POIGNÉES SUR LE TRACÉ ET « TIRER LE TRACÉ », COMME GPX STUDIO (v3.7.532). Vidéo de Stefan du 13/11/2026 comparant à GPX Studio.
+  - Le tracé de la variante choisie porte des poignées discrètes à ses tournants (`turningPoints`, passage-order.js : Douglas-Peucker 25 m, 120 m d'écart mini, rien à moins de 80 m des lieux, une poignée au moins tous les 450 m sur les lignes droites ; rien sur un passage en ligne droite ni à moins de 40 m d'un point posé).
+  - Glisser une poignée la change en point de passage ; ses deux poignées voisines deviennent des points aussi (`pinsAround`), sauf si un point posé tient déjà ce côté, pour que seul ce bout du passage change (comme les ancres de GPX Studio).
+  - Appuyer sur le tracé choisi et tirer : un point suit la souris, posé au relâché, voisines épinglées ; sans mouvement, c'est un clic. L'appui est pris au `pointerdown` de la ligne : Leaflet 1.9 démarre le glissé de la carte sur ce même événement, avant le `mousedown` de la ligne (constaté à l'essai : la carte glissait). Le clic qui suit un tracé tiré ne pose pas de point.
+  - Poignées aux couleurs fixes des tracés (le fond de carte ne suit pas le moment).
+  - Vérifié en aperçu (BRouter de ce PC, vrai glissé souris) : 3 poignées sur un passage de 1 km ; poignée du milieu glissée → 3 points (voisine avant, point tiré, voisine après) envoyés dans cet ordre ; tracé tiré → carte immobile, 3 points, tracé recalculé par eux.
+  - Tests : +5 (`passage_order`).
+
 - ITINÉRAIRE : UN SEUL PANNEAU POUR LES VARIANTES ET LES POINTS DE PASSAGE (v3.7.531). Maquette « Panneau Itinéraire » validée par Stefan le 13/11/2026 (« ce ne serait pas plus logique de poser les points avant de valider ? »). PR A du panneau unique.
   - Le panneau « Choisir l'itinéraire » devient « Itinéraire » et porte un bloc « Points de passage » : « Poser un point » (actif dès l'ouverture), « Voies », « Calque », liste des passages avec leur nombre de points et × pour les retirer. Clic sur le tracé = un point (rangé dans l'ordre du parcours, passage-order.js) ; glisser = l'ajuster ; clic sur un point = le retirer.
   - Un point posé, glissé ou retiré recalcule son SEUL passage (`routeOneSegment`, résultat recomposé par `assembleRoute`, extrait de `routeCircuit`) : tout de suite pour la variante choisie ; pour l'autre, en arrière-plan avec BRouter de ce PC, « Pas à jour » + « Recalculer » avec brouter.de (choisir une variante pas à jour la recalcule). Avec « éviter de repasser », toute la variante est recalculée. Un résultat arrivé après un nouveau changement du même passage est ignoré ; un calcul complet reprend à son arrivée les passages changés pendant qu'il tournait.

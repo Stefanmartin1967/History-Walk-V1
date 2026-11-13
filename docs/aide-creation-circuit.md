@@ -70,8 +70,10 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   gros détours)*. Chaque passage est alors tracé à son tour, plus lentement avec
   brouter.de.
 - Dans le même panneau, **« Points de passage »** : « Poser un point » est actif dès
-  l'ouverture. Cliquez sur le tracé pour poser un point, puis glissez-le sur le chemin
-  voulu ; cliquez un point pour le retirer. Les deux variantes passent par vos points : la
+  l'ouverture. Le tracé choisi porte des **poignées** à ses tournants : **tirez une poignée,
+  ou le tracé lui-même**, vers le chemin voulu. Le point tiré devient un point de passage,
+  et ses deux poignées voisines aussi, pour que seul ce bout change. Un clic sur le tracé
+  pose un point ; cliquez un point pour le retirer. Les deux variantes passent par vos points : la
   variante choisie suit tout de suite ; l'autre se met à jour en arrière-plan avec BRouter
   de ce PC, ou affiche **« Pas à jour »** avec brouter.de *(bouton « Recalculer »)*.
   **« Voies »** montre toutes les voies autour, **« Calque »** une trace GPX en fond, et la
