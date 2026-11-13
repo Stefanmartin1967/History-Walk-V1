@@ -73,5 +73,24 @@
     ],
     "trackHash": "233-268bf08c",
     "ascend": 63
+  },
+  {
+    "id": "HW-01M7A34T1N72MC8Z3T3V59KDCT",
+    "name": "Boucle autour de Paroisse des Saints Jean le Valaque et Piat le Romain",
+    "file": "charleroi/Boucle autour de Paroisse des Saints Jean le Valaque et Piat le Romain.gpx",
+    "description": "",
+    "distance": "10.3 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Marchienne-au-Pont",
+    "poiIds": [
+      "HW-01M616BQT3APXG44FQ4XSZ1JRE",
+      "HW-01M616BPYE7HFP2X856RFJAN1J",
+      "HW-01M616BNSCBB9V05XV6XJFFB16",
+      "HW-01M616BT2RHF77SP30963CSKP6",
+      "HW-01M616BQT3APXG44FQ4XSZ1JRE"
+    ],
+    "trackHash": "510-51e8055b",
+    "ascend": 64
   }
 ]
