@@ -46325,11 +46325,21 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Chapelle (Rue de Dreumont)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/1116769587",
-        "candidate": true,
         "HW_ID": "HW-01M6PM2GMNNXDSYBJ3Z510A2AY",
+        "Sous-type": "À porte",
+        "description": "Chapelle de la rue de Dreumont, à Villers-la-Ville.\nAucune dédicace n'a été trouvée : le nom de cette fiche reprend celui de la rue.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Villers-la-Ville"
       }
     },
