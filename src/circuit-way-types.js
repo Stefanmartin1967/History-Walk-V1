@@ -178,6 +178,18 @@ export function paintZoneWays(group, parts) {
 }
 
 /**
+ * Panneau Itinéraire, bouton « Voies » : comme paintZoneWays, et demande les
+ * voies de la zone à Overpass si elles ne sont pas encore connues ; `onReady`
+ * redessine à leur arrivée.
+ */
+export function paintZoneWaysLoading(group, parts, onReady) {
+    const { ways, cover } = indexes();
+    const { runs, meters } = classifyParts(parts, ways, cover);
+    if (meters.pending) requestCoverage(runs, onReady);
+    paintZoneWays(group, parts);
+}
+
+/**
  * État pour la carte du tracé, ou null si aucun tracé n'est coloré.
  * @returns {{meters: Object<string, number>, loading: boolean, error: boolean} | null}
  */

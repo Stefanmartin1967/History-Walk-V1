@@ -60,7 +60,7 @@ Tout est enregistré à la saisie.
 Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
 - Heripia route le circuit avec **BRouter**, qui **suit les chemins piétons** : il
   transforme le trait « à vol d'oiseau » en **trace réellement marchable**.
-- Le panneau **« Choisir l'itinéraire »** s'ouvre à gauche de la carte avec deux
+- Le panneau **« Itinéraire »** s'ouvre à gauche de la carte avec deux
   variantes : **Direct** *(le plus court raisonnable)* et **Chemins** *(préfère pistes et
   sentiers, un peu plus long)*. Pour chacune : distance, D+, kilomètres **repassés** et
   kilomètres par type de voie ; les écarts de Chemins avec Direct sont marqués **mieux**
@@ -69,13 +69,21 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   quand une autre existe, pour les deux variantes, avec un **poids** *(léger, net, fort :
   gros détours)*. Chaque passage est alors tracé à son tour, plus lentement avec
   brouter.de.
-- Cliquez une variante *(ou sa ligne sur la carte)*, puis **« Utiliser cette
-  variante »**. **« Annuler »** ne change rien.
+- Dans le même panneau, **« Points de passage »** : « Poser un point » est actif dès
+  l'ouverture. Cliquez sur le tracé pour poser un point, puis glissez-le sur le chemin
+  voulu ; cliquez un point pour le retirer. Les deux variantes passent par vos points : la
+  variante choisie suit tout de suite ; l'autre se met à jour en arrière-plan avec BRouter
+  de ce PC, ou affiche **« Pas à jour »** avec brouter.de *(bouton « Recalculer »)*.
+  **« Voies »** montre toutes les voies autour, **« Calque »** une trace GPX en fond, et la
+  liste des passages dit combien de points chacun porte *(× pour les retirer)*.
+- Choisissez une variante *(cliquez sa carte)*, puis **« Enregistrer avec Direct /
+  Chemins »** : tracé, variante et points sont enregistrés ensemble. **« Annuler »** ne
+  change rien.
 - Résultat : **« Itinéraire tracé »**, la **distance réelle**, et une ligne qui rappelle
   la variante et le moteur : **BRouter de ce PC** s'il tourne sur votre ordinateur, sinon
   **brouter.de**.
 
-*C'est « Utiliser cette variante » qui enregistre le circuit avec son tracé.*
+*C'est « Enregistrer avec … » qui enregistre le circuit avec son tracé et ses points de passage.*
 
 ### 5 · Ajuster le tracé
 - **« Éditer l'itinéraire »** : ajoutez des **points de passage** *(cliquez sur la
@@ -96,7 +104,7 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   *(sans « éviter de repasser »)*. Les points de passage suivent : ceux d'un lieu retiré
   passent au nouveau passage, ceux du passage où un lieu s'insère se répartissent avant
   et après lui.
-- **« Tout re-tracer »** *(menu ⋮)* : rouvre « Choisir l'itinéraire » ; la variante
+- **« Tout re-tracer »** *(menu ⋮)* : rouvre le panneau « Itinéraire » ; la variante
   retenue recalcule **tous** les passages, en passant par vos points de passage. Les
   retouches GPX Studio sont perdues.
 
@@ -186,16 +194,18 @@ Studio », « Exporter le GPX » · périmé : « Tracé à mettre à jour » / 
 échec partiel : « Tracé presque complet » / « N segments droits » + note furet « Un passage
 est resté en ligne droite » / « Ajouter un point de passage ».
 
-**Comparateur** (`src/circuit-compare.js`) : « Choisir l'itinéraire » · « N lieux · N passages » ·
-Direct « Le plus court raisonnable. C'est le calcul d'aujourd'hui. » · Chemins « Préfère pistes et
-sentiers aux routes et rues, quitte à marcher un peu plus. » · « Calcul en cours · passage N sur N » ·
+**Panneau Itinéraire** (`src/circuit-compare.js`) : « Itinéraire » · « N lieux · N passages · N points
+de passage » · « Calcul en cours · passage N sur N » · « Mise à jour… » · « avant vos derniers
+points » / « Pas à jour » / « Recalculer Direct » · « Points de passage » / « Poser un point » /
+« Voies » / « Calque » / « aucun » / « N points » · « BRouter de ce PC ne répond pas : chaque point
+ne recalcule que la variante choisie. Les écarts reviennent quand l'autre est recalculée. » ·
 Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » au-delà de 100 m) ·
 « Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » / « Éviter de
 repasser » / « Poids » (Léger 5 · Net 100 · Fort 1000) / « Plus lent avec brouter.de : chaque
 passage est demandé à part. » · « Calculé par
 BRouter de ce PC » ou « brouter.de · BRouter de ce PC indisponible » · « Réessayer » · « Annuler » ·
-« Utiliser cette variante ». Carte d'état pendant la comparaison : « Choix de l'itinéraire » /
-« 2 variantes ».
+« Enregistrer avec Direct / Chemins ». Carte d'état pendant la comparaison : « Itinéraire en
+cours » / « 2 variantes » / « Posez vos points, comparez, puis enregistrez. »
 
 **Barre d'actions** (`index.html` ~338-369, handlers `src/ui-circuit-editor.js`) :
 « Boucler le circuit » (ajoute le 1ᵉʳ lieu à la fin) · « Importer un GPX » (trace réelle du

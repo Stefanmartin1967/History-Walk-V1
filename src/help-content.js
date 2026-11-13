@@ -368,7 +368,7 @@ export const GUIDE_CIRCUIT = {
                 <p>Heripia route le circuit avec <strong>BRouter</strong>, qui <strong>suit les
                 chemins piétons</strong> : il transforme le trait « à vol d'oiseau » en
                 <strong>trace réellement marchable</strong>.</p>
-                <p>Le panneau <strong>« Choisir l'itinéraire »</strong> s'ouvre à gauche de la carte
+                <p>Le panneau <strong>« Itinéraire »</strong> s'ouvre à gauche de la carte
                 avec deux variantes : <strong>Direct</strong> <span class="help-muted">(le plus
                 court raisonnable)</span> et <strong>Chemins</strong> <span class="help-muted">(préfère
                 pistes et sentiers, un peu plus long)</span>. Pour chacune : distance, D+,
@@ -381,17 +381,27 @@ export const GUIDE_CIRCUIT = {
                 <strong>poids</strong> <span class="help-muted">(léger, net, fort : gros
                 détours)</span>. Chaque passage est alors tracé à son tour, ce qui est plus lent
                 avec brouter.de.</p>
-                <p>Cliquez une variante <span class="help-muted">(ou sa ligne sur la carte)</span>,
-                puis <strong>« Utiliser cette variante »</strong>. <strong>« Annuler »</strong> ne
-                change rien. La variante retenue est rappelée sous le tracé, avec le moteur :
+                <p>Dans le même panneau, <strong>« Points de passage »</strong> : « Poser un
+                point » est actif dès l'ouverture. Cliquez sur le tracé pour poser un point, puis
+                glissez-le sur le chemin voulu ; cliquez un point pour le retirer. Les deux
+                variantes passent par vos points : la variante choisie suit tout de suite ;
+                l'autre se met à jour en arrière-plan avec BRouter de ce PC, ou affiche
+                <strong>« Pas à jour »</strong> avec brouter.de <span class="help-muted">(bouton
+                « Recalculer »)</span>. <strong>« Voies »</strong> montre toutes les voies autour,
+                <strong>« Calque »</strong> une trace GPX en fond, et la liste des passages dit
+                combien de points chacun porte <span class="help-muted">(× pour les
+                retirer)</span>.</p>
+                <p>Choisissez une variante <span class="help-muted">(cliquez sa carte)</span>,
+                puis <strong>« Enregistrer avec Direct / Chemins »</strong> : tracé, variante et
+                points sont enregistrés ensemble. <strong>« Annuler »</strong> ne change rien. La variante retenue est rappelée sous le tracé, avec le moteur :
                 <strong>BRouter de ce PC</strong> s'il tourne sur votre ordinateur, sinon
                 <strong>brouter.de</strong>.</p>
                 <p>Le tracé se colore selon le <strong>type de voie</strong> : route, rue, piste,
                 sentier ou non classé <span class="help-muted">(voies d'OpenStreetMap)</span>. La
                 carte du tracé donne les kilomètres de chacun. Ces couleurs ne servent qu'à la
                 création : en consultation, le tracé reste bleu.</p>
-                <p class="help-muted">C'est « Utiliser cette variante » qui enregistre le circuit
-                avec son tracé.</p>`,
+                <p class="help-muted">C'est « Enregistrer avec … » qui enregistre le circuit
+                avec son tracé et ses points de passage.</p>`,
         },
         {
             heading: `5 · Ajuster le tracé`,
@@ -424,7 +434,7 @@ export const GUIDE_CIRCUIT = {
                         de passage suivent : ceux d'un lieu retiré passent au nouveau passage,
                         ceux du passage où un lieu s'insère se répartissent avant et après lui.</li>
                     <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
-                        rouvre « Choisir l'itinéraire » ; la variante retenue recalcule
+                        rouvre le panneau « Itinéraire » ; la variante retenue recalcule
                         <strong>tous</strong> les passages, en passant par vos points de passage.
                         Les retouches GPX Studio sont perdues.</li>
                     <li><strong>« Revenir au tracé précédent »</strong> <span class="help-muted">(menu ⋮,

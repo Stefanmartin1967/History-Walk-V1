@@ -33,7 +33,7 @@ import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-cont
 import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
 import { trackFingerprint } from './track-fingerprint.js';
-import { circuitWaypointsFor, savedToBySeg, storedWaypoints } from './circuit-waypoints.js';
+import { circuitWaypointsFor, savedToBySeg, storedWaypoints, draftToSaved } from './circuit-waypoints.js';
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
 import { WAY_CATEGORIES, formatKm, wayTypesStatus } from './way-types.js';
 import { openSaveModal } from './save-modal-ui.js';
@@ -112,14 +112,14 @@ export function updateTraceBlock() {
                 </div>
             </div>` + chip;
     } else if (isComparing()) {
-        // Le panneau « Choisir l'itinéraire » est ouvert à gauche de la carte.
+        // Le panneau « Itinéraire » est ouvert à gauche de la carte.
         el.innerHTML = `
             <div class="trace-status">
                 <div class="trace-status-head">
                     <div class="trace-status-ico"><i data-lucide="route"></i></div>
                     <div class="trace-status-txt">
-                        <h4>Choix de l'itinéraire <span class="trace-pill">2 variantes</span></h4>
-                        <p>Comparez-les sur la carte, puis retenez-en une.</p>
+                        <h4>Itinéraire en cours <span class="trace-pill">2 variantes</span></h4>
+                        <p>Posez vos points, comparez, puis enregistrez.</p>
                     </div>
                 </div>
             </div>` + chip;
@@ -395,7 +395,7 @@ function traceContext() {
 // keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
 // paire de lieux a changé sont recalculés, avec la variante du circuit, les
 // autres gardent leurs ajustements. Sans lui (1ᵉʳ tracé, « Tout re-tracer ») :
-// le comparateur « Choisir l'itinéraire » s'ouvre.
+// le panneau « Itinéraire » s'ouvre.
 async function runTrace({ keepUnchanged = false } = {}) {
     if (tracing || isComparing()) return;
     if (!state.currentCircuit || state.currentCircuit.length < 2) {
@@ -432,7 +432,7 @@ function traceFailed(e) {
     updateTraceBlock(); // restaure le bouton
 }
 
-// Ouvre « Choisir l'itinéraire » : le tracé en place (et ses passages droits)
+// Ouvre le panneau « Itinéraire » : le tracé en place (et ses passages droits)
 // s'efface le temps de la comparaison, les deux variantes le remplacent.
 function startCompare(ctx) {
     compareKey = currentPoiKey();
@@ -444,11 +444,14 @@ function startCompare(ctx) {
         // Variante mémorisée sur le circuit, sinon Chemins (décision de Stefan, 12/11/2026).
         initial: ctx.prevCircuit?.routing || { variant: 'chemins' },
         waypointsBySeg: ctx.waypoints.bySeg,
-        onApply: async ({ result, routing, engine }) => {
+        onApply: async ({ result, routing, engine, points }) => {
             tracing = true;
             updateTraceBlock();
+            // Points posés ou retirés dans le panneau : ce sont eux qu'on enregistre.
+            const ids = state.currentCircuit.map(getPoiId);
+            const waypoints = storedWaypoints(draftToSaved(points, ids), ids);
             try {
-                await applyTraceResult(ctx, { result, routing, engine, prev: null });
+                await applyTraceResult(ctx, { result, routing, engine, prev: null, waypoints });
             } catch (e) {
                 traceFailed(e);
             }
@@ -465,7 +468,7 @@ function startCompare(ctx) {
 
 // Enregistre un tracé calculé (variante retenue au comparateur, ou re-tracé
 // partiel) et remet la carte et le panneau à jour.
-async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints }, { result, routing, engine, prev }) {
+async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints: ctxWaypoints }, { result, routing, engine, prev, waypoints }) {
     const { realTrack, segments } = result;
     // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
     // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
@@ -475,7 +478,9 @@ async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints }, { r
     state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
     // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
     await saveAndExportCircuit(realTrack, {
-        stayInCreation: true, ascend, routing: { ...routing, engine: engine.key }, waypoints: waypoints.stored,
+        stayInCreation: true, ascend, routing: { ...routing, engine: engine.key },
+        // Panneau Itinéraire : ses points ; re-tracé partiel : ceux du circuit, reportés.
+        waypoints: waypoints !== undefined ? waypoints : ctxWaypoints.stored,
     });
     // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
     // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
