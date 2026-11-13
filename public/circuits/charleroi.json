@@ -1,10 +1,10 @@
 [
   {
     "id": "HW-01M6NH9JRSZBK3GXGR4YXGKTHZ",
-    "name": "Circuit de Église Saint-Pierre (Montignies-sur-Sambre) à Maison Mattot",
-    "file": "charleroi/Circuit de Église Saint-Pierre (Montignies-sur-Sambre) à Maison Mattot.gpx",
+    "name": "Boucle autour de Église Saint-Pierre (Montignies-sur-Sambre)",
+    "file": "charleroi/Boucle autour de Église Saint-Pierre (Montignies-sur-Sambre).gpx",
     "description": "",
-    "distance": "6.4 km",
+    "distance": "6.9 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Montignies-sur-Sambre",
@@ -12,9 +12,13 @@
       "HW-01M616BPTAFCEQFANX8N44P62T",
       "HW-01M616BQH5TDAW10E5SW5YFE1N",
       "HW-01M616BN3K13BABRTGB3HYS0KZ",
+      "HW-01M6PC21XQFSQKGBQNWVPWBA51",
+      "HW-01M616BNC9X19N7F03ZS9ENPJP",
+      "HW-01M616BNBSR2572V57W6XRVQEG",
       "HW-01M616BR71ED150ZM8QFWJ0VQR",
       "HW-01M616BRA2D99WFW44GHD3XZ3G",
       "HW-01M616BQ72DMZK225MWPD7JAKJ",
+      "HW-01M6PBE3V86K0DHVC3GVYHKG3Z",
       "HW-01M616BR7X43SN571RV51DKBV3",
       "HW-01M616BMX945K93TF5ZQQDASBJ",
       "HW-01M616BRBPJ9NS0F50TM0GEBWT",
@@ -23,9 +27,11 @@
       "HW-01M616BR65D8YBDMH18F2M2ZR8",
       "HW-01M6B70SY3K8NKFJTEAH828SSC",
       "HW-01M616BMT0WVS0MA2RAVJMWM45",
-      "HW-01M616BR98326G65D6Z2R942JM"
+      "HW-01M616BR98326G65D6Z2R942JM",
+      "HW-01M616BPTAFCEQFANX8N44P62T"
     ],
-    "trackHash": "277-43351a13"
+    "trackHash": "306-8f1c1f92",
+    "ascend": 65
   },
   {
     "id": "HW-01M78J0A4WQP1MFP6K9CN9GZ3F",
@@ -46,14 +52,15 @@
       "HW-01M6EV4VSRVJH56R9RZ6X5T5GM",
       "HW-01M6EV4ZREXDF263DBM6FD9DRR"
     ],
-    "trackHash": "209-4a5f3b85"
+    "trackHash": "209-4a5f3b85",
+    "ascend": 70
   },
   {
     "id": "HW-01M79T9DN23YH7MBC3TC5Z517P",
     "name": "Boucle autour de Église Saint-Benoît",
     "file": "charleroi/Boucle autour de Église Saint-Benoît.gpx",
     "description": "",
-    "distance": "8.5 km",
+    "distance": "9.3 km",
     "isOfficial": true,
     "hasRealTrack": true,
     "zone": "Ham-sur-Heure-Nalinnes",
@@ -64,6 +71,7 @@
       "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
       "HW-01M6EV6W5QVEX5YRFVH681CNNG"
     ],
-    "trackHash": "203-10ee6874"
+    "trackHash": "233-268bf08c",
+    "ascend": 63
   }
 ]
