@@ -83,16 +83,21 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   tracé passe par les points **dans l'ordre du parcours** : un point se range selon
   l'endroit du tracé où vous cliquez, et le garde quand vous le déplacez *(pratique pour
   faire le tour d'un parc ou d'un terril : cliquez sur le tracé, puis glissez le point sur
-  le chemin voulu)*.
+  le chemin voulu)*. Les points sont **enregistrés avec le circuit** à « Terminer » : vous
+  les retrouvez en rouvrant l'édition, et Tracer, le comparateur et le re-tracé passent
+  par eux.
 - **« Tracé presque complet »** : un **segment droit** est un passage que BRouter n'a
   pas su tracer — il reste en **ligne droite**. Ajoutez-y un **point de passage** pour
   le guider.
 - **« Re-tracer l'itinéraire »** : si vous changez les lieux après coup, le tracé est
   signalé **« séquence modifiée »** *(« Tracé à mettre à jour »)*. Re-tracez pour le
   remettre à jour : seuls les passages modifiés sont recalculés, avec la même variante
-  *(sans « éviter de repasser »)*.
+  *(sans « éviter de repasser »)*. Les points de passage suivent : ceux d'un lieu retiré
+  passent au nouveau passage, ceux du passage où un lieu s'insère se répartissent avant
+  et après lui.
 - **« Tout re-tracer »** *(menu ⋮)* : rouvre « Choisir l'itinéraire » ; la variante
-  retenue recalcule **tous** les passages et efface vos ajustements.
+  retenue recalcule **tous** les passages, en passant par vos points de passage. Les
+  retouches GPX Studio sont perdues.
 
 ### 6 · Apporter ou afficher une trace existante
 - **« Importer un GPX »** : apporte une trace GPX *(Wikiloc, GPS…)* **comme itinéraire

@@ -43,14 +43,17 @@ const kmNum = (m) => (m / 1000).toFixed(1).replace('.', ',');
  * @param {Object} o
  * @param {Object[]} o.features  Lieux du circuit, dans l'ordre (≥ 2).
  * @param {{variant: string, force?: number}} o.initial  Variante présélectionnée et force.
+ * @param {Object} [o.waypointsBySeg]  Points de passage enregistrés ({ [passage]: [{lat, lng}] }) :
+ *   les deux variantes passent par eux (circuit-waypoints.js).
  * @param {(choice: {routing: Object, engine: Object, result: Object}) => Promise<void>} o.onApply
  * @param {() => void} o.onCancel
  */
-export async function openRouteCompare({ features, initial, onApply, onCancel }) {
+export async function openRouteCompare({ features, initial, waypointsBySeg = {}, onApply, onCancel }) {
     if (cv || !map) return;
     const init = normalizeRouting(initial);
     cv = {
         features: features.slice(),
+        waypointsBySeg,
         engine: null,
         selected: init.variant,
         // Force mémorisée si le circuit l'a (même s'il est en Direct), sinon 1.
@@ -104,7 +107,7 @@ async function compute(variant) {
     const live = () => cv === session && session.tok[variant] === tok;
     let result;
     try {
-        result = await routeCircuit(session.features, {}, {
+        result = await routeCircuit(session.features, session.waypointsBySeg, {
             routing: routingFor(variant),
             base: session.engine.base,
             onProgress: (done, total) => {
@@ -220,6 +223,8 @@ function fitTo(track) {
 // --- Panneau -------------------------------------------------------------
 function buildPanel() {
     const n = cv.features.length;
+    const nPts = Object.values(cv.waypointsBySeg || {}).reduce((t, pts) => t + pts.length, 0);
+    const ptsTxt = nPts ? ` · ${nPts} point${nPts > 1 ? 's' : ''} de passage` : '';
     const el = document.createElement('section');
     el.className = 'cv-panel';
     el.setAttribute('aria-labelledby', 'cv-title');
@@ -228,7 +233,7 @@ function buildPanel() {
             <div class="cv-head-ico"><i data-lucide="route"></i></div>
             <div class="cv-head-txt">
                 <h3 id="cv-title">Choisir l'itinéraire</h3>
-                <p>${n} lieux · ${n - 1} passage${n - 1 > 1 ? 's' : ''}</p>
+                <p>${n} lieux · ${n - 1} passage${n - 1 > 1 ? 's' : ''}${ptsTxt}</p>
             </div>
             <button class="cv-icon-btn" type="button" data-act="cancel" aria-label="Fermer"><i data-lucide="x"></i></button>
         </div>

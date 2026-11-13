@@ -33,6 +33,7 @@ import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-cont
 import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
 import { trackFingerprint } from './track-fingerprint.js';
+import { circuitWaypointsFor, savedToBySeg, storedWaypoints } from './circuit-waypoints.js';
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
 import { WAY_CATEGORIES, formatKm, wayTypesStatus } from './way-types.js';
 import { openSaveModal } from './save-modal-ui.js';
@@ -200,7 +201,7 @@ const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'F
 const MP_EXPORT_RAW = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: "Vol d'oiseau (avant le tracé BRouter)" };
 // Re-tracé COMPLET (avec confirmation) : repart de zéro sur tous les passages,
 // là où « Re-tracer l'itinéraire » (tracé périmé) ne recalcule que les modifiés.
-const MP_RETRACE_ALL = { act: 'retrace', icon: 'repeat', t: 'Tout re-tracer', d: 'Recalcule tous les passages, sans garder vos ajustements' };
+const MP_RETRACE_ALL = { act: 'retrace', icon: 'repeat', t: 'Tout re-tracer', d: 'Recalcule tous les passages, par vos points de passage' };
 const MP_UNDO = { act: 'undo', icon: 'rotate-ccw', t: 'Revenir au tracé précédent', d: 'Annule le dernier re-tracé' };
 // En tête du menu, seulement juste après un re-tracé.
 function undoItems() {
@@ -378,10 +379,17 @@ function traceContext() {
         prevTrack,
         prevAscend: Number.isFinite(prevCircuit.ascend) ? prevCircuit.ascend : null,
         prevRouting: prevCircuit.routing || null,
+        prevWaypoints: prevCircuit.waypoints || null,
         prevBasisKey: state.routeBasisKey,
         prevSegments: state.routeSegments,
     } : null;
-    return { prevCircuit, prevTrack, undo };
+    // Points de passage enregistrés, reportés sur la séquence actuelle des
+    // lieux (lieu retiré : fusion ; lieu ajouté : répartition) — Tracer, le
+    // comparateur et le re-tracé passent par eux.
+    const ids = state.currentCircuit.map(getPoiId);
+    const passages = circuitWaypointsFor(prevCircuit, state.currentCircuit);
+    const waypoints = { bySeg: savedToBySeg(passages, ids), stored: storedWaypoints(passages, ids) };
+    return { prevCircuit, prevTrack, undo, waypoints };
 }
 
 // keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
@@ -404,11 +412,11 @@ async function runTrace({ keepUnchanged = false } = {}) {
         // BRouter de ce PC s'il répond, sinon brouter.de.
         const routing = normalizeRouting(ctx.prevCircuit?.routing);
         const engine = await resolveEngine();
-        const opts = { routing, base: engine.base };
+        const opts = { routing, base: engine.base, waypointsBySeg: ctx.waypoints.bySeg };
         const prev = previousRoute(ctx.prevTrack);
         const result = prev
             ? await routeChangedSegments(state.currentCircuit, state.currentCircuit.map(getPoiId), prev, opts)
-            : await routeCircuit(state.currentCircuit, {}, opts);
+            : await routeCircuit(state.currentCircuit, ctx.waypoints.bySeg, opts);
         await applyTraceResult(ctx, { result, routing, engine, prev });
     } catch (e) {
         traceFailed(e);
@@ -435,6 +443,7 @@ function startCompare(ctx) {
         features: state.currentCircuit,
         // Variante mémorisée sur le circuit, sinon Chemins (décision de Stefan, 12/11/2026).
         initial: ctx.prevCircuit?.routing || { variant: 'chemins' },
+        waypointsBySeg: ctx.waypoints.bySeg,
         onApply: async ({ result, routing, engine }) => {
             tracing = true;
             updateTraceBlock();
@@ -456,7 +465,7 @@ function startCompare(ctx) {
 
 // Enregistre un tracé calculé (variante retenue au comparateur, ou re-tracé
 // partiel) et remet la carte et le panneau à jour.
-async function applyTraceResult({ prevCircuit, prevTrack, undo }, { result, routing, engine, prev }) {
+async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints }, { result, routing, engine, prev }) {
     const { realTrack, segments } = result;
     // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
     // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
@@ -465,7 +474,9 @@ async function applyTraceResult({ prevCircuit, prevTrack, undo }, { result, rout
         ? prevCircuit.ascend : result.ascend;
     state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
     // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
-    await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend, routing: { ...routing, engine: engine.key } });
+    await saveAndExportCircuit(realTrack, {
+        stayInCreation: true, ascend, routing: { ...routing, engine: engine.key }, waypoints: waypoints.stored,
+    });
     // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
     // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
     if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
@@ -495,7 +506,9 @@ async function undoRetrace() {
     const u = lastRetrace;
     lastRetrace = null;
     try {
-        await saveAndExportCircuit(u.prevTrack, { stayInCreation: true, ascend: u.prevAscend, routing: u.prevRouting });
+        await saveAndExportCircuit(u.prevTrack, {
+            stayInCreation: true, ascend: u.prevAscend, routing: u.prevRouting, waypoints: u.prevWaypoints,
+        });
     } catch (e) {
         console.error('[routing] retour au tracé précédent échoué :', e);
         showToast("Impossible de rétablir le tracé précédent.", 'error');
@@ -519,7 +532,7 @@ function plural(n, one, many) {
 async function confirmRetrace() {
     const ok = await showConfirm(
         'Tout re-tracer ?',
-        'Tous les passages seront recalculés par BRouter. Les points de passage et les retouches GPX Studio seront perdus.',
+        'Tous les passages seront recalculés par BRouter, en passant par vos points de passage. Les retouches GPX Studio seront perdues.',
         'Tout re-tracer', 'Annuler'
     );
     if (ok) runTrace();

@@ -284,7 +284,9 @@ export const HELP_STALE = {
         Cliquez <strong>« Re-tracer l'itinéraire »</strong> pour le recalculer.</p>
         <p>Seuls les <strong>passages modifiés</strong> sont recalculés : les autres gardent
         leurs ajustements <span class="help-muted">(points de passage, retouches GPX
-        Studio)</span>.</p>`,
+        Studio)</span>. Vos <strong>points de passage</strong> suivent : un lieu retiré, et
+        les points de ses deux passages passent au nouveau passage ; un lieu ajouté, et
+        ceux du passage où il s'insère se répartissent avant et après lui.</p>`,
 };
 
 /* === ANCRE — « ? » sur la note « Un passage est resté en ligne droite » === */
@@ -401,7 +403,9 @@ export const GUIDE_CIRCUIT = {
                         se range selon l'endroit du tracé où vous cliquez, et le garde quand vous le
                         déplacez <span class="help-muted">(pratique pour faire le tour d'un parc ou
                         d'un terril : cliquez sur le tracé, puis glissez le point sur le chemin
-                        voulu)</span>.</li>
+                        voulu)</span>. Les points sont <strong>enregistrés avec le circuit</strong>
+                        à « Terminer » : vous les retrouvez en rouvrant l'édition, et Tracer, le
+                        comparateur et le re-tracé passent par eux.</li>
                     <li><strong>« Voies »</strong> <span class="help-muted">(barre d'édition)</span> :
                         montre en traits fins <strong>toutes les voies</strong> autour du circuit, avec
                         les couleurs du tracé, pour repérer un sentier à côté d'une route et y faire
@@ -414,14 +418,17 @@ export const GUIDE_CIRCUIT = {
                         <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
                         le remettre à jour : seuls les passages modifiés sont recalculés, avec la
                         même variante <span class="help-muted">(sans « éviter de
-                        repasser »)</span>, les autres gardent leurs ajustements.</li>
+                        repasser »)</span>, les autres gardent leurs ajustements. Les points
+                        de passage suivent : ceux d'un lieu retiré passent au nouveau passage,
+                        ceux du passage où un lieu s'insère se répartissent avant et après lui.</li>
                     <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
                         rouvre « Choisir l'itinéraire » ; la variante retenue recalcule
-                        <strong>tous</strong> les passages et efface vos ajustements.</li>
+                        <strong>tous</strong> les passages, en passant par vos points de passage.
+                        Les retouches GPX Studio sont perdues.</li>
                     <li><strong>« Revenir au tracé précédent »</strong> <span class="help-muted">(menu ⋮,
                         juste après un re-tracé)</span> : un re-tracé est enregistré dès que vous
-                        retenez une variante ; ce bouton rétablit le tracé d'avant, ajustements et
-                        variante compris.</li>
+                        retenez une variante ; ce bouton rétablit le tracé d'avant, ajustements,
+                        points de passage et variante compris.</li>
                 </ul>`,
         },
         {
