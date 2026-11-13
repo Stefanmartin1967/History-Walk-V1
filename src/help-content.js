@@ -396,7 +396,12 @@ export const GUIDE_CIRCUIT = {
             html: `<ul class="help-list">
                     <li><strong>« Éditer l'itinéraire »</strong> : ajoutez des <strong>points de
                         passage</strong> <span class="help-muted">(cliquez sur la carte)</span> pour
-                        guider le tracé ; déplacez-les. Seul le segment touché est recalculé.</li>
+                        guider le tracé ; déplacez-les. Seul le segment touché est recalculé. Le
+                        tracé passe par les points <strong>dans l'ordre du parcours</strong> : un point
+                        se range selon l'endroit du tracé où vous cliquez, et le garde quand vous le
+                        déplacez <span class="help-muted">(pratique pour faire le tour d'un parc ou
+                        d'un terril : cliquez sur le tracé, puis glissez le point sur le chemin
+                        voulu)</span>.</li>
                     <li><strong>« Voies »</strong> <span class="help-muted">(barre d'édition)</span> :
                         montre en traits fins <strong>toutes les voies</strong> autour du circuit, avec
                         les couleurs du tracé, pour repérer un sentier à côté d'une route et y faire

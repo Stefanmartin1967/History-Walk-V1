@@ -6,6 +6,12 @@
 
 ---
 
+- ÉDITION DU TRACÉ : LES POINTS DE PASSAGE GARDENT L'ORDRE DU PARCOURS (v3.7.528). Signalé par Stefan le 13/11/2026 (tour du terril, Marchienne-au-Pont : « dès que ça devient plus long, je perds un morceau »). Chantier points de passage permanents, PR 1.
+  - Cause : les points d'un passage étaient TRIÉS par leur projection sur la ligne droite entre ses deux lieux. Sur une boucle ou un aller-retour, l'aller et le retour tombent au même niveau : les points se mélangeaient, BRouter les reliait dans le désordre et sautait un morceau.
+  - Nouveau `src/passage-order.js` : un point posé s'insère selon sa position le long du tracé ACTUEL du passage, entre les points déjà posés (repérés dans leur ordre, chacun cherché après le précédent) ; l'ordre est ensuite gardé, y compris quand on glisse un point. Le passage visé est celui dont le TRACÉ passe au plus près du clic (avant : le plus proche sommet).
+  - Vérifié en aperçu (BRouter de ce PC) : deux points glissés en boucle sont envoyés dans l'ordre voulu (l'ancien tri les inversait) ; un clic sur le tracé entre eux s'insère au milieu.
+  - Aide « Créer un circuit » et docs : ordre du parcours. Tests : +8 (`passage_order`).
+
 - MOBILE : LE « < n/total > » DE LA FICHE CIRCUIT PASSE SUR LA LIGNE DU BADGE (v3.7.527). Demandé par Stefan le 13/11/2026.
   - Avec le D+ (v3.7.526), la ligne « ZONE · N LIEUX · KM · D+ » débordait et renvoyait « < n/total > » seul sur une deuxième ligne.
   - Le pager quitte `.cc-eyebrow` et rejoint une nouvelle ligne `.cc-ident-row` sous le titre : badge « OFFICIEL · VÉRIFIÉ » à gauche, « < n/total > » calé à droite (seul à droite pour un circuit perso sans badge). Pas de ligne en plus, zones de toucher 44 px inchangées. Variante `.cc-pager.in-eyebrow` renommée `.is-compact`.
