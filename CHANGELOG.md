@@ -6,6 +6,14 @@
 
 ---
 
+- CIRCUITS : LE DÉNIVELÉ (D+) EST PUBLIÉ (v3.7.526). Signalé par Stefan le 13/11/2026 : pas de dénivelé sur mobile.
+  - Cause : la publication n'écrivait pas `ascend` dans l'index des circuits. Seul le PC qui avait tracé le circuit voyait le D+ (copie locale) ; le mobile et les visiteurs, qui lisent l'index, jamais. L'emplacement « D+ … M » de la fiche circuit mobile existait déjà.
+  - `buildCircuitIndexEntry` écrit `ascend` (mètres, omis si absent ou nul). Fusion au démarrage (`mergeOfficialWithLocal`) : D+ de la copie locale s'il existe, sinon celui de l'index. Le diff signale « Dénivelé » quand le local a un D+ différent de l'index (jamais pour le retirer).
+  - ⚠️ Après merge : les circuits publiés avant n'ont pas de D+ dans l'index. Ils ressortent au CC en « Dénivelé — → D+ … m » sur le PC qui les a tracés ; les publier emmène le D+.
+  - Vérifié sur l'aperçu (D+ simulé sur un circuit officiel sans copie locale) : PC « D+ 84 m », mobile « … · 7.4 KM · D+ 84 M · ». Sur mobile, la ligne déborde alors : le « < 19/24 > » passe à la ligne.
+  - `scripts/generate-circuit-index.js` (réparation manuelle) n'écrit pas `ascend` : il ne peut pas le recalculer.
+  - Tests : +4 (`circuit-index-entry`, `circuit_lookup`, `admin_diff_engine`).
+
 - DESTINATIONS : PAYS, DRAPEAU ET DEVISE VIENNENT DU CODE PAYS (v3.7.525). Signalé par Stefan le 13/11/2026 sur la Wallonie.
   - Avant : la Wallonie affichait « be » sous son nom (menu PC), une mappemonde au lieu du drapeau (sélecteur mobile) et « TND » comme devise (bloc transport, éditeur de lieu). Le menu PC devinait le pays d'après la position (Tunisie, Maroc seulement), le mobile n'avait que trois drapeaux, et une destination créée par le Scout n'a pas de devise : le « TND » écrit en dur restait affiché.
   - Maintenant : `src/countries.js`, table unique des pays (nom, devise par défaut ; drapeau calculé depuis le code). Utilisée par le menu PC (`topbar-v2.js`, heuristique retirée), le sélecteur mobile, la fiche (prix), le bloc transport et l'éditeur de lieu (« Prix (EUR) »). Un `currency` renseigné dans destinations.json reste prioritaire. Wallonie : Belgique, 🇧🇪, EUR.

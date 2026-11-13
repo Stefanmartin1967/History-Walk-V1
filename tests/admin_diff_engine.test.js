@@ -908,6 +908,27 @@ describe('Admin Diff Engine', () => {
             expect(r.circuits.find(c => c.id === 'tr3')).toBeUndefined();
         });
 
+        // D+ publié dans l'index depuis le 13/11/2026.
+        it("signale un D+ local absent de l'index (circuit publié avant)", async () => {
+            state.myCircuits = [{ id: 'as1', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'], ascend: 84 }];
+            withRemote({ id: 'as1', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)) });
+
+            const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+            expect(r.circuits[0].changes).toEqual([{ key: 'Dénivelé', old: '—', new: 'D+ 84 m' }]);
+        });
+
+        it("même D+ que l'index, ou copie locale sans D+ : rien à publier", async () => {
+            state.myCircuits = [
+                { id: 'as2', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'], ascend: 84 },
+            ];
+            withRemote({ id: 'as2', name: 'Circuit', poiIds: ['p1'], trackHash: trackFingerprint(makeTrack(10)), ascend: 84 });
+            expect((await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits).toEqual([]);
+
+            state.myCircuits = [{ id: 'as2', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1'], ascend: null }];
+            expect((await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits).toEqual([]);
+        });
+
         it('circuit publié sans empreinte : compare au GPX publié relu sur le serveur', async () => {
             state.myCircuits = [{ id: 'tr4', name: 'Circuit', realTrack: makeTrack(12), poiIds: ['p1'] }];
             withRemote({ id: 'tr4', name: 'Circuit', poiIds: ['p1'], file: 'djerba/Circuit.gpx' }, toGpx(makeTrack(10)));

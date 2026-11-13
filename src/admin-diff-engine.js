@@ -4,7 +4,7 @@ import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
-import { getAllCircuits } from './circuit-lookup.js';
+import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
 import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { countFramed } from './photo-focus.js';
 import { stripCircuitSignature } from './circuit-description.js';
@@ -495,6 +495,20 @@ export async function prepareDiffData(adminDraft) {
                     key: 'Tracé',
                     old: `${fingerprintPointCount(publishedFp)} pts`,
                     new: `${local.realTrack.length} pts`
+                });
+            }
+
+            // Dénivelé (D+) : publié dans l'index depuis le 13/11/2026. Signalé
+            // seulement quand le local EN A UN, différent : un circuit publié avant
+            // ressort une fois ici et sa republication emmène le D+ ; une copie
+            // locale sans D+ ne propose jamais de le retirer.
+            const localAscend = publishedAscend(local.ascend);
+            const remoteAscend = publishedAscend(remote.ascend);
+            if (localAscend !== undefined && localAscend !== remoteAscend) {
+                changes.push({
+                    key: 'Dénivelé',
+                    old: remoteAscend !== undefined ? `D+ ${remoteAscend} m` : '—',
+                    new: `D+ ${localAscend} m`
                 });
             }
 
