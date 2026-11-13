@@ -21,7 +21,7 @@ import L from 'leaflet';
 import { state } from './state.js';
 import { map, updatePolylines, clearMapLines, trackRenderer } from './map.js';
 import {
-    anchorOf, routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm, segmentsAscend,
+    routeOneSegment, splitTrackByAnchors, buildRealTrack, segmentsDistanceKm, segmentsAscend,
     normalizeRouting, resolveEngine,
 } from './circuit-routing.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
@@ -35,6 +35,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { paintTrackParts, paintZoneWays } from './circuit-way-types.js';
+import { nearestPassage, insertionIndex } from './passage-order.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -62,20 +63,10 @@ function wpIcon() {
     });
 }
 
-// Projection scalaire normalisée de p sur la corde a→b (points [lon, lat]).
-// Sert à ORDONNER les points de passage d'un même segment le long du chemin,
-// pour qu'un point posé/glissé s'insère au bon endroit (pas de zigzag).
-function projT(p, a, b) {
-    const abx = b[0] - a[0], aby = b[1] - a[1];
-    const len2 = abx * abx + aby * aby;
-    if (!len2) return 0;
-    return ((p[0] - a[0]) * abx + (p[1] - a[1]) * aby) / len2;
-}
-
 // Ancres déplacées en session (drapeaux d'accès glissés en focus), indexées par
 // position de POI : { [idx]: [lon, lat] }. Priment sur l'accessPoint enregistré
 // pour que le re-route (et l'ordre des points de passage) suive la position LIVE
-// du drapeau — cf. routeOneSegment / anchorOf.
+// du drapeau — cf. routeOneSegment.
 function anchorOverrides() {
     const dragged = getDraggedAnchors(); // { [poiId]: [lon, lat] }
     const out = {};
@@ -83,16 +74,13 @@ function anchorOverrides() {
     return out;
 }
 
-// Regroupe state.draftWaypoints par segment, ordonnés le long de la corde.
+// Regroupe state.draftWaypoints par segment, dans l'ordre de la liste : c'est
+// l'ordre du parcours, fixé à la pose (insertWaypoint). Plus de tri par la
+// ligne droite entre les deux lieux, qui mélangeait l'aller et le retour d'une
+// boucle (cf. passage-order.js).
 function waypointsBySeg() {
-    const ov = anchorOverrides();
-    const anchors = features().map((f, idx) => ov[idx] || anchorOf(f));
     const bySeg = {};
     (state.draftWaypoints || []).forEach(w => { (bySeg[w.seg] = bySeg[w.seg] || []).push(w); });
-    Object.keys(bySeg).forEach(s => {
-        const i = +s, a = anchors[i], b = anchors[i + 1];
-        if (a && b) bySeg[s].sort((w1, w2) => projT([w1.lng, w1.lat], a, b) - projT([w2.lng, w2.lat], a, b));
-    });
     return bySeg;
 }
 
@@ -142,25 +130,11 @@ function drawGhosts() {
     });
 }
 
-// Segment le plus proche d'un point cliqué (nearest-vertex) — pour rattacher un
-// nouveau point de passage au bon tronçon POI→POI.
-function nearestSegmentIndex(latlng) {
-    const segs = state.routeSegments || [];
-    let best = 0, bestD = Infinity;
-    segs.forEach((s, i) => {
-        (s.coords || []).forEach(([lat, lon]) => {
-            const d = (lat - latlng.lat) ** 2 + (lon - latlng.lng) ** 2;
-            if (d < bestD) { bestD = d; best = i; }
-        });
-    });
-    return best;
-}
-
 // Mode « Ajouter un point » actif : un clic GAUCHE sur la carte pose un point de
 // passage à cet endroit, rattaché au segment le plus proche (le tracé s'y plie).
 function onAddClick(e) {
     if (!_addMode) return;
-    insertWaypoint(nearestSegmentIndex(e.latlng), e.latlng);
+    insertWaypoint(nearestPassage(state.routeSegments, e.latlng), e.latlng);
 }
 
 function drawWaypoints() {
@@ -178,8 +152,12 @@ function drawWaypoints() {
 }
 
 // ---------- Opérations sur les points de passage ----------
+// Le point prend sa place dans l'ordre du parcours : selon sa position le long
+// du tracé actuel du passage, entre les points déjà posés.
 function insertWaypoint(seg, latlng) {
-    state.draftWaypoints.push({ id: genId(), seg, lat: latlng.lat, lng: latlng.lng });
+    const wp = { id: genId(), seg, lat: latlng.lat, lng: latlng.lng };
+    const coords = state.routeSegments?.[seg]?.coords || [];
+    state.draftWaypoints.splice(insertionIndex(state.draftWaypoints, seg, coords, latlng), 0, wp);
     _dirty = true;
     rerouteSegment(seg);
 }

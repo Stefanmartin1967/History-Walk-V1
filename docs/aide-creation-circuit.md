@@ -79,7 +79,11 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
 
 ### 5 · Ajuster le tracé
 - **« Éditer l'itinéraire »** : ajoutez des **points de passage** *(cliquez sur la
-  carte)* pour guider le tracé ; déplacez-les. Seul le segment touché est recalculé.
+  carte)* pour guider le tracé ; déplacez-les. Seul le segment touché est recalculé. Le
+  tracé passe par les points **dans l'ordre du parcours** : un point se range selon
+  l'endroit du tracé où vous cliquez, et le garde quand vous le déplacez *(pratique pour
+  faire le tour d'un parc ou d'un terril : cliquez sur le tracé, puis glissez le point sur
+  le chemin voulu)*.
 - **« Tracé presque complet »** : un **segment droit** est un passage que BRouter n'a
   pas su tracer — il reste en **ligne droite**. Ajoutez-y un **point de passage** pour
   le guider.
