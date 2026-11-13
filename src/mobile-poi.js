@@ -246,13 +246,14 @@ function renderCircuitView(container, fallbackList) {
     const ascendM = (Number.isFinite(circuit.ascend) && circuit.ascend > 0) ? circuit.ascend : null;
     const denivHtml = ascendM ? `<span class="sep">·</span><span>D+ ${ascendM} M</span>` : '';
 
-    // Position dans la liste ordonnée (pour chevrons « < n/total > »)
+    // Position dans la liste ordonnée (pour chevrons « < n/total > »).
+    // Le pager vit sur la ligne du badge (calé à droite), pas dans l'eyebrow :
+    // avec le D+, l'eyebrow débordait et renvoyait « < n/total > » seul à la ligne.
     const ordered = getAllCircuitsOrdered();
     const idx = ordered.findIndex(c => c.id === state.activeCircuitId);
     const hasPager = idx >= 0 && ordered.length > 1;
     const pagerHtml = hasPager ? `
-        <span class="sep">·</span>
-        <span class="cc-pager in-eyebrow">
+        <span class="cc-pager is-compact">
             <button class="cc-pager-btn" id="cc-pager-prev" aria-label="Circuit précédent"${idx <= 0 ? ' disabled' : ''}>
                 <i data-lucide="chevron-left"></i>
             </button>
@@ -314,10 +315,12 @@ function renderCircuitView(container, fallbackList) {
                 <span>${poiCount} LIEUX</span><span class="sep">·</span>
                 <span>${kmDisplay} KM</span>
                 ${denivHtml}
-                ${pagerHtml}
             </div>
             <h1 class="cc-title">${escapeHtml(fullName)}</h1>
-            ${flagText ? `<span class="cc-flag" data-flag="${flag}"><span class="dot"></span>${flagText}</span>` : ''}
+            ${(flagText || pagerHtml) ? `<div class="cc-ident-row">
+                ${flagText ? `<span class="cc-flag" data-flag="${flag}"><span class="dot"></span>${flagText}</span>` : ''}
+                ${pagerHtml}
+            </div>` : ''}
         </div>
         ${description ? `<div class="cc-desc">
             <p class="cc-desc-text">${escapeHtml(description)}</p>

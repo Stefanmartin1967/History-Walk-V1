@@ -6,6 +6,11 @@
 
 ---
 
+- MOBILE : LE « < n/total > » DE LA FICHE CIRCUIT PASSE SUR LA LIGNE DU BADGE (v3.7.527). Demandé par Stefan le 13/11/2026.
+  - Avec le D+ (v3.7.526), la ligne « ZONE · N LIEUX · KM · D+ » débordait et renvoyait « < n/total > » seul sur une deuxième ligne.
+  - Le pager quitte `.cc-eyebrow` et rejoint une nouvelle ligne `.cc-ident-row` sous le titre : badge « OFFICIEL · VÉRIFIÉ » à gauche, « < n/total > » calé à droite (seul à droite pour un circuit perso sans badge). Pas de ligne en plus, zones de toucher 44 px inchangées. Variante `.cc-pager.in-eyebrow` renommée `.is-compact`.
+  - Vérifié en aperçu : à 412 px (S25 Ultra), « MONTIGNIES-SUR-SAMBRE · 5 LIEUX · 5.6 KM · D+ 84 M » tient sur une ligne ; à 375 px, ce cas extrême renvoie le D+ à la ligne.
+
 - CIRCUITS : LE DÉNIVELÉ (D+) EST PUBLIÉ (v3.7.526). Signalé par Stefan le 13/11/2026 : pas de dénivelé sur mobile.
   - Cause : la publication n'écrivait pas `ascend` dans l'index des circuits. Seul le PC qui avait tracé le circuit voyait le D+ (copie locale) ; le mobile et les visiteurs, qui lisent l'index, jamais. L'emplacement « D+ … M » de la fiche circuit mobile existait déjà.
   - `buildCircuitIndexEntry` écrit `ascend` (mètres, omis si absent ou nul). Fusion au démarrage (`mergeOfficialWithLocal`) : D+ de la copie locale s'il existe, sinon celui de l'index. Le diff signale « Dénivelé » quand le local a un D+ différent de l'index (jamais pour le retirer).
