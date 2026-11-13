@@ -11949,11 +11949,20 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Monument aux morts (Tilly)",
         "Catégorie": "Monument",
         "osm_ref": "node/2440359056",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4Q90RMB7FNAG29MEME0X",
+        "description": "Monument aux morts de la place Communale, à Tilly.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Villers-la-Ville"
       }
     },
@@ -46353,6 +46362,7 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
+        "Accès": "Extérieur seulement",
         "Zone": "Villers-la-Ville"
       }
     },
