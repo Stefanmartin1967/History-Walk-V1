@@ -48,5 +48,24 @@
       "HW-01M6EV4ZREXDF263DBM6FD9DRR"
     ],
     "trackHash": "209-4a5f3b85"
+  },
+  {
+    "id": "HW-01M79T9DN23YH7MBC3TC5Z517P",
+    "name": "Boucle autour de Grotte des Sarrasins",
+    "file": "charleroi/Boucle autour de Grotte des Sarrasins.gpx",
+    "description": "",
+    "distance": "11.0 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Gerpinnes",
+    "poiIds": [
+      "HW-01M616BNAR8FA2THSPYGTF9HF6",
+      "HW-01M616BMWMN6G8EK4FWJHFASM2",
+      "HW-01M6EV6TWYARPA1DW5W6HWW9PN",
+      "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
+      "HW-01M6EV6W5QVEX5YRFVH681CNNG",
+      "HW-01M616BNAR8FA2THSPYGTF9HF6"
+    ],
+    "trackHash": "264-d01d2a41"
   }
 ]
