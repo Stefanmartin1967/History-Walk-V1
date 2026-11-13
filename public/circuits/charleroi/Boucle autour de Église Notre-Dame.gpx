@@ -18,6 +18,10 @@
       <name>Lieu inconnu</name>
       <desc></desc>
     </wpt>
+    <wpt lat="50.56061733306909" lon="4.552069052062019">
+      <name>Église Notre-Dame des Affligés (Tilly)</name>
+      <desc></desc>
+    </wpt>
     <wpt lat="50.5604102" lon="4.5518741">
       <name>Bottes t&apos;Serclaes</name>
       <desc></desc>
@@ -145,6 +149,7 @@
       <trkpt lat="50.561061" lon="4.551346"><ele>0</ele></trkpt>
       <trkpt lat="50.560905" lon="4.551386"><ele>0</ele></trkpt>
       <trkpt lat="50.560764" lon="4.551474"><ele>0</ele></trkpt>
+      <trkpt lat="50.560344" lon="4.551739"><ele>0</ele></trkpt>
       <trkpt lat="50.560371" lon="4.551721"><ele>0</ele></trkpt>
       <trkpt lat="50.560344" lon="4.551739"><ele>0</ele></trkpt>
       <trkpt lat="50.560303" lon="4.551751"><ele>0</ele></trkpt>
