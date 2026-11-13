@@ -15201,6 +15201,17 @@
         "osm_ref": "way/836801933",
         "candidate": true,
         "HW_ID": "HW-01M6EV4ZREXDF263DBM6FD9DRR",
+        "Sous-type": "Catholique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "maps_ref": "https://maps.app.goo.gl/gWWdWUEaQZVB59RWA",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
         "Zone": "Villers-la-Ville"
       }
     },
@@ -49611,6 +49622,39 @@
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M72DQVS8M5KF59B3NM9QZVVH_1794304275554.jpg"
         ],
         "Zone": "Charleroi"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.552069052062019,
+          50.56061733306909
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Église Notre-Dame des Affligés (Tilly)",
+        "Catégorie": "Église",
+        "Sous-type": "Catholique",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "osm_ref": "way/235959580",
+        "maps_ref": "https://maps.app.goo.gl/QAPr3mxfELCviBu1A",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "osmCheckedDate": "2026-11-13",
+        "mapsChecked": true,
+        "mapsHasPhoto": true,
+        "jalelChecked": false,
+        "HW_ID": "HW-01M79Q55273513DWBTXMWX6AYG",
+        "accessPoint": [
+          4.5524036,
+          50.5604707
+        ],
+        "Zone": "Villers-la-Ville"
       }
     }
   ]
