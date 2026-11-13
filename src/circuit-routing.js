@@ -416,6 +416,15 @@ export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
         segments = await Promise.all(Array.from({ length: total }, (_, i) =>
             routeSegment(segmentVias(anchors, waypointsBySeg, i), opts).then(progress)));
     }
+    return assembleRoute(segments);
+}
+
+/**
+ * Résultat d'un circuit à partir de ses passages (routeCircuit, et le panneau
+ * Itinéraire quand un seul passage a été recalculé après un point de passage).
+ * @param {{coords:number[][], ok:boolean, distanceKm:number, ascend?:number, ways?:Object}[]} segments
+ */
+export function assembleRoute(segments) {
     const failedSegments = segments.map((s, i) => (s.ok ? -1 : i)).filter(i => i >= 0);
     return {
         realTrack: buildRealTrack(segments),

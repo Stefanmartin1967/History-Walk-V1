@@ -6,6 +6,16 @@
 
 ---
 
+- ITINÉRAIRE : UN SEUL PANNEAU POUR LES VARIANTES ET LES POINTS DE PASSAGE (v3.7.531). Maquette « Panneau Itinéraire » validée par Stefan le 13/11/2026 (« ce ne serait pas plus logique de poser les points avant de valider ? »). PR A du panneau unique.
+  - Le panneau « Choisir l'itinéraire » devient « Itinéraire » et porte un bloc « Points de passage » : « Poser un point » (actif dès l'ouverture), « Voies », « Calque », liste des passages avec leur nombre de points et × pour les retirer. Clic sur le tracé = un point (rangé dans l'ordre du parcours, passage-order.js) ; glisser = l'ajuster ; clic sur un point = le retirer.
+  - Un point posé, glissé ou retiré recalcule son SEUL passage (`routeOneSegment`, résultat recomposé par `assembleRoute`, extrait de `routeCircuit`) : tout de suite pour la variante choisie ; pour l'autre, en arrière-plan avec BRouter de ce PC, « Pas à jour » + « Recalculer » avec brouter.de (choisir une variante pas à jour la recalcule). Avec « éviter de repasser », toute la variante est recalculée. Un résultat arrivé après un nouveau changement du même passage est ignoré ; un calcul complet reprend à son arrivée les passages changés pendant qu'il tournait.
+  - Variante non choisie réduite à une ligne (distance, D+) et sa barre ; explications des variantes retirées des cartes (place).
+  - « Utiliser cette variante » → « Enregistrer avec Direct / Chemins » : tracé, variante et points du panneau enregistrés ensemble. Carte d'état pendant le choix : « Itinéraire en cours ».
+  - Piège corrigé pendant l'essai : le rendu remplace l'élément cliqué (× d'un passage, carte de variante) ; Leaflet ne voyait plus que le clic venait du panneau et posait un point sur la carte → `stopPropagation` au clic du panneau.
+  - « Voies » : `paintZoneWaysLoading` (circuit-way-types) demande les voies de la zone à Overpass si elles manquent.
+  - Encore là jusqu'à la PR B : « Éditer l'itinéraire » et sa barre du bas.
+  - Vérifié en aperçu (Djerba, BRouter de ce PC puis brouter.de simulé) : points enregistrés remontés à l'ouverture ; point posé sur le tracé inséré au bon rang, les deux variantes recalculées par lui ; glisser, retirer, × d'un passage ; cartes cliquées sans poser de point ; avec brouter.de : Direct « Pas à jour », note, puis « Recalculer Direct » rétablit les écarts ; « Enregistrer avec Chemins » enregistre la variante et les 3 points, panneau, points et viseur retirés.
+
 - CIRCUITS : LA VARIANTE ET LES POINTS DE PASSAGE SONT PUBLIÉS (v3.7.530). Validé par Stefan le 13/11/2026. Chantier points de passage permanents, PR 3.
   - Avant : variante (`routing`) et points (`waypoints`) restaient sur le PC qui avait tracé. Sur un autre appareil, ou après un rechargement depuis l'index, un circuit officiel re-traçait de lieu à lieu, en Direct.
   - `buildCircuitIndexEntry` écrit `routing` (réglage seul, sans le moteur : `publishedRouting`) et `waypoints` (`{ ids, passages }`, `publishedWaypoints`), omis s'ils sont absents. Fusion au démarrage inchangée : le local prime s'il porte le champ, sinon l'index.

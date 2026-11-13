@@ -245,3 +245,55 @@
 .cv-route-line--chemins { stroke: var(--variant-chemins); }
 .cv-route-halo.is-strong { stroke-width: calc(var(--variant-width) + 2 * var(--variant-halo-width)); opacity: 1; }
 .cv-route-line.is-strong { stroke-width: var(--variant-width); opacity: 1; }
+
+/* ---------- Panneau unique « Itinéraire » (13/11/2026) ---------- */
+/* Cartes compactes : la variante non choisie tient sur une ligne et sa barre. */
+.cv-card.is-compact { gap: 8px; padding: 10px 12px; }
+.cv-card.is-compact.is-selected { padding: 9px 11px; }
+.cv-card.is-compact .cv-stats { padding-top: 8px; }
+.cv-mini { display: flex; align-items: center; gap: 6px; margin-left: auto; font-size: var(--font-size-xs); color: var(--ink-soft); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.cv-mini b { color: var(--ink); font-weight: var(--weight-bold); }
+.cv-mini.is-stale { color: var(--ink-faint); }
+.cv-updating { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 11.5px; font-weight: var(--weight-semibold); color: var(--ink-soft); white-space: nowrap; }
+.cv-updating .cv-spin { width: 13px; height: 13px; }
+.cv-stale { display: flex; align-items: center; gap: var(--space-sm); margin-left: 28px; font-size: var(--font-size-xs); color: var(--ink-soft); }
+.cv-stale .cv-retry { margin-left: auto; min-height: 34px; padding: 0 12px; font-size: 12.5px; }
+
+/* Bloc « Points de passage » */
+.pp { border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); }
+.pp-head { display: flex; align-items: center; gap: 9px; padding: 0 12px; min-height: 44px; font-size: 13px; font-weight: var(--weight-semibold); }
+.pp-count { margin-left: auto; font-size: var(--font-size-xs); font-weight: var(--weight-semibold); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pp-ring {
+    width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; box-sizing: border-box;
+    background: var(--surface); border: 3px solid var(--brand-2);
+}
+.pp-body { display: flex; flex-direction: column; gap: 10px; padding: 0 12px 12px; }
+.pp-tools { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); gap: 6px; }
+.pp-tool {
+    min-height: 40px; border: 1px solid var(--on-brand-strong-border); border-radius: 9px; background: transparent; color: var(--ink);
+    font: inherit; font-size: 12.5px; font-weight: var(--weight-semibold); display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+    cursor: pointer; white-space: nowrap;
+}
+.pp-tool:hover { background: var(--on-brand-strong); }
+.pp-tool:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.pp-tool.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.pp-tool svg { width: 15px; height: 15px; flex-shrink: 0; }
+.pp-hint { margin: 0; font-size: var(--font-size-xs); line-height: 1.4; color: var(--ink-soft); }
+.pp-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+.pp-list li { display: flex; align-items: center; gap: var(--space-sm); min-height: 36px; border-bottom: 1px solid var(--line); font-size: 12.5px; }
+.pp-list li:last-child { border-bottom: 0; }
+.pp-num {
+    width: 20px; height: 20px; border-radius: 50%; background: var(--brand); color: var(--on-brand-fg);
+    display: grid; place-items: center; font-size: 10.5px; font-weight: var(--weight-bold); flex-shrink: 0;
+}
+.pp-arrow { color: var(--ink-faint); }
+.pp-pts { margin-left: auto; font-weight: var(--weight-semibold); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pp-pts.is-none { color: var(--ink-faint); font-weight: var(--weight-medium); }
+.pp-x { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-faint); display: grid; place-items: center; cursor: pointer; }
+.pp-x:hover { background: var(--on-brand-strong); color: var(--ink); }
+.pp-x:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+.pp-x svg { width: 15px; height: 15px; }
+
+/* « Poser un point » actif : curseur viseur sur la carte et les lignes */
+.leaflet-container.cv-placing,
+.leaflet-container.cv-placing .cv-route-line { cursor: crosshair; }
