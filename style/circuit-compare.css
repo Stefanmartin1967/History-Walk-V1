@@ -297,3 +297,16 @@
 /* « Poser un point » actif : curseur viseur sur la carte et les lignes */
 .leaflet-container.cv-placing,
 .leaflet-container.cv-placing .cv-route-line { cursor: crosshair; }
+
+/* Poignées du tracé choisi (comme GPX Studio) : discrètes, à glisser */
+.wp-handle { background: none; border: 0; }
+.wp-handle .wp-handle-dot {
+    display: block; width: 12px; height: 12px; margin: 1px; box-sizing: border-box; border-radius: 50%;
+    /* Couleurs fixes des tracés : le fond de carte ne suit pas le moment. */
+    background: var(--way-halo-light); border: 2px solid var(--way-halo-dark); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    cursor: grab; transition: transform var(--dur-fast) var(--ease-out);
+}
+.wp-handle:hover .wp-handle-dot { transform: scale(1.35); }
+.wp-handle .wp-handle-dot:active { cursor: grabbing; }
+/* Le tracé choisi se tire (hors « Poser un point », où il garde le viseur) */
+.cv-route-line.is-strong { cursor: grab; }

@@ -382,8 +382,11 @@ export const GUIDE_CIRCUIT = {
                 détours)</span>. Chaque passage est alors tracé à son tour, ce qui est plus lent
                 avec brouter.de.</p>
                 <p>Dans le même panneau, <strong>« Points de passage »</strong> : « Poser un
-                point » est actif dès l'ouverture. Cliquez sur le tracé pour poser un point, puis
-                glissez-le sur le chemin voulu ; cliquez un point pour le retirer. Les deux
+                point » est actif dès l'ouverture. Le tracé choisi porte des
+                <strong>poignées</strong> à ses tournants : <strong>tirez une poignée, ou le tracé
+                lui-même</strong>, vers le chemin voulu. Le point tiré devient un point de passage,
+                et ses deux poignées voisines aussi, pour que seul ce bout change. Un clic sur le
+                tracé pose un point ; cliquez un point pour le retirer. Les deux
                 variantes passent par vos points : la variante choisie suit tout de suite ;
                 l'autre se met à jour en arrière-plan avec BRouter de ce PC, ou affiche
                 <strong>« Pas à jour »</strong> avec brouter.de <span class="help-muted">(bouton

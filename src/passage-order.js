@@ -93,3 +93,92 @@ export function insertionIndex(list, seg, coords, p) {
     }
     return own[own.length - 1] + 1;
 }
+
+// --- Poignées le long du tracé (13/11/2026) ---------------------------------
+// Comme GPX Studio : des poignées discrètes aux tournants du tracé de la
+// variante choisie, qu'on glisse pour le reprendre à la main. Glisser une
+// poignée la change en point de passage ; ses deux voisines aussi, pour que
+// seul ce bout du passage bouge (le reste est tenu par elles).
+
+// Douglas-Peucker sur des points projetés en mètres : indices gardés.
+function simplifyIdx(P, tol) {
+    const keep = new Uint8Array(P.length);
+    keep[0] = 1; keep[P.length - 1] = 1;
+    const stack = [[0, P.length - 1]];
+    while (stack.length) {
+        const [a, b] = stack.pop();
+        let best = -1, bestD = tol;
+        const [ax, ay] = P[a], [bx, by] = P[b];
+        const dx = bx - ax, dy = by - ay, L2 = dx * dx + dy * dy;
+        for (let i = a + 1; i < b; i++) {
+            const u = L2 ? Math.max(0, Math.min(1, ((P[i][0] - ax) * dx + (P[i][1] - ay) * dy) / L2)) : 0;
+            const d = Math.hypot(P[i][0] - ax - u * dx, P[i][1] - ay - u * dy);
+            if (d > bestD) { bestD = d; best = i; }
+        }
+        if (best > 0) { keep[best] = 1; stack.push([a, best], [best, b]); }
+    }
+    const out = [];
+    keep.forEach((k, i) => { if (k) out.push(i); });
+    return out;
+}
+
+/**
+ * Poignées d'un passage : ses tournants (simplification à `tolerance` m), au
+ * moins `minGap` m d'écart, rien à moins de `endGap` m de ses bouts, et une
+ * poignée au moins tous les `maxGap` m sur les longues lignes droites.
+ * @param {number[][]} coords  Tracé du passage, [[lat, lon], …].
+ * @returns {{lat:number, lng:number, along:number}[]}  dans l'ordre du parcours.
+ */
+export function turningPoints(coords, { tolerance = 25, minGap = 120, endGap = 80, maxGap = 450 } = {}) {
+    if (!Array.isArray(coords) || coords.length < 3) return [];
+    const { kx, ky } = frame(coords[0][0]);
+    const P = coords.map(c => [c[1] * kx, c[0] * ky]);
+    const cum = [0];
+    for (let i = 1; i < P.length; i++) cum.push(cum[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]));
+    const total = cum[cum.length - 1];
+    const at = (along) => { // point du tracé à cette distance
+        let i = 1;
+        while (i < cum.length - 1 && cum[i] < along) i++;
+        const t = cum[i] > cum[i - 1] ? (along - cum[i - 1]) / (cum[i] - cum[i - 1]) : 0;
+        return { lat: coords[i - 1][0] + (coords[i][0] - coords[i - 1][0]) * t, lng: coords[i - 1][1] + (coords[i][1] - coords[i - 1][1]) * t, along };
+    };
+    // Tournants, puis espacement minimal.
+    const turns = simplifyIdx(P, tolerance).map(i => cum[i]).filter(a => a > endGap && a < total - endGap);
+    const kept = [];
+    turns.forEach(a => { if (!kept.length || a - kept[kept.length - 1] >= minGap) kept.push(a); });
+    // Longues lignes droites : poignées intermédiaires régulières.
+    const bounds = [0, ...kept, total];
+    const out = [];
+    for (let k = 0; k < bounds.length - 1; k++) {
+        const a = bounds[k], b = bounds[k + 1];
+        if (k > 0) out.push(a);
+        const n = Math.floor((b - a) / maxGap);
+        for (let j = 1; j <= n; j++) {
+            const x = a + ((b - a) * j) / (n + 1);
+            if (x > endGap && x < total - endGap) out.push(x);
+        }
+    }
+    return out.sort((x, y) => x - y).map(at);
+}
+
+/**
+ * Voisines à épingler autour d'une position `along` du passage : la poignée
+ * juste avant et juste après, sauf si un point de passage (ou un bout du
+ * passage) est plus près — il tient déjà le tracé de ce côté.
+ * @param {{along:number}[]} handles     Poignées du passage.
+ * @param {number[]} pointAlongs         Position des points de passage déjà posés.
+ * @param {number} along
+ * @returns {{before: Object|null, after: Object|null}}
+ */
+export function pinsAround(handles, pointAlongs, along) {
+    const below = (list) => list.filter(a => a < along);
+    const above = (list) => list.filter(a => a > along);
+    const hb = handles.filter(h => h.along < along).pop() || null;
+    const ha = handles.find(h => h.along > along) || null;
+    const pb = Math.max(0, ...below(pointAlongs));
+    const pa = Math.min(Infinity, ...above(pointAlongs));
+    return {
+        before: hb && hb.along > pb ? hb : null,
+        after: ha && ha.along < pa ? ha : null,
+    };
+}
