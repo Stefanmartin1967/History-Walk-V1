@@ -24,7 +24,7 @@
 
 import { locateOnTrack } from './passage-order.js';
 import { anchorOf, splitTrackByAnchors } from './circuit-routing.js';
-import { getPoiId } from './data.js';
+import { getPoiId } from './utils.js';
 import { state } from './state.js';
 
 const round6 = (v) => Math.round(v * 1e6) / 1e6;
@@ -167,6 +167,32 @@ export function remapWaypoints(saved, prev, next) {
 export function storedWaypoints(passages, ids) {
     const p = compactWaypoints(passages);
     return p ? { ids: [...ids], passages: p } : null;
+}
+
+/**
+ * Points publiables dans l'index des circuits (publiés depuis le 13/11/2026),
+ * pour les retrouver sur un autre appareil. undefined s'il n'y en a pas.
+ */
+export function publishedWaypoints(stored) {
+    if (!stored || !Array.isArray(stored.ids)) return undefined;
+    const passages = compactWaypoints(stored.passages);
+    return passages ? { ids: [...stored.ids], passages } : undefined;
+}
+
+/** Nombre de points d'un enregistrement (0 si aucun). */
+export function waypointCount(stored) {
+    return Object.values((stored && stored.passages) || {}).reduce((t, pts) => t + (Array.isArray(pts) ? pts.length : 0), 0);
+}
+
+/** Deux enregistrements identiques (séquence et points, dans l'ordre) ? */
+export function sameWaypoints(a, b) {
+    const canon = (w) => {
+        const p = publishedWaypoints(w);
+        if (!p) return '';
+        const keys = Object.keys(p.passages).sort();
+        return JSON.stringify([p.ids, keys.map(k => [k, p.passages[k]])]);
+    };
+    return canon(a) === canon(b);
 }
 
 /**

@@ -85,7 +85,8 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   faire le tour d'un parc ou d'un terril : cliquez sur le tracé, puis glissez le point sur
   le chemin voulu)*. Les points sont **enregistrés avec le circuit** à « Terminer » : vous
   les retrouvez en rouvrant l'édition, et Tracer, le comparateur et le re-tracé passent
-  par eux.
+  par eux. Publiés avec un circuit officiel *(avec sa variante)*, ils se retrouvent sur
+  vos autres appareils.
 - **« Tracé presque complet »** : un **segment droit** est un passage que BRouter n'a
   pas su tracer — il reste en **ligne droite**. Ajoutez-y un **point de passage** pour
   le guider.

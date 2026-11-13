@@ -142,6 +142,15 @@ describe('mergeOfficialWithLocal', () => {
         expect(mergeOfficialWithLocal(OFF, { id: 'HW-1', ascend: null })).not.toHaveProperty('ascend');
     });
 
+    it("variante et points : ceux du local s'il les a (null = aucun point), sinon ceux de l'index", () => {
+        const WP = { ids: ['a', 'b'], passages: { 'a>b#0': [[1, 2]] } };
+        const off = { ...OFF, routing: { variant: 'chemins', force: 1 }, waypoints: WP };
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1' }).waypoints).toEqual(WP);
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1' }).routing).toEqual({ variant: 'chemins', force: 1 });
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1', waypoints: null }).waypoints).toBeNull();
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1', routing: { variant: 'direct' } }).routing).toEqual({ variant: 'direct' });
+    });
+
     it("l'INDEX prime sur `distance` — une copie locale périmée ne gagne plus", () => {
         const loc = { id: 'HW-1', distance: '5.7 km' };
 

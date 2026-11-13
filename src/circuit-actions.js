@@ -339,11 +339,10 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
             else delete circuitToSave.routing;
         }
         // Points de passage par lesquels ce tracé a été calculé (cf.
-        // circuit-waypoints.js) : même règle que la variante.
-        if (waypoints !== undefined) {
-            if (waypoints) circuitToSave.waypoints = waypoints;
-            else delete circuitToSave.waypoints;
-        }
+        // circuit-waypoints.js). « Aucun point » s'écrit null, pas une absence :
+        // sur un circuit officiel, l'absence laisse passer ceux de l'index à la
+        // fusion (mergeOfficialWithLocal) et les points retirés reviendraient.
+        if (waypoints !== undefined) circuitToSave.waypoints = waypoints || null;
     }
 
     // B1 — Vérification anti-doublon à la source (admin uniquement, skip silencieux

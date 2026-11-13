@@ -405,7 +405,9 @@ export const GUIDE_CIRCUIT = {
                         d'un terril : cliquez sur le tracé, puis glissez le point sur le chemin
                         voulu)</span>. Les points sont <strong>enregistrés avec le circuit</strong>
                         à « Terminer » : vous les retrouvez en rouvrant l'édition, et Tracer, le
-                        comparateur et le re-tracé passent par eux.</li>
+                        comparateur et le re-tracé passent par eux. Publiés avec un circuit
+                        officiel <span class="help-muted">(avec sa variante)</span>, ils se
+                        retrouvent sur vos autres appareils.</li>
                     <li><strong>« Voies »</strong> <span class="help-muted">(barre d'édition)</span> :
                         montre en traits fins <strong>toutes les voies</strong> autour du circuit, avec
                         les couleurs du tracé, pour repérer un sentier à côté d'une route et y faire

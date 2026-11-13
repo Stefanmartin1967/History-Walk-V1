@@ -929,6 +929,51 @@ describe('Admin Diff Engine', () => {
             expect((await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits).toEqual([]);
         });
 
+        // Variante et points de passage publiés dans l'index depuis le 13/11/2026.
+        describe('variante et points de passage', () => {
+            const base = (extra) => ({ id: 'vp1', name: 'Circuit', realTrack: makeTrack(10), poiIds: ['p1', 'p2'], ...extra });
+            const remote = (extra) => ({ id: 'vp1', name: 'Circuit', poiIds: ['p1', 'p2'], trackHash: trackFingerprint(makeTrack(10)), ...extra });
+            const WP = { ids: ['p1', 'p2'], passages: { 'p1>p2#0': [[50.1, 4.1], [50.2, 4.2]] } };
+            const run = async () => (await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits;
+
+            it("signale une variante et des points absents de l'index (circuit publié avant)", async () => {
+                state.myCircuits = [base({ routing: { variant: 'chemins', force: 1, engine: 'local' }, waypoints: WP })];
+                withRemote(remote({}));
+                expect((await run())[0].changes).toEqual([
+                    { key: 'Variante', old: '—', new: 'Chemins · force 1' },
+                    { key: 'Points de passage', old: 'aucun', new: '2 points' },
+                ]);
+            });
+
+            it("identiques à l'index (le moteur ne compte pas) : rien à publier", async () => {
+                state.myCircuits = [base({ routing: { variant: 'chemins', force: 1, engine: 'local' }, waypoints: WP })];
+                withRemote(remote({ routing: { variant: 'chemins', force: 1 }, waypoints: WP }));
+                expect(await run()).toEqual([]);
+            });
+
+            it('copie locale sans ces champs : rien à publier', async () => {
+                state.myCircuits = [base({})];
+                withRemote(remote({ routing: { variant: 'direct' }, waypoints: WP }));
+                expect(await run()).toEqual([]);
+            });
+
+            it('points déplacés, puis tous retirés (null)', async () => {
+                withRemote(remote({ waypoints: WP }));
+                state.myCircuits = [base({ waypoints: { ids: ['p1', 'p2'], passages: { 'p1>p2#0': [[50.1, 4.1], [50.3, 4.3]] } } })];
+                expect((await run())[0].changes).toEqual([{ key: 'Points de passage', old: '2 points', new: '2 points (déplacés)' }]);
+                state.myCircuits = [base({ waypoints: null })];
+                expect((await run())[0].changes).toEqual([{ key: 'Points de passage', old: '2 points', new: 'aucun' }]);
+            });
+
+            it('force changée', async () => {
+                state.myCircuits = [base({ routing: { variant: 'chemins', force: 3, avoid: true, weight: 1000 } })];
+                withRemote(remote({ routing: { variant: 'chemins', force: 1 } }));
+                expect((await run())[0].changes).toEqual([
+                    { key: 'Variante', old: 'Chemins · force 1', new: 'Chemins · force 3 · éviter de repasser (poids 1000)' },
+                ]);
+            });
+        });
+
         it('circuit publié sans empreinte : compare au GPX publié relu sur le serveur', async () => {
             state.myCircuits = [{ id: 'tr4', name: 'Circuit', realTrack: makeTrack(12), poiIds: ['p1'] }];
             withRemote({ id: 'tr4', name: 'Circuit', poiIds: ['p1'], file: 'djerba/Circuit.gpx' }, toGpx(makeTrack(10)));

@@ -6,6 +6,16 @@
 
 ---
 
+- CIRCUITS : LA VARIANTE ET LES POINTS DE PASSAGE SONT PUBLIÉS (v3.7.530). Validé par Stefan le 13/11/2026. Chantier points de passage permanents, PR 3.
+  - Avant : variante (`routing`) et points (`waypoints`) restaient sur le PC qui avait tracé. Sur un autre appareil, ou après un rechargement depuis l'index, un circuit officiel re-traçait de lieu à lieu, en Direct.
+  - `buildCircuitIndexEntry` écrit `routing` (réglage seul, sans le moteur : `publishedRouting`) et `waypoints` (`{ ids, passages }`, `publishedWaypoints`), omis s'ils sont absents. Fusion au démarrage inchangée : le local prime s'il porte le champ, sinon l'index.
+  - Points retirés : la copie locale porte désormais `waypoints: null` (et non plus une absence), sinon la fusion ramenait les points de l'index.
+  - Diff du CC : « Variante » (libellé `routingLabel`, le moteur ne compte pas) et « Points de passage » (« 2 points », « aucun », « (déplacés) »), seulement quand la copie locale porte le champ — comme le D+.
+  - ⚠️ Après merge : les circuits tracés avec une variante ressortent une fois au CC en « Variante — → … » sur le PC qui les a tracés ; les publier l'emmène.
+  - Vérifié en aperçu sur le vrai index (circuit officiel Djerba, en mémoire seulement, rien d'écrit) : entrée d'index avec variante et 2 points ; diff = exactement « Variante » et « Points de passage ».
+  - `scripts/generate-circuit-index.js` (réparation manuelle) n'écrit ni l'un ni l'autre.
+  - Tests : +7 (`admin_diff_engine`, `circuit-index-entry`, `circuit_lookup`).
+
 - ITINÉRAIRE : LES POINTS DE PASSAGE SONT ENREGISTRÉS AVEC LE CIRCUIT (v3.7.529). Demandé par Stefan le 13/11/2026 (« si je veux ensuite retracer, je perds les points ajoutés »). Chantier points de passage permanents, PR 2.
   - Avant : les points ne vivaient que le temps de « Éditer l'itinéraire » ; seul le tracé obtenu était gardé. Tracer, le comparateur et le re-tracé repartaient de lieu à lieu, et rouvrir l'édition ne les remontrait pas.
   - Nouveau champ du circuit `waypoints` = `{ ids, passages }` (`src/circuit-waypoints.js`) : points rangés par PAIRE DE LIEUX (`idA>idB#rang`), dans l'ordre du parcours ; `ids` = séquence du tracé enregistré avec eux. Écrit à « Terminer » et à chaque tracé retenu ; remontré en rouvrant l'édition ; utilisé par Tracer, les deux variantes du comparateur (en-tête « · N points de passage ») et le re-tracé partiel. « Revenir au tracé précédent » rétablit aussi les points.
