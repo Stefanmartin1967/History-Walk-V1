@@ -11963,6 +11963,9 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": false,
+        "Sous-type": "Aux morts",
+        "État": "Conservé",
+        "Accès": "Extérieur seulement",
         "Zone": "Villers-la-Ville"
       }
     },
@@ -49712,6 +49715,8 @@
           4.5524036,
           50.5604707
         ],
+        "description": "Église du village de Tilly, à Villers-la-Ville.\nLe site de randonnée Visorando la nomme église Notre-Dame des Affligés ; le monument des Bottes t'Serclaes se dresse à son pied.",
+        "Source": "Visorando, « Le Tour de Sainte-Croix » | https://www.visorando.com/en/walk-le-tour-de-saint-croix/",
         "Zone": "Villers-la-Ville"
       }
     },
