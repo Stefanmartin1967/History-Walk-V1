@@ -15196,10 +15196,9 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "Église Notre-Dame",
+        "Nom du site FR": "Église Notre-Dame (Marbisoux)",
         "Catégorie": "Église",
         "osm_ref": "way/836801933",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4ZREXDF263DBM6FD9DRR",
         "Sous-type": "Catholique",
         "Temps_minutes": 0,
@@ -15207,11 +15206,13 @@
         "maps_ref": "https://maps.app.goo.gl/gWWdWUEaQZVB59RWA",
         "verified": false,
         "introuvableCarte": false,
-        "descriptionPublic": false,
+        "descriptionPublic": true,
         "osmChecked": true,
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": false,
+        "description": "Église du village de Marbisoux, à Villers-la-Ville.\nLe site du village, marbisoux.be, indique qu'elle a été construite de 1868 à 1870, dans un style néoclassique en briques ; jusqu'en 1869, le culte se célébrait dans une chapelle placée sous l'invocation de Notre-Dame. Selon la même source, Marbisoux est devenue une paroisse à part entière le 10 septembre 1872, après avoir dépendu de Marbais.\nOpenStreetMap la nomme « Église Notre-Dame » ; sa dédicace reste à confirmer sur place.",
+        "Source": "marbisoux.be, « Historique » | https://www.marbisoux.be/www/index.php?option=com_content&view=article&id=4&Itemid=11",
         "Zone": "Villers-la-Ville"
       }
     },
@@ -49655,6 +49656,312 @@
           50.5604707
         ],
         "Zone": "Villers-la-Ville"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.0541256,
+          50.5130259
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de la Baille Rouge",
+        "Catégorie": "Château",
+        "osm_ref": "way/171950593",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQC7RTRD53KTA1418W3Y8",
+        "Zone": "Soignies"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4503267,
+          50.5343321
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château De Dobbeleer",
+        "Catégorie": "Château",
+        "osm_ref": "way/297753232",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQCBW4B12HGG15S3CEDZ3",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.5037402,
+          50.5148392
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Chassart",
+        "Catégorie": "Château",
+        "osm_ref": "way/1092702581",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQCGV3MT1WH2HAJ8FV5HY",
+        "Zone": "Fleurus"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3965048,
+          50.3664885
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Bomerée",
+        "Catégorie": "Château",
+        "osm_ref": "way/1413928459",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQCN65ATQDX1FGC1B11HJ",
+        "Zone": "Montigny-le-Tilleul"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4655673,
+          50.4453114
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Baudoux",
+        "Catégorie": "Château",
+        "osm_ref": "way/1418087411",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQCRZSAM8CPDPPCPXT7ZD",
+        "Zone": "Jumet"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.4806392,
+          50.5274247
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Villers-Perwin",
+        "Catégorie": "Château",
+        "osm_ref": "way/1436521929",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQCWKBYVXVGBX9KS62XVK",
+        "Zone": "Les Bons Villers"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2671345,
+          50.1433152
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château-ferme de Rance",
+        "Catégorie": "Château",
+        "osm_ref": "way/851304111",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQD0FEM7SVKTN9MJGNT4D",
+        "Zone": "Sivry-Rance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.181934,
+          50.1675764
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château-ferme de l'Esclinchamp",
+        "Catégorie": "Château",
+        "osm_ref": "way/889028905",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQD4QR28W0NJVXPVXQNH0",
+        "Zone": "Sivry-Rance"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2619681,
+          50.3455188
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Duquesne",
+        "Catégorie": "Château",
+        "osm_ref": "way/1361257301",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQD8KY3ZS8NT2XDA5VVTP",
+        "Zone": "Lobbes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2438268,
+          50.3484318
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château-Ferme de Forestaille",
+        "Catégorie": "Château",
+        "osm_ref": "way/1375364217",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDCXFHSAARM2BYRV86VY",
+        "Zone": "Lobbes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2310633,
+          50.3344561
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Centre protestant Tourne-Bride",
+        "Catégorie": "Château",
+        "osm_ref": "way/1375364256",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDGW8ZZZB9PH83C80ETD",
+        "Zone": "Lobbes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2816742,
+          50.3075029
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de Ragnies",
+        "Catégorie": "Château",
+        "osm_ref": "way/1380143530",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDMNT793CD6VCB9EN64F",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.275517,
+          50.3225538
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château Barbier",
+        "Catégorie": "Château",
+        "osm_ref": "way/1380148124",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDR9SAS10S7FS740K7C3",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3395066,
+          50.2173687
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château-ferme de Septanes",
+        "Catégorie": "Château",
+        "osm_ref": "way/1389649535",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDW4YMBRA01CKNMFS9E7",
+        "Zone": "Froidchapelle"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.2869176,
+          50.339051
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Tour Notger",
+        "Catégorie": "Site archéologique",
+        "osm_ref": "way/1393538802",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQDZY95G61YTGS02DHG9S",
+        "Zone": "Thuin"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.3757757,
+          50.3311188
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château de la Pasture",
+        "Catégorie": "Château",
+        "osm_ref": "way/1412935274",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQE3PBWRGGYBSZ27S2YJ4",
+        "Zone": "Ham-sur-Heure-Nalinnes"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          4.387407,
+          50.2962233
+        ]
+      },
+      "properties": {
+        "Nom du site FR": "Château-ferme de Cour-sur-Heure",
+        "Catégorie": "Château",
+        "osm_ref": "way/1412936320",
+        "candidate": true,
+        "HW_ID": "HW-01M79QQE77W4YQ1C8W0241MH2M",
+        "Zone": "Ham-sur-Heure-Nalinnes"
       }
     }
   ]
