@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia 3.7.523" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia 3.7.526" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
     <metadata>
         <name>Boucle autour de Église Notre-Dame</name>
         <desc>Circuit généré par Heripia — heripia.com</desc>
@@ -7,7 +7,7 @@
         </link>
     </metadata>
     <wpt lat="50.5483945" lon="4.5547835">
-      <name>Église Notre-Dame</name>
+      <name>Église Notre-Dame (Marbisoux)</name>
       <desc></desc>
     </wpt>
     <wpt lat="50.5487999" lon="4.5430017">
@@ -15,7 +15,7 @@
       <desc></desc>
     </wpt>
     <wpt lat="50.5595835" lon="4.5430066">
-      <name>Lieu inconnu</name>
+      <name>Chapelle (Rue de Dreumont)</name>
       <desc></desc>
     </wpt>
     <wpt lat="50.56061733306909" lon="4.552069052062019">
@@ -27,15 +27,15 @@
       <desc></desc>
     </wpt>
     <wpt lat="50.560547" lon="4.5545964">
-      <name>Lieu inconnu</name>
+      <name>Monument aux morts (Tilly)</name>
       <desc></desc>
     </wpt>
     <wpt lat="50.5513935" lon="4.5638177">
-      <name>Lieu inconnu</name>
+      <name>Chapelle (Chaussée Romaine)</name>
       <desc></desc>
     </wpt>
     <wpt lat="50.5483945" lon="4.5547835">
-      <name>Église Notre-Dame</name>
+      <name>Église Notre-Dame (Marbisoux)</name>
       <desc></desc>
     </wpt><trk><name>Boucle autour de Église Notre-Dame</name><desc><![CDATA[Circuit généré par Heripia — heripia.com]]></desc><trkseg><trkpt lat="50.548518" lon="4.554804"><ele>0</ele></trkpt>
       <trkpt lat="50.548527" lon="4.554682"><ele>0</ele></trkpt>
