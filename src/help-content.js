@@ -595,7 +595,7 @@ export const GUIDE_LIEU = {
         {
             heading: `6 · Infos pratiques`,
             html: `<p>Pour enrichir la fiche <span class="help-muted">(facultatif)</span> :
-                <strong>temps de visite</strong>, <strong>prix</strong> (en TND),
+                <strong>temps de visite</strong>, <strong>prix</strong> (dans la monnaie du pays),
                 <strong>téléphone</strong>, <strong>horaires</strong>, <strong>Facebook</strong>.</p>`,
         },
         {

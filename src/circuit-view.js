@@ -3,6 +3,7 @@ import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
 import { getPatrimonialName, getPoiId, isCategoryInName } from './data.js';
 import { state, setCurrentCircuit } from './state.js';
+import { getActiveDestinationCurrency } from './countries.js';
 import { sanitizeHTML, escapeXml, getPoiProp } from './utils.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { showToast } from './toast.js';
@@ -373,7 +374,7 @@ export function updateCircuitForm(data) {
 }
 
 /**
- * Calcule et met à jour le résumé "X min · Y TND" en haut de l'accordion transport.
+ * Calcule et met à jour le résumé "X min · Y <devise>" en haut de l'accordion transport.
  */
 export function updateTransportSummary() {
     const summary = document.getElementById('transport-summary');
@@ -393,7 +394,7 @@ export function updateTransportSummary() {
         summary.textContent = '— non renseigné';
     } else {
         summary.classList.remove('is-empty');
-        const currency = getCurrentCurrency();
+        const currency = getActiveDestinationCurrency();
         const parts = [];
         if (totalMin > 0) parts.push(`${totalMin} min`);
         if (totalCost > 0) parts.push(`${totalCost}${currency ? ' ' + currency : ''}`);
@@ -401,20 +402,14 @@ export function updateTransportSummary() {
     }
 }
 
-function getCurrentCurrency() {
-    if (!state.currentMapId || !state.destinations || !state.destinations.maps?.[state.currentMapId]) {
-        return '';
-    }
-    return state.destinations.maps[state.currentMapId].currency || '';
-}
-
 /**
  * Met à jour les unités de devise (data-currency-unit) selon la destination.
  * Appelé au boot et quand on change de destination.
  */
 export function updateCurrencyUnits() {
-    const currency = getCurrentCurrency();
-    if (!currency) return;
+    // Vide si la destination n'a pas de devise connue : jamais l'unité d'une
+    // autre destination (le « TND » en dur restait affiché en Wallonie).
+    const currency = getActiveDestinationCurrency();
     document.querySelectorAll('[data-currency-unit]').forEach(el => {
         el.textContent = currency;
     });

@@ -162,7 +162,7 @@ changement → ré-attachés à chaque rendu).
 qu'il n'y a pas de nom saisi ; personnalisable via le crayon ou un double-clic
 (`initTitleEdit`) → `customDraftName` qui prime · invite « Ajouter une description… » /
 textarea « Décrivez ce circuit… » (`initDescriptionEdit`, création seulement) · accordéon
-« Transport » / résumé « — non renseigné » (min · TND).
+« Transport » / résumé « — non renseigné » (min · devise de la destination).
 
 **Étapes** (`src/circuit-view.js`) : empty state « Commençons par le premier lieu » /
 « Cliquez sur un lieu de la carte pour l'ajouter au circuit. Vous pourrez réordonner les

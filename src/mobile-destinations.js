@@ -11,12 +11,12 @@ import { state } from './state.js';
 import { escapeHtml, isDestinationPublished } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { switchActiveDestination } from './destination-switch.js';
+import { countryFlag } from './countries.js';
 
-// Drapeau emoji depuis le code pays ISO (`dest.country`, posé par le Modèle C).
-// Repli 🌍 si le pays est absent/inconnu — affichage seulement, pas de logique.
-const COUNTRY_FLAG = { tn: '🇹🇳', ma: '🇲🇦', dz: '🇩🇿' };
+// Drapeau emoji calculé depuis le code pays ISO (`dest.country`), pour tout pays
+// (countries.js). Repli 🌍 seulement si la destination n'a pas de code pays.
 function flagFor(dest) {
-    return COUNTRY_FLAG[(dest?.country || '').toLowerCase()] || '🌍';
+    return countryFlag(dest?.country) || '🌍';
 }
 
 let sheetEl = null;

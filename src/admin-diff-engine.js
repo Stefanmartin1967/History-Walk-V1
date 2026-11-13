@@ -308,7 +308,7 @@ export async function prepareDiffData(adminDraft) {
             // --- USER FRIENDLY LABELS ---
             let displayKey = key;
             if (key === 'Temps_minutes') displayKey = 'Durée (min)';
-            if (key === 'Prix_TND') displayKey = 'Prix (TND)';
+            if (key === 'Prix_TND') displayKey = 'Prix'; // la clé garde « TND », la valeur est dans la devise de la destination
             if (key === 'description') displayKey = 'Description';
             if (key === 'info_gpx') displayKey = 'Info GPX';
             if (key === 'osm_ref') displayKey = 'Objet OSM';

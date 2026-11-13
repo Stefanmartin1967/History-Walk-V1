@@ -3,19 +3,12 @@ import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
 import { escapeXml, getDerivedZone, linkifyText, formatPhone, telHref, commonsCategoryUrl } from './utils.js';
 import { state, getActiveDestinationCountry } from './state.js';
+import { getActiveDestinationCurrency } from './countries.js';
 import { isMobileView } from './mobile-state.js';
 import { getAccessPointStatus } from './access-point.js';
 import { parseSources } from './source-format.mjs';
 import { renderDescriptionHtml } from './description-format.mjs';
 import { isDescriptionVisible } from './description-visibility.js';
-
-// Devise de la destination active. Seul consommateur : buildDetailsPanelHtml ci-dessous.
-function getCurrentCurrency() {
-    if (!state.currentMapId || !state.destinations || !state.destinations.maps[state.currentMapId]) {
-        return '';
-    }
-    return state.destinations.maps[state.currentMapId].currency || '';
-}
 
 export const ICONS = {
     mosque: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H4v-7a8 8 0 0 1 16 0z"/><path d="M12 5V2"/><circle cx="12" cy="8" r="2"/></svg>`,
@@ -280,7 +273,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         priceValue = allProps['Prix_TND'];
     }
     const hasPrice = priceValue !== null;
-    const currency = getCurrentCurrency();
+    const currency = getActiveDestinationCurrency();
     const priceText = !hasPrice ? '' : (priceValue === 0 ? 'Gratuit' : `${priceValue}${currency ? ' ' + currency : ''}`);
 
     // Le numéro est déjà mis en forme à l'enregistrement (richEditor) ; on

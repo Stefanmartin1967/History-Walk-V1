@@ -17,6 +17,7 @@ import { setTheme, getCurrentTheme } from './theme.js';
 import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-names.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { isDestinationPublished } from './utils.js';
+import { countryName } from './countries.js';
 
 const FILTERS_BTN_ID = 'hw-topbar-filters-btn';
 const FILTERS_COUNT_ID = 'hw-topbar-filters-count';
@@ -106,39 +107,15 @@ function setupDestinationMenu() {
 // dans destinations.json devient cliquable. Plus de section "Bientôt" : si
 // une dest est dans destinations.json, elle est utilisable.
 
-// Heuristique drapeau / sous-titre basée sur les bounds (lat, lon) ou un
-// override `country` dans destinations.json. Pour l'instant : Tunisie ou
-// Maroc ou autre selon la lat/lon. Si on ouvre d'autres pays, ajouter un
-// champ explicite `country` + `flag` dans destinations.json.
-// Convertit un drapeau émoji (indicateurs régionaux 🇹🇳) en code pays 2 lettres ("TN").
-function flagToCode(flag) {
-    if (!flag) return '';
-    const cps = [...flag].map(ch => ch.codePointAt(0));
-    if (cps.length >= 2 && cps[0] >= 0x1F1E6 && cps[0] <= 0x1F1FF) {
-        return cps.slice(0, 2).map(cp => String.fromCharCode(cp - 0x1F1E6 + 65)).join('');
-    }
-    return '';
-}
-
-// Déduit { pays, drapeau, code 2 lettres }. On AFFICHE le `code` (carré terracotta)
-// plutôt que l'émoji-drapeau, dont le rendu varie selon la plateforme (Windows ne
-// dessine pas les drapeaux émoji → il affiche « TN », incohérent avec mobile/Mac).
-function inferCountryAndFlag(dest) {
-    if (dest?.country && dest?.flag) {
-        return { country: dest.country, flag: dest.flag,
-                 code: dest.code || flagToCode(dest.flag) || dest.country.slice(0, 2).toUpperCase() };
-    }
-    const center = dest?.startView?.center;
-    if (Array.isArray(center) && center.length === 2) {
-        const [lat, lon] = center;
-        // Tunisie
-        if (lat >= 30 && lat <= 38 && lon >= 7 && lon <= 12) return { country: 'Tunisie', flag: '🇹🇳', code: 'TN' };
-        // Maroc
-        if (lat >= 27 && lat <= 36 && lon >= -14 && lon <= 0) return { country: 'Maroc', flag: '🇲🇦', code: 'MA' };
-    }
-    const country = dest?.country || '';
-    return { country, flag: dest?.flag || '🌍',
-             code: dest?.code || flagToCode(dest?.flag) || (country ? country.slice(0, 2).toUpperCase() : '··') };
+// Pays affiché sous le nom de chaque destination, et code 2 lettres dans le carré
+// terracotta. Tout vient de `country` (destinations.json) via countries.js — plus
+// de devinette d'après la position (elle ne connaissait que la Tunisie et le
+// Maroc : la Wallonie affichait « be »). On AFFICHE le code plutôt que l'émoji-
+// drapeau, dont le rendu varie selon la plateforme (Windows ne dessine pas les
+// drapeaux émoji → il affiche « TN », incohérent avec mobile/Mac).
+function destCountry(dest) {
+    const code = String(dest?.country || '').trim().toUpperCase();
+    return { country: countryName(code), code: code || '··' };
 }
 
 export function renderDestinationMenu(destinations, activeMapId) {
@@ -159,7 +136,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
     // Met à jour la pastille du sélecteur (drapeau + nom de la dest active)
     const activeDest = maps[activeMapId];
     if (activeDest) {
-        const { code } = inferCountryAndFlag(activeDest);
+        const { code } = destCountry(activeDest);
         if (selectorName) selectorName.textContent = activeDest.name || activeMapId;
         if (selectorFlagEl) selectorFlagEl.textContent = code;
     }
@@ -169,7 +146,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
 
     // Active en premier
     if (activeDest) {
-        const { country, code } = inferCountryAndFlag(activeDest);
+        const { country, code } = destCountry(activeDest);
         html.push(`
             <button type="button" class="hw-dest-item is-active" role="menuitemradio"
                     aria-checked="true" data-dest="${activeMapId}">
@@ -190,7 +167,7 @@ export function renderDestinationMenu(destinations, activeMapId) {
     if (others.length > 0) {
         html.push('<div class="hw-dest-menu-section-title is-divided">Autres destinations</div>');
         for (const [id, dest] of others) {
-            const { country, code } = inferCountryAndFlag(dest);
+            const { country, code } = destCountry(dest);
             html.push(`
                 <button type="button" class="hw-dest-item" role="menuitemradio"
                         aria-checked="false" data-dest="${id}">
