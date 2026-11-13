@@ -80,6 +80,14 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(buildCircuitIndexEntry({ ...circuit, realTrack: [] }, [], 'djerba')).not.toHaveProperty('trackHash');
     });
 
+    it("publie le D+ du tracé (ascend), et l'omet s'il est absent ou nul", () => {
+        const circuit = { id: 'HW-X', name: 'C', realTrack: [[1, 2], [3, 4]], poiIds: ['p1'] };
+        expect(buildCircuitIndexEntry({ ...circuit, ascend: 84 }, [], 'charleroi').ascend).toBe(84);
+        expect(buildCircuitIndexEntry(circuit, [], 'charleroi')).not.toHaveProperty('ascend');
+        expect(buildCircuitIndexEntry({ ...circuit, ascend: null }, [], 'charleroi')).not.toHaveProperty('ascend');
+        expect(buildCircuitIndexEntry({ ...circuit, ascend: 0 }, [], 'charleroi')).not.toHaveProperty('ascend');
+    });
+
     it("publie la description SANS signature, et '' s'il n'y a pas de texte", () => {
         const signed = buildCircuitIndexEntry(
             { id: 'a', name: 'n', poiIds: [], description: 'Belle balade.\n\nCircuit généré par Heripia — heripia.com' }, [], 'djerba');

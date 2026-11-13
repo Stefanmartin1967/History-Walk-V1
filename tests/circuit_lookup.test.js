@@ -134,6 +134,14 @@ describe('mergeOfficialWithLocal', () => {
         expect(m.isOfficial).toBe(true);
     });
 
+    it("D+ : celui du local s'il existe, sinon celui de l'index", () => {
+        const off = { ...OFF, ascend: 84 };
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1', ascend: 120 }).ascend).toBe(120);
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1', ascend: null }).ascend).toBe(84);
+        expect(mergeOfficialWithLocal(off, { id: 'HW-1' }).ascend).toBe(84);
+        expect(mergeOfficialWithLocal(OFF, { id: 'HW-1', ascend: null })).not.toHaveProperty('ascend');
+    });
+
     it("l'INDEX prime sur `distance` — une copie locale périmée ne gagne plus", () => {
         const loc = { id: 'HW-1', distance: '5.7 km' };
 

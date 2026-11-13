@@ -1,6 +1,6 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, setTestedCircuit, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
-import { getAllCircuits } from './circuit-lookup.js';
+import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
 import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
@@ -68,9 +68,14 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         // Empreinte du tracé publié : le diff y compare le tracé local, pour
         // qu'une retouche du seul tracé soit publiable et annulable.
         trackHash: trackFingerprint(circuit.realTrack) || undefined,
+        // Dénivelé positif (D+, mètres) calculé par BRouter avec ce tracé. Absent
+        // de l'index jusqu'au 13/11/2026 : seul le PC qui avait tracé le voyait
+        // (copie locale), le mobile et les visiteurs jamais.
+        ascend: publishedAscend(circuit.ascend),
     };
     if (!entry.zone) delete entry.zone;
     if (!entry.trackHash) delete entry.trackHash;
+    if (entry.ascend === undefined) delete entry.ascend;
     return entry;
 }
 

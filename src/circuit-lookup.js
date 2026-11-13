@@ -73,7 +73,7 @@ export function getActiveCircuit() {
  */
 export function mergeOfficialWithLocal(off, loc) {
     if (!loc) return off;
-    return {
+    const merged = {
         ...off,
         ...loc,
         // L'index est la source de vérité ; repli sur le local s'il ne la porte pas.
@@ -81,4 +81,22 @@ export function mergeOfficialWithLocal(off, loc) {
         distance: off.distance ?? loc.distance,
         isOfficial: true
     };
+    // D+ : celui de la copie locale s'il existe, sinon celui de l'index (publié
+    // depuis le 13/11/2026). Une copie plus ancienne que la publication du D+
+    // ne l'efface pas — ni à l'écran, ni au diff (qui sinon proposerait de le
+    // retirer de l'index).
+    const ascend = publishedAscend(loc.ascend) ?? publishedAscend(off.ascend);
+    if (ascend === undefined) delete merged.ascend;
+    else merged.ascend = ascend;
+    return merged;
+}
+
+/**
+ * D+ publiable : un nombre de mètres > 0, sinon undefined (BRouter muet, valeur
+ * absente ou nulle — l'affichage masque alors la métrique).
+ * @param {*} v
+ * @returns {number|undefined}
+ */
+export function publishedAscend(v) {
+    return (Number.isFinite(v) && v > 0) ? v : undefined;
 }
