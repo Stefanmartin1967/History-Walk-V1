@@ -31,7 +31,12 @@
       "HW-01M616BPTAFCEQFANX8N44P62T"
     ],
     "trackHash": "306-8f1c1f92",
-    "ascend": 65
+    "ascend": 65,
+    "routing": {
+      "variant": "direct",
+      "avoid": true,
+      "weight": 100
+    }
   },
   {
     "id": "HW-01M78J0A4WQP1MFP6K9CN9GZ3F",
@@ -53,26 +58,13 @@
       "HW-01M6EV4ZREXDF263DBM6FD9DRR"
     ],
     "trackHash": "209-4a5f3b85",
-    "ascend": 70
-  },
-  {
-    "id": "HW-01M79T9DN23YH7MBC3TC5Z517P",
-    "name": "Boucle autour de Église Saint-Benoît",
-    "file": "charleroi/Boucle autour de Église Saint-Benoît.gpx",
-    "description": "",
-    "distance": "9.3 km",
-    "isOfficial": true,
-    "hasRealTrack": true,
-    "zone": "Ham-sur-Heure-Nalinnes",
-    "poiIds": [
-      "HW-01M6EV6W5QVEX5YRFVH681CNNG",
-      "HW-01M616BMWMN6G8EK4FWJHFASM2",
-      "HW-01M6EV6TWYARPA1DW5W6HWW9PN",
-      "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
-      "HW-01M6EV6W5QVEX5YRFVH681CNNG"
-    ],
-    "trackHash": "233-268bf08c",
-    "ascend": 63
+    "ascend": 70,
+    "routing": {
+      "variant": "chemins",
+      "force": 3,
+      "avoid": true,
+      "weight": 1000
+    }
   },
   {
     "id": "HW-01M7A34T1N72MC8Z3T3V59KDCT",
@@ -91,6 +83,12 @@
       "HW-01M616BQT3APXG44FQ4XSZ1JRE"
     ],
     "trackHash": "510-51e8055b",
-    "ascend": 64
+    "ascend": 64,
+    "routing": {
+      "variant": "chemins",
+      "force": 3,
+      "avoid": true,
+      "weight": 100
+    }
   }
 ]
