@@ -1,6 +1,8 @@
 import { state, setUserData, setCustomFeatures, setOfficialCircuits, setTestedCircuit, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, isOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
+import { publishedRouting } from './circuit-routing.js';
+import { publishedWaypoints } from './circuit-waypoints.js';
 import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
@@ -72,10 +74,17 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         // de l'index jusqu'au 13/11/2026 : seul le PC qui avait tracé le voyait
         // (copie locale), le mobile et les visiteurs jamais.
         ascend: publishedAscend(circuit.ascend),
+        // Variante et points de passage du tracé (13/11/2026) : sans eux, un
+        // autre appareil — ou ce PC après un rechargement depuis l'index — re-
+        // traçait de lieu à lieu, en Direct.
+        routing: publishedRouting(circuit.routing),
+        waypoints: publishedWaypoints(circuit.waypoints),
     };
     if (!entry.zone) delete entry.zone;
     if (!entry.trackHash) delete entry.trackHash;
     if (entry.ascend === undefined) delete entry.ascend;
+    if (entry.routing === undefined) delete entry.routing;
+    if (entry.waypoints === undefined) delete entry.waypoints;
     return entry;
 }
 

@@ -1,4 +1,3 @@
-// @vitest-environment jsdom
 // Points de passage enregistrés avec le circuit (src/circuit-waypoints.js).
 // Chantier points de passage permanents, PR 2 (13/11/2026).
 import { describe, it, expect } from 'vitest';

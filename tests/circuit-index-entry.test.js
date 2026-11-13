@@ -88,6 +88,20 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(buildCircuitIndexEntry({ ...circuit, ascend: 0 }, [], 'charleroi')).not.toHaveProperty('ascend');
     });
 
+    it('publie la variante (sans le moteur) et les points de passage, et les omet sinon', () => {
+        const circuit = { id: 'HW-X', name: 'C', realTrack: [[1, 2], [3, 4]], poiIds: ['p1', 'p2'] };
+        const e = buildCircuitIndexEntry({
+            ...circuit,
+            routing: { variant: 'chemins', force: 3, avoid: true, weight: 1000, engine: 'local' },
+            waypoints: { ids: ['p1', 'p2'], passages: { 'p1>p2#0': [[50.1, 4.1]], 'p2>p1#0': [] } },
+        }, [], 'charleroi');
+        expect(e.routing).toEqual({ variant: 'chemins', force: 3, avoid: true, weight: 1000 });
+        expect(e.waypoints).toEqual({ ids: ['p1', 'p2'], passages: { 'p1>p2#0': [[50.1, 4.1]] } });
+        const none = buildCircuitIndexEntry({ ...circuit, waypoints: null }, [], 'charleroi');
+        expect(none).not.toHaveProperty('routing');
+        expect(none).not.toHaveProperty('waypoints');
+    });
+
     it("publie la description SANS signature, et '' s'il n'y a pas de texte", () => {
         const signed = buildCircuitIndexEntry(
             { id: 'a', name: 'n', poiIds: [], description: 'Belle balade.\n\nCircuit généré par Heripia — heripia.com' }, [], 'djerba');

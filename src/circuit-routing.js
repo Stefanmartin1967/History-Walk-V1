@@ -63,6 +63,24 @@ export function normalizeRouting(routing) {
     return out;
 }
 
+/**
+ * Variante publiable dans l'index des circuits (publiée depuis le 13/11/2026) :
+ * le réglage seul, sans le moteur qui a calculé (propre à un PC). undefined si
+ * le circuit n'en a pas.
+ */
+export function publishedRouting(routing) {
+    return routing && routing.variant ? normalizeRouting(routing) : undefined;
+}
+
+/** « Chemins · force 1 · éviter de repasser (poids 100) » — libellé texte d'une variante. */
+export function routingLabel(routing) {
+    const r = normalizeRouting(routing);
+    const parts = [ROUTING_VARIANTS[r.variant].label];
+    if (r.variant === 'chemins') parts.push(`force ${String(r.force).replace('.', ',')}`);
+    if (r.avoid) parts.push(`éviter de repasser (poids ${r.weight})`);
+    return parts.join(' · ');
+}
+
 // Paramètres d'URL BRouter d'une variante : `&profile=…` (+ `&profile:<param>=<force>`).
 export function routingQuery(routing) {
     const r = normalizeRouting(routing);

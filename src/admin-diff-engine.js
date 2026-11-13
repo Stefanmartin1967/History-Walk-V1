@@ -5,6 +5,8 @@ import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
+import { publishedRouting, routingLabel } from './circuit-routing.js';
+import { publishedWaypoints, sameWaypoints, waypointCount } from './circuit-waypoints.js';
 import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
 import { countFramed } from './photo-focus.js';
 import { stripCircuitSignature } from './circuit-description.js';
@@ -510,6 +512,26 @@ export async function prepareDiffData(adminDraft) {
                     old: remoteAscend !== undefined ? `D+ ${remoteAscend} m` : '—',
                     new: `D+ ${localAscend} m`
                 });
+            }
+
+            // Variante et points de passage : publiés depuis le 13/11/2026. Comme
+            // le D+, signalés seulement quand la copie locale porte le champ (un
+            // circuit publié avant ressort une fois ; sa republication les emmène).
+            // Points retirés : la copie locale porte `null` → « aucun ».
+            if (local.routing) {
+                const l = publishedRouting(local.routing);
+                const r = publishedRouting(remote.routing);
+                if (!r || routingLabel(l) !== routingLabel(r)) {
+                    changes.push({ key: 'Variante', old: r ? routingLabel(r) : '—', new: routingLabel(l) });
+                }
+            }
+            if (local.waypoints !== undefined && !sameWaypoints(local.waypoints, remote.waypoints)) {
+                const fmt = (w) => {
+                    const n = waypointCount(publishedWaypoints(w));
+                    return n ? `${n} point${n > 1 ? 's' : ''}` : 'aucun';
+                };
+                const oldTxt = fmt(remote.waypoints), newTxt = fmt(local.waypoints);
+                changes.push({ key: 'Points de passage', old: oldTxt, new: newTxt === oldTxt ? `${newTxt} (déplacés)` : newTxt });
             }
 
             // GPX publié introuvable alors que l'index le cite (12/11/2026 : supprimé
