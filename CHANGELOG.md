@@ -6,6 +6,12 @@
 
 ---
 
+- SCOUT : LA RÈGLE DES 50 M N'ÉCARTE PLUS UN LIEU VOISIN D'UNE AUTRE NATURE (v3.7.524). Décision de Stefan du 13/11/2026, après un 2ᵉ cas.
+  - Avant : tout objet OSM à moins de 50 m d'un lieu ou d'un candidat connu était écarté, même avec un osm_ref différent. Cas : la potale Santa Maria de Vezin (node/11278255130), à 12 m du monument « Aux morts pour la Belgique 1830-1930 » (07/11) ; l'église Notre-Dame des Affligés de Tilly, à ~25 m du candidat « Bottes t'Serclaes » (node/5532885488) (13/11).
+  - Maintenant (`src/scout-dedup.js`) : entre deux objets OSM distincts, la proximité ne joue que s'ils ont la même catégorie (même lieu dessiné deux fois). Elle joue toujours face à un lieu sans osm_ref, et quand une catégorie est inconnue ou « A définir ». `scout.js` passe la catégorie du candidat.
+  - Effet attendu : à la prochaine moisson, des lieux jusqu'ici cachés (église au pied d'un monument, potale près d'un calvaire…) apparaissent en candidats.
+  - Tests : `tests/scout_dedup.test.js` (+5). Non vérifié par une vraie moisson Overpass.
+
 - ITINÉRAIRE : « ÉVITER DE REPASSER » (v3.7.523). PR 3 sur 3 du comparateur de tracé (handoff Claude Design du 12/11/2026).
   - « Ajuster » du panneau « Choisir l'itinéraire » gagne un interrupteur « Éviter de repasser » (ne pas revenir par la même voie quand une autre existe, pour les deux variantes) et son poids en trois crans : Léger 5 · Net 100 (défaut) · Fort 1000. Chaque changement recalcule les deux variantes ; résumé « force 1 · éviter de repasser » ; note « Plus lent avec brouter.de : chaque passage est demandé à part. » quand BRouter de ce PC ne répond pas.
   - Moteur (`circuit-routing.js`) : avec « éviter », les passages sont tracés à la suite, chacun évitant le tracé déjà calculé (`&polylines=`, poids en fin de ligne), privé des 150 m autour des deux bouts du passage (sinon BRouter ignore la ligne, constat du banc d'essai), un point tous les 15 m, 600 points au plus vers brouter.de (3000 en local). Vers brouter.de, un appel toutes les 1,2 s ; sur « Please, retry later! », jusqu'à 3 nouveaux essais (3, 6, 9 s) — pour tous les appels à brouter.de.
