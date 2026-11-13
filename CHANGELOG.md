@@ -6,6 +6,13 @@
 
 ---
 
+- DESTINATIONS : PAYS, DRAPEAU ET DEVISE VIENNENT DU CODE PAYS (v3.7.525). Signalé par Stefan le 13/11/2026 sur la Wallonie.
+  - Avant : la Wallonie affichait « be » sous son nom (menu PC), une mappemonde au lieu du drapeau (sélecteur mobile) et « TND » comme devise (bloc transport, éditeur de lieu). Le menu PC devinait le pays d'après la position (Tunisie, Maroc seulement), le mobile n'avait que trois drapeaux, et une destination créée par le Scout n'a pas de devise : le « TND » écrit en dur restait affiché.
+  - Maintenant : `src/countries.js`, table unique des pays (nom, devise par défaut ; drapeau calculé depuis le code). Utilisée par le menu PC (`topbar-v2.js`, heuristique retirée), le sélecteur mobile, la fiche (prix), le bloc transport et l'éditeur de lieu (« Prix (EUR) »). Un `currency` renseigné dans destinations.json reste prioritaire. Wallonie : Belgique, 🇧🇪, EUR.
+  - Libellé du diff admin « Prix » (sans TND) ; aide (section 6) et `docs/aide-*.md` disent « dans la monnaie du pays ». La clé de donnée `Prix_TND` ne change pas.
+  - Vérifié sur l'aperçu (rendu forcé en admin, sans écriture) : menu PC « BE | Wallonie | Belgique », mobile 🇧🇪, unités EUR ; Djerba garde TN / TND.
+  - Tests : `tests/countries.test.js` (+5).
+
 - SCOUT : LA RÈGLE DES 50 M N'ÉCARTE PLUS UN LIEU VOISIN D'UNE AUTRE NATURE (v3.7.524). Décision de Stefan du 13/11/2026, après un 2ᵉ cas.
   - Avant : tout objet OSM à moins de 50 m d'un lieu ou d'un candidat connu était écarté, même avec un osm_ref différent. Cas : la potale Santa Maria de Vezin (node/11278255130), à 12 m du monument « Aux morts pour la Belgique 1830-1930 » (07/11) ; l'église Notre-Dame des Affligés de Tilly, à ~25 m du candidat « Bottes t'Serclaes » (node/5532885488) (13/11).
   - Maintenant (`src/scout-dedup.js`) : entre deux objets OSM distincts, la proximité ne joue que s'ils ont la même catégorie (même lieu dessiné deux fois). Elle joue toujours face à un lieu sans osm_ref, et quand une catégorie est inconnue ou « A définir ». `scout.js` passe la catégorie du candidat.

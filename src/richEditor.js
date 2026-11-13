@@ -3,6 +3,7 @@ import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES, APP_VERSION, getActiveDestinationCountry, getActiveDestinationName } from './state.js';
 import { buildNewPlaceSuggestion } from './suggestion-email.js';
+import { getActiveDestinationCurrency } from './countries.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
@@ -253,7 +254,7 @@ const RICH_POI_BODY_HTML = `
             </div>
         </div>
         <div class="input-group">
-            <label for="rich-poi-price">Prix (TND)</label>
+            <label for="rich-poi-price" id="rich-poi-price-label">Prix</label>
             <input type="number" id="rich-poi-price" class="editable-input" placeholder="0" step="0.5">
         </div>
         <div class="input-group">
@@ -911,6 +912,12 @@ function showModal() {
     bindModalEvents();
     populateCategorySelect();
     createIcons({ icons: appIcons });
+
+    // Devise de la destination active (le corps est une constante figée au
+    // chargement du module, avant destinations.json) : « Prix (EUR) » en Wallonie.
+    const priceLabel = document.getElementById('rich-poi-price-label');
+    const currency = getActiveDestinationCurrency();
+    if (priceLabel) priceLabel.textContent = currency ? `Prix (${currency})` : 'Prix';
 
     const commonsGroup = document.getElementById('rich-poi-commons-group');
     if (commonsGroup) commonsGroup.hidden = !state.isAdmin;

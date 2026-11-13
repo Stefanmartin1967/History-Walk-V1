@@ -71,7 +71,7 @@ dépendent de la catégorie.)*
 - **Description complète** — le texte détaillé du lieu, affiché sur sa fiche.
 
 ### 6 · Infos pratiques *(facultatif)*
-Pour enrichir la fiche : **temps de visite**, **prix** *(en TND)*, **téléphone**,
+Pour enrichir la fiche : **temps de visite**, **prix** *(dans la monnaie du pays)*, **téléphone**,
 **horaires**, **Facebook**. À remplir si vous les connaissez.
 
 ### 7 · Source et notes
@@ -137,7 +137,7 @@ propose rien), `ui-photo-batch.js` (« Créer un lieu »).
 (`rich-poi-category`, défaut « Choisir une catégorie… », exclut « A définir »/« Autre ») ·
 Zone (`rich-poi-zone`, auto via `getZoneFromCoords`, `disabled`) · taxonomie
 `rich-poi-taxonomy` (Sous-type / État / Accès, `is-hidden` si pas de catégorie) ·
-Description Courte (Résumé) · Description Complète · Temps de visite (h+min) · Prix (TND) ·
+Description Courte (Résumé) · Description Complète · Temps de visite (h+min) · Prix (devise de la destination) ·
 Téléphone · Horaires · Facebook · Source (URL ou Texte) · Notes · footer GPS « Déplacer »
 (`btn-rich-move-marker`) + coords.
 
