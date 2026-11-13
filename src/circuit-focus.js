@@ -36,6 +36,7 @@ import { eventBus } from './events.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { paintTrackParts, paintZoneWays } from './circuit-way-types.js';
 import { nearestPassage, insertionIndex } from './passage-order.js';
+import { circuitWaypointsFor, savedToBySeg, draftToSaved, storedWaypoints } from './circuit-waypoints.js';
 
 let _overlay = null;   // conteneur rail + barre + bouton quitter
 let _segLayer = null;  // L.layerGroup des polylignes de segment (+ hit-lines)
@@ -278,7 +279,11 @@ export function enterCircuitFocus() {
         state.routeSegments = splitTrackByAnchors(circuit.realTrack || [], feats);
     }
     _snapshot = JSON.parse(JSON.stringify(state.routeSegments));
-    state.draftWaypoints = [];
+    // Points de passage enregistrés avec le circuit : on les retrouve, à leur
+    // place et dans leur ordre, pour les ajuster (circuit-waypoints.js).
+    const bySeg = savedToBySeg(circuitWaypointsFor(circuit, feats), feats.map(getPoiId));
+    state.draftWaypoints = Object.keys(bySeg).sort((a, b) => a - b)
+        .flatMap(seg => bySeg[seg].map(p => ({ id: genId(), seg: +seg, lat: p.lat, lng: p.lng })));
     _addMode = false; _dirty = false; _rerouting = 0; _editedSegs = new Set();
 
     // On dessine par segment → on retire TOUTES les polylignes globales (vol
@@ -322,7 +327,11 @@ async function finish() {
     const ascend = segs.every(s => Number.isFinite(s.ascend)) ? segmentsAscend(segs) : existingAscend;
     // Réutilise le flux PR1 : pose le realTrack (+ D+) et reste en création (pour
     // continuer d'ajuster / re-tracer ensuite).
-    await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend });
+    // Les points de passage sont enregistrés avec le tracé : Tracer, le
+    // comparateur et le re-tracé passeront par eux.
+    const ids = features().map(getPoiId);
+    const waypoints = storedWaypoints(draftToSaved(state.draftWaypoints, ids), ids);
+    await saveAndExportCircuit(realTrack, { stayInCreation: true, ascend, waypoints });
     state.routeBasisKey = currentPoiKey(); // le tracé édité correspond à cette séquence
     teardown({ keepSegments: true });
 }
@@ -332,7 +341,7 @@ async function requestQuit() {
     if (_dirty) {
         const ok = await showConfirm(
             'Abandonner les ajustements ?',
-            'Les points de passage et déplacements de drapeaux de cette session seront perdus, et le tracé reviendra à sa version enregistrée.',
+            'Les changements de points de passage et les déplacements de drapeaux de cette session seront perdus ; le tracé et ses points reviendront à leur version enregistrée.',
             'Abandonner', "Continuer l'ajustement", false
         );
         if (!ok) return;

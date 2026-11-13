@@ -267,7 +267,7 @@ export function warnIfNameTaken(name, selfId) {
     return true;
 }
 
-export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null, routing } = {}) {
+export async function saveAndExportCircuit(realTrack = null, { stayInCreation = false, ascend = null, routing, waypoints } = {}) {
     if (state.currentCircuit.length === 0) return;
 
     // 1. Nom : même source que l'en-tête (getCircuitTitle), jamais le texte du
@@ -337,6 +337,12 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         if (routing !== undefined) {
             if (routing) circuitToSave.routing = routing;
             else delete circuitToSave.routing;
+        }
+        // Points de passage par lesquels ce tracé a été calculé (cf.
+        // circuit-waypoints.js) : même règle que la variante.
+        if (waypoints !== undefined) {
+            if (waypoints) circuitToSave.waypoints = waypoints;
+            else delete circuitToSave.waypoints;
         }
     }
 

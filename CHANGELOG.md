@@ -6,6 +6,15 @@
 
 ---
 
+- ITINÉRAIRE : LES POINTS DE PASSAGE SONT ENREGISTRÉS AVEC LE CIRCUIT (v3.7.529). Demandé par Stefan le 13/11/2026 (« si je veux ensuite retracer, je perds les points ajoutés »). Chantier points de passage permanents, PR 2.
+  - Avant : les points ne vivaient que le temps de « Éditer l'itinéraire » ; seul le tracé obtenu était gardé. Tracer, le comparateur et le re-tracé repartaient de lieu à lieu, et rouvrir l'édition ne les remontrait pas.
+  - Nouveau champ du circuit `waypoints` = `{ ids, passages }` (`src/circuit-waypoints.js`) : points rangés par PAIRE DE LIEUX (`idA>idB#rang`), dans l'ordre du parcours ; `ids` = séquence du tracé enregistré avec eux. Écrit à « Terminer » et à chaque tracé retenu ; remontré en rouvrant l'édition ; utilisé par Tracer, les deux variantes du comparateur (en-tête « · N points de passage ») et le re-tracé partiel. « Revenir au tracé précédent » rétablit aussi les points.
+  - Liste des lieux changée (décisions de Stefan) : lieu retiré → les points de ses deux passages passent au nouveau passage, dans l'ordre ; lieu ajouté au milieu d'un passage → ses points se répartissent avant/après le nouveau lieu selon leur position sur l'ancien tracé. Lieux réordonnés sans lien : les points du passage disparu sont abandonnés. Les points priment sur « éviter de repasser » ; la variante s'applique entre eux.
+  - Local seulement : les points ne sont pas publiés (PR 3, à confirmer). Un circuit officiel rechargé depuis l'index sur un autre appareil n'en a pas.
+  - Textes : « Tout re-tracer » passe par les points (menu ⋮, confirmation, aide) ; « Annuler » de l'édition. Aide « Créer un circuit », « Tracé à mettre à jour », docs.
+  - Vérifié en aperçu (brouter.de) : points enregistrés à « Terminer », retrouvés après rechargement en rouvrant l'édition ; « Tout re-tracer » : les deux variantes passent à ≤ 6 m des points ; lieu ajouté au milieu → 1 point de chaque côté, passages recalculés par eux ; lieu retiré → 2 points fusionnés ; « Revenir au tracé précédent » → points d'avant rétablis.
+  - Tests : +12 (`circuit_waypoints`).
+
 - ÉDITION DU TRACÉ : LES POINTS DE PASSAGE GARDENT L'ORDRE DU PARCOURS (v3.7.528). Signalé par Stefan le 13/11/2026 (tour du terril, Marchienne-au-Pont : « dès que ça devient plus long, je perds un morceau »). Chantier points de passage permanents, PR 1.
   - Cause : les points d'un passage étaient TRIÉS par leur projection sur la ligne droite entre ses deux lieux. Sur une boucle ou un aller-retour, l'aller et le retour tombent au même niveau : les points se mélangeaient, BRouter les reliait dans le désordre et sautait un morceau.
   - Nouveau `src/passage-order.js` : un point posé s'insère selon sa position le long du tracé ACTUEL du passage, entre les points déjà posés (repérés dans leur ordre, chacun cherché après le précédent) ; l'ordre est ensuite gardé, y compris quand on glisse un point. Le passage visé est celui dont le TRACÉ passe au plus près du clic (avant : le plus proche sommet).

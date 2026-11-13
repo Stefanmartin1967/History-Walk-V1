@@ -221,6 +221,8 @@ function toLonLats(points) {
  *   l'arrivée de chaque passage (compteur « passage 3 sur 5 » du comparateur).
  * @property {number[][]} [avoidTrack]  routePoints : tracé déjà parcouru à éviter
  *   ([[lat, lon], …]), pris en compte si la variante a « éviter de repasser ».
+ * @property {Object} [waypointsBySeg]  routeChangedSegments : points de passage
+ *   ({ [passage]: [{lat, lng}] }) des passages recalculés (circuit-waypoints.js).
  */
 
 // brouter.de limite le débit (« Please, retry later! ») : jusqu'à 3 nouvelles
@@ -533,7 +535,7 @@ function segmentsMatchTrack(segments, realTrack, nAnchors) {
 export async function routeChangedSegments(features, ids, prev, opts = {}) {
     const anchors = (features || []).map(anchorOf);
     if (anchors.length < 2 || !anchors.every(isValidLonLat) || !Array.isArray(ids) || ids.length !== anchors.length) {
-        const full = await routeCircuit(features, {}, opts);
+        const full = await routeCircuit(features, opts.waypointsBySeg || {}, opts);
         return { ...full, keptCount: 0, reroutedCount: full.segments.length };
     }
 
@@ -566,7 +568,7 @@ export async function routeChangedSegments(features, ids, prev, opts = {}) {
             keptCount++;
             tasks.push(Promise.resolve({ ...seg }));
         } else {
-            tasks.push(routeSegment(segmentVias(anchors, {}, i), opts));
+            tasks.push(routeSegment(segmentVias(anchors, opts.waypointsBySeg || {}, i), opts));
         }
     }
     const segments = await Promise.all(tasks);
