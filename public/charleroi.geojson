@@ -13878,11 +13878,22 @@
         ]
       },
       "properties": {
-        "Nom du site FR": "",
+        "Nom du site FR": "Chapelle (Chaussée Romaine)",
         "Catégorie": "Chapelle",
         "osm_ref": "way/235959633",
-        "candidate": true,
         "HW_ID": "HW-01M6EV4VSRVJH56R9RZ6X5T5GM",
+        "Accès": "Extérieur seulement",
+        "description": "Chapelle du carrefour de la chaussée Romaine et de la rue de la Croix, à Villers-la-Ville.\nAucune dédicace n'a été trouvée : le nom de cette fiche reprend celui de la rue.\nSelon le site du village de Marbisoux, la chaussée romaine qui traverse le village, dite chaussée Brunehaut, allait de Boulogne à Cologne.",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "Source": "marbisoux.be, « Historique » | https://www.marbisoux.be/www/index.php?option=com_content&view=article&id=4&Itemid=11",
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Villers-la-Ville"
       }
     },
