@@ -93,6 +93,54 @@ describe('isDuplicateCandidate', () => {
         expect(isDuplicateCandidate({ lat: NaN, lon: 10.97 }, { knownOsmRefs: new Set() })).toBe(false);
     });
 
+    describe('proximité entre objets OSM distincts (13/11/2026)', () => {
+        // Cas réel : église Notre-Dame des Affligés de Tilly, à ~25 m du candidat
+        // « Bottes t'Serclaes » (node/5532885488, Monument).
+        const bottes = poi(4.55187, 50.56041, { osm_ref: 'node/5532885488', 'Catégorie': 'Monument' });
+        const eglise = { lat: 50.56062, lon: 4.55195, osmRef: 'way/1', cat: 'Église' }; // ~24 m
+
+        it('retient une église à côté d\'un monument (catégories différentes)', () => {
+            expect(isDuplicateCandidate(eglise, {
+                knownOsmRefs: collectKnownOsmRefs([bottes]), features: [bottes],
+            })).toBe(false);
+        });
+
+        it('retient une potale à côté d\'un monument aux morts (cas de Vezin)', () => {
+            const monument = poi(4.9, 50.5, { osm_ref: 'node/11278255129', 'Catégorie': 'Monument' });
+            const potale = { lat: 50.5001, lon: 4.9, osmRef: 'node/11278255130', cat: 'Potale' }; // ~11 m
+            expect(isDuplicateCandidate(potale, {
+                knownOsmRefs: collectKnownOsmRefs([monument]), features: [monument],
+            })).toBe(false);
+        });
+
+        it('écarte toujours un même lieu dessiné deux fois (même catégorie)', () => {
+            const eglisePoi = poi(4.55195, 50.56062, { osm_ref: 'way/1', 'Catégorie': 'Église' });
+            const point = { lat: 50.56065, lon: 4.55195, osmRef: 'node/2', cat: 'Église' }; // ~3 m
+            expect(isDuplicateCandidate(point, {
+                knownOsmRefs: collectKnownOsmRefs([eglisePoi]), features: [eglisePoi],
+            })).toBe(true);
+        });
+
+        it('reste prudent si une catégorie est inconnue ou « A définir »', () => {
+            const aDefinir = poi(4.55187, 50.56041, { osm_ref: 'node/9', 'Catégorie': 'A définir' });
+            expect(isDuplicateCandidate(eglise, {
+                knownOsmRefs: collectKnownOsmRefs([aDefinir]), features: [aDefinir],
+            })).toBe(true);
+            expect(isDuplicateCandidate({ ...eglise, cat: null }, {
+                knownOsmRefs: collectKnownOsmRefs([bottes]), features: [bottes],
+            })).toBe(true);
+        });
+
+        it('applique la même règle aux candidats déjà retenus dans le scan', () => {
+            const retained = [{ lat: 50.56041, lon: 4.55187, osmRef: 'node/5532885488', cat: 'Monument', dup: false }];
+            expect(isDuplicateCandidate(eglise, { knownOsmRefs: new Set(), features: [], retained })).toBe(false);
+            const retenuEglise = [{ lat: 50.56062, lon: 4.55195, osmRef: 'way/1', cat: 'Église', dup: false }];
+            expect(isDuplicateCandidate({ lat: 50.56065, lon: 4.55195, osmRef: 'node/2', cat: 'Église' }, {
+                knownOsmRefs: new Set(), features: [], retained: retenuEglise,
+            })).toBe(true);
+        });
+    });
+
     it('expose le rayon de la règle #472', () => {
         expect(DEDUP_M).toBe(50);
     });

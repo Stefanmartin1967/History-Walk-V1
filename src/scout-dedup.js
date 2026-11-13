@@ -17,6 +17,14 @@
 //   2. PROXIMITÉ (< 50 m, règle #472 validée 07/05) — filet pour tout POI SANS
 //      osm_ref (89 des 348 POI de Djerba au 10/08/2026). La règle 1 ne remplace
 //      pas celle-ci : elle ne protège que les POI dont l'objet OSM est saisi.
+//      Depuis le 13/11/2026 (v3.7.524), la proximité ne joue entre deux objets
+//      OSM DISTINCTS (osm_ref des deux côtés, différents) que s'ils sont de la
+//      MÊME catégorie : deux « Église » à 20 m sont presque sûrement le même lieu
+//      dessiné deux fois, alors qu'une église et le monument à son pied sont deux
+//      lieux. Cas fondateurs : la potale Santa Maria de Vezin, écartée à 12 m d'un
+//      monument aux morts (07/11), et l'église de Tilly, écartée à ~25 m des
+//      « Bottes t'Serclaes » (13/11). Catégorie inconnue ou « A définir » d'un côté
+//      → on reste prudent et la proximité joue.
 //
 // La règle 1 est ce qui donne sa valeur au report d'osm_ref fait pendant la
 // curation (action « doublon d'un lieu existant » du RichEditor) : chaque
@@ -44,10 +52,28 @@ export function collectKnownOsmRefs(features = []) {
     return set;
 }
 
+/** Catégorie exploitable pour la comparaison, ou '' si inconnue / « A définir ». */
+function knownCategory(cat) {
+    const c = String(cat || '').trim();
+    return c && c !== 'A définir' ? c : '';
+}
+
+/**
+ * Un voisin à moins de 50 m fait-il du candidat un doublon ?
+ * Oui, sauf si ce sont deux objets OSM distincts de catégories connues différentes.
+ */
+function proximityCounts(candRef, candCat, otherRef, otherCat) {
+    if (!candRef || !otherRef || candRef === otherRef) return true;
+    const a = knownCategory(candCat);
+    const b = knownCategory(otherCat);
+    if (!a || !b) return true;
+    return a === b;
+}
+
 /**
  * Un candidat moissonné est-il un doublon ? (identité OSM, puis proximité)
  *
- * @param {{lat:number, lon:number, osmRef?:string}} cand
+ * @param {{lat:number, lon:number, osmRef?:string, cat?:string}} cand  cat = catégorie Heripia (getHwCategory)
  * @param {Object}   ctx
  * @param {Set<string>} [ctx.knownOsmRefs]  index issu de collectKnownOsmRefs
  * @param {Array}    [ctx.features]  POI chargés (proximité)
@@ -66,9 +92,14 @@ export function isDuplicateCandidate(cand, { knownOsmRefs, features = [], retain
 
     const inData = features.some(f => {
         const c = f?.geometry?.coordinates;
-        return Array.isArray(c) && Number.isFinite(c[0]) && Number.isFinite(c[1]) && near(c[1], c[0]);
+        if (!(Array.isArray(c) && Number.isFinite(c[0]) && Number.isFinite(c[1]) && near(c[1], c[0]))) return false;
+        return proximityCounts(
+            ref, cand.cat,
+            normalizeOsmRef(getPoiProp(f, 'osm_ref') || ''), getPoiProp(f, 'Catégorie'),
+        );
     });
     if (inData) return true;
 
-    return retained.some(c => !c.dup && near(c.lat, c.lon));
+    return retained.some(c => !c.dup && near(c.lat, c.lon)
+        && proximityCounts(ref, cand.cat, normalizeOsmRef(c.osmRef || ''), c.cat));
 }

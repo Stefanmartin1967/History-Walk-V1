@@ -591,9 +591,10 @@ async function scan() {
                     if (cat) scannedCats.set(key, cat);
                     // Doublon si l'objet OSM est DÉJÀ porté par un POI chargé (identité
                     // osm_ref, quelle que soit la distance), sinon < 50 m d'un POI
-                    // existant (règle #472) ou d'un candidat déjà retenu dans CE scan.
+                    // existant (règle #472) ou d'un candidat déjà retenu dans CE scan —
+                    // entre deux objets OSM distincts, seulement s'ils ont la même catégorie.
                     const dup = isDuplicateCandidate(
-                        { lat, lon, osmRef: key },
+                        { lat, lon, osmRef: key, cat },
                         { knownOsmRefs, features: state.loadedFeatures || [], retained: all },
                     );
                     // P5 — routage FR/AR du nom OSM (évite qu'un nom arabe atterrisse
