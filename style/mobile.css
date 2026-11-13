@@ -596,6 +596,16 @@
 }
 .cc-flag[data-flag="official"] { color: var(--brand-2, var(--brand)); }
 .cc-flag[data-flag="verified"] { color: var(--ok); }
+/* Ligne sous le titre : badge à gauche, « < n/total > » calé à droite
+   (margin-left:auto → reste à droite aussi sans badge, circuit perso). */
+.cc-ident-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 20px;
+}
+.cc-ident-row .cc-flag { margin-top: 0; }
+.cc-ident-row .cc-pager { margin-left: auto; }
 
 /* Description */
 .cc-desc {
@@ -666,7 +676,7 @@
     position: relative;
 }
 /* Cible tactile 44px (audit AC6) sans grossir le visuel : zone de toucher
-   étendue par pseudo-élément (hit-slop). 28+2×8=44 ; eyebrow 20+2×12=44.
+   étendue par pseudo-élément (hit-slop). 28+2×8=44 ; compact 20+2×12=44.
    Pas de chevauchement : le compteur n/total entre les 2 chevrons est plus
    large que l'extension. */
 .cc-pager-btn::after {
@@ -674,7 +684,7 @@
     position: absolute;
     inset: -8px;
 }
-.cc-pager.in-eyebrow .cc-pager-btn::after { inset: -12px; }
+.cc-pager.is-compact .cc-pager-btn::after { inset: -12px; }
 .cc-pager-btn:hover { background: var(--surface-muted); color: var(--ink); }
 .cc-pager-btn:disabled { opacity: 0.3; pointer-events: none; }
 .cc-pager-btn svg { width: 14px; height: 14px; }
@@ -685,16 +695,16 @@
     min-width: 38px;
     text-align: center;
 }
-/* Variante « eyebrow » (PC-03 like) : chevrons compacts inline dans la
-   ligne mono uppercase de métadonnées */
-.cc-pager.in-eyebrow { gap: 2px; }
-.cc-pager.in-eyebrow .cc-pager-btn {
+/* Variante compacte : chevrons mono uppercase, sur la ligne du badge
+   de la fiche circuit mobile (.cc-ident-row) */
+.cc-pager.is-compact { gap: 2px; }
+.cc-pager.is-compact .cc-pager-btn {
     width: 20px;
     height: 20px;
     border-radius: 4px;
 }
-.cc-pager.in-eyebrow .cc-pager-btn svg { width: 11px; height: 11px; }
-.cc-pager.in-eyebrow .cc-pager-pos {
+.cc-pager.is-compact .cc-pager-btn svg { width: 11px; height: 11px; }
+.cc-pager.is-compact .cc-pager-pos {
     font-family: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
     font-size: 10.5px;
     letter-spacing: 0.08em;
