@@ -90,5 +90,99 @@
       "avoid": true,
       "weight": 100
     }
+  },
+  {
+    "id": "HW-01M7ACMAGXH4Z2CJVPJ5PKG21V",
+    "name": "Boucle autour de Église Saint-Benoît",
+    "file": "charleroi/Boucle autour de Église Saint-Benoît.gpx",
+    "description": "",
+    "distance": "11.6 km",
+    "isOfficial": true,
+    "hasRealTrack": true,
+    "zone": "Ham-sur-Heure-Nalinnes",
+    "poiIds": [
+      "HW-01M6EV6W5QVEX5YRFVH681CNNG",
+      "HW-01M616BNAR8FA2THSPYGTF9HF6",
+      "HW-01M616BMWMN6G8EK4FWJHFASM2",
+      "HW-01M6EV6TWYARPA1DW5W6HWW9PN",
+      "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
+      "HW-01M6EV6W5QVEX5YRFVH681CNNG"
+    ],
+    "trackHash": "298-adc7a0c8",
+    "ascend": 108,
+    "routing": {
+      "variant": "chemins",
+      "force": 1,
+      "avoid": true,
+      "weight": 100
+    },
+    "waypoints": {
+      "ids": [
+        "HW-01M6EV6W5QVEX5YRFVH681CNNG",
+        "HW-01M616BNAR8FA2THSPYGTF9HF6",
+        "HW-01M616BMWMN6G8EK4FWJHFASM2",
+        "HW-01M6EV6TWYARPA1DW5W6HWW9PN",
+        "HW-01M6PM2VQKTT4FBPSRNTT93A6V",
+        "HW-01M6EV6W5QVEX5YRFVH681CNNG"
+      ],
+      "passages": {
+        "HW-01M616BNAR8FA2THSPYGTF9HF6>HW-01M616BMWMN6G8EK4FWJHFASM2#0": [
+          [
+            50.363061,
+            4.457863
+          ]
+        ],
+        "HW-01M616BMWMN6G8EK4FWJHFASM2>HW-01M6EV6TWYARPA1DW5W6HWW9PN#0": [
+          [
+            50.355812,
+            4.452885
+          ],
+          [
+            50.353538,
+            4.458162
+          ],
+          [
+            50.349383,
+            4.453268
+          ],
+          [
+            50.348377,
+            4.452465
+          ],
+          [
+            50.349442,
+            4.447515
+          ],
+          [
+            50.350048,
+            4.445864
+          ],
+          [
+            50.350218,
+            4.443915
+          ],
+          [
+            50.35033,
+            4.438286
+          ],
+          [
+            50.34908,
+            4.438007
+          ],
+          [
+            50.347292,
+            4.438137
+          ],
+          [
+            50.348817,
+            4.442767
+          ],
+          [
+            50.347207,
+            4.443878
+          ]
+        ]
+      }
+    }
   }
 ]
