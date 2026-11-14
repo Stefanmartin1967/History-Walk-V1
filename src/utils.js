@@ -2,6 +2,7 @@
 import { zonesData, zoneCacheGet, zoneCacheSet } from './zones.js';
 import { getSubtypes } from './taxonomy.js';
 import { normalizeOsmRef, osmObjectUrl } from './osm-ref.mjs';
+import { countryDialCode } from './countries.js';
 
 /**
  * Génère un identifiant unique au format HW-ULID
@@ -141,9 +142,10 @@ export function isMapsChecked(props) {
  * destinations.json). Une entrée = « je sais reconnaître et regrouper les
  * numéros de ce pays ».
  *
- *  - `dialCode`  : indicatif international, sans le « + »
  *  - `nsnLength` : longueur du numéro national (hors indicatif)
  *  - `groups`    : découpage d'affichage, somme = nsnLength
+ *
+ * L'indicatif vient de la table des pays (countryDialCode, countries.js).
  *
  * Tunisie : 8 chiffres groupés 2-3-3 — c'est déjà la forme des numéros saisis
  * à la main dans les données (« +216 27 677 120 »), donc rien à migrer.
@@ -153,7 +155,7 @@ export function isMapsChecked(props) {
  * formatPhone). La ligne se rajoutera le jour où la destination existera.
  */
 const PHONE_PLANS = {
-    tn: { dialCode: '216', nsnLength: 8, groups: [2, 3, 3] },
+    tn: { nsnLength: 8, groups: [2, 3, 3] },
 };
 
 /**
@@ -183,8 +185,11 @@ export function formatPhone(value, country) {
     const raw = value.trim().replace(/\s+/g, ' ');
     if (!raw) return '';
 
-    const plan = PHONE_PLANS[String(country || '').toLowerCase()];
-    if (!plan) return raw;
+    const code = String(country || '').toLowerCase();
+    const known = PHONE_PLANS[code];
+    const dialCode = countryDialCode(code);
+    if (!known || !dialCode) return raw;
+    const plan = { ...known, dialCode };
 
     // Seuls les chiffres et un éventuel « + » de tête portent du sens ; le
     // reste (espaces, points, tirets, parenthèses) n'est que de la mise en forme.

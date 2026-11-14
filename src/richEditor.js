@@ -3,7 +3,7 @@ import L from 'leaflet';
 import { map, startMarkerDrag } from './map.js';
 import { state, POI_CATEGORIES, APP_VERSION, getActiveDestinationCountry, getActiveDestinationName } from './state.js';
 import { buildNewPlaceSuggestion } from './suggestion-email.js';
-import { getActiveDestinationCurrency } from './countries.js';
+import { getActiveDestinationCurrency, countryDialCode } from './countries.js';
 import { getPoiId, commitPendingPoiIfNeeded, updatePoiCoordinates, updatePoiData } from './data.js';
 import { eventBus } from './events.js';
 import { getZoneFromCoords, openCoordsOnMap, isCandidate, normalizeOsmRef, osmObjectUrl, mapsPlaceUrl, normalizeCommonsCategory, isOsmChecked, isMapsChecked, isInJalelDirectoryScope, formatPhone } from './utils.js';
@@ -259,7 +259,7 @@ const RICH_POI_BODY_HTML = `
         </div>
         <div class="input-group">
             <label for="rich-poi-phone">Téléphone</label>
-            <input type="tel" id="rich-poi-phone" class="editable-input" placeholder="+216 ...">
+            <input type="tel" id="rich-poi-phone" class="editable-input" placeholder="">
         </div>
         <div class="input-group">
             <label for="rich-poi-hours">Horaires</label>
@@ -918,6 +918,10 @@ function showModal() {
     const priceLabel = document.getElementById('rich-poi-price-label');
     const currency = getActiveDestinationCurrency();
     if (priceLabel) priceLabel.textContent = currency ? `Prix (${currency})` : 'Prix';
+    // Exemple du champ téléphone : indicatif du pays (« +32 ... » en Wallonie).
+    const phoneInput = document.getElementById(DOM_IDS.INPUTS.PHONE);
+    const dialCode = countryDialCode(getActiveDestinationCountry());
+    if (phoneInput) phoneInput.placeholder = dialCode ? `+${dialCode} ...` : '';
 
     const commonsGroup = document.getElementById('rich-poi-commons-group');
     if (commonsGroup) commonsGroup.hidden = !state.isAdmin;

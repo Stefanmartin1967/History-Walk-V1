@@ -9,7 +9,7 @@ vi.mock('../src/zones.js', () => ({
     zoneCacheGet: vi.fn(() => undefined),
     zoneCacheSet: vi.fn(),
 }));
-vi.mock('../src/taxonomy.js', () => ({ getSubtypes: vi.fn(() => []) }));
+vi.mock('../src/taxonomy.js', () => ({ getSubtypes: vi.fn(() => []), getCategoryLabels: vi.fn(() => []) }));
 
 import { getPoiName } from '../src/utils.js';
 
