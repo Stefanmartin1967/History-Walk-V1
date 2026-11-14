@@ -49,6 +49,48 @@ describe('formatPhone — Tunisie', () => {
     });
 });
 
+describe('formatPhone — Belgique', () => {
+    it('fixe à zone de deux chiffres (Charleroi 071) : 2-2-2-2', () => {
+        const c = '+32 71 12 34 56';
+        expect(formatPhone('071 12 34 56', 'be')).toBe(c);
+        expect(formatPhone('071/12.34.56', 'be')).toBe(c);
+        expect(formatPhone('071123456', 'be')).toBe(c);
+        expect(formatPhone('+32 71 12 34 56', 'be')).toBe(c);
+        expect(formatPhone('+32 (0)71 12 34 56', 'be')).toBe(c);
+        expect(formatPhone('0032 71 12 34 56', 'be')).toBe(c);
+        expect(formatPhone('3271123456', 'be')).toBe(c);
+    });
+
+    it("fixe à zone d'un chiffre (02 Bruxelles, 04 Liège) : 1-3-2-2", () => {
+        expect(formatPhone('02 555 12 12', 'be')).toBe('+32 2 555 12 12');
+        expect(formatPhone('04 123 45 67', 'be')).toBe('+32 4 123 45 67');
+        expect(formatPhone('+3225551212', 'be')).toBe('+32 2 555 12 12');
+    });
+
+    it('portable 04xx (9 chiffres) : 3-2-2-2, distingué de Liège par la longueur', () => {
+        expect(formatPhone('0474 12 34 56', 'be')).toBe('+32 474 12 34 56');
+        expect(formatPhone('+32474123456', 'be')).toBe('+32 474 12 34 56');
+        expect(formatPhone('0032 474/12.34.56', 'be')).toBe('+32 474 12 34 56');
+    });
+
+    it('conserve le numéro belge déjà en base et reste idempotente', () => {
+        expect(formatPhone('+32 85 84 96 95', 'be')).toBe('+32 85 84 96 95');
+        expect(formatPhone(formatPhone('0474123456', 'be'), 'be')).toBe('+32 474 12 34 56');
+    });
+
+    it('garde tels quels les numéros spéciaux et les longueurs inconnues', () => {
+        expect(formatPhone('0800 12 345', 'be')).toBe('0800 12 345');
+        expect(formatPhone('070 22 33 44', 'be')).toBe('070 22 33 44');
+        expect(formatPhone('078 15 16 17', 'be')).toBe('078 15 16 17');
+        expect(formatPhone('0900 12 345', 'be')).toBe('0900 12 345');
+        expect(formatPhone('071 12 34 5', 'be')).toBe('071 12 34 5');
+        // Sans le 0 national, un numéro local belge n'est pas reconnu (on ne devine pas)
+        expect(formatPhone('71 12 34 56', 'be')).toBe('71 12 34 56');
+        // Numéro tunisien saisi dans une fiche belge
+        expect(formatPhone('+216 27 677 120', 'be')).toBe('+216 27 677 120');
+    });
+});
+
 describe('formatPhone — ce qu\'on ne reformate PAS (et qu\'on ne perd pas)', () => {
     it('rend telle quelle une saisie qu\'aucun plan ne décrit', () => {
         // Deux numéros dans le champ
