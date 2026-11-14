@@ -6,6 +6,10 @@
 
 ---
 
+- GPX : PLUS D'ALTITUDE « 0 » SUR LES POINTS DU TRACÉ (v3.7.534). Demandé par Stefan le 14/11/2026.
+  - `generateGPXString` écrivait `<ele>0</ele>` en dur sur chaque `<trkpt>` : l'app ne connaît pas l'altitude des points, et un logiciel qui lit les altitudes croyait à un circuit plat. Le D+ vient de BRouter et vit dans l'index (`ascend`, v3.7.526) ; `<ele>` est facultatif en GPX.
+  - Les points s'écrivent `<trkpt lat=".." lon=".."/>`. Tous les lecteurs de l'app (import, couche de référence, empreinte de tracé, contrôle OSM) ne lisent que lat/lon : aucun circuit ne ressort comme modifié. Les GPX déjà publiés gardent leurs `<ele>0</ele>` jusqu'à leur prochaine publication.
+
 - ÉDITEUR DE LIEU : L'EXEMPLE DU TÉLÉPHONE SUIT LE PAYS (v3.7.533). Relevé le 13/11/2026, corrigé le 14/11 à la demande de Stefan.
   - Le champ Téléphone affichait « +216 ... » partout, Wallonie comprise. L'exemple vient maintenant de l'indicatif du pays de la destination : « +32 ... » en Wallonie, « +216 ... » à Djerba, vide pour un pays inconnu.
   - L'indicatif rejoint la table des pays (`countryDialCode`, countries.js), source unique. `formatPhone` (utils.js) y lit l'indicatif tunisien au lieu de le dupliquer ; sa règle de mise en forme reste réservée à la Tunisie (pas de plan inventé pour la Belgique : saisie gardée telle quelle).
