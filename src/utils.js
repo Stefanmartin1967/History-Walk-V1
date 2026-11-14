@@ -142,21 +142,47 @@ export function isMapsChecked(props) {
  * destinations.json). Une entrée = « je sais reconnaître et regrouper les
  * numéros de ce pays ».
  *
- *  - `nsnLength` : longueur du numéro national (hors indicatif)
- *  - `groups`    : découpage d'affichage, somme = nsnLength
+ *  - `trunk` : préfixe national (« 0 » en Belgique) tapé devant un numéro
+ *              local et qui tombe derrière l'indicatif ; absent = pas de préfixe
+ *  - `rules` : formes reconnues du numéro national (sans indicatif ni
+ *              préfixe), essayées dans l'ordre. `match` porte la longueur ;
+ *              `groups` = découpage d'affichage
  *
  * L'indicatif vient de la table des pays (countryDialCode, countries.js).
  *
  * Tunisie : 8 chiffres groupés 2-3-3 — c'est déjà la forme des numéros saisis
  * à la main dans les données (« +216 27 677 120 »), donc rien à migrer.
  *
+ * Belgique (Wikipédia « Telephone numbers in Belgium », vérifié le 14/11/2026) :
+ * fixe = 8 chiffres, zone d'UN chiffre pour 2 Bruxelles, 3 Anvers, 4 Liège,
+ * 9 Gand (« 0x xxx xx xx »), de deux chiffres ailleurs (« 0xx xx xx xx »,
+ * 071 Charleroi) ; portable = 9 chiffres en 4xx (« 04xx xx xx xx »). Les
+ * numéros spéciaux (0800, 070, 077, 078, 090x) ne sont reconnus par aucune
+ * règle : gardés tels que saisis. Le seul numéro belge en base,
+ * « +32 85 84 96 95 », a déjà cette forme.
+ *
  * Pas d'entrée inventée pour les destinations à venir : sans plan, on
  * n'invente aucun regroupement, on garde la saisie telle quelle (cf.
- * formatPhone). La ligne se rajoutera le jour où la destination existera.
+ * formatPhone). La ligne se rajoute le jour où la destination existe.
  */
 const PHONE_PLANS = {
-    tn: { nsnLength: 8, groups: [2, 3, 3] },
+    tn: { rules: [{ match: /^\d{8}$/, groups: [2, 3, 3] }] },
+    be: {
+        trunk: '0',
+        rules: [
+            { match: /^4\d{8}$/, groups: [3, 2, 2, 2] },                  // portable 04xx
+            // Zone d'un chiffre. Un numéro d'abonné ne commence jamais par 0 :
+            // exclut 090x (spécial) qui sinon passerait pour Gand (09).
+            { match: /^[2349][1-9]\d{6}$/, groups: [1, 3, 2, 2] },
+            { match: /^(?:[156]\d|71|8[1-9])\d{6}$/, groups: [2, 2, 2, 2] }, // zone de deux chiffres
+        ],
+    },
 };
+
+/** Découpage du numéro national selon le plan, ou null si aucune règle ne le reconnaît. */
+function phoneGroups(plan, nsn) {
+    return plan.rules.find(r => r.match.test(nsn))?.groups || null;
+}
 
 /**
  * Met un numéro de téléphone à la forme canonique du pays de la destination,
@@ -164,6 +190,8 @@ const PHONE_PLANS = {
  *
  *   27677120 · 27 677 120 · +21627677120 · 00216 27-677-120 · 216.27.677.120
  *                              → « +216 27 677 120 »
+ *   071 12 34 56 · 071/12.34.56 · +32 71 12 34 56 · +32 (0)71 12 34 56
+ *                              → « +32 71 12 34 56 »
  *
  * On garde l'indicatif visible : c'est la forme déjà présente en base, et
  * c'est elle qui rend le lien `tel:` composable depuis un téléphone étranger
@@ -202,18 +230,27 @@ export function formatPhone(value, country) {
     // « 0027677120 » (numéro sud-africain) se ferait passer pour un local.
     if (compact.startsWith('00' + plan.dialCode)) compact = compact.slice(2);
 
-    let nsn = null;
-    if (compact.length === plan.nsnLength) {
-        nsn = compact;                                   // saisi en local
-    } else if (compact.startsWith(plan.dialCode)
-               && compact.length === plan.dialCode.length + plan.nsnLength) {
-        nsn = compact.slice(plan.dialCode.length);       // saisi à l'international
+    // Numéro national candidat : saisi en local (préfixe national retiré s'il
+    // y en a un), puis à l'international — avec ou sans le « (0) » que l'on
+    // écrit parfois derrière l'indicatif. Le premier reconnu par une règle gagne.
+    const candidates = [];
+    if (!plan.trunk) candidates.push(compact);
+    else if (compact.startsWith(plan.trunk)) candidates.push(compact.slice(plan.trunk.length));
+    if (compact.startsWith(plan.dialCode)) {
+        const rest = compact.slice(plan.dialCode.length);
+        candidates.push(rest);
+        if (plan.trunk && rest.startsWith(plan.trunk)) candidates.push(rest.slice(plan.trunk.length));
+    }
+    let nsn = null, groups = null;
+    for (const c of candidates) {
+        groups = phoneGroups(plan, c);
+        if (groups) { nsn = c; break; }
     }
     if (nsn === null) return raw;
 
     const parts = [];
     let at = 0;
-    for (const size of plan.groups) { parts.push(nsn.slice(at, at + size)); at += size; }
+    for (const size of groups) { parts.push(nsn.slice(at, at + size)); at += size; }
     return `+${plan.dialCode} ${parts.join(' ')}`;
 }
 
