@@ -115,19 +115,23 @@ export function generateGPXString(circuit, id, name, description, realTrack = nu
     </wpt>`;
     }).join('');
 
+    // Pas de <ele> : l'app ne connaît pas l'altitude des points (le D+ vient de
+    // BRouter et vit dans l'index, `ascend`). Un <ele>0</ele> ferait croire à
+    // un circuit plat aux logiciels qui lisent les altitudes ; <ele> est
+    // facultatif dans le format GPX.
     let trackpointsXML = '';
 
     if (realTrack && realTrack.length > 0) {
         // Cas A : Trace réelle importée → format [lat, lon]
         trackpointsXML = realTrack.map(coord =>
-            `<trkpt lat="${coord[0]}" lon="${coord[1]}"><ele>0</ele></trkpt>`
+            `<trkpt lat="${coord[0]}" lon="${coord[1]}"/>`
         ).join('\n      ');
     } else {
         // Cas B : Tracé direct POI→POI. Ancre de chaque POI = son point d'accès
         // au tracé s'il existe, sinon ses coords réelles (cf. trackAnchorOf).
         const coords = circuit.map(f => trackAnchorOf(f)); // [lon, lat]
         trackpointsXML = coords.map(([lon, lat]) =>
-            `<trkpt lat="${lat}" lon="${lon}"><ele>0</ele></trkpt>`
+            `<trkpt lat="${lat}" lon="${lon}"/>`
         ).join('\n      ');
     }
 
