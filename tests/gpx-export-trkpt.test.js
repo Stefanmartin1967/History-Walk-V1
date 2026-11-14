@@ -97,6 +97,16 @@ describe('generateGPXString — Cas B (vol d\'oiseau) : <trkpt> = vraies coords 
         expect(trkpts).toEqual([[11.0, 33.0], [11.05, 33.05], [11.1, 33.1]]);
         expect(trkpts.length).toBe(3); // 3 points de trace ≠ 2 POIs → bien realTrack
     });
+
+    it("n'écrit aucune altitude (<ele>) : l'app ne la connaît pas", () => {
+        const circuit = [poi('A', 11.0, 33.0, 'A'), poi('B', 11.1, 33.1, 'B')];
+        const casA = generateGPXString(circuit, 'HW-X', 'C', 'd', [[33.0, 11.0], [33.1, 11.1]]);
+        const casB = generateGPXString(circuit, 'HW-X', 'C', 'd');
+        for (const gpx of [casA, casB]) {
+            expect(gpx).not.toContain('<ele>');
+            expect(parseTrkpts(gpx)).toHaveLength(2);
+        }
+    });
 });
 
 describe('generateGPXString — Cas B : point d\'accès (accessPoint) comme ancre de tracé', () => {
