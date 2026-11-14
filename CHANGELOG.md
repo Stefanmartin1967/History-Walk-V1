@@ -6,6 +6,10 @@
 
 ---
 
+- ÉDITEUR DE LIEU : L'EXEMPLE DU TÉLÉPHONE SUIT LE PAYS (v3.7.533). Relevé le 13/11/2026, corrigé le 14/11 à la demande de Stefan.
+  - Le champ Téléphone affichait « +216 ... » partout, Wallonie comprise. L'exemple vient maintenant de l'indicatif du pays de la destination : « +32 ... » en Wallonie, « +216 ... » à Djerba, vide pour un pays inconnu.
+  - L'indicatif rejoint la table des pays (`countryDialCode`, countries.js), source unique. `formatPhone` (utils.js) y lit l'indicatif tunisien au lieu de le dupliquer ; sa règle de mise en forme reste réservée à la Tunisie (pas de plan inventé pour la Belgique : saisie gardée telle quelle).
+
 - ITINÉRAIRE : POIGNÉES SUR LE TRACÉ ET « TIRER LE TRACÉ », COMME GPX STUDIO (v3.7.532). Vidéo de Stefan du 13/11/2026 comparant à GPX Studio.
   - Le tracé de la variante choisie porte des poignées discrètes à ses tournants (`turningPoints`, passage-order.js : Douglas-Peucker 25 m, 120 m d'écart mini, rien à moins de 80 m des lieux, une poignée au moins tous les 450 m sur les lignes droites ; rien sur un passage en ligne droite ni à moins de 40 m d'un point posé).
   - Glisser une poignée la change en point de passage ; ses deux poignées voisines deviennent des points aussi (`pinsAround`), sauf si un point posé tient déjà ce côté, pour que seul ce bout du passage change (comme les ancres de GPX Studio).

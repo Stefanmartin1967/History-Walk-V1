@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { state } from '../src/state.js';
-import { countryName, countryFlag, destinationCurrency, getActiveDestinationCurrency } from '../src/countries.js';
+import { countryName, countryFlag, countryDialCode, destinationCurrency, getActiveDestinationCurrency } from '../src/countries.js';
 
 describe('countries — pays, drapeau, devise d\'une destination', () => {
     it('nomme le pays en français, sinon affiche le code', () => {
@@ -16,6 +16,13 @@ describe('countries — pays, drapeau, devise d\'une destination', () => {
         expect(countryFlag('bg')).toBe('🇧🇬');
         expect(countryFlag('')).toBe('');
         expect(countryFlag('bel')).toBe('');
+    });
+
+    it("donne l'indicatif téléphonique du pays, '' si inconnu", () => {
+        expect(countryDialCode('be')).toBe('32');
+        expect(countryDialCode('TN')).toBe('216');
+        expect(countryDialCode('bg')).toBe('');
+        expect(countryDialCode('')).toBe('');
     });
 
     it('prend la devise de la destination, sinon celle du pays', () => {
