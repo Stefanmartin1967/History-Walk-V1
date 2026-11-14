@@ -6,6 +6,11 @@
 
 ---
 
+- TÉLÉPHONES : MISE EN FORME AUTOMATIQUE DES NUMÉROS BELGES (v3.7.535). Demandé par Stefan le 14/11/2026.
+  - En Wallonie, un numéro saisi n'importe comment prend la forme belge, comme en Tunisie : « 071 12 34 56 », « 071/12.34.56 » ou « +32 (0)71 12 34 56 » donnent « +32 71 12 34 56 ». Le 0 national tombe derrière +32.
+  - Plan vérifié sur Wikipédia (« Telephone numbers in Belgium ») : fixe à zone d'un chiffre (02, 03, 04, 09) → « +32 2 555 12 12 » ; zone de deux chiffres (071…) → « +32 71 12 34 56 », la forme du seul numéro belge en base ; portable 04xx (9 chiffres) → « +32 474 12 34 56 ». Numéros spéciaux (0800, 070, 078, 090x) et longueurs inconnues : gardés tels que saisis.
+  - `PHONE_PLANS` (utils.js) passe d'un découpage fixe à une liste de règles (longueur + début du numéro) avec préfixe national facultatif ; la Tunisie garde exactement son comportement.
+
 - GPX : PLUS D'ALTITUDE « 0 » SUR LES POINTS DU TRACÉ (v3.7.534). Demandé par Stefan le 14/11/2026.
   - `generateGPXString` écrivait `<ele>0</ele>` en dur sur chaque `<trkpt>` : l'app ne connaît pas l'altitude des points, et un logiciel qui lit les altitudes croyait à un circuit plat. Le D+ vient de BRouter et vit dans l'index (`ascend`, v3.7.526) ; `<ele>` est facultatif en GPX.
   - Les points s'écrivent `<trkpt lat=".." lon=".."/>`. Tous les lecteurs de l'app (import, couche de référence, empreinte de tracé, contrôle OSM) ne lisent que lat/lon : aucun circuit ne ressort comme modifié. Les GPX déjà publiés gardent leurs `<ele>0</ele>` jusqu'à leur prochaine publication.
