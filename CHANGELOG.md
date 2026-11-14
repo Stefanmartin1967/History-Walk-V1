@@ -6,6 +6,13 @@
 
 ---
 
+- ITINÉRAIRE : UNE SEULE ENTRÉE, PLUS DE BARRE DU BAS (v3.7.536). PR B du panneau unique, maquette validée par Stefan le 13/11/2026, choix complémentaires validés le 14/11.
+  - « Éditer l'itinéraire » devient « Itinéraire » : il ouvre le panneau des variantes, qui recalcule Direct et Chemins en passant par les points enregistrés. Une ligne « Enregistré : » rappelle variante, force, points et distance ; tant que rien ne change (variante, réglages, points, drapeaux), « Rien à enregistrer » et « Fermer » : le tracé enregistré reste tel quel.
+  - La barre « Édition du tracé » et son mode (`circuit-focus.js`) sont retirés. Le pointillé des passages en ligne droite passe dans `route-fail-overlay.js` ; `style/circuit-focus.css` devient `circuit-trace.css` (boutons, points de passage, types de voie).
+  - Les drapeaux d'accès se glissent pendant que le panneau est ouvert (`state.routePanelOpen`) : glisser un drapeau recalcule les deux passages qui touchent ce lieu, pour les deux variantes (`routeCircuit` accepte `anchorOverrides`). « Enregistrer » garde la position, « Annuler » la remet.
+  - « Tout re-tracer » est retiré du menu ⋮ : « Itinéraire » fait la même chose. Tracé périmé : « Re-tracer l'itinéraire » (partiel) reste le bouton, « Itinéraire » passe dans le menu.
+  - Fermer le panneau (Annuler, Échap, croix) après avoir touché aux points ou aux drapeaux demande « Abandonner les changements ? ». Aide (guide § 5, « ? » segment droit) et `docs/aide-creation-circuit.md` mises à jour.
+
 - TÉLÉPHONES : MISE EN FORME AUTOMATIQUE DES NUMÉROS BELGES (v3.7.535). Demandé par Stefan le 14/11/2026.
   - En Wallonie, un numéro saisi n'importe comment prend la forme belge, comme en Tunisie : « 071 12 34 56 », « 071/12.34.56 » ou « +32 (0)71 12 34 56 » donnent « +32 71 12 34 56 ». Le 0 national tombe derrière +32.
   - Plan vérifié sur Wikipédia (« Telephone numbers in Belgium ») : fixe à zone d'un chiffre (02, 03, 04, 09) → « +32 2 555 12 12 » ; zone de deux chiffres (071…) → « +32 71 12 34 56 », la forme du seul numéro belge en base ; portable 04xx (9 chiffres) → « +32 474 12 34 56 ». Numéros spéciaux (0800, 070, 078, 090x) et longueurs inconnues : gardés tels que saisis.

@@ -6,12 +6,12 @@
 // bleu : rien de ceci n'est publié.
 //
 // Deux points d'entrée :
-//   • hors « Éditer l'itinéraire » : map.js signale chaque tracé bleu dessiné
+//   • le tracé enregistré : map.js signale chaque tracé bleu dessiné
 //     ('circuit:realtrack-drawn') ; on pose par-dessus un calque coloré et on
 //     masque le bleu. Le calque suit la vie du tracé bleu (retiré avec lui).
-//   • dans « Éditer l'itinéraire » : circuit-focus dessine ses passages via
-//     paintTrackParts, et toutes les voies de la zone en fond via paintZoneWays
-//     (bouton « Voies »), pour repérer une alternative au tracé.
+//   • le panneau « Itinéraire » (circuit-compare.js) : toutes les voies de la
+//     zone en fond via paintZoneWaysLoading (bouton « Voies »), pour repérer
+//     une alternative au tracé.
 // Les voies viennent d'Overpass, sur un rectangle autour du tracé (une requête
 // sert aux deux). Tant qu'un tronçon n'est pas couvert, il reste bleu ; si
 // Overpass échoue, la carte du tracé l'indique (« Réessayer ») et rien n'est
@@ -58,9 +58,9 @@ function notify() {
 }
 
 // Dessine les passages dans `group` : liserés d'abord, puis traits. Un tronçon
-// non couvert reste bleu ; un passage en échec n'est dessiné que si drawFail
-// (hors édition, refreshFailOverlay s'en charge).
-function paint(group, parts, { drawFail = false, onRefresh = null } = {}) {
+// non couvert reste bleu ; un passage en échec n'est pas dessiné ici
+// (route-fail-overlay.js s'en charge).
+function paint(group, parts, { onRefresh = null } = {}) {
     const { ways, cover } = indexes();
     const { runs, meters } = classifyParts(parts, ways, cover);
     const line = (ll, className) => L.polyline(ll, { className, interactive: false, renderer: trackRenderer() });
@@ -71,7 +71,6 @@ function paint(group, parts, { drawFail = false, onRefresh = null } = {}) {
         let cls = null;
         if (WAY_KEYS.has(r.t)) cls = `way-line way-line--${r.t}`;
         else if (r.t === 'pending') cls = 'real-track-polyline';
-        else if (r.t === 'droite' && drawFail) cls = 'route-fail-segment';
         if (cls) group.addLayer(line(r.ll, cls));
     });
     _view = { meters };
@@ -134,19 +133,10 @@ function renderOverlay() {
 
 function onRealTrackDrawn(polyline) {
     clearOverlay();
-    if (!polyline || !inCreation() || state.circuitFocusActive) return;
+    if (!polyline || !inCreation() || state.routePanelOpen) return;
     _base = polyline;
     polyline.once('remove', () => { if (_base === polyline) clearOverlay(); });
     renderOverlay();
-}
-
-/**
- * « Éditer l'itinéraire » : dessine les passages (segments de session) colorés
- * dans `group`, passages en échec compris. `onRefresh` redessine quand les voies
- * d'une zone nouvelle sont arrivées.
- */
-export function paintTrackParts(group, parts, onRefresh) {
-    paint(group, parts, { drawFail: true, onRefresh });
 }
 
 // Pane sous le tracé (z-index en CSS) : les voies de la zone restent dessous
@@ -162,12 +152,9 @@ function zoneRenderer() {
     return _zoneRenderer;
 }
 
-/**
- * « Éditer l'itinéraire », bouton « Voies » : dessine dans `group` toutes les
- * voies connues autour des passages (rectangle du tracé élargi de ZONE_MARGIN_M),
- * en traits fins des cinq couleurs.
- */
-export function paintZoneWays(group, parts) {
+// Dessine dans `group` toutes les voies connues autour des passages (rectangle
+// du tracé élargi de ZONE_MARGIN_M), en traits fins des cinq couleurs.
+function paintZoneWays(group, parts) {
     const zone = boundsOf((parts || []).flatMap(p => p?.coords || []), ZONE_MARGIN_M);
     if (!zone) return;
     const renderer = zoneRenderer();
@@ -178,7 +165,7 @@ export function paintZoneWays(group, parts) {
 }
 
 /**
- * Panneau Itinéraire, bouton « Voies » : comme paintZoneWays, et demande les
+ * Panneau Itinéraire, bouton « Voies » : toutes les voies de la zone, et demande les
  * voies de la zone à Overpass si elles ne sont pas encore connues ; `onReady`
  * redessine à leur arrivée.
  */

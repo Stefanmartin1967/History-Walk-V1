@@ -88,27 +88,35 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
 *C'est « Enregistrer avec … » qui enregistre le circuit avec son tracé et ses points de passage.*
 
 ### 5 · Ajuster le tracé
-- **« Éditer l'itinéraire »** : ajoutez des **points de passage** *(cliquez sur la
-  carte)* pour guider le tracé ; déplacez-les. Seul le segment touché est recalculé. Le
-  tracé passe par les points **dans l'ordre du parcours** : un point se range selon
+- **« Itinéraire »** : rouvre le panneau. Les deux variantes sont **recalculées**, en
+  passant par vos points de passage ; une ligne **« Enregistré : »** rappelle la variante,
+  la force, les points et la distance. Tant que vous ne changez rien, le bouton dit
+  **« Rien à enregistrer »** et le tracé enregistré reste tel quel *(« Fermer » referme
+  le panneau)*. Enregistrer remplace le tracé par le nouveau calcul : une retouche GPX
+  Studio est alors perdue.
+- Le tracé passe par les points **dans l'ordre du parcours** : un point se range selon
   l'endroit du tracé où vous cliquez, et le garde quand vous le déplacez *(pratique pour
   faire le tour d'un parc ou d'un terril : cliquez sur le tracé, puis glissez le point sur
-  le chemin voulu)*. Les points sont **enregistrés avec le circuit** à « Terminer » : vous
-  les retrouvez en rouvrant l'édition, et Tracer, le comparateur et le re-tracé passent
-  par eux. Publiés avec un circuit officiel *(avec sa variante)*, ils se retrouvent sur
-  vos autres appareils.
+  le chemin voulu)*. Les points sont **enregistrés avec le circuit** ; publiés avec un
+  circuit officiel *(avec sa variante)*, ils se retrouvent sur vos autres appareils.
+- **Drapeaux d'accès** *(là où le tracé rejoint un lieu)* : panneau ouvert, ils se
+  glissent. Déplacer un drapeau recalcule les deux passages qui touchent ce lieu, pour les
+  deux variantes. « Enregistrer avec … » garde sa nouvelle place ; « Annuler » le remet où
+  il était.
+- **« Annuler »** après avoir posé, déplacé ou retiré des points, ou glissé un drapeau :
+  Heripia demande confirmation avant de les abandonner. Changer seulement de variante ou de
+  réglage ferme sans question.
 - **« Tracé presque complet »** : un **segment droit** est un passage que BRouter n'a
-  pas su tracer — il reste en **ligne droite**. Ajoutez-y un **point de passage** pour
-  le guider.
+  pas su tracer — il reste en **ligne droite**. Ajoutez-y un **point de passage** dans
+  « Itinéraire » pour le guider.
 - **« Re-tracer l'itinéraire »** : si vous changez les lieux après coup, le tracé est
   signalé **« séquence modifiée »** *(« Tracé à mettre à jour »)*. Re-tracez pour le
   remettre à jour : seuls les passages modifiés sont recalculés, avec la même variante
   *(sans « éviter de repasser »)*. Les points de passage suivent : ceux d'un lieu retiré
   passent au nouveau passage, ceux du passage où un lieu s'insère se répartissent avant
-  et après lui.
-- **« Tout re-tracer »** *(menu ⋮)* : rouvre le panneau « Itinéraire » ; la variante
-  retenue recalcule **tous** les passages, en passant par vos points de passage. Les
-  retouches GPX Studio sont perdues.
+  et après lui. Pour tout recalculer, ouvrez **« Itinéraire »** *(menu ⋮)*.
+- **« Revenir au tracé précédent »** *(menu ⋮, juste après un re-tracé)* : rétablit le
+  tracé d'avant, points de passage et variante compris.
 
 ### 6 · Apporter ou afficher une trace existante
 - **« Importer un GPX »** : apporte une trace GPX *(Wikiloc, GPS…)* **comme itinéraire
@@ -157,8 +165,8 @@ changement → ré-attachés à chaque rendu).
 
 **« ? » Segment droit** — sur la note « Un passage est resté en ligne droite »
 > **Segment en ligne droite** — BRouter n'a pas trouvé de chemin pour **un passage** : il
-> le laisse en **ligne droite**. Ajoutez un **point de passage** (« Éditer l'itinéraire »
-> → cliquer sur la carte) pour le guider, ou affinez dans **GPX Studio**.
+> le laisse en **ligne droite**. Ajoutez un **point de passage** (« Itinéraire »
+> → cliquer sur le tracé) pour le guider, ou affinez dans **GPX Studio**.
 
 *(Le panneau global « ? » de la toolbar Mes Circuits ouvre le guide complet, § ci-dessus.)*
 
@@ -191,8 +199,9 @@ textarea « Décrivez ce circuit… » (`initDescriptionEdit`, création seuleme
 **Bloc tracé** (`src/ui-circuit-routing.js`) : « Tracer l'itinéraire » · hint « BRouter suit
 les chemins piétons pour transformer le vol d'oiseau en trace marchable. » · spinner
 « BRouter calcule l'itinéraire… » · « Itinéraire tracé » / pastille « Tracé réel » ·
-« Éditer l'itinéraire » · menu « Plus » : « Re-tracer l'itinéraire », « Affiner dans GPX
-Studio », « Exporter le GPX » · périmé : « Tracé à mettre à jour » / « séquence modifiée » ·
+« Itinéraire » · menu « Plus » : « Revenir au tracé précédent », « Affiner dans GPX
+Studio », « Exporter le GPX » · périmé : « Tracé à mettre à jour » / « séquence modifiée »,
+« Re-tracer l'itinéraire », menu « Itinéraire » ·
 échec partiel : « Tracé presque complet » / « N segments droits » + note furet « Un passage
 est resté en ligne droite » / « Ajouter un point de passage ».
 
@@ -206,7 +215,7 @@ Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » a
 repasser » / « Poids » (Léger 5 · Net 100 · Fort 1000) / « Plus lent avec brouter.de : chaque
 passage est demandé à part. » · « Calculé par
 BRouter de ce PC » ou « brouter.de · BRouter de ce PC indisponible » · « Réessayer » · « Annuler » ·
-« Enregistrer avec Direct / Chemins ». Carte d'état pendant la comparaison : « Itinéraire en
+« Enregistrer avec Direct / Chemins » · rouvert sur un circuit tracé : « Enregistré : » (variante · force · N points · km), « Rien à enregistrer » / « Fermer » tant que rien n'a changé · « Abandonner les changements ? » (points ou drapeaux touchés). Carte d'état pendant la comparaison : « Itinéraire en
 cours » / « 2 variantes » / « Posez vos points, comparez, puis enregistrez. »
 
 **Barre d'actions** (`index.html` ~338-369, handlers `src/ui-circuit-editor.js`) :

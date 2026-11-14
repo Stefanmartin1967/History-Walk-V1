@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.535'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.536'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 // Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
 // lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
 // (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
@@ -78,9 +78,8 @@ export const state = {
     // Routing in-app niveau 2 — focus mode (PR2). État de SESSION uniquement,
     // jamais persisté dans le circuit (décision « trace finale seule » : seul
     // circuit.realTrack est sauvegardé, pas les points qui l'ont produit).
-    circuitFocusActive: false, // true pendant l'ajustement plein écran du tracé
+    routePanelOpen: false,     // true pendant que le panneau « Itinéraire » est ouvert (circuit-compare.js)
     routeSegments: null,       // [{coords:[[lat,lon],…], ok:bool, distanceKm}] — découpage POI→POI du tracé courant
-    draftWaypoints: [],        // [{id, seg, lat, lng}] — points de passage de la session focus (vidés à la sortie)
     // Clé des poiIds (ordonnés) au moment où le tracé a été posé/édité. Sert à
     // détecter qu'un tracé est PÉRIMÉ : si la séquence de POIs change ensuite, on
     // garde le tracé mais on affiche le badge « à re-tracer » (modèle validé :

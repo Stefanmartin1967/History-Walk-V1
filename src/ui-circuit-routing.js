@@ -5,33 +5,36 @@
 // 05/06/2026) :
 //   • < 2 POIs            → rien
 //   • ≥ 2 POIs, pas tracé → CTA « Tracer l'itinéraire » (auto-route BRouter)
-//   • tracé réel présent  → carte d'état + « Éditer l'itinéraire » (focus mode)
+//   • tracé réel présent  → carte d'état + « Itinéraire »
 //   • tracé PÉRIMÉ        → la séquence de POIs a changé → « Re-tracer » (le tracé
 //                           est conservé mais signalé « à mettre à jour ») ; ce
-//                           re-tracé est PARTIEL (routeChangedSegments), « Tout
-//                           re-tracer » (menu ⋮) repart de zéro
+//                           re-tracé est PARTIEL (routeChangedSegments)
 //
-// « Tracer » route le circuit SEGMENT PAR SEGMENT (circuit-routing.js), pose le
-// realTrack et sauvegarde (en restant en création). Un segment non routable
-// retombe en ligne droite (échec partiel) → note furet + segment pointillé.
-// « Éditer l'itinéraire » ouvre le focus mode niveau 2 (circuit-focus.js).
-// Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026.
+// « Tracer » et « Itinéraire » ouvrent le même panneau (circuit-compare.js) :
+// deux variantes calculées SEGMENT PAR SEGMENT, points de passage et drapeaux
+// d'accès réglés au même endroit, puis « Enregistrer avec … » pose le realTrack
+// et sauvegarde (en restant en création). Rouvrir recalcule les deux variantes
+// (décision de Stefan, 13/11/2026). Un segment non routable retombe en ligne
+// droite (échec partiel) → note furet + segment pointillé.
+// Handoff Claude Design 04/06/2026 + modèle cycle de vie du tracé 05/06/2026 ;
+// panneau unique 13/11/2026 (la barre « Édition du tracé » est retirée).
 import { state } from './state.js';
 import { routeCircuit, routeChangedSegments, normalizeRouting, resolveEngine, engineLabel, ROUTING_VARIANTS } from './circuit-routing.js';
-import { enterCircuitFocus, refreshFailOverlay, clearFailOverlay } from './circuit-focus.js';
+import { refreshFailOverlay, clearFailOverlay } from './route-fail-overlay.js';
+import { revertDraggedFlags, resyncFlags } from './circuit-flags.js';
 import { openRouteCompare, isComparing, cancelRouteCompare } from './circuit-compare.js';
 import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
 import { showToast } from './toast.js';
-import { showConfirm } from './modal.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { configureHelp, helpInline } from './help-popover.js';
 import { HELP_TRACER, HELP_CALQUE, HELP_STALE, HELP_WAYPOINT } from './help-content.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { getPoiId } from './data.js';
+import { getRealDistance } from './utils.js';
 import { trackFingerprint } from './track-fingerprint.js';
 import { circuitWaypointsFor, savedToBySeg, storedWaypoints, draftToSaved } from './circuit-waypoints.js';
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
@@ -65,7 +68,7 @@ function hasRealTrack() {
     const c = activeCircuit();
     return !!(c && Array.isArray(c.realTrack) && c.realTrack.length >= 2);
 }
-// Segments en échec connus de la SESSION courante (Tracer/focus). Vide sur un
+// Segments en échec connus de la SESSION courante (Tracer / panneau Itinéraire). Vide sur un
 // circuit simplement chargé (l'état d'échec n'est pas persisté → « trace finale seule »).
 function failedCount() {
     const segs = state.routeSegments;
@@ -76,7 +79,7 @@ function failedCount() {
 // d'autre circuit chargé entre-temps).
 function canUndoRetrace() {
     const c = activeCircuit();
-    return !!(lastRetrace && c && !state.circuitFocusActive
+    return !!(lastRetrace && c && !isComparing()
         && String(state.activeCircuitId) === lastRetrace.circuitId
         && trackFingerprint(c.realTrack) === lastRetrace.newFp);
 }
@@ -97,21 +100,7 @@ export function updateTraceBlock() {
     // calque est chargé (même à 0 POI : il guide la construction du circuit).
     const chip = referenceChipHtml();
 
-    if (state.circuitFocusActive) {
-        // Réunif A2 : édition du tracé « en place » → pas de bouton « Éditer »
-        // redondant ; le panneau indique l'état, la barre flottante pilote.
-        el.innerHTML = `
-            <div class="trace-status is-editing">
-                <div class="trace-status-head">
-                    <div class="trace-status-ico"><i data-lucide="waypoints"></i></div>
-                    <div class="trace-status-txt">
-                        <h4>Édition du tracé en cours</h4>
-                        <p>Ajustez l'itinéraire sur la carte ; terminez ou annulez depuis la barre en bas.</p>
-                        ${wayTypesHtml()}
-                    </div>
-                </div>
-            </div>` + chip;
-    } else if (isComparing()) {
+    if (isComparing()) {
         // Le panneau « Itinéraire » est ouvert à gauche de la carte.
         el.innerHTML = `
             <div class="trace-status">
@@ -199,9 +188,9 @@ const MP_EXPORT = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: 'F
 // Variante pré-tracé : sans realTrack, l'export retombe sur le vol d'oiseau
 // (lignes droites entre les lieux) — cf. ui-circuit-editor 'request-export-gpx'.
 const MP_EXPORT_RAW = { act: 'export', icon: 'download', t: 'Exporter le GPX', d: "Vol d'oiseau (avant le tracé BRouter)" };
-// Re-tracé COMPLET (avec confirmation) : repart de zéro sur tous les passages,
-// là où « Re-tracer l'itinéraire » (tracé périmé) ne recalcule que les modifiés.
-const MP_RETRACE_ALL = { act: 'retrace', icon: 'repeat', t: 'Tout re-tracer', d: 'Recalcule tous les passages, par vos points de passage' };
+// Tracé périmé : le panneau, en plus du re-tracé partiel. Il recalcule tous les
+// passages (plus de « Tout re-tracer » à part : c'était le même geste).
+const MP_OPEN = { act: 'open', icon: 'route', t: 'Itinéraire', d: 'Recalcule tous les passages : variantes, points de passage' };
 const MP_UNDO = { act: 'undo', icon: 'rotate-ccw', t: 'Revenir au tracé précédent', d: 'Annule le dernier re-tracé' };
 // En tête du menu, seulement juste après un re-tracé.
 function undoItems() {
@@ -240,12 +229,7 @@ function traceStatusHtml() {
                 <button class="btn-adjust" id="btn-retrace-stale" type="button">
                     <i data-lucide="repeat"></i> Re-tracer l'itinéraire
                 </button>
-                ${morePopHtml([
-                    ...undoItems(),
-                    { act: 'edit', icon: 'move', t: "Éditer l'itinéraire", d: 'Ajuster le tracé actuel sans re-tracer' },
-                    MP_RETRACE_ALL,
-                    { sep: true }, MP_GPX, MP_EXPORT,
-                ])}
+                ${morePopHtml([...undoItems(), MP_OPEN, { sep: true }, MP_GPX, MP_EXPORT])}
             </div>
         </div>`;
     }
@@ -268,9 +252,9 @@ function traceStatusHtml() {
             </div>
             <div class="trace-status-actions">
                 <button class="btn-adjust" id="btn-adjust" type="button">
-                    <i data-lucide="move"></i> Éditer l'itinéraire
+                    <i data-lucide="route"></i> Itinéraire
                 </button>
-                ${morePopHtml([...undoItems(), MP_RETRACE_ALL, { sep: true }, MP_GPX, MP_EXPORT])}
+                ${morePopHtml([...undoItems(), MP_GPX, MP_EXPORT])}
             </div>
         </div>
         ${warn ? failNote() : ''}${phoneHintHtml()}`;
@@ -343,7 +327,7 @@ function failNote() {
             <img class="furet-mini" src="icons/icon-512-maskable.png" alt="">
             <div class="fn-body">
                 <h5>Un passage est resté en ligne droite</h5>
-                <p>BRouter n'a pas pu tracer un segment — il reste en ligne droite. Ajoutez un point de passage pour le guider, ou affinez dans GPX Studio.</p>
+                <p>BRouter n'a pas pu tracer un segment — il reste en ligne droite. Ajoutez un point de passage dans « Itinéraire » pour le guider, ou affinez dans GPX Studio.</p>
                 <div class="fn-actions">
                     <button class="fn-link" type="button" data-act="fix"><i data-lucide="waypoints"></i> Ajouter un point de passage</button>
                     <button class="fn-link muted" type="button" data-act="gpx"><i data-lucide="external-link"></i> GPX Studio</button>
@@ -394,8 +378,8 @@ function traceContext() {
 
 // keepUnchanged : re-tracé PARTIEL (tracé périmé) — seuls les passages dont la
 // paire de lieux a changé sont recalculés, avec la variante du circuit, les
-// autres gardent leurs ajustements. Sans lui (1ᵉʳ tracé, « Tout re-tracer ») :
-// le panneau « Itinéraire » s'ouvre.
+// autres gardent leurs ajustements. Sans lui (« Tracer », « Itinéraire ») : le
+// panneau « Itinéraire » s'ouvre.
 async function runTrace({ keepUnchanged = false } = {}) {
     if (tracing || isComparing()) return;
     if (!state.currentCircuit || state.currentCircuit.length < 2) {
@@ -433,7 +417,8 @@ function traceFailed(e) {
 }
 
 // Ouvre le panneau « Itinéraire » : le tracé en place (et ses passages droits)
-// s'efface le temps de la comparaison, les deux variantes le remplacent.
+// s'efface le temps de la comparaison, les deux variantes le remplacent. Les
+// drapeaux d'accès se déverrouillent tant qu'il est ouvert (circuit-flags).
 function startCompare(ctx) {
     compareKey = currentPoiKey();
     state.realTrackPolyline?.remove();
@@ -444,6 +429,7 @@ function startCompare(ctx) {
         // Variante mémorisée sur le circuit, sinon Chemins (décision de Stefan, 12/11/2026).
         initial: ctx.prevCircuit?.routing || { variant: 'chemins' },
         waypointsBySeg: ctx.waypoints.bySeg,
+        saved: savedRoute(ctx),
         onApply: async ({ result, routing, engine, points }) => {
             tracing = true;
             updateTraceBlock();
@@ -451,19 +437,36 @@ function startCompare(ctx) {
             const ids = state.currentCircuit.map(getPoiId);
             const waypoints = storedWaypoints(draftToSaved(points, ids), ids);
             try {
+                // Enregistre aussi les drapeaux glissés (commitDirtyFlags dans
+                // saveAndExportCircuit) AVANT de les re-verrouiller.
                 await applyTraceResult(ctx, { result, routing, engine, prev: null, waypoints });
             } catch (e) {
+                revertDraggedFlags();
                 traceFailed(e);
             }
+            resyncFlags();
         },
         onCancel: () => {
-            // Rien n'a changé : le tracé d'avant revient tel quel (ou rien au 1er tracé).
+            // Rien n'a changé : drapeaux remis en place, le tracé d'avant revient
+            // tel quel (ou rien au 1er tracé).
+            revertDraggedFlags();
+            resyncFlags();
             updatePolylines();
             refreshFailOverlay();
             updateTraceBlock();
         },
     });
+    resyncFlags(); // déverrouille les drapeaux (state.routePanelOpen posé par le panneau)
     updateTraceBlock();
+}
+
+// Ce qui est enregistré, pour la ligne « Enregistré : » et « Rien à
+// enregistrer » : seulement si le tracé correspond aux lieux actuels et que sa
+// variante est connue (circuits tracés depuis le 12/11/2026).
+function savedRoute(ctx) {
+    const c = ctx.prevCircuit;
+    if (!ctx.prevTrack || !c?.routing || !ROUTING_VARIANTS[c.routing.variant] || isStale()) return null;
+    return { routing: c.routing, distanceKm: getRealDistance(c) / 1000 };
 }
 
 // Enregistre un tracé calculé (variante retenue au comparateur, ou re-tracé
@@ -472,10 +475,10 @@ async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints: ctxWa
     const { realTrack, segments } = result;
     // D+ : un passage conservé n'a pas toujours d'altitude (re-découpé du
     // tracé enregistré) → on garde le D+ existant plutôt qu'une somme
-    // partielle, comme « Terminer » en édition du tracé (circuit-focus.js).
+    // partielle.
     const ascend = (prev && !Number.isFinite(result.ascend) && Number.isFinite(prevCircuit?.ascend))
         ? prevCircuit.ascend : result.ascend;
-    state.routeSegments = segments; // mémorise le découpage (focus + échec partiel)
+    state.routeSegments = segments; // mémorise le découpage (re-tracé partiel + échec partiel)
     // Sauvegarde le circuit AVEC son tracé réel + son D+ BRouter, en création.
     await saveAndExportCircuit(realTrack, {
         stayInCreation: true, ascend, routing: { ...routing, engine: engine.key },
@@ -489,8 +492,7 @@ async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints: ctxWa
     // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
     // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait
     // inopérante → le badge « à re-tracer » / « séquence modifiée » ne sortait
-    // jamais quand on changeait les lieux après coup. Même ordre que
-    // circuit-focus.js (pose après l'édition du tracé).
+    // jamais quand on changeait les lieux après coup.
     state.routeBasisKey = currentPoiKey(); // le tracé correspond à cette séquence
     lastRetrace = undo ? { ...undo, newFp: trackFingerprint(realTrack) } : null;
     tracing = false;
@@ -534,15 +536,6 @@ function plural(n, one, many) {
     return `${n} ${n > 1 ? many : one}`;
 }
 
-async function confirmRetrace() {
-    const ok = await showConfirm(
-        'Tout re-tracer ?',
-        'Tous les passages seront recalculés par BRouter, en passant par vos points de passage. Les retouches GPX Studio seront perdues.',
-        'Tout re-tracer', 'Annuler'
-    );
-    if (ok) runTrace();
-}
-
 // Ouvre GPX Studio via l'ancre existante (deeplink conditionnel, cf.
 // reference_no_gpx_studio_link) ; repli sur l'URL directe si absente.
 function openGpxStudio() {
@@ -561,7 +554,7 @@ export function initCircuitRoutingUI() {
         // Délégation : le conteneur est stable, seul son innerHTML est re-rendu.
         el.addEventListener('click', (e) => {
             if (e.target.closest('#btn-trace')) { runTrace(); return; }
-            if (e.target.closest('#btn-adjust')) { enterCircuitFocus(); return; }
+            if (e.target.closest('#btn-adjust')) { runTrace(); return; }
             // Tracé périmé : re-tracé PARTIEL direct (mise à jour attendue, rien
             // de ce qui n'a pas changé n'est perdu → pas de confirmation).
             if (e.target.closest('#btn-retrace-stale')) { runTrace({ keepUnchanged: true }); return; }
@@ -577,16 +570,15 @@ export function initCircuitRoutingUI() {
             if (mp) {
                 closeMorePop();
                 const act = mp.dataset.act;
-                if (act === 'retrace') confirmRetrace();
+                if (act === 'open') runTrace();
                 else if (act === 'undo') undoRetrace();
-                else if (act === 'edit') enterCircuitFocus();
                 else if (act === 'export') eventBus.emit('request-export-gpx');
                 else if (act === 'gpx') openGpxStudio();
                 return;
             }
             const fn = e.target.closest('.fn-link');
             if (fn) {
-                if (fn.dataset.act === 'fix') enterCircuitFocus();
+                if (fn.dataset.act === 'fix') runTrace();
                 else if (fn.dataset.act === 'gpx') openGpxStudio();
             }
         });
