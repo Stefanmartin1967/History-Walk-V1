@@ -25,6 +25,7 @@ import { schedulePushTestedToGitHub, rememberTestedSteps } from './tested-sync.j
 import { markEditingStart, getDirtyCount } from './circuit-flags.js';
 import { getActiveCircuit, findCircuitById, getAllCircuits } from './circuit-lookup.js';
 import { takenCircuitNames, uniqueAutoCircuitName } from './circuit-name.js';
+import { autoCircuitBaseName } from './gpx-steps.js';
 import { persistCircuit } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { rememberPublishedTrack } from './track-fingerprint.js';
@@ -670,9 +671,8 @@ export function generateCircuitName() {
     const startPoi = getPoiName(circuit[0]);
     const endPoi = getPoiName(circuit[circuit.length - 1]);
 
-    const base = getPoiId(circuit[0]) === getPoiId(circuit[circuit.length - 1])
-        ? `Boucle autour de ${startPoi}`
-        : `Circuit de ${startPoi} à ${endPoi}`;
+    const base = autoCircuitBaseName(startPoi, endPoi,
+        getPoiId(circuit[0]) === getPoiId(circuit[circuit.length - 1]));
     // Nom déjà pris par un AUTRE circuit de la destination (12/11/2026) : on ajoute
     // « via <lieu du milieu> » à celui-ci, jamais à l'autre (cf. circuit-name.js).
     // Le circuit en cours (édité) est exclu par son id ; une création n'en a pas.

@@ -1,11 +1,12 @@
 // gpx.js
 import { state, APP_VERSION } from './state.js';
-import { getPoiId, getPoiName } from './data.js';
+import { getPoiId } from './data.js';
 import { loadCircuitById, generateCircuitName } from './circuit.js';
 import { getAppState } from './database.js';
 import { findCircuitById } from './circuit-lookup.js';
 import { persistCircuit } from './circuit-store.js';
 import { withCircuitSignature } from './circuit-description.js';
+import { gpxStepsOf } from './gpx-steps.js';
 import { showToast } from './toast.js';
 import { downloadFile, escapeXml, generateHWID, getAccessPoint } from './utils.js';
 import { updatePolylines } from './map.js';
@@ -93,25 +94,19 @@ function trackAnchorOf(feature) {
  *    faisait ignorer le POI par GPX Studio).
  */
 export function generateGPXString(circuit, id, name, description, realTrack = null) {
-    // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle)
-    const waypointsXML = circuit.map(feature => {
-        const poiName = escapeXml(getPoiName(feature));
-        // `info_gpx` (lowercase) depuis le renommage de Description_courte —
-        // c'est ce texte qui voyage dans le <desc> du waypoint, visible côté
-        // Wikiloc / GPX Studio. userData prioritaire sur properties.
-        const desc = escapeXml(feature.properties.userData?.info_gpx || feature.properties.info_gpx || '');
-        const sourceUrl = feature.properties.userData?.Source || feature.properties.Source || '';
-        let linkXML = '';
-        if (sourceUrl && sourceUrl.trim().startsWith('http')) {
-            linkXML = `
-      <link href="${escapeXml(sourceUrl.trim())}">
+    // <wpt> : toujours les coordonnées réelles du POI (repère visuel fidèle).
+    // Nom, « info GPX » (<desc>, visible côté Wikiloc / GPX Studio) et lien
+    // Source : une seule définition, partagée avec le Centre de contrôle qui
+    // compare ces étapes à celles du GPX publié (gpx-steps.js).
+    const waypointsXML = gpxStepsOf(circuit).map(step => {
+        const linkXML = step.link ? `
+      <link href="${escapeXml(step.link)}">
         <text>Lien vers le site</text>
-      </link>`;
-        }
+      </link>` : '';
         return `
-    <wpt lat="${feature.geometry.coordinates[1]}" lon="${feature.geometry.coordinates[0]}">
-      <name>${poiName}</name>
-      <desc>${desc}</desc>${linkXML}
+    <wpt lat="${step.lat}" lon="${step.lon}">
+      <name>${escapeXml(step.name)}</name>
+      <desc>${escapeXml(step.desc)}</desc>${linkXML}
     </wpt>`;
     }).join('');
 

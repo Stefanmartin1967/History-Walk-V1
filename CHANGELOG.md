@@ -6,6 +6,12 @@
 
 ---
 
+- CENTRE DE CONTRÔLE : LES GPX SUIVENT LES FICHES CORRIGÉES (v3.7.537). Demandé par Stefan le 17/11/2026.
+  - Une fiche renommée, déplacée, ou dont l'info GPX ou le lien Source changeait laissait les GPX de ses circuits périmés : le diff ne voyait un circuit modifié que si son nom, sa description, sa liste de lieux ou son tracé changeaient. Mesuré le 17/11 : 12 GPX sur 24 périmés à Djerba (ex. « Mosquée Taqwa » au lieu de « Mosquée Takwa (Bardaoui) »), 0 sur 4 à Charleroi.
+  - `gpx-steps.js` : une seule définition des étapes (<wpt> : nom, position, info GPX, lien), partagée par l'écriture du GPX et le diff ; empreinte `stepsHash` publiée dans l'index, comme `trackHash`. Sans elle, le diff relit le GPX publié (une fois par session, en parallèle).
+  - Le Centre de contrôle liste « Étape renommée » (ancien → nouveau nom) et « Étapes du GPX » (position, info GPX ou lien). Un officiel jamais ouvert sur ce poste est republié avec le tracé de son GPX publié. Ces cartes n'ont pas de bouton « Annuler » (rien de local à annuler) mais une note.
+  - Nom automatique : si un circuit porte encore le nom calculé avec ses extrémités publiées (« Circuit de A à B », « Boucle autour de A », avec « via … » ou « (n) ») et qu'une extrémité est renommée, le diff propose le nouveau nom (ligne « Nom ») ; la publication renomme le GPX, retire l'ancien fichier et renomme la copie locale (`renameCircuitCopies`). Un nom tapé à la main n'est jamais touché. Fin du « crayon → Éditer → Terminer » (20/10/2026).
+
 - ITINÉRAIRE : UNE SEULE ENTRÉE, PLUS DE BARRE DU BAS (v3.7.536). PR B du panneau unique, maquette validée par Stefan le 13/11/2026, choix complémentaires validés le 14/11.
   - « Éditer l'itinéraire » devient « Itinéraire » : il ouvre le panneau des variantes, qui recalcule Direct et Chemins en passant par les points enregistrés. Une ligne « Enregistré : » rappelle variante, force, points et distance ; tant que rien ne change (variante, réglages, points, drapeaux), « Rien à enregistrer » et « Fermer » : le tracé enregistré reste tel quel.
   - La barre « Édition du tracé » et son mode (`circuit-focus.js`) sont retirés. Le pointillé des passages en ligne droite passe dans `route-fail-overlay.js` ; `style/circuit-focus.css` devient `circuit-trace.css` (boutons, points de passage, types de voie).

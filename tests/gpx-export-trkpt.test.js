@@ -20,6 +20,7 @@ vi.mock('../src/utils.js', () => ({
     downloadFile: vi.fn(),
     escapeXml: (s) => (s == null ? '' : String(s)),
     generateHWID: vi.fn(),
+    getPoiName: (f) => f?.properties?.Nom || '',
     // Reproduit getAccessPoint : overlay userData (prime) + validation [lon,lat].
     getAccessPoint: (f) => {
         const u = f?.properties?.userData?.accessPoint;
@@ -30,6 +31,7 @@ vi.mock('../src/utils.js', () => ({
 vi.mock('../src/map.js', () => ({ updatePolylines: vi.fn() }));
 
 import { generateGPXString } from '../src/gpx.js';
+import { gpxStepsOf, parseGpxSteps, stepsFingerprint } from '../src/gpx-steps.js';
 
 // Signature Heripia : ajoutée au <trk><desc> (lu par Wikiloc), jamais stockée
 // dans la description du circuit (14/09/2026).
@@ -144,5 +146,19 @@ describe('generateGPXString — Cas B : point d\'accès (accessPoint) comme ancr
             [11.3, 33.3],   // fallback (non numérique)
             [11.45, 33.42], // accessPoint valide
         ]);
+    });
+});
+
+// Les étapes écrites se relisent à l'identique : c'est ce que compare le Centre
+// de contrôle pour republier un GPX qu'une fiche corrigée a périmé (17/11/2026).
+describe('generateGPXString — <wpt> relus par parseGpxSteps', () => {
+    it('même empreinte que les étapes des fiches', () => {
+        const features = [
+            { properties: { HW_ID: 'A', Nom: 'Mosquée A', info_gpx: 'Coupole blanche', Source: 'https://a.example' }, geometry: { coordinates: [10.85, 33.87] } },
+            { properties: { HW_ID: 'B', Nom: 'Mosquée B', userData: { info_gpx: 'Minaret' } }, geometry: { coordinates: [10.9, 33.8] } },
+        ];
+        const gpx = generateGPXString(features, 'HW-1', 'Circuit', '', [[33.87, 10.85], [33.8, 10.9]]);
+        expect(stepsFingerprint(parseGpxSteps(gpx))).toBe(stepsFingerprint(gpxStepsOf(features)));
+        expect(parseGpxSteps(gpx).map(s => s.link)).toEqual(['https://a.example', '']);
     });
 });

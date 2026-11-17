@@ -18,6 +18,7 @@ vi.mock('../src/state.js', () => {
 vi.mock('../src/circuit-deletion-state.js', () => ({ setOfficialCircuitDeleted: vi.fn(), isOfficialCircuitDeleted: vi.fn(() => false) }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID,
+    getPoiName: (f) => f?.properties?.Nom || '',
     getRealDistance: () => h.realDistance,
     // Dégel de Zone : buildCircuitIndexEntry lit la zone du 1er POI via getDerivedZone.
     // En test (zones non chargées) il retombe sur la valeur stockée (overlay-aware).
@@ -52,6 +53,7 @@ vi.mock('../src/admin-control-ui.js', () => ({ openControlCenterModal: vi.fn(), 
 
 import { buildCircuitIndexEntry } from '../src/admin-control-center.js';
 import { trackFingerprint } from '../src/track-fingerprint.js';
+import { gpxStepsOf, stepsFingerprint } from '../src/gpx-steps.js';
 
 describe('buildCircuitIndexEntry — format index circuit', () => {
     beforeEach(() => { h.realDistance = 7200; });
@@ -71,6 +73,16 @@ describe('buildCircuitIndexEntry — format index circuit', () => {
         expect(e.poiIds).toEqual(['p1', 'p2']);
         // Depuis le 14/09/2026 : la description de l'auteur (plus la constante).
         expect(e.description).toBe('desc perso');
+    });
+
+    it("porte l'empreinte des étapes écrites dans le GPX (stepsHash, 17/11/2026)", () => {
+        const features = [
+            { properties: { HW_ID: 'p1', Nom: 'Mosquée A', info_gpx: 'x' }, geometry: { coordinates: [10.1, 33.8] } },
+            { properties: { HW_ID: 'p2', Nom: 'Mosquée B' }, geometry: { coordinates: [10.2, 33.9] } },
+        ];
+        const e = buildCircuitIndexEntry({ id: 'HW-S', name: 'C', realTrack: [[1, 2]], poiIds: ['p1', 'p2'] }, features, 'djerba');
+        expect(e.stepsHash).toBe(stepsFingerprint(gpxStepsOf(features)));
+        expect(buildCircuitIndexEntry({ id: 'HW-S', name: 'C', realTrack: [[1, 2]], poiIds: [] }, [], 'djerba')).not.toHaveProperty('stepsHash');
     });
 
     it("porte l'empreinte du tracé publié (trackHash), comparée par le diff", () => {
