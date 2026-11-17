@@ -6,6 +6,9 @@
 
 ---
 
+- SAUVEGARDE : LES LIEUX CRÉÉS SUR LE TÉLÉPHONE SONT SAUVEGARDÉS ET RESTAURÉS (v3.7.542). Constaté par Stefan le 17/11/2026.
+  - `isUserCreatedFeature` (fileManager.js) ne reconnaissait que `HW-PC-` et `auto_` : les lieux créés sur le téléphone (`HW-MOB-`, « Nouveau lieu ») n'entraient ni dans la sauvegarde légère ni dans la restauration. Sa sauvegarde du 17/11 : 2 lieux créés au téléphone, 0 sauvegardé.
+
 - SUIVI MOBILE : TABLEAU DE MARCHE (v3.7.541). Idée de Stefan le 17/11/2026 (inspirée de l'écran d'enregistrement Wikiloc, en plus simple) ; maquette « Tableau de marche », variante A + état hors du tracé validés.
   - Sous le titre du suivi : « 4,3 km faits · reste 7,3 km », une barre de progression et le prochain lieu avec son numéro d'étape (« 4 Église Saint-Nicolas · dans 2,1 km »), distances le long du tracé. Au bout : « Tous les lieux sont passés ».
   - À plus de 50 m du tracé (retour sous 35 m, pas de clignotement) : « Hors du tracé · à 120 m, vers l'est », un pointillé vers le point le plus proche du tracé, progression figée et atténuée.

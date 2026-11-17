@@ -646,3 +646,16 @@ describe('backupFileName', () => {
         expect(backupFileName('mon brouillon/1', false, when)).toBe('Heripia_mon-brouillon-1_legere_2026-11-09_07h05.txt');
     });
 });
+
+// Lieux créés sur le téléphone (HW-MOB-) : sauvegardés et restaurés comme ceux
+// du PC (17/11/2026, ils étaient perdus au transfert téléphone → PC).
+import { isUserCreatedFeature } from '../src/fileManager.js';
+describe('isUserCreatedFeature', () => {
+    it('reconnaît les lieux créés sur PC, sur téléphone et importés', () => {
+        const f = (id) => ({ properties: { HW_ID: id } });
+        expect(isUserCreatedFeature(f('HW-PC-1794000000000'))).toBe(true);
+        expect(isUserCreatedFeature(f('HW-MOB-1794000000000'))).toBe(true);
+        expect(isUserCreatedFeature(f('auto_12'))).toBe(true);
+        expect(isUserCreatedFeature(f('HW-01M616BNAR8FA2THSPYGTF9HF6'))).toBe(false);
+    });
+});
