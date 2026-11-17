@@ -18,7 +18,7 @@ import {
 import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
-import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked } from './utils.js';
+import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked, applyMovedPosition } from './utils.js';
 import { addRejected } from './rejected.js';
 import { savePendingRejected } from './rejected-store.js';
 import { deleteZoneCacheEntry } from './zones.js';
@@ -374,10 +374,7 @@ export async function displayGeoJSON(geoJSON, mapId) {
         // --- GESTION OVERRIDE GEOMETRY (DÉPLACEMENT DE POINT) ---
         // Seulement des nombres : une position locale illisible rendrait le lieu
         // invalide après le tri, et ferait tomber tous les marqueurs.
-        const { lat, lng } = state.userData[pId];
-        if (lat && lng && Number.isFinite(+lat) && Number.isFinite(+lng)) {
-            feature.geometry.coordinates = [+lng, +lat];
-        }
+        applyMovedPosition(feature, state.userData[pId]);
 
         return feature;
     });
