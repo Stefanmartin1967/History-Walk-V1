@@ -782,16 +782,24 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4594862,
-          50.3630564
+          4.459564094362497,
+          50.36276738140881
         ]
       },
       "properties": {
         "Nom du site FR": "Grotte des Sarrasins",
-        "Catégorie": "Monument",
+        "Catégorie": "Curiosité",
         "osm_ref": "node/8119180917",
-        "candidate": true,
         "HW_ID": "HW-01M616BNAR8FA2THSPYGTF9HF6",
+        "Temps_minutes": 0,
+        "Prix_TND": 0,
+        "verified": false,
+        "introuvableCarte": false,
+        "descriptionPublic": false,
+        "osmChecked": true,
+        "mapsChecked": false,
+        "mapsHasPhoto": false,
+        "jalelChecked": false,
         "Zone": "Gerpinnes"
       }
     },
