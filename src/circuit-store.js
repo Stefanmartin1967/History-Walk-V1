@@ -13,7 +13,7 @@
 //
 // Module FEUILLE (state + database) : importable partout sans cycle.
 import { state, setOfficialCircuits, addMyCircuit, updateMyCircuit, removeMyCircuit } from './state.js';
-import { saveCircuit, deleteCircuitById, getAppState, saveAppState } from './database.js';
+import { saveCircuit, deleteCircuitById, getAppState, saveAppState, getAllCircuitsForMap } from './database.js';
 
 /**
  * Écrit un circuit en IndexedDB PUIS le pose en mémoire, à sa place unique.
@@ -112,6 +112,26 @@ export async function revertCircuitToPublished(publishedEntry) {
     const next = [...officials];
     if (idx > -1) next[idx] = restored; else next.push(restored);
     setOfficialCircuits(next);
+}
+
+/**
+ * Renomme un circuit qu'on vient de PUBLIER sous un nouveau nom (nom automatique
+ * mis à jour au Centre de contrôle, 17/11/2026) : sa copie IndexedDB s'il en a
+ * une — elle prime au démarrage et ramènerait l'ancien nom — et son entrée en
+ * mémoire. Un officiel sans copie locale n'en reçoit pas : on n'écrit jamais en
+ * base un circuit simplement consulté (cf. persistCircuit).
+ * @param {string|number} id
+ * @param {string} name
+ * @param {string} [file] fichier GPX publié (`<dest>/<nom>.gpx`), pour l'entrée en mémoire
+ */
+export async function renameCircuitCopies(id, name, file) {
+    const sid = String(id);
+    const copies = await getAllCircuitsForMap(state.currentMapId);
+    const copy = copies.find(c => String(c.id) === sid);
+    if (copy) await saveCircuit({ ...copy, name });
+    const inMemory = [...(state.officialCircuits || []), ...(state.myCircuits || [])]
+        .find(c => String(c.id) === sid);
+    if (inMemory) placeCircuitInState({ ...inMemory, name, ...(file ? { file } : {}) });
 }
 
 // Copie IndexedDB + présence dans myCircuits + brouillon qui vise ce circuit.

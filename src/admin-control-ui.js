@@ -1642,9 +1642,9 @@ function renderItemGroup(title, items, kind, opts) {
                     ${showEdit ? `<button class="cc-diff-btn cc-diff-btn--primary" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
                         <i data-lucide="edit-3"></i> Réviser
                     </button>` : ''}
-                    <button class="cc-diff-btn cc-diff-btn--danger" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
+                    ${item.fromSteps ? '' : `<button class="cc-diff-btn cc-diff-btn--danger" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
                         <i data-lucide="${refuseIcon}"></i> ${refuseLabel}
-                    </button>
+                    </button>`}
                 </div>
             </div>
         `;
@@ -1672,7 +1672,12 @@ function renderItemGroup(title, items, kind, opts) {
                     <div class="cc-diff-new">${c.new !== undefined ? escapeXml(c.new) : '—'}</div>
                 </div>
             `).join('');
-            bodyHtml = `<div class="cc-diff-body">${rows}</div>`;
+            // Circuit qui ressort seulement parce que des fiches ont changé depuis
+            // sa publication (17/11/2026) : rien d'autre à faire que republier.
+            const stepsNote = item.fromSteps
+                ? `<div class="cc-diff-note cc-diff-note--new"><i data-lucide="info"></i> Des fiches de ce circuit ont changé depuis sa publication : republier met son GPX à jour.</div>`
+                : '';
+            bodyHtml = `<div class="cc-diff-body">${rows}${stepsNote}</div>`;
         }
 
         const photoGrid = opts.showPhotoGrid ? renderPendingPhotoGrid(item) : '';

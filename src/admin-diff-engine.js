@@ -7,11 +7,15 @@ import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
 import { publishedRouting, routingLabel } from './circuit-routing.js';
 import { publishedWaypoints, sameWaypoints, waypointCount } from './circuit-waypoints.js';
-import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
+import { findCircuitWithSameName, normalizeCircuitName, takenCircuitNames, uniqueAutoCircuitName } from './circuit-name.js';
 import { countFramed } from './photo-focus.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { pendingRejectedCount } from './rejected.js';
 import { trackFingerprint, fingerprintPointCount, publishedTrackFingerprint, rememberPublishedTrack, parseGpxTrack } from './track-fingerprint.js';
+import {
+    gpxStepsOf, parseGpxSteps, stepsFingerprint, describeStepChanges, publishedStepsFingerprint,
+    autoCircuitBaseName, isAutoCircuitName,
+} from './gpx-steps.js';
 
 // --- MOTEUR DE DIFFÉRENCE (DIFF ENGINE) ---
 // Ce fichier concentre exclusivement la logique complexe de comparaison
@@ -130,19 +134,116 @@ function noteNameClash(changes, local, localCircuits, remoteCircuits) {
 async function publishedFingerprintFor(remote) {
     const known = publishedTrackFingerprint(remote.id) || remote.trackHash;
     if (known) return known;
-    if (!remote.file) return null;
-    try {
-        const path = `public/circuits/${String(remote.file).split('/').map(encodeURIComponent).join('/')}`;
-        const resp = await fetchRepoFile(path);
-        if (!resp.ok) return null;
-        const coords = parseGpxTrack(await resp.text());
-        rememberPublishedTrack(remote.id, coords);
-        return trackFingerprint(coords);
-    } catch (e) {
-        // GPX illisible : pas de comparaison plutôt qu'un faux « modifié ».
-        console.warn('[Diff] GPX publié illisible :', remote.file, e);
-        return null;
+    const gpx = await readPublishedGpx(remote);
+    if (!gpx || gpx.coords.length === 0) return null;
+    rememberPublishedTrack(remote.id, gpx.coords);
+    return trackFingerprint(gpx.coords);
+}
+
+// Lignes produites par checkPublishedSteps (fiches corrigées depuis la publication).
+const STEP_CHANGE_KEYS = new Set(['Étape renommée', 'Étapes du GPX']);
+
+// GPX publiés lus pendant la session (tracé + étapes), par circuit et fichier.
+// Une lecture suffit : le contenu ne change que par une publication, après
+// laquelle on se fie aux empreintes de notre propre écriture. Un échec n'est
+// pas retenu (on relira au prochain calcul).
+const publishedGpx = new Map();
+
+async function readPublishedGpx(remote) {
+    if (!remote || !remote.file) return null;
+    const key = `${remote.id}|${remote.file}`;
+    if (!publishedGpx.has(key)) {
+        publishedGpx.set(key, (async () => {
+            try {
+                const path = `public/circuits/${String(remote.file).split('/').map(encodeURIComponent).join('/')}`;
+                const resp = await fetchRepoFile(path);
+                if (!resp.ok) return null;
+                const text = await resp.text();
+                return { coords: parseGpxTrack(text), steps: parseGpxSteps(text) };
+            } catch (e) {
+                // GPX illisible : pas de comparaison plutôt qu'un faux « modifié ».
+                console.warn('[Diff] GPX publié illisible :', remote.file, e);
+                return null;
+            }
+        })());
     }
+    const gpx = await publishedGpx.get(key);
+    if (!gpx) publishedGpx.delete(key);
+    return gpx;
+}
+
+/**
+ * Tracé du GPX publié d'un circuit de l'index ([[lat, lon], …]) ou null. La
+ * publication s'en sert pour republier un officiel jamais ouvert sur ce poste
+ * (pas de tracé en mémoire) dont seules les étapes ont vieilli.
+ */
+export async function publishedTrackFor(remote) {
+    const gpx = await readPublishedGpx(remote);
+    return gpx && gpx.coords.length > 0 ? gpx.coords : null;
+}
+
+/**
+ * Étapes du GPX publié comparées à celles qu'on écrirait aujourd'hui (nom,
+ * position, info GPX et lien de chaque fiche, gpx-steps.js). Ajoute les lignes
+ * à `changes` et, si le nom du circuit était le nom automatique et que ses
+ * extrémités ont été renommées, une ligne « Nom » : renvoie alors le nouveau nom.
+ *
+ * Pourquoi (17/11/2026) : une fiche corrigée ne changeait ni le nom, ni la
+ * liste des lieux, ni le tracé de ses circuits — leurs GPX n'étaient jamais
+ * republiés (12 sur 24 périmés à Djerba). Le nom du circuit restait aussi
+ * l'ancien (« un pansement, pas une vraie méthode », Stefan, 20/10/2026).
+ * @returns {Promise<string|null>} nouveau nom proposé, ou null
+ */
+async function checkPublishedSteps(local, remote, allCircuits, changes) {
+    const ids = local.poiIds || [];
+    if (ids.length === 0) return null;
+    const features = ids.map(pid => state.loadedFeatures.find(f => getPoiId(f) === pid));
+    if (features.some(f => !f)) return null; // fiche introuvable : rien à comparer
+    const steps = gpxStepsOf(features);
+    const localFp = stepsFingerprint(steps);
+
+    let published = null;
+    let publishedFp = publishedStepsFingerprint(remote.id) || remote.stepsHash || null;
+    if (!publishedFp) {
+        const gpx = await readPublishedGpx(remote);
+        if (!gpx || gpx.steps.length === 0) return null;
+        published = gpx.steps;
+        publishedFp = stepsFingerprint(published);
+    }
+    if (localFp === publishedFp) return null;
+    if (!published) published = (await readPublishedGpx(remote))?.steps || null;
+
+    const d = published ? describeStepChanges(published, steps) : null;
+    if (!d) {
+        changes.push({ key: 'Étapes du GPX', old: 'GPX publié', new: 'à mettre à jour' });
+    } else {
+        d.renamed.forEach(r => changes.push({ key: 'Étape renommée', old: r.from, new: r.to }));
+        if (d.countChanged) {
+            changes.push({ key: 'Étapes du GPX', old: `${published.length} étapes`, new: `${steps.length} étapes` });
+        }
+        if (d.others > 0) {
+            changes.push({
+                key: 'Étapes du GPX', old: 'GPX publié',
+                new: `${d.others > 1 ? `${d.others} étapes` : '1 étape'} : position, info GPX ou lien`,
+            });
+        }
+        if (!d.renamed.length && !d.countChanged && !d.others) {
+            changes.push({ key: 'Étapes du GPX', old: 'GPX publié', new: 'à mettre à jour' });
+        }
+    }
+
+    // Nom automatique : seulement si le circuit porte encore, tel quel, le nom
+    // calculé avec les extrémités PUBLIÉES. Un nom tapé à la main, ou déjà
+    // changé sur ce poste, n'est jamais touché.
+    if (!published || published.length < 2 || steps.length < 2 || local.name !== remote.name) return null;
+    const isLoop = String(ids[0]) === String(ids[ids.length - 1]);
+    const first = published[0].name, last = published[published.length - 1].name;
+    if (!isAutoCircuitName(remote.name, first, last, isLoop)) return null;
+    const base = autoCircuitBaseName(steps[0].name, steps[steps.length - 1].name, isLoop);
+    const proposed = uniqueAutoCircuitName(base, steps.map(s => s.name), takenCircuitNames(allCircuits, local.id));
+    if (proposed === remote.name) return null;
+    changes.push({ key: 'Nom', old: remote.name, new: proposed });
+    return proposed;
 }
 
 /**
@@ -421,13 +522,34 @@ export async function prepareDiffData(adminDraft) {
         : null;
 
     // 1. Nouveaux & Modifiés
+    // Noms déjà pris (locaux et publiés), pour un nom automatique proposé.
+    const namedCircuits = [...localCircuits, ...remoteCircuits];
+    // Étapes publiées à lire dans le GPX (index sans `stepsHash`) : lues en
+    // parallèle d'abord, la boucle les trouve ensuite en mémoire.
+    await Promise.all(remoteCircuits
+        .filter(r => !r.stepsHash && !publishedStepsFingerprint(r.id))
+        .map(r => readPublishedGpx(r)));
+
     for (const local of localCircuits) {
         // --- FILTRE STRICT : PAS DE PUBLICATION SANS TRACE RÉELLE NI POUR LES SUPPRIMÉS ---
         if (local.isDeleted) continue; // Ignorer la corbeille locale
-        if (!local.realTrack || local.realTrack.length === 0) continue; // Ignorer les brouillons orthodromiques
 
         // On normalise l'ID (parfois string vs number)
         const remote = remoteCircuits.find(r => String(r.id) === String(local.id));
+
+        if (!local.realTrack || local.realTrack.length === 0) {
+            // Pas de tracé en mémoire : brouillon à vol d'oiseau (jamais publié),
+            // ou officiel jamais ouvert sur ce poste. Pour ce dernier, seules
+            // ses étapes peuvent avoir vieilli (fiches corrigées) : on les
+            // compare, et la publication reprendra le tracé du GPX publié.
+            if (!remote) continue;
+            const changes = [];
+            const renameTo = await checkPublishedSteps(local, remote, namedCircuits, changes);
+            if (changes.length > 0) {
+                diffData.circuits.push({ id: local.id, name: local.name, changes, renameTo: renameTo || undefined, fromSteps: true });
+            }
+            continue;
+        }
 
         if (!remote) {
             // Copie locale d'un OFFICIEL absente de l'index : ce n'est jamais un
@@ -479,12 +601,16 @@ export async function prepareDiffData(adminDraft) {
             const localIds = (local.poiIds || []).join(',');
             const remoteIds = (remote.poiIds || []).join(',');
 
+            let renameTo = null;
             if (localIds !== remoteIds) {
                 changes.push({
                     key: 'Étapes',
                     old: `${(remote.poiIds || []).length} étapes`,
                     new: `${(local.poiIds || []).length} étapes`
                 });
+            } else {
+                // Mêmes lieux : leurs fiches ont-elles changé depuis le GPX publié ?
+                renameTo = await checkPublishedSteps(local, remote, namedCircuits, changes);
             }
 
             // Tracé : comparé par EMPREINTE à celui du GPX publié. L'index ne
@@ -542,11 +668,15 @@ export async function prepareDiffData(adminDraft) {
             }
 
             if (changes.length > 0) {
-                noteNameClash(changes, local, localCircuits, remoteCircuits);
+                if (!renameTo) noteNameClash(changes, local, localCircuits, remoteCircuits);
                 diffData.circuits.push({
                     id: local.id,
                     name: local.name,
-                    changes: changes
+                    changes: changes,
+                    renameTo: renameTo || undefined,
+                    // Seulement des fiches corrigées depuis la publication : rien
+                    // de local à annuler (admin-control-ui le dit sur la carte).
+                    fromSteps: changes.every(ch => STEP_CHANGE_KEYS.has(ch.key) || (renameTo && ch.key === 'Nom')) || undefined,
                 });
             }
         }

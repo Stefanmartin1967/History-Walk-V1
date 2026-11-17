@@ -4,9 +4,10 @@ import { getAllCircuits, publishedAscend } from './circuit-lookup.js';
 import { publishedRouting } from './circuit-routing.js';
 import { publishedWaypoints } from './circuit-waypoints.js';
 import { findCircuitWithSameName, normalizeCircuitName } from './circuit-name.js';
-import { forgetDeletedCircuit, revertCircuitToPublished } from './circuit-store.js';
+import { forgetDeletedCircuit, revertCircuitToPublished, renameCircuitCopies } from './circuit-store.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
+import { gpxStepsOf, stepsFingerprint, rememberPublishedSteps } from './gpx-steps.js';
 import { getPoiId, getPoiProp, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
@@ -25,7 +26,7 @@ import { pendingRejectedCount } from './rejected.js';
 import { pushRejected } from './rejected-store.js';
 
 // Nouveaux imports suite au découpage
-import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, purgeOrphanPendingCircuits, diffData } from './admin-diff-engine.js';
+import { reconcileLocalChanges, prepareDiffData, purgeOrphanPendingPois, purgeOrphanPendingCircuits, diffData, publishedTrackFor } from './admin-diff-engine.js';
 import { openControlCenterModal, renderTab, closeCCModal, syncFooterAndNavCount } from './admin-control-ui.js';
 
 /**
@@ -70,6 +71,10 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
         // Empreinte du tracé publié : le diff y compare le tracé local, pour
         // qu'une retouche du seul tracé soit publiable et annulable.
         trackHash: trackFingerprint(circuit.realTrack) || undefined,
+        // Empreinte des étapes écrites dans le GPX (nom, position, info GPX et
+        // lien de chaque fiche, 17/11/2026) : le diff y compare les fiches
+        // d'aujourd'hui, pour republier un GPX qu'une fiche corrigée a périmé.
+        stepsHash: stepsFingerprint(gpxStepsOf(features)) || undefined,
         // Dénivelé positif (D+, mètres) calculé par BRouter avec ce tracé. Absent
         // de l'index jusqu'au 13/11/2026 : seul le PC qui avait tracé le voyait
         // (copie locale), le mobile et les visiteurs jamais.
@@ -82,6 +87,7 @@ export function buildCircuitIndexEntry(circuit, features, mapId) {
     };
     if (!entry.zone) delete entry.zone;
     if (!entry.trackHash) delete entry.trackHash;
+    if (!entry.stepsHash) delete entry.stepsHash;
     if (entry.ascend === undefined) delete entry.ascend;
     if (entry.routing === undefined) delete entry.routing;
     if (entry.waypoints === undefined) delete entry.waypoints;
@@ -967,27 +973,37 @@ async function publishChanges() {
                         continue;
                     }
 
-                    // Création / modification : nécessite un realTrack (garanti par le diff engine).
+                    // Création / modification : nécessite un tracé. Celui du circuit en
+                    // mémoire ; pour un officiel jamais ouvert sur ce poste dont seules
+                    // les étapes ont vieilli (fiches corrigées), celui du GPX publié.
                     const local = allLocal.find(x => String(x.id) === String(c.id));
-                    if (!local || !local.realTrack || local.realTrack.length === 0) continue;
+                    if (!local) continue;
+                    const oldEntry = index.find(e => String(e.id) === String(local.id));
+                    const isNew = !oldEntry;
+                    const track = (local.realTrack && local.realTrack.length > 0)
+                        ? local.realTrack
+                        : (oldEntry ? await publishedTrackFor(oldEntry) : null);
+                    if (!track || track.length === 0) continue;
 
                     const features = (local.poiIds || [])
                         .map(pid => state.loadedFeatures.find(f => getPoiId(f) === pid))
                         .filter(Boolean);
 
-                    const oldEntry = index.find(e => String(e.id) === String(local.id));
-                    const isNew = !oldEntry;
+                    // Nom automatique dont une extrémité a été renommée : le diff
+                    // propose le nouveau (« Nom » dans la liste) ; on le prend s'il
+                    // porte encore le nom publié.
+                    const name = (c.renameTo && oldEntry && local.name === oldEntry.name) ? c.renameTo : local.name;
 
                     // Nom = fichier GPX : refusé s'il est déjà pris par un autre circuit
                     // (index publié ou circuit local), casse et accents ignorés. Sans ce
                     // contrôle, le second écrasait le GPX du premier (12/11/2026, boucles
                     // de Rym Beach). Le circuit reste en attente, le reste est publié.
-                    const newFile = `${mapId}/${local.name}.gpx`;
+                    const newFile = `${mapId}/${name}.gpx`;
                     const clash = index.find(e => String(e.id) !== String(local.id)
                             && normalizeCircuitName(e.file) === normalizeCircuitName(newFile))
-                        || findCircuitWithSameName(local.name, allLocal, local.id);
+                        || findCircuitWithSameName(name, allLocal, local.id);
                     if (clash) {
-                        blockedByName.push(local.name);
+                        blockedByName.push(name);
                         continue;
                     }
                     const cid = String(local.id);
@@ -997,13 +1013,15 @@ async function publishChanges() {
                     }
 
                     // 1. Commit du GPX (nom de fichier = nom du circuit).
-                    const gpxStr = generateGPXString(features, local.id, local.name, local.description || '', local.realTrack);
-                    const gpxFile = new File([gpxStr], `${local.name}.gpx`, { type: 'application/gpx+xml' });
-                    const gpxPath = `public/circuits/${mapId}/${local.name}.gpx`;
-                    await uploadFileToGitHub(gpxFile, token, GITHUB_OWNER, GITHUB_REPO, gpxPath, `feat(circuit): ${isNew ? 'Ajout' : 'MAJ'} "${local.name}"`);
-                    // Ce tracé EST désormais le publié : on se fie à notre écriture
-                    // plutôt qu'à une relecture du GPX (en retard de quelques secondes).
-                    rememberPublishedTrack(local.id, local.realTrack);
+                    const gpxStr = generateGPXString(features, local.id, name, local.description || '', track);
+                    const gpxFile = new File([gpxStr], `${name}.gpx`, { type: 'application/gpx+xml' });
+                    const gpxPath = `public/circuits/${mapId}/${name}.gpx`;
+                    await uploadFileToGitHub(gpxFile, token, GITHUB_OWNER, GITHUB_REPO, gpxPath, `feat(circuit): ${isNew ? 'Ajout' : 'MAJ'} "${name}"`);
+                    // Ce tracé et ces étapes SONT désormais les publiés : on se fie à
+                    // notre écriture plutôt qu'à une relecture du GPX (en retard de
+                    // quelques secondes).
+                    rememberPublishedTrack(local.id, track);
+                    rememberPublishedSteps(local.id, gpxStepsOf(features));
 
                     // 2. Renommage → supprimer l'ancien fichier GPX (sinon doublon dans l'index régénéré).
                     //    SAUF s'il sert encore à un autre circuit de l'index : le 12/11/2026,
@@ -1017,11 +1035,18 @@ async function publishChanges() {
                     }
 
                     // 3. Upsert de l'entrée d'index (préserve `transport` existant).
-                    const newEntry = buildCircuitIndexEntry(local, features, mapId);
+                    const newEntry = buildCircuitIndexEntry({ ...local, name, realTrack: track }, features, mapId);
                     if (oldEntry?.transport) newEntry.transport = oldEntry.transport;
                     const i = index.findIndex(e => String(e.id) === String(local.id));
                     if (i > -1) index[i] = newEntry; else index.push(newEntry);
                     indexDirty = true;
+
+                    // Nouveau nom publié : le circuit le porte aussi sur ce poste (sinon
+                    // sa copie locale, qui prime, ressortirait avec l'ancien nom).
+                    if (name !== local.name) {
+                        try { await renameCircuitCopies(local.id, name, newFile); }
+                        catch (e) { console.warn('[CC] renommage local échec:', local.id, e); }
+                    }
                 }
 
                 if (blockedByName.length > 0) {

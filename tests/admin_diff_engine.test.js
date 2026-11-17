@@ -60,6 +60,7 @@ import {
     diffData
 } from '../src/admin-diff-engine.js';
 import { trackFingerprint, rememberPublishedTrack } from '../src/track-fingerprint.js';
+import { gpxStepsOf, stepsFingerprint } from '../src/gpx-steps.js';
 
 // ----------------------------------------------------------------------------
 // Helper : mock fetch par défaut (geojson vide, circuits vides, tested vide).
@@ -971,6 +972,78 @@ describe('Admin Diff Engine', () => {
                 expect((await run())[0].changes).toEqual([
                     { key: 'Variante', old: 'Chemins · force 1', new: 'Chemins · force 3 · éviter de repasser (poids 1000)' },
                 ]);
+            });
+        });
+
+        // Étapes du GPX publié (17/11/2026) : une fiche corrigée ne changeait ni
+        // le nom, ni la liste des lieux, ni le tracé — le GPX restait périmé.
+        describe('étapes du GPX publié', () => {
+            const feat = (id, nom, lon = 10, lat = 33) => ({ properties: { HW_ID: id, 'Nom du site FR': nom }, geometry: { coordinates: [lon, lat] } });
+            const wpts = (names) => names.map(([n, lon = 10, lat = 33]) => `<wpt lat="${lat}" lon="${lon}"><name>${n}</name><desc></desc></wpt>`).join('');
+            const gpxWith = (names) => `<gpx>${wpts(names)}<trk><trkseg>${makeTrack(5).map(([la, lo]) => `<trkpt lat="${la}" lon="${lo}"/>`).join('')}</trkseg></trk></gpx>`;
+
+            it('officiel jamais ouvert : renommage d’une étape et du nom automatique', async () => {
+                state.loadedFeatures = [feat('k1', 'Mosquée Kharroubi'), feat('k2', 'Mosquée Om Turkiya', 10.1)];
+                const entry = { id: 'st1', name: 'Circuit de Mosquée Kharoubi à Mosquée Turkiya', file: 'djerba/st1.gpx', poiIds: ['k1', 'k2'] };
+                state.officialCircuits = [{ ...entry, isOfficial: true }];
+                withRemote(entry, gpxWith([['Mosquée Kharoubi'], ['Mosquée Turkiya', 10.1]]));
+
+                const r = await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+
+                const c = r.circuits.find(x => x.id === 'st1');
+                expect(c.changes).toEqual([
+                    { key: 'Étape renommée', old: 'Mosquée Kharoubi', new: 'Mosquée Kharroubi' },
+                    { key: 'Étape renommée', old: 'Mosquée Turkiya', new: 'Mosquée Om Turkiya' },
+                    { key: 'Nom', old: entry.name, new: 'Circuit de Mosquée Kharroubi à Mosquée Om Turkiya' },
+                ]);
+                expect(c.renameTo).toBe('Circuit de Mosquée Kharroubi à Mosquée Om Turkiya');
+            });
+
+            it('étape du milieu renommée : le nom du circuit ne bouge pas', async () => {
+                state.loadedFeatures = [feat('m1', 'A'), feat('m2', 'Mosquée Takwa (Bardaoui)', 10.05), feat('m3', 'B', 10.1)];
+                const entry = { id: 'st2', name: 'Circuit de A à B', file: 'djerba/st2.gpx', poiIds: ['m1', 'm2', 'm3'] };
+                state.officialCircuits = [{ ...entry, isOfficial: true }];
+                withRemote(entry, gpxWith([['A'], ['Mosquée Taqwa', 10.05], ['B', 10.1]]));
+
+                const c = (await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits.find(x => x.id === 'st2');
+                expect(c.changes).toEqual([{ key: 'Étape renommée', old: 'Mosquée Taqwa', new: 'Mosquée Takwa (Bardaoui)' }]);
+                expect(c.renameTo).toBeUndefined();
+            });
+
+            it('nom tapé à la main : jamais renommé', async () => {
+                state.loadedFeatures = [feat('h1', 'A2'), feat('h2', 'B', 10.1)];
+                const entry = { id: 'st3', name: 'Les mosquées du nord', file: 'djerba/st3.gpx', poiIds: ['h1', 'h2'] };
+                state.officialCircuits = [{ ...entry, isOfficial: true }];
+                withRemote(entry, gpxWith([['A'], ['B', 10.1]]));
+
+                const c = (await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits.find(x => x.id === 'st3');
+                expect(c.changes.map(x => x.key)).toEqual(['Étape renommée']);
+                expect(c.renameTo).toBeUndefined();
+            });
+
+            it('fiche déplacée : position signalée', async () => {
+                state.loadedFeatures = [feat('p1x', 'A', 10.2), feat('p2x', 'B', 10.1)];
+                const entry = { id: 'st4', name: 'Circuit de A à B', file: 'djerba/st4.gpx', poiIds: ['p1x', 'p2x'] };
+                state.officialCircuits = [{ ...entry, isOfficial: true }];
+                withRemote(entry, gpxWith([['A'], ['B', 10.1]]));
+
+                const c = (await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits.find(x => x.id === 'st4');
+                expect(c.changes).toEqual([{ key: 'Étapes du GPX', old: 'GPX publié', new: '1 étape : position, info GPX ou lien' }]);
+            });
+
+            it('GPX à jour, ou empreinte de l’index identique : rien à publier', async () => {
+                state.loadedFeatures = [feat('o1', 'A'), feat('o2', 'B', 10.1)];
+                const entry = { id: 'st5', name: 'Circuit de A à B', file: 'djerba/st5.gpx', poiIds: ['o1', 'o2'] };
+                state.officialCircuits = [{ ...entry, isOfficial: true }];
+                withRemote(entry, gpxWith([['A'], ['B', 10.1]]));
+                expect((await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits).toEqual([]);
+
+                // L'index porte l'empreinte : le GPX n'est même pas lu.
+                const steps = gpxStepsOf(state.loadedFeatures);
+                const indexed = { ...entry, id: 'st6', file: 'djerba/st6.gpx', stepsHash: stepsFingerprint(steps) };
+                state.officialCircuits = [{ ...indexed, isOfficial: true }];
+                withRemote(indexed, null);
+                expect((await prepareDiffData({ pendingPois: {}, pendingCircuits: {} })).circuits).toEqual([]);
             });
         });
 
