@@ -6,6 +6,10 @@
 
 ---
 
+- LIEU DÉPLACÉ : À SA NOUVELLE PLACE SUR LE TÉLÉPHONE ET DANS LA PUBLICATION (v3.7.543). Constaté le 17/11/2026 sur la « Grotte des Sarrasins » (Charleroi) : publiée à son ancien point OSM, la nouvelle position en propriétés `lat`/`lng`, où rien ne la lit.
+  - Démarrage mobile (app-startup.js) : le déplacement (`userData.lat/lng`) n'était pas rejoué sur la géométrie, contrairement au PC (data.js). Les deux passent maintenant par `applyMovedPosition` (utils.js).
+  - Publication (admin-geojson.js) : une position déplacée va dans la géométrie publiée ; `lat`/`lng` ne sont plus jamais écrits en propriétés (ceux déjà publiés sont remis dans la géométrie à la prochaine publication).
+
 - SAUVEGARDE : LES LIEUX CRÉÉS SUR LE TÉLÉPHONE SONT SAUVEGARDÉS ET RESTAURÉS (v3.7.542). Constaté par Stefan le 17/11/2026.
   - `isUserCreatedFeature` (fileManager.js) ne reconnaissait que `HW-PC-` et `auto_` : les lieux créés sur le téléphone (`HW-MOB-`, « Nouveau lieu ») n'entraient ni dans la sauvegarde légère ni dans la restauration. Sa sauvegarde du 17/11 : 2 lieux créés au téléphone, 0 sauvegardé.
 

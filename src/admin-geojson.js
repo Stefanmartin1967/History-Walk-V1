@@ -4,7 +4,7 @@
 // Aucune dépendance DOM / UI : pure transformation de données.
 
 import { state } from './state.js';
-import { getPoiId, isCandidate, deriveZoneSafe } from './utils.js';
+import { getPoiId, isCandidate, deriveZoneSafe, movedPosition } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 
 // `keepCandidates` : faut-il laisser passer les candidats Scout non curés
@@ -46,13 +46,24 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
                 delete properties.userData;
             }
 
+            // Position déplacée : elle va dans la GÉOMÉTRIE, jamais en propriétés.
+            // Avant le 17/11/2026, la géométrie publiée était celle en mémoire
+            // (restée d'origine sur le téléphone) et lat/lng partaient à côté, en
+            // propriétés, où rien ne les lit : la « Grotte des Sarrasins » était
+            // publiée à son ancienne place.
+            let geometry = f.geometry;
+            const moved = movedPosition(properties);
+            if (moved) geometry = { ...f.geometry, type: 'Point', coordinates: moved };
+            delete properties.lat;
+            delete properties.lng;
+
             // Dégel de Zone : on cuit une Zone FRAÎCHE (dérivée des coordonnées sur le
             // jeu de quartiers courant) dans le geojson public, pour qu'un visiteur
             // dont le fetch des quartiers échoue garde quand même une Zone correcte
             // (filet de robustesse). deriveZoneSafe NE recalcule PAS si zonesData est
             // vide → on conserve alors la valeur déjà aplatie (jamais « Hors zone »
             // fabriqué en masse). Le visiteur, lui, re-dérive de toute façon à la volée.
-            const coords = f.geometry && f.geometry.coordinates; // [lng, lat]
+            const coords = geometry && geometry.coordinates; // [lng, lat]
             if (Array.isArray(coords) && coords.length >= 2) {
                 properties.Zone = deriveZoneSafe(coords[1], coords[0], properties.Zone);
             }
@@ -95,7 +106,7 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
 
             return {
                 type: "Feature",
-                geometry: f.geometry,
+                geometry,
                 properties: properties
             };
         });

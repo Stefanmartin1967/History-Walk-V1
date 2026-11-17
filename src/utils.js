@@ -748,6 +748,31 @@ export function linkifyText(text) {
  * seulement. Défaut volontairement défensif — un nouveau dump Scout reste
  * invisible tant qu'il n'a pas été explicitement publié.
  */
+/**
+ * Position déplacée d'un lieu (userData.lat/lng, posée par updatePoiCoordinates)
+ * → [lng, lat] numériques, ou null s'il n'y en a pas de lisible. Seulement des
+ * nombres : une position illisible rendrait le lieu invalide.
+ */
+export function movedPosition(ud) {
+    if (!ud || ud.lat == null || ud.lng == null || ud.lat === '' || ud.lng === '') return null;
+    const lat = +ud.lat, lng = +ud.lng;
+    if (!Number.isFinite(lat) || !Number.isFinite(lng) || (lat === 0 && lng === 0)) return null;
+    return [lng, lat];
+}
+
+/**
+ * Rejoue au démarrage le déplacement d'un lieu sur sa géométrie. Le même pour
+ * le PC (data.js) et le téléphone (app-startup.js) : avant le 17/11/2026, le
+ * démarrage mobile ne le faisait pas, le lieu restait à sa place d'origine sur
+ * le téléphone (« Grotte des Sarrasins », Charleroi).
+ */
+export function applyMovedPosition(feature, ud) {
+    const pos = movedPosition(ud);
+    if (!pos || !feature?.geometry) return false;
+    feature.geometry.coordinates = pos;
+    return true;
+}
+
 export function isDestinationPublished(dest) {
     return dest?.status === 'published';
 }

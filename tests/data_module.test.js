@@ -63,7 +63,8 @@ vi.mock('../src/toast.js', () => ({
 }));
 
 let _hwidCounter = 0;
-vi.mock('../src/utils.js', () => ({
+vi.mock('../src/utils.js', async (importOriginal) => ({
+    applyMovedPosition: (await importOriginal()).applyMovedPosition,
     getPoiId: vi.fn(f => f?.properties?.HW_ID || f?.id),
     getPoiName: vi.fn(f => f?.properties?.name || 'Unknown'),
     generateHWID: vi.fn(() => `HW-${String(++_hwidCounter).padStart(26, '0')}`),

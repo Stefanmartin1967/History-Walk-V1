@@ -22,7 +22,7 @@ import { RAW_BASE, GITHUB_PATHS } from './config.js';
 import { fetchRepoFile, fetchRepoFileFresh, repoFileSha, setLoadedGeojsonSha } from './repo-read.js';
 import { getStoredToken } from './github-sync.js';
 import { fetchDestinationsJson } from './publish-destination.js';
-import { isDestinationPublished } from './utils.js';
+import { isDestinationPublished, applyMovedPosition } from './utils.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -631,6 +631,8 @@ export async function loadAndInitializeMap() {
             const id = getPoiId(feature);
             if (state.userData[id]) {
                 feature.properties.userData = state.userData[id];
+                // Lieu déplacé : à sa nouvelle place, comme au démarrage PC (17/11/2026).
+                applyMovedPosition(feature, state.userData[id]);
             }
         });
 

@@ -22,7 +22,8 @@ vi.mock('../src/state.js', () => {
     return mod;
 });
 
-vi.mock('../src/utils.js', () => ({
+vi.mock('../src/utils.js', async (importOriginal) => ({
+    movedPosition: (await importOriginal()).movedPosition,
     getPoiId: (f) => f.properties.HW_ID || f.id,
     // Réplique de l'overlay userData : userData.candidate prime sur properties.candidate.
     isCandidate: (f) => {
@@ -218,5 +219,30 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         ];
         const ids = generateMasterGeoJSONData(['a']).features.map(f => f.properties.HW_ID);
         expect(ids).toEqual(['b']); // 'a' exclu explicitement, 'c' candidat exclu par défaut
+    });
+
+    // 17/11/2026 : « Grotte des Sarrasins » publiée depuis le téléphone avec sa
+    // géométrie d'origine et lat/lng en propriétés.
+    it('position déplacée : publiée dans la géométrie, pas en propriétés', () => {
+        const f = buildFeature('poi_g', {}, { lat: 50.3630564, lng: 4.4594862 }, [4.4592714, 50.3627415]);
+        state.loadedFeatures = [f];
+        const out = generateMasterGeoJSONData().features[0];
+        expect(out.geometry.coordinates).toEqual([4.4594862, 50.3630564]);
+        expect(out.properties.lat).toBeUndefined();
+        expect(out.properties.lng).toBeUndefined();
+        // la feature en mémoire n'est pas modifiée par la publication
+        expect(f.geometry.coordinates).toEqual([4.4592714, 50.3627415]);
+    });
+
+    it('lat/lng déjà publiés en propriétés (fichier du 17/11) : remis dans la géométrie', () => {
+        state.loadedFeatures = [buildFeature('poi_g', { lat: 50.3630564, lng: 4.4594862 }, null, [4.4592714, 50.3627415])];
+        const out = generateMasterGeoJSONData().features[0];
+        expect(out.geometry.coordinates).toEqual([4.4594862, 50.3630564]);
+        expect(out.properties).not.toHaveProperty('lat');
+    });
+
+    it('sans déplacement : géométrie inchangée', () => {
+        state.loadedFeatures = [buildFeature('poi_x', {}, { notes: '' }, [10, 33])];
+        expect(generateMasterGeoJSONData().features[0].geometry.coordinates).toEqual([10, 33]);
     });
 });
