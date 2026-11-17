@@ -72,12 +72,21 @@ async function attachLocalDraft(exportData, mapId) {
 }
 
 /**
- * Lieu créé par l'utilisateur sur une destination publiée : ajouté à la main
- * (`HW-PC-`) ou importé (`auto_`). Les autres fiches viennent du site.
+ * Préfixes des lieux créés par l'utilisateur : sur PC (`HW-PC-`, richEditor),
+ * sur le téléphone (`HW-MOB-`, mobile-new-place : « Nouveau lieu » du dock ou
+ * du suivi) ou importés (`auto_`). Les autres fiches viennent du site.
+ *
+ * `HW-MOB-` manquait jusqu'au 17/11/2026 : les lieux créés sur le téléphone
+ * n'entraient ni dans la sauvegarde légère ni dans la restauration — un
+ * utilisateur qui transférait son téléphone vers son PC les perdait (constaté
+ * sur la sauvegarde de Stefan : 2 lieux créés au téléphone, 0 sauvegardé).
  */
+const USER_CREATED_PREFIXES = ['HW-PC-', 'HW-MOB-', 'auto_'];
+
+/** Lieu créé par l'utilisateur sur une destination publiée. */
 export function isUserCreatedFeature(f) {
     const id = String(f?.properties?.HW_ID || f?.id || '');
-    return id.startsWith('HW-PC-') || id.startsWith('auto_');
+    return USER_CREATED_PREFIXES.some(p => id.startsWith(p));
 }
 
 /**
@@ -303,9 +312,9 @@ export async function restoreBackup(json) {
         }
 
         // 2. Extraire et Restaurer les Lieux Créés (Custom POIs).
-        // Dest publiée : seuls les POIs créés à la main (HW-PC-) ou importés (auto_).
+        // Dest publiée : seuls les POIs créés à la main (HW-PC-, HW-MOB-) ou importés (auto_).
         // Brouillon LOCAL (Option A) : TOUS ses lieux sont custom — les captures Scout
-        // ont un id HW-ULID (hors du filtre HW-PC-/auto_) ; sans ce cas un brouillon
+        // ont un id HW-ULID (hors du filtre HW-PC-/HW-MOB-/auto_) ; sans ce cas un brouillon
         // restauré perdrait ses lieux.
         const isDraftRestore = !!json.draftDestination;
         if (json.baseGeoJSON && json.baseGeoJSON.features) {
