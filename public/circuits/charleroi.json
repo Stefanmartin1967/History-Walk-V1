@@ -31,6 +31,7 @@
       "HW-01M616BPTAFCEQFANX8N44P62T"
     ],
     "trackHash": "306-8f1c1f92",
+    "stepsHash": "20-c64e1904",
     "ascend": 65,
     "routing": {
       "variant": "direct",
@@ -109,7 +110,7 @@
       "HW-01M6EV6W5QVEX5YRFVH681CNNG"
     ],
     "trackHash": "231-4aea57cf",
-    "stepsHash": "6-7791cffc",
+    "stepsHash": "6-79aa638f",
     "ascend": 73,
     "routing": {
       "variant": "chemins",
