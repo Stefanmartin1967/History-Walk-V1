@@ -294,6 +294,13 @@
     display: grid; place-items: center; font-size: 10.5px; font-weight: var(--weight-bold); flex-shrink: 0;
 }
 .pp-arrow { color: var(--ink-faint); }
+.pp-list li { flex-wrap: wrap; row-gap: 0; }
+/* Longueur et rapport au vol d'oiseau du passage (17/11/2026) */
+.pp-meta { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
+.pp-ratio { color: var(--ink-faint); }
+.pp-ratio.is-forced { color: var(--warn-fg); font-weight: var(--weight-semibold); }
+/* Suivi des calques affichés : seconde ligne, sous les numéros */
+.pp-follow { flex-basis: 100%; padding: 0 0 6px 50px; margin-top: -4px; font-size: var(--font-size-xs); color: var(--ink-soft); }
 .pp-pts { margin-left: auto; font-weight: var(--weight-semibold); color: var(--ink-soft); font-variant-numeric: tabular-nums; }
 .pp-pts.is-none { color: var(--ink-faint); font-weight: var(--weight-medium); }
 .pp-x { width: 32px; height: 32px; border: 0; border-radius: 8px; background: transparent; color: var(--ink-faint); display: grid; place-items: center; cursor: pointer; }
@@ -317,3 +324,14 @@
 .wp-handle .wp-handle-dot:active { cursor: grabbing; }
 /* Le tracé choisi se tire (hors « Poser un point », où il garde le viseur) */
 .cv-route-line.is-strong { cursor: grab; }
+
+/* Morceaux de la variante choisie à plus de 30 m de tout calque affiché
+   (17/11/2026) : surlignés largement SOUS le tracé, sans le masquer. */
+.cv-off-calque {
+    stroke: var(--route-off-calque) !important;
+    stroke-width: 16px !important;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.5 !important;
+    fill: none !important;
+}

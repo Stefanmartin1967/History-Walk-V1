@@ -555,8 +555,9 @@ function openGpxStudio() {
     else window.open('https://gpx.studio/fr/app', '_blank', 'noopener');
 }
 
-// Calques ajoutés, masqués ou retirés : leurs lignes se redessinent.
-const refreshAfterLayers = () => updateTraceBlock();
+// Calques ajoutés, masqués ou retirés : leurs lignes se redessinent (écouteur
+// posé dans initCircuitRoutingUI), et le panneau Itinéraire remesure le suivi.
+const refreshAfterLayers = () => window.dispatchEvent(new CustomEvent('reference-layers:changed'));
 
 function closeMorePop() {
     document.getElementById('more-pop')?.classList.remove('open');
@@ -619,6 +620,6 @@ export function initCircuitRoutingUI() {
         if (isComparing() && (!inCreation() || currentPoiKey() !== compareKey)) cancelRouteCompare();
     });
     window.addEventListener('circuit:way-types', updateTraceBlock); // types de voie arrivés / échec
-    window.addEventListener('reference-layers:changed', updateTraceBlock); // calque ajouté depuis le panneau Itinéraire
+    window.addEventListener('reference-layers:changed', updateTraceBlock); // calque ajouté, masqué ou retiré
     updateTraceBlock();
 }
