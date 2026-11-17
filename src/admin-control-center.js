@@ -1089,6 +1089,12 @@ async function publishChanges() {
                         catch (e) { console.warn('[CC] purge copie locale échec:', deletedId, e); }
                     }
                 }
+
+                // 6. La liste « Mes Circuits » se redessine sur ce qui vient d'être
+                //    publié (nom automatique mis à jour, circuit retiré). Oublié
+                //    jusqu'au 17/11/2026 : le circuit Kharroubi gardait son ancien
+                //    nom dans la liste alors que la mémoire portait déjà le nouveau.
+                if (indexDirty) eventBus.emit('circuit:list-updated');
             } catch (err) {
                 console.warn('[CC] Publication circuits échouée (POI/photos OK):', err);
                 showToast("Circuits non publiés (le reste OK) — réessayez", "warning", 5000);

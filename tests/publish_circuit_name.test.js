@@ -29,6 +29,9 @@ const h = vi.hoisted(() => ({
     setOfficialCircuitDeleted: vi.fn(() => Promise.resolve()),
     store: {},
     showToast: vi.fn(),
+    renameCircuitCopies: vi.fn(() => Promise.resolve()),
+    publishedTrackFor: vi.fn(async () => null),
+    emit: vi.fn(),
 }));
 
 vi.mock('../src/state.js', () => {
@@ -45,7 +48,7 @@ vi.mock('../src/state.js', () => {
     mod.getActiveMapId = () => mod.state.currentMapId || 'djerba';
     return mod;
 });
-vi.mock('../src/events.js', () => ({ eventBus: { on: vi.fn(), emit: vi.fn(), off: vi.fn() } }));
+vi.mock('../src/events.js', () => ({ eventBus: { on: vi.fn(), emit: h.emit, off: vi.fn() } }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
 // Garde-fou « carte à jour » (publish-base.js) : testé à part dans publish_base.test.js.
 vi.mock('../src/publish-base.js', async (importOriginal) => ({
@@ -78,7 +81,7 @@ vi.mock('../src/database.js', () => ({
     clearPendingAdminPhotos: vi.fn(() => Promise.resolve()),
     deletePoiData: vi.fn(() => Promise.resolve()),
 }));
-vi.mock('../src/circuit-store.js', () => ({ forgetDeletedCircuit: h.forgetDeletedCircuit }));
+vi.mock('../src/circuit-store.js', () => ({ forgetDeletedCircuit: h.forgetDeletedCircuit, renameCircuitCopies: h.renameCircuitCopies }));
 vi.mock('../src/circuit-deletion-state.js', () => ({
     setOfficialCircuitDeleted: h.setOfficialCircuitDeleted,
     isOfficialCircuitDeleted: vi.fn(() => false),
@@ -94,6 +97,7 @@ vi.mock('../src/admin-diff-engine.js', () => ({
     purgeOrphanPendingPois: vi.fn(() => []),
     purgeOrphanPendingCircuits: vi.fn(() => []),
     diffData: { pois: [], circuits: [], stats: {}, pendingPhotos: {}, testedChanges: null },
+    publishedTrackFor: h.publishedTrackFor,
 }));
 
 import { publishChanges } from '../src/admin-control-center.js';
@@ -127,6 +131,7 @@ beforeEach(() => {
     diffData.pendingPhotos = {};
     diffData.testedChanges = null;
     h.uploadFileToGitHub.mockImplementation(() => Promise.resolve());
+    h.publishedTrackFor.mockImplementation(async () => null);
 });
 
 describe('publishChanges — nom de circuit = fichier GPX', () => {
@@ -193,5 +198,55 @@ describe('publishChanges — nom de circuit = fichier GPX', () => {
         await publishChanges();
 
         expect(uploadedPaths()).toContain(GPX('Boucle autour de Rym Beach via L'));
+    });
+});
+
+// Nom automatique mis à jour par le Centre de contrôle (17/11/2026, #1114) :
+// une extrémité renommée, le diff propose le nouveau nom (`renameTo`).
+describe('publishChanges — nom automatique proposé par le diff', () => {
+    const OLD = 'Circuit de Mosquée Kharoubi à Mosquée Turkiya';
+    const NEW = 'Circuit de Mosquée Kharroubi à Mosquée Om Turkiya';
+
+    it('publie sous le nouveau nom, retire l’ancien GPX, renomme la copie locale et redessine la liste', async () => {
+        setup({
+            index: [{ id: 'KH', name: OLD, file: `djerba/${OLD}.gpx`, poiIds: ['R', 'L'] }],
+            locals: [{ id: 'KH', name: OLD, poiIds: ['R', 'L'], realTrack: TRACK }],
+            toPublish: ['KH'],
+        });
+        diffData.circuits[0].renameTo = NEW;
+
+        await publishChanges();
+
+        expect(uploadedPaths()).toContain(GPX(NEW));
+        expect(deletedPaths()).toContain(GPX(OLD));
+        expect(h.renameCircuitCopies).toHaveBeenCalledWith('KH', NEW, `djerba/${NEW}.gpx`);
+        expect(h.emit).toHaveBeenCalledWith('circuit:list-updated');
+    });
+
+    it('officiel sans tracé en mémoire : republié avec le tracé du GPX publié', async () => {
+        setup({
+            index: [{ id: 'ST', name: 'Circuit de R à L', file: 'djerba/Circuit de R à L.gpx', poiIds: ['R', 'L'] }],
+            locals: [{ id: 'ST', name: 'Circuit de R à L', poiIds: ['R', 'L'] }],
+            toPublish: ['ST'],
+        });
+        h.publishedTrackFor.mockImplementation(async () => TRACK);
+
+        await publishChanges();
+
+        expect(h.publishedTrackFor).toHaveBeenCalled();
+        expect(uploadedPaths()).toContain(GPX('Circuit de R à L'));
+        expect(h.renameCircuitCopies).not.toHaveBeenCalled();
+    });
+
+    it('ni tracé en mémoire ni GPX publié lisible : rien n’est publié pour ce circuit', async () => {
+        setup({
+            index: [{ id: 'ST2', name: 'Circuit de R à P', file: 'djerba/Circuit de R à P.gpx', poiIds: ['R', 'P'] }],
+            locals: [{ id: 'ST2', name: 'Circuit de R à P', poiIds: ['R', 'P'] }],
+            toPublish: ['ST2'],
+        });
+
+        await publishChanges();
+
+        expect(uploadedPaths().some(p => p.endsWith('.gpx'))).toBe(false);
     });
 });
