@@ -800,6 +800,14 @@ export const GUIDE_MES_CIRCUITS = {
             html: `<p>Ouvrez un circuit qui a un <strong>itinéraire tracé</strong> et touchez
                 <strong>« Suivre »</strong> : Heripia passe en <strong>carte plein écran</strong>
                 avec le tracé et votre position GPS.</p>
+                <p>Sous le titre, le <strong>tableau de marche</strong> dit où vous en êtes :
+                les kilomètres <strong>faits</strong> et ceux qui <strong>restent</strong>, et le
+                <strong>prochain lieu</strong> <span class="help-muted">(son numéro d'étape et la
+                distance pour y arriver, le long du tracé)</span>. À plus de 50 m du tracé, il
+                l'annonce : <strong>« Hors du tracé · à 120 m, vers l'est »</strong>, et un
+                pointillé vous relie au point le plus proche du tracé ; la progression reprend
+                quand vous le rejoignez. Heripia n'enregistre pas votre marche : ni vitesse, ni
+                dénivelé parcouru.</p>
                 <p><strong>⚠️ Encore en test.</strong> Le suivi fonctionne, mais nous n'avons
                 pas terminé toutes les vérifications terrain. <strong>Gardez votre application
                 de marche habituelle ouverte en parallèle</strong> — Heripia n'est pas (encore)

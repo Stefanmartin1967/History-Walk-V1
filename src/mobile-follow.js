@@ -28,9 +28,16 @@
 // limités à la zone visible (Charleroi : plus de 2 600 lieux) ; l'aperçu donne
 // la distance au lieu de l'étape. Pas de sélecteur de fond (décision Stefan :
 // sur place, on voit les chemins ; la carte dit seulement « il y a un lieu par là »).
+//
+// Tableau de marche (17/11/2026, maquette « Tableau de marche », variante A) :
+// pendant le suivi d'un circuit, la carte du titre dit « 4,3 km faits · reste
+// 7,3 km », une barre de progression et le prochain lieu (« 4 Église
+// Saint-Nicolas · dans 2,1 km ») ; à plus de 50 m du tracé, « Hors du tracé ·
+// à 120 m, vers l'est » et un pointillé vers le point le plus proche du tracé.
+// Calculs dans walk-progress.js, depuis la position projetée sur le tracé.
 
 import L from 'leaflet';
-import { map, initMap, createHistoryWalkIcon } from './map.js';
+import { map, initMap, createHistoryWalkIcon, trackRenderer } from './map.js';
 import { state, setActiveCircuitId } from './state.js';
 import { eventBus } from './events.js';
 import { notifyCircuitChanged } from './circuit.js';
@@ -38,13 +45,14 @@ import { updatePoiData, getPatrimonialName } from './data.js';
 import { getPoiPhotos } from './database.js';
 import { openDetailsPanel } from './ui-details.js';
 import { createIcons, appIcons } from './lucide-icons.js';
-import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp, calculateDistance } from './utils.js';
+import { escapeHtml, getZoneFromCoords, getPoiId, getPoiProp, calculateDistance, getAccessPoint } from './utils.js';
 import { isShownToUser } from './poi-visibility.js';
 import { pushMobileLevel } from './mobile-state.js';
 import { showToast } from './toast.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { arrowPositions, metersPerPixel } from './follow-arrows.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
+import { createWalkTracker, formatDistance as formatWalkDistance } from './walk-progress.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -75,6 +83,11 @@ let _zoneShown = false;      // zone de la position déjà inscrite dans l'en-t�
 // Au-delà, on n'affiche rien et on invite à zoomer : des centaines de marqueurs
 // font ramer le téléphone, et à cette échelle la carte ne sert plus à choisir un détour.
 const AROUND_MAX_MARKERS = 300;
+
+// --- Tableau de marche (17/11/2026) ---
+let _walk = null;            // createWalkTracker du circuit suivi
+let _walkPlaces = [];        // lieux du circuit, dans l'ordre (noms du tableau)
+let _offLayer = null;        // pointillé position → tracé quand on s'en écarte
 
 // --- Flèches de sens sur le tracé (06/11/2026) ---
 let _arrowLayer = null;      // L.layerGroup des chevrons
@@ -142,17 +155,42 @@ function buildOverlay(circuit) {
     overlay.innerHTML = `
         <div class="follow-top">
             <div class="follow-title-card">
-                <div class="follow-eyebrow" id="follow-eyebrow">
-                    ${around ? eyebrowHtml('locate', 'CARTE', '') : eyebrowHtml('route', 'SUIVI', zoneName)}
+                <div class="follow-head">
+                    <div class="follow-head-txt">
+                        <div class="follow-eyebrow" id="follow-eyebrow">
+                            ${around ? eyebrowHtml('locate', 'CARTE', '') : eyebrowHtml('route', 'SUIVI', zoneName)}
+                        </div>
+                        <div class="follow-title">${escapeHtml(title)}</div>
+                    </div>
+                    <!-- Croix DANS la carte du titre, qui prend toute la largeur
+                         (Stefan, 17/11/2026 : plus de place pour le titre et le
+                         tableau de marche). -->
+                    <button type="button" class="follow-close" id="follow-close" aria-label="${around ? 'Fermer la carte' : 'Quitter le suivi'}">
+                        <i data-lucide="x"></i>
+                    </button>
                 </div>
-                <div class="follow-title">${escapeHtml(title)}</div>
                 <div class="wake-chip" id="follow-wake" hidden>
                     <i data-lucide="sun"></i> Écran maintenu allumé
                 </div>
+                ${around ? '' : `
+                <div class="walk-board" id="follow-walk" hidden aria-live="polite">
+                    <div class="wb-row">
+                        <span class="wb-done" id="wb-done"></span><span class="wb-lbl">faits</span>
+                        <span class="wb-left">reste <b id="wb-left"></b></span>
+                    </div>
+                    <div class="wb-bar" aria-hidden="true"><span id="wb-bar"></span></div>
+                    <div class="wb-next" id="wb-next">
+                        <span class="wb-num" id="wb-num"></span>
+                        <span class="wb-name" id="wb-name"></span>
+                        <span class="wb-in">dans <b id="wb-in"></b></span>
+                    </div>
+                    <div class="wb-end" id="wb-end" hidden><i data-lucide="flag"></i> Tous les lieux sont passés</div>
+                    <div class="wb-off" id="wb-off" hidden>
+                        <i data-lucide="alert-triangle"></i>
+                        <span><b>Hors du tracé</b> · à <span id="wb-off-m"></span>, vers <span id="wb-off-dir"></span></span>
+                    </div>
+                </div>`}
             </div>
-            <button type="button" class="follow-close" id="follow-close" aria-label="${around ? 'Fermer la carte' : 'Quitter le suivi'}">
-                <i data-lucide="x"></i>
-            </button>
         </div>
 
         <div class="acq-toast" id="follow-acq" hidden>
@@ -575,6 +613,72 @@ function setGpsState(stateName) {
     _overlay.classList.toggle('has-invite', stateName === 'denied');
     // Le point bleu n'a de sens qu'en 'live' (on a une position).
     if (stateName !== 'live') removePuck();
+    // Sans position, le tableau de marche n'a plus rien à dire de vrai.
+    if (stateName === 'denied') {
+        const board = _overlay.querySelector('#follow-walk');
+        if (board) board.hidden = true;
+        clearOffLine();
+    }
+}
+
+// ─── TABLEAU DE MARCHE (17/11/2026) ───────────────────────────────────────────
+
+// Lieux du circuit sur le tracé : leur point d'accès s'il y en a un (là où le
+// tracé les rejoint), sinon le lieu lui-même.
+function buildWalkTracker(circuit) {
+    const track = circuit?.realTrack;
+    _walkPlaces = (state.currentCircuit || []).filter(f => f?.geometry?.coordinates);
+    const places = _walkPlaces.map(f => {
+        const ap = getAccessPoint(f); // [lon, lat]
+        const c = ap || f.geometry.coordinates;
+        return [c[1], c[0]];
+    });
+    _walk = Array.isArray(track) && track.length >= 2 ? createWalkTracker(track, places) : null;
+}
+
+function clearOffLine() {
+    if (_offLayer) { _offLayer.remove(); _offLayer = null; }
+}
+
+// Pointillé de la position au point le plus proche du tracé (hors du tracé).
+function drawOffLine(from, to) {
+    if (!map) return;
+    if (!_offLayer) _offLayer = L.layerGroup().addTo(map);
+    _offLayer.clearLayers();
+    // Rendu SVG (trackRenderer) : la carte peint en canvas par défaut, où les
+    // classes CSS ne s'appliquent pas.
+    L.polyline([from, to], { className: 'follow-off-line', interactive: false, renderer: trackRenderer() }).addTo(_offLayer);
+    L.circleMarker(to, { className: 'follow-off-dot', radius: 5, interactive: false, renderer: trackRenderer() }).addTo(_offLayer);
+}
+
+function updateWalkBoard(ll) {
+    const board = _overlay && _overlay.querySelector('#follow-walk');
+    if (!board || !_walk) return;
+    const s = _walk.update(ll);
+    const $ = (id) => board.querySelector(`#${id}`);
+    board.hidden = false;
+    board.classList.toggle('is-off', s.off);
+    $('wb-done').textContent = formatWalkDistance(s.done);
+    $('wb-left').textContent = formatWalkDistance(s.left);
+    // Largeur posée par le CSSOM (la CSP de prod refuse les attributs style).
+    $('wb-bar').style.width = `${Math.round(Math.min(1, s.share) * 100)}%`;
+    const next = s.next;
+    $('wb-next').hidden = s.off || !next;
+    $('wb-end').hidden = s.off || !!next || s.done === 0;
+    $('wb-off').hidden = !s.off;
+    if (next && !s.off) {
+        const f = _walkPlaces[next.index];
+        $('wb-num').textContent = String(next.index + 1);
+        $('wb-name').textContent = f ? getPatrimonialName(f) : '';
+        $('wb-in').textContent = formatWalkDistance(next.inM);
+    }
+    if (s.off) {
+        $('wb-off-m').textContent = formatWalkDistance(s.offM);
+        $('wb-off-dir').textContent = s.direction;
+        drawOffLine(ll, s.nearest);
+    } else {
+        clearOffLine();
+    }
 }
 
 function onPosition(pos) {
@@ -584,6 +688,7 @@ function onPosition(pos) {
     _lastLatLng = ll;
     setGpsState('live');
     updatePuck(ll);
+    if (_mode === 'circuit') updateWalkBoard(ll);
     if (_mode === 'around' && !_zoneShown) showAroundZone(ll);
 
     // Recentrage automatique au 1er fix : « voilà où tu es » (zoom-in + flyTo).
@@ -727,7 +832,10 @@ function openMap(mode, circuit, opts) {
 
     _overlay = buildOverlay(circuit);
     buildPoiMarkers(); // marqueurs POI cliquables (PR3)
-    if (mode === 'circuit') buildArrows(circuit); // flèches de sens sur le tracé
+    if (mode === 'circuit') {
+        buildArrows(circuit);      // flèches de sens sur le tracé
+        buildWalkTracker(circuit); // tableau de marche (au 1er fix GPS)
+    }
 
     // Entrée d'historique : le Back Android (et la croix) quittent le suivi
     // au lieu de revenir à la liste des circuits. À la REPRISE depuis une fiche
@@ -794,6 +902,9 @@ export function stopFollow() {
     closeSheetInternal();
     removePoiMarkers();
     removeArrows();
+    clearOffLine();
+    _walk = null;
+    _walkPlaces = [];
 
     // GPS + Wake Lock teardown (PR2)
     stopWatch();
