@@ -6,6 +6,10 @@
 
 ---
 
+- MES CIRCUITS : LA LISTE SUIT LA PUBLICATION (v3.7.538). Relevé par Stefan le 17/11/2026.
+  - Après « Tout publier », la liste « Mes Circuits » gardait l'ancien nom du circuit renommé automatiquement (Kharoubi → Kharroubi, #1114) : la mémoire portait déjà le nouveau nom, mais rien ne redessinait la liste. La publication des circuits émet désormais `circuit:list-updated` dès que l'index a été réécrit.
+  - Après un F5, la liste se lit dans l'index du site, qui ne change qu'au déploiement suivant (quelques minutes) : c'est voulu, l'index et les GPX servis restent ainsi d'accord entre eux.
+
 - CENTRE DE CONTRÔLE : LES GPX SUIVENT LES FICHES CORRIGÉES (v3.7.537). Demandé par Stefan le 17/11/2026.
   - Une fiche renommée, déplacée, ou dont l'info GPX ou le lien Source changeait laissait les GPX de ses circuits périmés : le diff ne voyait un circuit modifié que si son nom, sa description, sa liste de lieux ou son tracé changeaient. Mesuré le 17/11 : 12 GPX sur 24 périmés à Djerba (ex. « Mosquée Taqwa » au lieu de « Mosquée Takwa (Bardaoui) »), 0 sur 4 à Charleroi.
   - `gpx-steps.js` : une seule définition des étapes (<wpt> : nom, position, info GPX, lien), partagée par l'écriture du GPX et le diff ; empreinte `stepsHash` publiée dans l'index, comme `trackHash`. Sans elle, le diff relit le GPX publié (une fois par session, en parallèle).
