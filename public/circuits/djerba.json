@@ -2,8 +2,8 @@
   {
     "id": "HW-1771320398895",
     "name": "Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen",
-    "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen via Mosquée Ben Daoued.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
+    "file": "djerba/Circuit de Mosquée Ben Maazouzine à Mosquée Medrajen.gpx",
+    "description": "",
     "distance": "7.4 km",
     "isOfficial": true,
     "hasRealTrack": true,
@@ -16,7 +16,9 @@
       "HW-01K77WPE6B49HSRPBACEWDY95T",
       "HW-01K77WPE6BE2HDNBY0FSWSNRTH",
       "HW-01K77WPE6A7EGYFGG7XNYT8AYC"
-    ]
+    ],
+    "trackHash": "389-eebbc2fe",
+    "stepsHash": "7-d7172ec0"
   },
   {
     "id": "HW-01KKDSEVGXXB4Q4GMRC9YJDET6",
@@ -33,7 +35,9 @@
       "HW-01K77WPE6A27VC54MEK4XHGV9V",
       "HW-01KKEM62BHCM4RDBWTZR0QZR78",
       "HW-01K77WPE699CBRC4PV1ARJPXKM"
-    ]
+    ],
+    "trackHash": "273-fe9cb6b3",
+    "stepsHash": "5-2723141f"
   },
   {
     "id": "HW-1771678048762",
@@ -51,9 +55,9 @@
   },
   {
     "id": "HW-01KK1F3HVM50TEW74H3AKYEHS3",
-    "name": "Circuit de Mosquée Kharoubi à Mosquée Turkiya",
-    "file": "djerba/Circuit de Mosquée Kharoubi à Mosquée Turkiya via Mosquee Ouchachna.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
+    "name": "Circuit de Mosquée Kharroubi à Mosquée Om Turkiya",
+    "file": "djerba/Circuit de Mosquée Kharroubi à Mosquée Om Turkiya.gpx",
+    "description": "",
     "distance": "6.4 km",
     "isOfficial": true,
     "hasRealTrack": true,
@@ -64,7 +68,9 @@
       "HW-01K77WPE6E2G25V2R888QZDP0X",
       "HW-01K77WPE6FDEFE8CMVWQSV93V4",
       "HW-01K77WPE6ECJK1CMJKYVNTKGGS"
-    ]
+    ],
+    "trackHash": "324-f19767cf",
+    "stepsHash": "5-ec651fab"
   },
   {
     "id": "HW-1771317964994",
@@ -83,7 +89,9 @@
       "HW-01K77WPE6RQNBBQXWYACNJTRAC",
       "HW-01K77WPE6NJ1X6TBWGCTV85QMM",
       "HW-01K77WPE6N6HF86MYJNJWFPNSV"
-    ]
+    ],
+    "trackHash": "277-fe9ca356",
+    "stepsHash": "7-419f25ec"
   },
   {
     "id": "HW-1771324790804",
@@ -104,13 +112,15 @@
       "HW-01K77WPE6H365AYB72RWY40WZX",
       "HW-01K77WPE6H0HDCNZVRSJGSX5TF",
       "HW-01KJABRN0XCGBFRH389WG2S71J"
-    ]
+    ],
+    "trackHash": "350-26a16c6f",
+    "stepsHash": "9-2a9ba5f3"
   },
   {
     "id": "HW-1771317389638",
     "name": "Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba",
-    "file": "djerba/Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba via Mosquée Sidi Brahim Eljomni.gpx",
-    "description": "Circuit généré par Heripia — heripia.com",
+    "file": "djerba/Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba.gpx",
+    "description": "",
     "distance": "3.8 km",
     "isOfficial": true,
     "hasRealTrack": true,
@@ -123,7 +133,9 @@
       "HW-01K77WPE6G6RDSP8C7C5WQVJCN",
       "HW-01KJABRN0WMXW7CV3JQJJK9EAV",
       "HW-01K77WPE6HV1767JVPMV1000YQ"
-    ]
+    ],
+    "trackHash": "208-4305c258",
+    "stepsHash": "7-6331f6da"
   },
   {
     "id": "HW-01KJB21G695QTYPJYJ4XYW7QHE",
@@ -164,7 +176,9 @@
       "HW-01K77WPE6P9JFRW9XXGN7P7FPX",
       "HW-01K77WPE6SFRMMS2GS11D6JXR5",
       "HW-01K77WPE6A22WXDRBSQ8AEW7BR"
-    ]
+    ],
+    "trackHash": "393-d5eaf089",
+    "stepsHash": "11-d5aaae2b"
   },
   {
     "id": "HW-1771319458286",
@@ -320,7 +334,9 @@
       "HW-01K77WPE6RHDAFAXAA92EFT8GY",
       "HW-01KJABRN0XJDFFSBSRFDN4PGQ4",
       "HW-01K77WPE6PGWRVHZ8H8CTQJ06X"
-    ]
+    ],
+    "trackHash": "287-a8013650",
+    "stepsHash": "12-8e077d7e"
   },
   {
     "id": "HW-01M2Z725C8KGR3E0N6VEPKZ9B9",
@@ -338,7 +354,9 @@
       "HW-01M2Z8E6VK56GR0AC0MV3FZVXQ",
       "HW-01KSZ2SGB3GCGB3RG8946MGTZG",
       "HW-01K77WPE6ND38ZJ2GFV2K4NRTK"
-    ]
+    ],
+    "trackHash": "296-6b0fea4e",
+    "stepsHash": "6-2b7f7a2e"
   },
   {
     "id": "HW-01M2ZC26CA20KVH2443RJTTB2C",
@@ -355,7 +373,9 @@
       "HW-01K77WPE6M14K3331NK215THZS",
       "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
       "HW-01M2ZF8PZN7VQVBZRPBX12H8VR"
-    ]
+    ],
+    "trackHash": "234-bf70e1f7",
+    "stepsHash": "5-2276e52d"
   },
   {
     "id": "HW-01M2ZK38D1N3BD6JSKM0VT1D9S",
@@ -375,7 +395,9 @@
       "HW-01KZH0VEH4B5SYS305V3RAVFJ9",
       "HW-01KZH0VEJP087D87WAX2S3JPBS",
       "HW-01M2ZKXPVVTHW5JZFT0H4F7EQS"
-    ]
+    ],
+    "trackHash": "388-acfcebbc",
+    "stepsHash": "8-c0a8306b"
   },
   {
     "id": "HW-01M3MKTVA1A2FHVF6MVBSFCNZN",
@@ -395,7 +417,9 @@
       "HW-01K77WPE6C4QCW255MDZKT0RHK",
       "HW-01K77WPE6CC0RY56ECB2RCTGJP",
       "HW-01M3MKCX8QFEERFG0EPSC71FMS"
-    ]
+    ],
+    "trackHash": "433-d79e5d98",
+    "stepsHash": "8-2b8e09ff"
   },
   {
     "id": "HW-01M5MG5WVAPHFFR2DWQG7HH7JK",
