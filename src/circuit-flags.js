@@ -111,14 +111,15 @@ export function getDirtyCount() {
     return n;
 }
 
-// === API focus « Éditer l'itinéraire » =========================================
-// Le focus (circuit-focus.js) déverrouille les drapeaux et re-route les segments
-// sur leur position glissée AVANT tout commit. Ces 3 helpers exposent l'état des
-// drapeaux à la session focus sans dupliquer le rendu ni la persistance.
+// === API panneau « Itinéraire » ================================================
+// Le panneau (circuit-compare.js, ouvert par ui-circuit-routing.js) déverrouille
+// les drapeaux et re-route les passages sur leur position glissée AVANT tout
+// commit. Ces 3 helpers exposent l'état des drapeaux au panneau sans dupliquer
+// le rendu ni la persistance.
 
 /**
  * Ancres déplacées (drapeaux glissés) NON encore persistées : { [poiId]: [lon,lat] }.
- * Le focus s'en sert comme OVERRIDE d'ancre pour re-router les segments sur la
+ * Le panneau s'en sert comme OVERRIDE d'ancre pour re-router les segments sur la
  * position live du drapeau avant tout commit (cf. routeOneSegment).
  */
 export function getDraggedAnchors() {
@@ -130,7 +131,7 @@ export function getDraggedAnchors() {
 }
 
 /**
- * Annule les déplacements de drapeaux de la session (focus « Quitter ») : remet
+ * Annule les déplacements de drapeaux de la session (panneau fermé sans enregistrer) : remet
  * chaque drapeau dirty à sa position/couleur d'origine et efface le dirty (donc
  * commitDirtyFlags ne persistera rien).
  */
@@ -151,9 +152,9 @@ export function revertDraggedFlags() {
 
 /**
  * Re-rend les drapeaux (retire les markers + re-sync) SANS toucher au snapshot
- * cadenas (_initialPoiIds, que teardownAllFlags effacerait). Utilisé par le focus
- * à l'entrée (recalcule le verrou → déverrouillé) et à la sortie (re-verrouille
- * les POI préexistants d'un officiel édité).
+ * cadenas (_initialPoiIds, que teardownAllFlags effacerait). Utilisé à
+ * l'ouverture du panneau Itinéraire (recalcule le verrou → déverrouillé) et à sa
+ * fermeture (re-verrouille les POI préexistants d'un officiel édité).
  */
 export function resyncFlags() {
     for (const [, f] of _flags) {
@@ -220,12 +221,12 @@ function ensureFlag(feature) {
     // source de vérité — c'est ce repli local, dupliqué ailleurs, qui avait laissé
     // la passe conclure l'inverse (orange) sur les mêmes POI.
     const status = getAccessPointStatus(feature);
-    // Règle cadenas : préexistant en édition → rouge non-draggable. EXCEPTION en
-    // focus « Éditer l'itinéraire » : on déverrouille pour laisser l'admin ajuster
+    // Règle cadenas : préexistant en édition → rouge non-draggable. EXCEPTION
+    // panneau « Itinéraire » ouvert : on déverrouille pour laisser l'admin ajuster
     // où le circuit raccroche au réseau routable (validé 07/06 — risque de
     // déplacement accidentel jugé négligeable). resyncFlags() recalcule ce verrou
-    // à l'entrée/sortie du focus.
-    const isLocked = state.editingMode === true && _initialPoiIds.has(poiId) && !state.circuitFocusActive;
+    // à l'ouverture / la fermeture du panneau.
+    const isLocked = state.editingMode === true && _initialPoiIds.has(poiId) && !state.routePanelOpen;
     const effectiveStatus = isLocked ? 'locked' : status;
 
     const [apLon, apLat] = ap;
@@ -262,7 +263,7 @@ function ensureFlag(feature) {
         isLocked,
         isDirty: false,
         newCoords: [apLon, apLat],
-        baseCoords: [apLon, apLat], // position d'origine — restaurée par revertDraggedFlags (Quitter focus)
+        baseCoords: [apLon, apLat], // position d'origine — restaurée par revertDraggedFlags (panneau annulé)
         baseStatus: status,         // couleur d'origine — restaurée au revert
         poiAnchor: [poiLat, poiLon], // pour redessiner la ligne au drag
     };
@@ -284,10 +285,10 @@ function ensureFlag(feature) {
             entry.isDirty = true;
             entry.status = 'moved';
             marker.setIcon(flagIcon('moved', false));
-            // En focus « Éditer l'itinéraire » : prévient circuit-focus pour qu'il
-            // re-route les segments bordant ce POI sur la nouvelle position (lue en
-            // live via getDraggedAnchors → routeOneSegment). Hors focus : no-op.
-            if (state.circuitFocusActive) eventBus.emit('circuit-flag:moved', { poiId });
+            // Panneau « Itinéraire » ouvert : le prévient pour qu'il re-route les
+            // passages bordant ce POI sur la nouvelle position (lue en live via
+            // getDraggedAnchors → routeOneSegment). Panneau fermé : no-op.
+            if (state.routePanelOpen) eventBus.emit('circuit-flag:moved', { poiId });
         });
     }
 }

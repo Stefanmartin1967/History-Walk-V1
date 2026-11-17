@@ -1,9 +1,11 @@
 // circuit-compare.js — Panneau « Itinéraire » (PC, création de circuit).
 //
-// Au premier tracé et à « Tout re-tracer », l'auteur compare deux variantes
-// calculées en même temps — Direct (le calcul historique) et Chemins (pistes et
-// sentiers préférés, avec une force réglable) — et pose ses POINTS DE PASSAGE
-// dans le même panneau, puis enregistre une variante. Handoff Claude Design du
+// Au premier tracé, puis à chaque clic sur « Itinéraire », l'auteur compare deux
+// variantes calculées en même temps — Direct (le calcul historique) et Chemins
+// (pistes et sentiers préférés, avec une force réglable) — et pose ses POINTS DE
+// PASSAGE dans le même panneau, puis enregistre une variante. C'est le seul
+// endroit où l'on règle le tracé (l'ancienne barre « Édition du tracé » est
+// retirée, PR B du 14/11/2026). Handoff Claude Design du
 // 12/11/2026 (.claude/handoff-comparateur-trace/README.md) ; panneau unique
 // (variantes + points) validé par Stefan le 13/11/2026 (maquette « Panneau
 // Itinéraire »).
@@ -20,12 +22,26 @@
 // repasser », toute la variante est recalculée (chaque passage évite les
 // précédents).
 //
+// Les DRAPEAUX D'ACCÈS se glissent pendant que le panneau est ouvert
+// (circuit-flags.js les déverrouille tant que state.routePanelOpen) : glisser un
+// drapeau recalcule les deux passages qui touchent ce lieu, pour les deux
+// variantes, sur sa position glissée.
+//
+// Rouvert sur un circuit tracé, le panneau rappelle ce qui est enregistré ;
+// tant que rien n'a changé (variante, réglages, points, drapeaux), il n'y a
+// « Rien à enregistrer » et le tracé enregistré reste tel quel.
+//
 // Ce module ne sauvegarde rien : il calcule, affiche le panneau à gauche de la
 // carte, les deux lignes et les points, puis rend la main à l'appelant
 // (ui-circuit-routing) via onApply (variante retenue, son résultat et les
-// points) ou onCancel.
+// points) ou onCancel (qui remet aussi les drapeaux glissés en place).
 import L from 'leaflet';
 import { map, trackRenderer } from './map.js';
+import { state } from './state.js';
+import { eventBus } from './events.js';
+import { getPoiId } from './utils.js';
+import { getDraggedAnchors } from './circuit-flags.js';
+import { showConfirm } from './modal.js';
 import {
     routeCircuit, routeOneSegment, assembleRoute, resolveEngine, normalizeRouting,
     ROUTING_VARIANTS, DEFAULT_FORCE, FORCE_MAX, AVOID_WEIGHTS, DEFAULT_AVOID_WEIGHT,
@@ -68,11 +84,14 @@ const newPointId = () => `cvp_${++_pid}`;
  * @param {{variant: string, force?: number}} o.initial  Variante présélectionnée et force.
  * @param {Object} [o.waypointsBySeg]  Points de passage enregistrés ({ [passage]: [{lat, lng}] }) :
  *   le panneau part d'eux, les deux variantes passent par eux (circuit-waypoints.js).
+ * @param {{routing: Object, distanceKm: number}|null} [o.saved]  Tracé enregistré qui
+ *   correspond aux lieux actuels (variante connue), ou null : premier tracé, tracé
+ *   périmé, variante pas mémorisée → toujours quelque chose à enregistrer.
  * @param {(choice: {routing: Object, engine: Object, result: Object,
  *   points: {seg:number, lat:number, lng:number}[]}) => Promise<void>} o.onApply
  * @param {() => void} o.onCancel
  */
-export async function openRouteCompare({ features, initial, waypointsBySeg = {}, onApply, onCancel }) {
+export async function openRouteCompare({ features, initial, waypointsBySeg = {}, saved = null, onApply, onCancel }) {
     if (cv || !map) return;
     const init = normalizeRouting(initial);
     cv = {
@@ -102,7 +121,13 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
         onApply, onCancel,
         panel: null,
         applying: false,
+        closing: false,       // confirmation « Abandonner ? » ouverte
+        saved: saved && saved.routing ? { ...saved, routing: normalizeRouting(saved.routing) } : null,
+        initialPoints: '',    // points à l'ouverture (« Rien à enregistrer » / « Abandonner ? »)
+        flagsMoved: false,    // un drapeau d'accès glissé pendant la session
     };
+    cv.initialPoints = pointsKey();
+    state.routePanelOpen = true;
     buildPanel();
     cv.handles = L.layerGroup().addTo(map);
     cv.markers = L.layerGroup().addTo(map);
@@ -116,13 +141,66 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
     VARIANTS.forEach(v => compute(v));
 }
 
-/** Ferme sans rien changer (Annuler, Échap, la croix, ou un changement de lieux). */
+/** Ferme sans rien changer ni rien demander (changement de lieux, sortie de la création). */
 export function cancelRouteCompare() {
     if (!cv) return;
     const { onCancel } = cv;
     teardown();
     if (typeof onCancel === 'function') onCancel();
 }
+
+// Fermeture demandée par l'auteur (Annuler / Fermer, Échap, la croix) : s'il a
+// touché aux points ou aux drapeaux, on confirme avant de tout perdre. Changer
+// seulement de variante ou de réglage se refait en deux clics : pas de question.
+async function requestClose() {
+    if (!cv || cv.applying || cv.closing) return;
+    if (pointsKey() !== cv.initialPoints || cv.flagsMoved) {
+        const session = cv;
+        session.closing = true;
+        const ok = await showConfirm(
+            'Abandonner les changements ?',
+            "Les points de passage posés, déplacés ou retirés et les drapeaux glissés depuis l'ouverture du panneau seront perdus. Rien ne sera enregistré.",
+            'Abandonner', 'Continuer', false
+        );
+        if (cv !== session) return;
+        session.closing = false;
+        if (!ok) return;
+    }
+    cancelRouteCompare();
+}
+
+// Quelque chose à enregistrer ? Toujours au premier tracé (ou sans variante
+// mémorisée) ; sinon dès que la variante, ses réglages, les points ou un drapeau
+// diffèrent de ce qui est enregistré.
+function hasChanges() {
+    const s = cv.saved;
+    if (!s) return true;
+    if (cv.flagsMoved || pointsKey() !== cv.initialPoints) return true;
+    const r = s.routing;
+    if (cv.selected !== r.variant || cv.avoid !== (r.avoid === true)) return true;
+    if (cv.avoid && cv.weight !== r.weight) return true;
+    return cv.selected === 'chemins' && cv.force !== r.force;
+}
+
+// Ancres déplacées (drapeaux glissés, pas encore enregistrés), par position de
+// lieu : elles priment sur l'accès enregistré dans les calculs du panneau.
+function anchorOverrides() {
+    const dragged = getDraggedAnchors();
+    const out = {};
+    cv.features.forEach((f, idx) => { const id = getPoiId(f); if (dragged[id]) out[idx] = dragged[id]; });
+    return out;
+}
+
+// Un drapeau d'accès glissé : le lieu d'index idx borde le passage idx-1 (le
+// lieu précédent → lui) et le passage idx (lui → le suivant).
+eventBus.on('circuit-flag:moved', ({ poiId } = {}) => {
+    if (!cv || cv.applying) return;
+    const idx = cv.features.findIndex(f => getPoiId(f) === poiId);
+    if (idx < 0) return;
+    cv.flagsMoved = true;
+    const segs = [idx - 1, idx].filter(seg => seg >= 0 && seg < cv.features.length - 1);
+    if (segs.length) pointsChanged(segs);
+});
 
 function newRun() {
     // busy : passages en cours de recalcul après un point ; stale : pas recalculée
@@ -131,6 +209,10 @@ function newRun() {
 }
 
 // --- Points de passage -----------------------------------------------------
+function pointsKey() {
+    return JSON.stringify(cv.points.map(p => [p.seg, p.lat, p.lng]));
+}
+
 function pointsBySeg() {
     const out = {};
     cv.points.forEach(p => { (out[p.seg] = out[p.seg] || []).push({ lat: p.lat, lng: p.lng }); });
@@ -203,7 +285,7 @@ async function updatePassage(variant, seg) {
     try {
         res = await routeOneSegment(session.features, seg, pointsBySeg(), {
             routing: routingFor(variant), base: session.engine.base,
-        });
+        }, anchorOverrides());
     } catch (e) {
         console.error('[itinéraire] passage', seg, e);
     }
@@ -374,6 +456,7 @@ async function compute(variant) {
         result = await routeCircuit(session.features, pointsBySeg(), {
             routing: routingFor(variant),
             base: session.engine.base,
+            anchorOverrides: anchorOverrides(),
             onProgress: (done, total) => {
                 if (!live()) return;
                 run.progress = { done, total };
@@ -518,6 +601,7 @@ function buildPanel() {
             <button class="cv-icon-btn" type="button" data-act="cancel" aria-label="Fermer"><i data-lucide="x"></i></button>
         </div>
         <div class="cv-body">
+            <p class="cv-saved" hidden></p>
             <div class="cv-cards" role="radiogroup" aria-label="Variantes d'itinéraire"></div>
             <p class="cv-legend" hidden>Écarts avec Direct : <span class="cv-delta cv-delta--mieux">mieux</span><span class="cv-delta cv-delta--moins">moins bien</span></p>
             <p class="cv-slow cv-slow--other" hidden><i data-lucide="clock"></i><span>BRouter de ce PC ne répond pas : chaque point ne recalcule que la variante choisie. Les écarts reviennent quand l'autre est recalculée.</span></p>
@@ -574,7 +658,7 @@ function buildPanel() {
             <p class="cv-engine"></p>
         </div>
         <div class="cv-foot">
-            <button class="fb-btn" type="button" data-act="cancel">Annuler</button>
+            <button class="fb-btn" type="button" data-act="cancel"></button>
             <button class="fb-btn fb-cta" type="button" data-act="apply"></button>
         </div>`;
     cv.panel = el;
@@ -591,11 +675,12 @@ function buildPanel() {
     el.addEventListener('input', onPanelInput);
     el.addEventListener('mouseover', onPanelHover);
     el.addEventListener('mouseleave', () => setHover(null));
-    cv.keyHandler = (e) => { if (e.key === 'Escape' && !e.defaultPrevented) cancelRouteCompare(); };
+    cv.keyHandler = (e) => { if (e.key === 'Escape' && !e.defaultPrevented) requestClose(); };
     document.addEventListener('keydown', cv.keyHandler);
 
     const range = el.querySelector('#cv-force');
     range.value = String(cv.force);
+    renderSaved();
     syncAdjust();
     createIcons({ icons: appIcons, root: el });
     render();
@@ -613,6 +698,7 @@ function teardown() {
     cv.panel?.remove();
     map?.getContainer().classList.remove('is-comparing', 'cv-placing');
     cv = null;
+    state.routePanelOpen = false;
 }
 
 function onPanelClick(e) {
@@ -622,7 +708,7 @@ function onPanelClick(e) {
     e.stopPropagation();
     const target = e.target.closest('[data-act]');
     const act = target?.dataset.act;
-    if (act === 'cancel') { cancelRouteCompare(); return; }
+    if (act === 'cancel') { requestClose(); return; }
     if (act === 'apply') { apply(); return; }
     if (act === 'retry') { retry(target.closest('[data-variant]').dataset.variant); return; }
     if (act === 'recompute') { e.preventDefault(); compute(target.closest('[data-variant]').dataset.variant); return; }
@@ -745,12 +831,18 @@ function render() {
 
     renderPoints();
 
+    const changed = hasChanges();
+    p.querySelector('.cv-foot [data-act="cancel"]').textContent = changed ? 'Annuler' : 'Fermer';
     const btn = p.querySelector('[data-act="apply"]');
     const sel = cv.runs[cv.selected];
     const label = ROUTING_VARIANTS[cv.selected].label;
     if (cv.applying) {
         btn.disabled = true;
         btn.textContent = 'Enregistrement…';
+    } else if (!changed) {
+        btn.disabled = true;
+        btn.innerHTML = '<i data-lucide="check"></i><span>Rien à enregistrer</span>';
+        createIcons({ icons: appIcons, root: btn });
     } else if (sel.status === 'ready' && !sel.busy && !sel.stale) {
         btn.disabled = false;
         btn.innerHTML = `<i data-lucide="check"></i><span>Enregistrer avec ${label}</span>`;
@@ -759,6 +851,25 @@ function render() {
         btn.disabled = true;
         btn.textContent = sel.status === 'failed' ? `Enregistrer avec ${label}` : `${label} se calcule…`;
     }
+}
+
+// Ligne « Enregistré : » (rouvert sur un circuit tracé) : variante, réglages,
+// points et distance du tracé enregistré.
+function renderSaved() {
+    const el = cv.panel.querySelector('.cv-saved');
+    const s = cv.saved;
+    el.hidden = !s;
+    if (!s) return;
+    const r = s.routing;
+    const dot = '<span class="cv-saved-dot" aria-hidden="true"></span>';
+    const parts = [`<b>${ROUTING_VARIANTS[r.variant].label}</b>`];
+    if (r.variant === 'chemins') parts.push(`force ${fmtForce(r.force)}`);
+    if (r.avoid) parts.push('éviter de repasser');
+    const n = cv.points.length;
+    parts.push(n ? plural(n, 'point', 'points') : 'aucun point');
+    if (s.distanceKm > 0) parts.push(`${s.distanceKm.toFixed(1).replace('.', ',')} km`);
+    el.innerHTML = `<i data-lucide="save"></i><span>Enregistré :</span>${parts.join(dot)}`;
+    createIcons({ icons: appIcons, root: el });
 }
 
 function renderPoints() {

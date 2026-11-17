@@ -323,12 +323,10 @@ export function initMapListeners() {
     });
 
     window.addEventListener('circuit:updated', (e) => {
-        // Signal SANS données : l'entrée en « Éditer l'itinéraire »
-        // (circuit-focus.js) le lance pour rafraîchir le panneau, et dessine
-        // elle-même le tracé segment par segment après avoir retiré les lignes
-        // globales. Rien à faire ici — et surtout ne pas redessiner la ligne
-        // globale sous les segments. Avant ce garde, la déstructuration de
-        // `e.detail` (null) levait une TypeError à chaque entrée (depuis #785).
+        // Signal SANS données (simple « rafraîchir le panneau ») : rien à
+        // dessiner ici. Avant ce garde, la déstructuration de `e.detail` (null)
+        // levait une TypeError (depuis #785, alors émis par l'ancien mode
+        // « Éditer l'itinéraire »).
         if (!e.detail) return;
         const { points, activeId } = e.detail;
 
@@ -406,9 +404,10 @@ export function handleMarkerClick(feature) {
     // Cela évite d'ajouter le point au circuit alors qu'on veut juste valider sa position
     if (state.draggingMarkerId === getPoiId(feature)) return;
 
-    // En focus mode « Ajuster le tracé » (niveau 2), la carte sert à poser des
-    // points de passage, PAS à modifier la séquence : on ignore le clic POI.
-    if (state.circuitFocusActive) return;
+    // Panneau « Itinéraire » ouvert : la carte sert à poser des points de
+    // passage, PAS à modifier la séquence (ajouter un lieu fermerait le
+    // panneau et perdrait les points) : on ignore le clic POI.
+    if (state.routePanelOpen) return;
 
     clearMarkerHighlights();
 

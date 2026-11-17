@@ -383,12 +383,14 @@ export function segmentsAscend(segments) {
  * segment touché en édition (niveau 2).
  * @param {Object[]} features  Features POI dans l'ordre du circuit.
  * @param {Object} [waypointsBySeg]  { [indexSegment]: [{lat, lng}] } — points de passage.
- * @param {RouteOptions} [opts]
+ * @param {RouteOptions} [opts]  + `anchorOverrides` { [indexPOI]: [lon, lat] } : drapeaux
+ *   d'accès glissés dans le panneau Itinéraire, pas encore enregistrés (cf. routeOneSegment).
  * @returns {Promise<{realTrack: number[][], distanceKm: number, durationMin: number,
  *   segments: {coords:number[][], ok:boolean, distanceKm:number}[], failedSegments: number[]}>}
  */
 export async function routeCircuit(features, waypointsBySeg = {}, opts = {}) {
-    const anchors = (features || []).map(anchorOf).filter(isValidLonLat);
+    const overrides = opts.anchorOverrides || {};
+    const anchors = (features || []).map((f, idx) => overrides[idx] || anchorOf(f)).filter(isValidLonLat);
     if (anchors.length < 2) {
         throw new Error('Au moins 2 lieux sont nécessaires pour tracer un itinéraire.');
     }
@@ -439,15 +441,15 @@ export function assembleRoute(segments) {
 }
 
 /**
- * Re-route UN seul segment (édition niveau 2 : ajout / déplacement / suppression
- * d'un point de passage). Renvoie l'entrée `segment` prête à remplacer
+ * Re-route UN seul segment (panneau Itinéraire : ajout / déplacement / suppression
+ * d'un point de passage, drapeau d'accès glissé). Renvoie l'entrée `segment` prête à remplacer
  * `state.routeSegments[i]`.
  * @param {Object[]} features  Séquence complète des POIs du circuit.
  * @param {number} i  Index du segment (POI i → POI i+1).
  * @param {Object} waypointsBySeg  { [indexSegment]: [{lat, lng}] }.
  * @param {RouteOptions} [opts]
  * @param {Object} [anchorOverrides]  { [indexPOI]: [lon, lat] } — ancres déplacées
- *   EN SESSION (drapeaux d'accès glissés en focus, non encore persistés) qui
+ *   EN SESSION (drapeaux d'accès glissés dans le panneau, non encore persistés) qui
  *   priment sur l'accessPoint enregistré, pour re-router sur la position live.
  */
 export async function routeOneSegment(features, i, waypointsBySeg = {}, opts = {}, anchorOverrides = {}) {
@@ -532,7 +534,7 @@ export function splitTrackByAnchors(realTrack, features) {
 // qui n'en avait pas besoin.
 export const KEEP_MAX_M = 50;
 
-// Les segments de la session (Tracer / Éditer l'itinéraire) correspondent-ils
+// Les segments de la session (dernier tracé enregistré) correspondent-ils
 // EXACTEMENT au tracé enregistré ? Seulement alors on les préfère à un
 // re-découpage : bornes exactes et état d'échec connu.
 function segmentsMatchTrack(segments, realTrack, nAnchors) {
@@ -545,8 +547,8 @@ function segmentsMatchTrack(segments, realTrack, nAnchors) {
 /**
  * Re-tracé PARTIEL : ne recalcule que les passages dont la paire de lieux a
  * changé depuis le tracé précédent. Un passage dont les deux lieux se suivent
- * toujours garde sa géométrie telle quelle — points de passage posés en
- * « Éditer l'itinéraire » et retouches GPX Studio compris. Ajouter B entre A et
+ * toujours garde sa géométrie telle quelle — points de passage et
+ * retouches GPX Studio compris. Ajouter B entre A et
  * C recalcule A→B et B→C ; retirer B recalcule A→C.
  * Un passage en échec (ligne droite) ou dont un bout s'est éloigné de son lieu
  * de plus de KEEP_MAX_M est recalculé lui aussi.

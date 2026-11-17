@@ -13,7 +13,7 @@
 //
 // Couverture : on interroge Overpass sur un rectangle autour du tracé, élargi de
 // ZONE_MARGIN_M (31/10/2026 : la même réponse sert à colorer le tracé et à
-// montrer toutes les voies de la zone dans « Éditer l'itinéraire », pour repérer
+// montrer toutes les voies de la zone dans le panneau Itinéraire, pour repérer
 // un sentier à côté d'une route). Un tronçon hors des rectangles déjà interrogés
 // est « en attente » (dessiné en bleu) jusqu'à la requête suivante. Un passage
 // recalculé dans la même zone se recolore donc sans requête.

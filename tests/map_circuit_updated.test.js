@@ -7,12 +7,11 @@ import { describe, it, expect, vi, beforeAll, beforeEach, afterEach } from 'vite
 //
 // Régression constatée par Stefan le 13/09/2026 (console) :
 //   « Cannot destructure property 'points' of 'e.detail' as it is null ».
-// L'entrée en « Éditer l'itinéraire » (circuit-focus.js) émet 'circuit:updated'
-// SANS detail pour rafraîchir le panneau ; l'écouteur de map.js déstructurait
-// `e.detail` et levait une TypeError à chaque entrée (depuis #785, 07/06/2026).
-//
-// Le correctif doit IGNORER ce signal (le focus dessine lui-même ses segments),
-// pas redessiner la ligne globale.
+// L'ancienne entrée en « Éditer l'itinéraire » (circuit-focus.js, retiré le
+// 14/11/2026) émettait 'circuit:updated' SANS detail pour rafraîchir le panneau ;
+// l'écouteur de map.js déstructurait `e.detail` et levait une TypeError (depuis
+// #785, 07/06/2026). Plus personne ne l'émet ainsi, le garde reste : un signal
+// sans données doit être IGNORÉ, sans redessiner la ligne globale.
 // ============================================================================
 
 const h = vi.hoisted(() => ({
@@ -68,7 +67,7 @@ afterEach(() => {
 });
 
 describe("map.js — 'circuit:updated'", () => {
-    it('ignore un signal SANS detail (entrée en « Éditer l\'itinéraire ») sans lever d\'erreur', () => {
+    it("ignore un signal SANS detail sans lever d'erreur", () => {
         window.dispatchEvent(new CustomEvent('circuit:updated'));
 
         expect(errors).toEqual([]);

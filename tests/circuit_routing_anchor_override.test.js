@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
-// Override d'ancre de routeOneSegment (src/circuit-routing.js). En focus « Éditer
-// l'itinéraire », un drapeau d'accès GLISSÉ fournit une ancre de SESSION (non
-// encore persistée) qui prime sur l'accessPoint enregistré, pour re-router le
-// segment sur la position LIVE du drapeau (cf. circuit-focus.js → anchorOverrides
-// → routeOneSegment). On vérifie que la coordonnée override atterrit bien dans la
+// Override d'ancre de routeOneSegment et routeCircuit (src/circuit-routing.js).
+// Panneau « Itinéraire » ouvert, un drapeau d'accès GLISSÉ fournit une ancre de
+// SESSION (non encore persistée) qui prime sur l'accessPoint enregistré, pour
+// re-router sur la position LIVE du drapeau (cf. circuit-compare.js →
+// anchorOverrides). On vérifie que la coordonnée override atterrit bien dans la
 // requête BRouter (param `lonlats`). fetch BRouter mocké (brouter.de injoignable).
 import { describe, it, expect, vi, afterEach } from 'vitest';
-import { routeOneSegment } from '../src/circuit-routing.js';
+import { routeOneSegment, routeCircuit } from '../src/circuit-routing.js';
 
 const FEATURES = [
     { geometry: { coordinates: [10.1, 33.8] }, properties: {} },
@@ -33,7 +33,7 @@ function mockBRouterCapture() {
     return calls;
 }
 
-describe('circuit-routing — override d’ancre (drapeau glissé en focus)', () => {
+describe('circuit-routing — override d’ancre (drapeau glissé dans le panneau)', () => {
     afterEach(() => { vi.restoreAllMocks(); });
 
     it('sans override : route avec l’ancre du POI (geometry.coordinates)', async () => {
@@ -60,5 +60,14 @@ describe('circuit-routing — override d’ancre (drapeau glissé en focus)', ()
         await routeOneSegment(FEATURES, 0, {}, undefined, { 99: [0, 0] });
         expect(calls[0]).toContain('10.10000000,33.80000000');
         expect(calls[0]).toContain('10.20000000,33.90000000');
+    });
+
+    it('routeCircuit : opts.anchorOverrides fait passer le calcul complet par le drapeau glissé', async () => {
+        const calls = mockBRouterCapture();
+        await routeCircuit(FEATURES, {}, { anchorOverrides: { 1: [10.25, 33.95] } });
+        expect(calls).toHaveLength(1);
+        expect(calls[0]).toContain('10.10000000,33.80000000');
+        expect(calls[0]).toContain('10.25000000,33.95000000');
+        expect(calls[0]).not.toContain('10.20000000,33.90000000');
     });
 });

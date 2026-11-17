@@ -84,7 +84,7 @@ describe('circuit-flags — _internals.flagIcon', () => {
     });
 });
 
-describe('circuit-flags — dragend du drapeau en focus (régression import eventBus, PR #872)', () => {
+describe('circuit-flags — dragend du drapeau, panneau Itinéraire ouvert (régression import eventBus, PR #872)', () => {
     beforeEach(() => { vi.resetModules(); });
 
     const buildFeature = (id) => ({
@@ -92,7 +92,7 @@ describe('circuit-flags — dragend du drapeau en focus (régression import even
         geometry: { coordinates: [10.001, 33.001] },
     });
 
-    it("le dragend en focus émet 'circuit-flag:moved' SANS ReferenceError (eventBus importé)", async () => {
+    it("le dragend panneau Itinéraire ouvert émet 'circuit-flag:moved' SANS ReferenceError (eventBus importé)", async () => {
         const mod = await import('../src/circuit-flags.js');
         const { state } = await import('../src/state.js');
         const { eventBus } = await import('../src/events.js');
@@ -104,20 +104,20 @@ describe('circuit-flags — dragend du drapeau en focus (régression import even
         expect(typeof dragend).toBe('function');
 
         const emitSpy = vi.spyOn(eventBus, 'emit');
-        const prev = state.circuitFocusActive;
-        state.circuitFocusActive = true;
+        const prev = state.routePanelOpen;
+        state.routePanelOpen = true;
         try {
             // AVANT #872 (eventBus non importé dans circuit-flags), ceci jetait
             // une ReferenceError au dragend → re-route live mort en silence.
             expect(() => dragend()).not.toThrow();
             expect(emitSpy).toHaveBeenCalledWith('circuit-flag:moved', { poiId: 'POI-FOCUS' });
         } finally {
-            state.circuitFocusActive = prev;
+            state.routePanelOpen = prev;
             emitSpy.mockRestore();
         }
     });
 
-    it("hors focus, le dragend ne ré-route pas (n'émet pas) et ne jette pas", async () => {
+    it("panneau fermé, le dragend ne ré-route pas (n'émet pas) et ne jette pas", async () => {
         const mod = await import('../src/circuit-flags.js');
         const { state } = await import('../src/state.js');
         const { eventBus } = await import('../src/events.js');
@@ -125,13 +125,13 @@ describe('circuit-flags — dragend du drapeau en focus (régression import even
         mod._internals.ensureFlag(buildFeature('POI-NOFOCUS'));
         const dragend = mod._internals._flags.get('POI-NOFOCUS').marker._handlers.dragend;
         const emitSpy = vi.spyOn(eventBus, 'emit');
-        const prev = state.circuitFocusActive;
-        state.circuitFocusActive = false;
+        const prev = state.routePanelOpen;
+        state.routePanelOpen = false;
         try {
             expect(() => dragend()).not.toThrow();
             expect(emitSpy).not.toHaveBeenCalled();
         } finally {
-            state.circuitFocusActive = prev;
+            state.routePanelOpen = prev;
             emitSpy.mockRestore();
         }
     });

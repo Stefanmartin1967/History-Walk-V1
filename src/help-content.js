@@ -295,8 +295,8 @@ export const HELP_WAYPOINT = {
     html: `
         <p>BRouter n'a pas trouvé de chemin pour <strong>un passage</strong> : il le laisse
         en <strong>ligne droite</strong>.</p>
-        <p>Ajoutez un <strong>point de passage</strong> <span class="help-muted">(« Éditer
-        l'itinéraire » → cliquer sur la carte)</span> pour le guider, ou affinez dans
+        <p>Ajoutez un <strong>point de passage</strong> <span class="help-muted">(« Itinéraire »
+        → cliquer sur le tracé)</span> pour le guider, ou affinez dans
         <strong>GPX Studio</strong>.</p>`,
 };
 
@@ -409,25 +409,35 @@ export const GUIDE_CIRCUIT = {
         {
             heading: `5 · Ajuster le tracé`,
             html: `<ul class="help-list">
-                    <li><strong>« Éditer l'itinéraire »</strong> : ajoutez des <strong>points de
-                        passage</strong> <span class="help-muted">(cliquez sur la carte)</span> pour
-                        guider le tracé ; déplacez-les. Seul le segment touché est recalculé. Le
-                        tracé passe par les points <strong>dans l'ordre du parcours</strong> : un point
-                        se range selon l'endroit du tracé où vous cliquez, et le garde quand vous le
-                        déplacez <span class="help-muted">(pratique pour faire le tour d'un parc ou
-                        d'un terril : cliquez sur le tracé, puis glissez le point sur le chemin
-                        voulu)</span>. Les points sont <strong>enregistrés avec le circuit</strong>
-                        à « Terminer » : vous les retrouvez en rouvrant l'édition, et Tracer, le
-                        comparateur et le re-tracé passent par eux. Publiés avec un circuit
-                        officiel <span class="help-muted">(avec sa variante)</span>, ils se
-                        retrouvent sur vos autres appareils.</li>
-                    <li><strong>« Voies »</strong> <span class="help-muted">(barre d'édition)</span> :
-                        montre en traits fins <strong>toutes les voies</strong> autour du circuit, avec
-                        les couleurs du tracé, pour repérer un sentier à côté d'une route et y faire
-                        passer le circuit. Affichées par défaut ; le bouton les masque.</li>
+                    <li><strong>« Itinéraire »</strong> : rouvre le panneau. Les deux variantes
+                        sont <strong>recalculées</strong>, en passant par vos points de passage ;
+                        une ligne <strong>« Enregistré : »</strong> rappelle la variante, la force,
+                        les points et la distance. Tant que vous ne changez rien, le bouton dit
+                        <strong>« Rien à enregistrer »</strong> et le tracé enregistré reste tel
+                        quel <span class="help-muted">(« Fermer » referme le panneau)</span>.
+                        Enregistrer remplace le tracé par le nouveau calcul : une retouche GPX
+                        Studio est alors perdue.</li>
+                    <li>Le tracé passe par les points <strong>dans l'ordre du parcours</strong> :
+                        un point se range selon l'endroit du tracé où vous cliquez, et le garde
+                        quand vous le déplacez <span class="help-muted">(pratique pour faire le
+                        tour d'un parc ou d'un terril : cliquez sur le tracé, puis glissez le point
+                        sur le chemin voulu)</span>. Les points sont <strong>enregistrés avec le
+                        circuit</strong> ; publiés avec un circuit officiel <span
+                        class="help-muted">(avec sa variante)</span>, ils se retrouvent sur vos
+                        autres appareils.</li>
+                    <li><strong>Drapeaux d'accès</strong> <span class="help-muted">(là où le
+                        tracé rejoint un lieu)</span> : panneau ouvert, ils se glissent. Déplacer
+                        un drapeau recalcule les deux passages qui touchent ce lieu, pour les deux
+                        variantes. « Enregistrer avec … » garde sa nouvelle place ; « Annuler » le
+                        remet où il était.</li>
+                    <li><strong>« Annuler »</strong> après avoir posé, déplacé ou retiré des
+                        points, ou glissé un drapeau : Heripia demande confirmation avant de les
+                        abandonner. Changer seulement de variante ou de réglage ferme sans
+                        question.</li>
                     <li><strong>« Tracé presque complet »</strong> : un <strong>segment droit</strong>
                         est un passage que BRouter n'a pas su tracer — il reste en ligne droite.
-                        Ajoutez-y un <strong>point de passage</strong> pour le guider.</li>
+                        Ajoutez-y un <strong>point de passage</strong> dans « Itinéraire » pour le
+                        guider.</li>
                     <li><strong>« Re-tracer l'itinéraire »</strong> : si vous changez les lieux après
                         coup, le tracé est signalé <strong>« séquence modifiée »</strong>
                         <span class="help-muted">(« Tracé à mettre à jour »)</span>. Re-tracez pour
@@ -435,11 +445,9 @@ export const GUIDE_CIRCUIT = {
                         même variante <span class="help-muted">(sans « éviter de
                         repasser »)</span>, les autres gardent leurs ajustements. Les points
                         de passage suivent : ceux d'un lieu retiré passent au nouveau passage,
-                        ceux du passage où un lieu s'insère se répartissent avant et après lui.</li>
-                    <li><strong>« Tout re-tracer »</strong> <span class="help-muted">(menu ⋮)</span> :
-                        rouvre le panneau « Itinéraire » ; la variante retenue recalcule
-                        <strong>tous</strong> les passages, en passant par vos points de passage.
-                        Les retouches GPX Studio sont perdues.</li>
+                        ceux du passage où un lieu s'insère se répartissent avant et après lui.
+                        Pour tout recalculer, ouvrez <strong>« Itinéraire »</strong>
+                        <span class="help-muted">(menu ⋮)</span>.</li>
                     <li><strong>« Revenir au tracé précédent »</strong> <span class="help-muted">(menu ⋮,
                         juste après un re-tracé)</span> : un re-tracé est enregistré dès que vous
                         retenez une variante ; ce bouton rétablit le tracé d'avant, ajustements,
