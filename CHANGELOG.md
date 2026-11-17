@@ -6,6 +6,13 @@
 
 ---
 
+- SUIVI MOBILE : TABLEAU DE MARCHE (v3.7.541). Idée de Stefan le 17/11/2026 (inspirée de l'écran d'enregistrement Wikiloc, en plus simple) ; maquette « Tableau de marche », variante A + état hors du tracé validés.
+  - Sous le titre du suivi : « 4,3 km faits · reste 7,3 km », une barre de progression et le prochain lieu avec son numéro d'étape (« 4 Église Saint-Nicolas · dans 2,1 km »), distances le long du tracé. Au bout : « Tous les lieux sont passés ».
+  - À plus de 50 m du tracé (retour sous 35 m, pas de clignotement) : « Hors du tracé · à 120 m, vers l'est », un pointillé vers le point le plus proche du tracé, progression figée et atténuée.
+  - `walk-progress.js` (module pur) : la progression n'avance que dans le sens de la marche (une boucle repasse par son départ ; 1er fix au plus tôt du parcours), un lieu dépassé le reste. Rejoué sur la marche Strava du 13/11 (Saint-Benoît) : progression sans recul de plus de 43 m, écarts vus à la Grotte (150 m) et à l'ouest (jusqu'à 220 m).
+  - Rien n'est enregistré : pas de vitesse, de temps en mouvement ni de D+ réel (une PWA ne suit pas la position écran éteint).
+  - La carte du titre prend toute la largeur, la croix « Quitter le suivi » passe dedans (remarque de Stefan sur la maquette) : le titre et l'avertissement « Hors du tracé » tiennent sur une ligne au lieu de deux.
+
 - ITINÉRAIRE : RAPPORT PAR PASSAGE ET SUIVI DES CALQUES (v3.7.540). Demandé par Stefan le 17/11/2026, après l'analyse du tracé Saint-Benoît.
   - La liste des passages du panneau Itinéraire donne la longueur de chacun (variante choisie) et son rapport au vol d'oiseau (« ×2,1 »), en orange quand le passage est forcé : rapport ≥ 1,8 ET au moins 800 m de détour (sur un passage court, un lacet de montée gonfle le rapport sans rien forcer). Rejoué sur Saint-Benoît : seul Clairière → Saint-Nicolas ressort (4,8 km, ×2,1).
   - Avec un calque affiché : « Suit « nom » à N % » (part du passage à moins de 30 m d'un calque), et les morceaux de la variante choisie qui s'en écartent (≥ 60 m) sont surlignés en orange sous le tracé. Saint-Benoît, Clairière → Saint-Nicolas : 71 % avec la seule marche du 13/11, 85 % avec la trace Hublinbu en plus.

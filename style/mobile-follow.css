@@ -92,14 +92,18 @@
     display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2;
     -webkit-box-orient: vertical; overflow: hidden;
 }
+/* En-tête de la carte : textes à gauche, croix à droite, DANS la carte (qui
+   prend toute la largeur depuis le 17/11/2026). La croix garde une cible de
+   44 px, rognée sur les marges de la carte pour ne pas l'agrandir. */
+.follow-head { display: flex; align-items: flex-start; gap: 6px; }
+.follow-head-txt { flex: 1; min-width: 0; }
 .follow-close {
-    flex-shrink: 0; width: 44px; height: 44px; border-radius: var(--radius-lg, 14px);
-    background: color-mix(in srgb, var(--surface) 94%, transparent);
-    -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
-    box-shadow: 0 4px 14px rgba(2, 12, 27, .16);
-    border: 0; color: var(--ink);
+    flex-shrink: 0; width: 44px; height: 44px; margin: -8px -10px -8px 0;
+    border-radius: var(--radius-md, 10px);
+    background: transparent; border: 0; color: var(--ink);
     display: grid; place-items: center; cursor: pointer;
 }
+.follow-close:active { background: var(--surface-muted); }
 .follow-close svg { width: 20px; height: 20px; }
 
 /* ============================================================
@@ -378,3 +382,47 @@ body.follow-around .real-track-polyline-done {
 /* Invite « Zoomez pour voir les lieux » : sous le toast GPS s'ils coexistent. */
 #follow-zoom-hint { top: calc(140px + env(safe-area-inset-top, 0)); }
 #follow-zoom-hint svg { width: 15px; height: 15px; }
+
+/* ============================================================
+   TABLEAU DE MARCHE (17/11/2026, maquette « Tableau de marche », A)
+   ============================================================
+   Sous le titre du suivi : fait / reste, barre de progression, prochain lieu ;
+   hors du tracé, un avertissement remplace le prochain lieu et la progression
+   se fige (atténuée). */
+.walk-board {
+    margin-top: 9px; padding-top: 8px; border-top: 1px solid var(--line);
+    display: flex; flex-direction: column; gap: 7px;
+    font-variant-numeric: tabular-nums;
+}
+.wb-row { display: flex; align-items: baseline; gap: 6px; }
+.wb-done { font-size: 17px; font-weight: 700; color: var(--ink); }
+.wb-lbl, .wb-left { font-size: 12px; color: var(--ink-soft); }
+.wb-left { margin-left: auto; }
+.wb-left b { color: var(--ink); font-weight: 700; }
+.wb-bar { height: 4px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.wb-bar span { display: block; height: 100%; width: 0; border-radius: 999px; background: var(--trace-color); }
+.wb-next { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink); min-width: 0; }
+.wb-num {
+    width: 18px; height: 18px; border-radius: 5px; flex-shrink: 0;
+    background: var(--brand); color: #FFFFFF;
+    display: grid; place-items: center; font-size: 10px; font-weight: 700;
+}
+.wb-name { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wb-in { margin-left: auto; color: var(--ink-soft); white-space: nowrap; }
+.wb-in b { color: var(--ink); }
+.wb-end { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--ink-soft); }
+.wb-end svg { width: 15px; height: 15px; }
+.wb-off {
+    display: flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 10px;
+    background: var(--warn-soft); color: var(--warn-fg); font-size: 13px;
+}
+.wb-off svg { width: 16px; height: 16px; flex-shrink: 0; }
+/* Hors du tracé : la progression est figée → atténuée. */
+.walk-board.is-off .wb-done,
+.walk-board.is-off .wb-left b { color: var(--ink-soft); }
+.walk-board.is-off .wb-bar span { opacity: .45; }
+
+/* Pointillé de la position au point le plus proche du tracé. Fixe : le fond de
+   carte ne suit pas le moment (cf. --route-off-calque). */
+.follow-off-line { stroke: #946017; stroke-width: 2.5; stroke-dasharray: 5 5; stroke-linecap: round; fill: none; }
+.follow-off-dot { stroke: #946017; stroke-width: 2.5; fill: #FFFFFF; fill-opacity: 1; }
