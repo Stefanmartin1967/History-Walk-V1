@@ -50,7 +50,7 @@ import { WAY_KEYS, repassedMeters, compareToDirect, WAY_BETTER, formatKmDelta } 
 import { WAY_CATEGORIES, formatKm } from './way-types.js';
 import { nearestPassage, insertionIndex, locateOnTrack, turningPoints, pinsAround } from './passage-order.js';
 import { paintZoneWaysLoading } from './circuit-way-types.js';
-import { toggleReferenceLayer, isReferenceVisible } from './circuit-reference-layer.js';
+import { importReferenceGpx } from './circuit-reference-layer.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 const VARIANTS = ['direct', 'chemins'];
@@ -299,14 +299,27 @@ async function updatePassage(variant, seg) {
     render();
 }
 
+// Numéro de chaque point dans l'ordre du parcours : passage après passage, et
+// dans un passage, l'ordre où le tracé les rencontre (17/11/2026, demande de
+// Stefan : on parle de « point 9 » en relisant un tracé ou une marche).
+function pointNumbers() {
+    const nums = new Map();
+    let n = 0;
+    const segs = [...new Set(cv.points.map(p => p.seg))].sort((a, b) => a - b);
+    segs.forEach(seg => cv.points.filter(p => p.seg === seg).forEach(p => nums.set(p.id, ++n)));
+    return nums;
+}
+
 function drawMarkers() {
     if (!cv || !cv.markers) return;
     cv.markers.clearLayers();
+    const nums = pointNumbers();
     cv.points.forEach(p => {
+        const n = nums.get(p.id);
         const m = L.marker([p.lat, p.lng], {
             draggable: true, zIndexOffset: 1300,
-            icon: L.divIcon({ className: 'wp-marker', html: '<span class="wp-ring"></span>', iconSize: [18, 18], iconAnchor: [9, 9] }),
-            title: 'Glisser pour ajuster · cliquer pour retirer',
+            icon: L.divIcon({ className: 'wp-marker', html: `<span class="wp-ring wp-ring--num">${n}</span>`, iconSize: [22, 22], iconAnchor: [11, 11] }),
+            title: `Point ${n} · glisser pour ajuster · cliquer pour retirer`,
         });
         m.on('dragend', () => {
             const ll = m.getLatLng();
@@ -611,7 +624,7 @@ function buildPanel() {
                     <div class="pp-tools">
                         <button class="pp-tool" type="button" data-act="add" aria-pressed="true"><i data-lucide="crosshair"></i>Poser un point</button>
                         <button class="pp-tool" type="button" data-act="ways" aria-pressed="true"><i data-lucide="route"></i>Voies</button>
-                        <button class="pp-tool" type="button" data-act="layer" aria-pressed="false"><i data-lucide="layers"></i>Calque</button>
+                        <button class="pp-tool" type="button" data-act="layer" title="Ajouter un calque de référence (GPX guide)"><i data-lucide="layers"></i>Calque</button>
                     </div>
                     <p class="pp-hint">Tirez le tracé ou une de ses poignées vers le chemin voulu ; un clic sur le tracé pose un point. Cliquez un point pour le retirer. Les deux variantes passent par vos points.</p>
                     <ul class="pp-list"></ul>
@@ -714,7 +727,9 @@ function onPanelClick(e) {
     if (act === 'recompute') { e.preventDefault(); compute(target.closest('[data-variant]').dataset.variant); return; }
     if (act === 'add') { cv.addMode = !cv.addMode; syncAddMode(); render(); return; }
     if (act === 'ways') { zoneVisible = !zoneVisible; drawZone(); render(); return; }
-    if (act === 'layer') { toggleReferenceLayer(() => render()); return; }
+    // « Calque » ajoute un GPX guide ; afficher / masquer / retirer chaque calque
+    // se fait dans le panneau Circuit, à droite (puces des calques).
+    if (act === 'layer') { importReferenceGpx(() => window.dispatchEvent(new CustomEvent('reference-layers:changed'))); return; }
     if (act === 'clear-seg') { clearPassage(Number(target.dataset.seg)); return; }
     if (act === 'weight') {
         const w = Number(target.dataset.w);
@@ -883,15 +898,18 @@ function renderPoints() {
     };
     tool('add', cv.addMode);
     tool('ways', zoneVisible);
-    tool('layer', isReferenceVisible());
-    const counts = {};
-    cv.points.forEach(pt => { counts[pt.seg] = (counts[pt.seg] || 0) + 1; });
+    // Numéros des points de chaque passage (ceux de la carte).
+    const nums = pointNumbers();
+    const bySeg = {};
+    cv.points.forEach(pt => { (bySeg[pt.seg] = bySeg[pt.seg] || []).push(nums.get(pt.id)); });
     const list = p.querySelector('.pp-list');
     list.innerHTML = cv.features.slice(1).map((_, seg) => {
-        const c = counts[seg] || 0;
+        const ns = (bySeg[seg] || []).sort((a, b) => a - b);
+        const c = ns.length;
         const ends = `<span class="pp-num">${seg + 1}</span><span class="pp-arrow" aria-hidden="true">→</span><span class="pp-num">${seg + 2}</span>`;
+        const which = c === 1 ? `point ${ns[0]}` : `points ${ns[0]} à ${ns[c - 1]}`;
         return c
-            ? `<li>${ends}<span class="pp-pts">${plural(c, 'point', 'points')}</span><button class="pp-x" type="button" data-act="clear-seg" data-seg="${seg}" aria-label="Retirer les points du passage ${seg + 1} → ${seg + 2}"><i data-lucide="x"></i></button></li>`
+            ? `<li>${ends}<span class="pp-pts">${which}</span><button class="pp-x" type="button" data-act="clear-seg" data-seg="${seg}" aria-label="Retirer les points du passage ${seg + 1} → ${seg + 2}"><i data-lucide="x"></i></button></li>`
             : `<li>${ends}<span class="pp-pts is-none">aucun</span></li>`;
     }).join('');
     createIcons({ icons: appIcons, root: list });

@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.538'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.539'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 // Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
 // lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
 // (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
@@ -85,10 +85,11 @@ export const state = {
     // garde le tracé mais on affiche le badge « à re-tracer » (modèle validé :
     // éditer ne jette plus le tracé). Session uniquement, reset au chargement.
     routeBasisKey: null,
-    // Calque de référence (PR3) : trace GPX importée (Wikiloc…) affichée en fond
-    // comme guide visuel. { name, latlngs:[[lat,lon],…], visible } | null. Session
-    // uniquement, n'entre PAS dans le tracé du circuit.
-    referenceLayer: null,
+    // Calques de référence (PR3, plusieurs depuis le 17/11/2026) : traces GPX
+    // importées (Wikiloc…) affichées en fond comme guides visuels.
+    // [{ id, name, latlngs:[[lat,lon],…], visible, color, autoPrevious? }].
+    // Session uniquement, n'entrent PAS dans le tracé (circuit-reference-layer.js).
+    referenceLayers: [],
     ghostMarker: null, // Marqueur temporaire pour la recherche de coordonnées
     draggingMarkerId: null, // Marqueur en cours de déplacement (pour ignorer le clic)
     filterCompleted: false,

@@ -23,7 +23,7 @@ import { routeCircuit, routeChangedSegments, normalizeRouting, resolveEngine, en
 import { refreshFailOverlay, clearFailOverlay } from './route-fail-overlay.js';
 import { revertDraggedFlags, resyncFlags } from './circuit-flags.js';
 import { openRouteCompare, isComparing, cancelRouteCompare } from './circuit-compare.js';
-import { removeReferenceLayer, toggleReferenceLayer, hasReferenceLayer, isReferenceVisible, referenceLayerName, showTraceAsReference } from './circuit-reference-layer.js';
+import { referenceLayers, importReferenceGpx, removeReferenceLayer, removePreviousTraceLayer, toggleReferenceLayerVisible, hasReferenceLayer, isReferenceVisible, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
@@ -96,8 +96,8 @@ export function updateTraceBlock() {
     // Le bloc tracé n'a de sens qu'en création / édition.
     if (!inCreation()) { el.innerHTML = ''; updateRefButton(); return; }
 
-    // Le chip « Calque de référence » s'affiche dans TOUS les états dès qu'un
-    // calque est chargé (même à 0 POI : il guide la construction du circuit).
+    // Les calques de référence s'affichent dans TOUS les états dès qu'un calque
+    // est chargé (même à 0 POI : ils guident la construction du circuit).
     const chip = referenceChipHtml();
 
     if (isComparing()) {
@@ -142,13 +142,14 @@ export function updateTraceBlock() {
     updateRefButton();
 }
 
-// Synchronise le bouton « Calque » de la barre d'actions (état actif + tooltip).
+// Synchronise le bouton « Calque » de la barre d'actions : il AJOUTE toujours un
+// calque (17/11/2026) ; teinté tant qu'un calque est affiché.
 function updateRefButton() {
     const btn = document.getElementById('btn-reference-layer');
     if (!btn) return;
     btn.classList.toggle('is-on', isReferenceVisible()); // .cp-act.is-on = teinte brand
     btn.title = hasReferenceLayer()
-        ? `Calque : ${referenceLayerName()}${isReferenceVisible() ? '' : ' (masqué)'}`
+        ? 'Ajouter un calque de référence (GPX guide)'
         : 'Calque de référence (guide Wikiloc…)';
 }
 
@@ -166,7 +167,7 @@ function attachTraceHelp(el) {
     const failH5 = el.querySelector('.fail-note h5');
     if (failH5) failH5.appendChild(helpInline(HELP_WAYPOINT, { size: 'sm' }));
 
-    const lcTxt = el.querySelector('.layer-chip .lc-txt');
+    const lcTxt = el.querySelector('.layer-chip .lc-head');
     if (lcTxt) lcTxt.appendChild(helpInline(HELP_CALQUE, { size: 'sm' }));
 }
 
@@ -199,14 +200,24 @@ function undoItems() {
 
 const escHtml = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
-// Chip « Calque de référence » (sous la carte d'état), si un GPX guide est chargé.
+// Calques de référence (sous la carte d'état) : une ligne par GPX guide chargé,
+// à sa couleur, avec « afficher / masquer » et « retirer » (17/11/2026).
 function referenceChipHtml() {
-    if (!hasReferenceLayer()) return '';
+    const layers = referenceLayers();
+    if (layers.length === 0) return '';
+    const rows = layers.map(l => `
+            <li class="lc-row${l.visible ? '' : ' is-off'}">
+                <span class="lc-dot lc-dot--${l.color}" aria-hidden="true"></span>
+                <span class="lc-name" title="${escHtml(l.name)}">${escHtml(l.name)}</span>
+                <button class="lc-btn" type="button" data-ref-toggle="${l.id}" aria-pressed="${l.visible}"
+                    title="${l.visible ? 'Masquer' : 'Afficher'} « ${escHtml(l.name)} »"><i data-lucide="${l.visible ? 'eye' : 'eye-off'}"></i></button>
+                <button class="lc-btn lc-remove" type="button" data-ref-remove="${l.id}"
+                    title="Retirer « ${escHtml(l.name)} »"><i data-lucide="x"></i></button>
+            </li>`).join('');
     return `
         <div class="layer-chip">
-            <span class="lc-dot"></span>
-            <span class="lc-txt">Calque de référence<small>${escHtml(referenceLayerName())} · guide visuel</small></span>
-            <button class="lc-remove" id="lc-remove" type="button" title="Retirer le calque"><i data-lucide="x"></i></button>
+            <div class="lc-head">${layers.length > 1 ? 'Calques de référence' : 'Calque de référence'}<small>guides visuels, hors tracé</small></div>
+            <ul class="lc-list">${rows}</ul>
         </div>`;
 }
 
@@ -525,7 +536,7 @@ async function undoRetrace() {
     state.routeSegments = u.prevSegments;
     // Le calque « Tracé précédent » montrait justement ce tracé : il n'a plus
     // lieu d'être. Un calque importé à la main, lui, reste.
-    if (state.referenceLayer?.autoPrevious) removeReferenceLayer();
+    removePreviousTraceLayer();
     updatePolylines();
     refreshFailOverlay();
     renderCircuitPanel();
@@ -543,6 +554,9 @@ function openGpxStudio() {
     if (a) a.click();
     else window.open('https://gpx.studio/fr/app', '_blank', 'noopener');
 }
+
+// Calques ajoutés, masqués ou retirés : leurs lignes se redessinent.
+const refreshAfterLayers = () => updateTraceBlock();
 
 function closeMorePop() {
     document.getElementById('more-pop')?.classList.remove('open');
@@ -565,7 +579,10 @@ export function initCircuitRoutingUI() {
                 document.getElementById('more-pop')?.classList.toggle('open');
                 return;
             }
-            if (e.target.closest('#lc-remove')) { removeReferenceLayer(updateTraceBlock); return; }
+            const refToggle = e.target.closest('[data-ref-toggle]');
+            if (refToggle) { toggleReferenceLayerVisible(refToggle.dataset.refToggle, refreshAfterLayers); return; }
+            const refRemove = e.target.closest('[data-ref-remove]');
+            if (refRemove) { removeReferenceLayer(refRemove.dataset.refRemove, refreshAfterLayers); return; }
             const mp = e.target.closest('.mp-item');
             if (mp) {
                 closeMorePop();
@@ -584,10 +601,10 @@ export function initCircuitRoutingUI() {
         });
     }
     // Bouton « Calque de référence » de la barre d'actions (toujours visible en
-    // création, même à 0 POI) : importe un GPX guide, ou bascule sa visibilité
-    // s'il est déjà chargé. Le retrait définitif se fait via le ✕ du chip.
+    // création, même à 0 POI) : ajoute un GPX guide. Afficher / masquer et
+    // retirer se font sur la ligne de chaque calque.
     const refBtn = document.getElementById('btn-reference-layer');
-    if (refBtn) refBtn.addEventListener('click', () => toggleReferenceLayer(updateTraceBlock));
+    if (refBtn) refBtn.addEventListener('click', () => importReferenceGpx(refreshAfterLayers));
 
     // Ferme le menu « Plus » au clic extérieur.
     document.addEventListener('click', (e) => {
@@ -602,5 +619,6 @@ export function initCircuitRoutingUI() {
         if (isComparing() && (!inCreation() || currentPoiKey() !== compareKey)) cancelRouteCompare();
     });
     window.addEventListener('circuit:way-types', updateTraceBlock); // types de voie arrivés / échec
+    window.addEventListener('reference-layers:changed', updateTraceBlock); // calque ajouté depuis le panneau Itinéraire
     updateTraceBlock();
 }
