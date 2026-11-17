@@ -492,8 +492,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4511576,
-          50.4111272
+          4.4510098,
+          50.4111114
         ]
       },
       "properties": {
@@ -516,8 +516,6 @@
         "Source": "Musée des Chasseurs à pied, « Accueil » | https://www.chasseurs-a-pied-belges.be/musee/musee-accueil.htm\nHoraires confirmés par le musée par Messenger, le 5 novembre 2026\nTarifs : Musée des Chasseurs à pied, « Infos pratiques », consultés le 5 novembre 2026 | https://www.chasseurs-a-pied-belges.be/musee/musee-infos_pratiques.htm\nWikipédia, « Caserne Caporal Trésignies » | https://fr.wikipedia.org/wiki/Caserne_Caporal_Tr%C3%A9signies\nPlaque du 5ᵉ régiment et observation sur place, le 5 novembre 2026",
         "Horaires": "Samedi de 10h00 à 13h00 ; du lundi au vendredi sur rendez-vous (Facebook, courriel ou téléphone 071 30 07 48).",
         "Facebook": "https://www.facebook.com/MuseeDesChasseursAPied",
-        "lat": 50.4111114,
-        "lng": 4.4510098,
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288926029.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BN3K13BABRTGB3HYS0KZ_1794288927704.jpg",
@@ -784,8 +782,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4592714,
-          50.3627415
+          4.4594862,
+          50.3630564
         ]
       },
       "properties": {
@@ -794,9 +792,7 @@
         "osm_ref": "node/8119180917",
         "candidate": true,
         "HW_ID": "HW-01M616BNAR8FA2THSPYGTF9HF6",
-        "Zone": "Gerpinnes",
-        "lat": 50.3630564,
-        "lng": 4.4594862
+        "Zone": "Gerpinnes"
       }
     },
     {
@@ -822,8 +818,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4465533,
-          50.4098503
+          4.4465934,
+          50.4099297
         ]
       },
       "properties": {
@@ -846,8 +842,6 @@
         "État": "Conservé",
         "Accès": "Extérieur seulement",
         "Source": "Wikipédia, « Parc reine Astrid (Charleroi) » | https://fr.wikipedia.org/wiki/Parc_reine_Astrid_(Charleroi)\nInscription du mémorial et observation sur place, le 5 novembre 2026",
-        "lat": 50.4099297,
-        "lng": 4.4465934,
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BNBSR2572V57W6XRVQEG_1794289649369.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BNBSR2572V57W6XRVQEG_1794289651459.jpg"
@@ -2714,8 +2708,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4533458,
-          50.4122383
+          4.4526004,
+          50.4121574
         ]
       },
       "properties": {
@@ -2737,8 +2731,6 @@
         "Zone": "Charleroi",
         "description": "Musée du boulevard Pierre Mayence, dans la Ville-Haute de Charleroi.\nSelon Wikipédia, il occupe depuis le 16 décembre 2022 l'ancien bâtiment Defeld, autrefois écuries de la gendarmerie, transformé par le bureau d'architectes Goffart-Polomé ; la Tour Bleue de Jean Nouvel se dresse à côté.\nToujours selon Wikipédia, la collection de la Ville, commencée en 1889 et poursuivie à l'initiative de Jules Destrée, compte environ 4000 pièces, surtout d'artistes belges et wallons des 19ᵉ et 20ᵉ siècles, dont huit tableaux de René Magritte et des œuvres de François-Joseph Navez, Pierre Paulus et James Ensor. Quelque 120 œuvres sont exposées en permanence, selon un parcours chronologique qui va du néoclassicisme à l'art contemporain, en passant par le réalisme social et le surréalisme.\nSur place, un panneau retrace son histoire : la collection a été lancée en 1889 par le Comité Navez, qui offrit à la Ville un buste du peintre par le sculpteur Jean Hérain, et l'idée d'un musée est née de l'exposition internationale de Charleroi de 1911, à laquelle Jules Destrée a participé. Le musée a ensuite occupé le second étage du nouvel hôtel de ville, inauguré en octobre 1936, et a été ouvert au public de façon permanente des années 1980 aux années 2000, avant de passer par les salles du Palais des Beaux-Arts puis de rejoindre les anciennes écuries Defeld.\nParmi les toiles de Pierre Paulus, Jeunesse (1911) porte le label « Trésor classé » du patrimoine culturel mobilier de la Fédération Wallonie-Bruxelles ; un portrait de Jules Destrée, du même peintre, est exposé en dépôt permanent de l'Université du Travail de Charleroi.\nTarifs annoncés par le musée : collections permanentes en entrée libre ; expositions temporaires 7,50 € (adulte) et 3,50 € (tarif réduit), gratuites le premier dimanche du mois.",
         "Horaires": "Du mardi au vendredi de 9h00 à 17h00, samedi et dimanche de 10h00 à 18h00. Fermé le lundi, le 1er mai, les 25 et 26 décembre, les 1er et 2 janvier, et à midi les 24 et 31 décembre.",
-        "lat": 50.4121574,
-        "lng": 4.4526004,
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288445577.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BQH5TDAW10E5SW5YFE1N_1794288447287.jpg",
@@ -3149,8 +3141,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4441829,
-          50.4128278
+          4.4442152,
+          50.412807
         ]
       },
       "properties": {
@@ -3173,8 +3165,6 @@
         "Accès": "Intérieur visitable",
         "description": "Église de la rue de Castel Rodrigo, à Charleroi.\nSelon la légende de photographies publiées sur Wikimedia Commons, c'est l'ancienne chapelle dite « du Rempart », construite en 1819 ; elle a abrité la statue de Notre-Dame du Rempart jusqu'en 1908, année où celle-ci a été transférée boulevard de l'Yser. Elle est aujourd'hui un lieu de culte catholique ukrainien de rite byzantin.\nSelon la liste des rues de Charleroi sur Wikipédia, la rue de Castel Rodrigo s'appelait autrefois rue de la Chapelle.\nSur place, une affiche sur la porte, en ukrainien et en français, présente l'« Église gréco-catholique ukrainienne » et annonce la Sainte Liturgie tous les dimanches et aux grandes fêtes, à 10h00.",
         "Source": "Chapelle dite « du Rempart », photographie de Jmh2o, 20 juin 2020 (Wikimedia Commons, CC BY-SA 4.0) | https://commons.wikimedia.org/wiki/File:Charleroi_-_%C3%89glise_Byzantine_Catholique_Ukrainienne_-_01.jpg\nWikipédia, « Liste des rues de Charleroi » | https://fr.wikipedia.org/wiki/Liste_des_rues_de_Charleroi\nAffiche de l'église, relevée sur place le 5 novembre 2026",
-        "lat": 50.412807,
-        "lng": 4.4442152,
         "État": "En activité",
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BR65D8YBDMH18F2M2ZR8_1794382339729.jpg",
@@ -3188,8 +3178,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4462,
-          50.4081159
+          4.446037,
+          50.4080309
         ]
       },
       "properties": {
@@ -3211,9 +3201,7 @@
         "Sous-type": "À porte",
         "Accès": "Intérieur visitable",
         "description": "Chapelle de la rue de Montigny, à Charleroi.\nSelon le site egliseinfo.be, elle relève de l'unité pastorale de Charleroi, dans le diocèse de Tournai, et des célébrations y sont annoncées plusieurs fois par semaine.",
-        "Source": "egliseinfo.be, « Chapelle du Sacré-Cœur », fiche mise à jour le 16 août 2025 | https://www.egliseinfo.be/lieu/60/charleroi/sacre-coeur",
-        "lat": 50.4080309,
-        "lng": 4.446037
+        "Source": "egliseinfo.be, « Chapelle du Sacré-Cœur », fiche mise à jour le 16 août 2025 | https://www.egliseinfo.be/lieu/60/charleroi/sacre-coeur"
       }
     },
     {
@@ -3647,8 +3635,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.4436331,
-          50.4124927
+          4.4436702,
+          50.4125544
         ]
       },
       "properties": {
@@ -3672,8 +3660,6 @@
         "Sous-type": "Beffroi accolé",
         "État": "Conservé",
         "Accès": "Extérieur seulement",
-        "lat": 50.4125544,
-        "lng": 4.4436702,
         "photos": [
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BRWS5WR93VM1BQWVN5GX_1794306481503.jpg"
         ]
@@ -4052,8 +4038,8 @@
       "geometry": {
         "type": "Point",
         "coordinates": [
-          4.445471,
-          50.412066
+          4.4450545,
+          50.4118197
         ]
       },
       "properties": {
@@ -4086,9 +4072,7 @@
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BSF5BT9VJD3JTD75HCCM_1793905621564.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BSF5BT9VJD3JTD75HCCM_1793905623123.jpg",
           "https://stefanmartin1967.github.io/heripia-photos-charleroi/photos/poi_HW-01M616BSF5BT9VJD3JTD75HCCM_1793905625966.jpg"
-        ],
-        "lat": 50.4118197,
-        "lng": 4.4450545
+        ]
       }
     },
     {
