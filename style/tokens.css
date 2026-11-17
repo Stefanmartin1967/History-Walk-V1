@@ -216,6 +216,13 @@
      du « fait », en teinte ET en clarté (validées par Stefan, 12/11/2026). */
   --variant-direct:        #3F3AC4;  /* indigo */
   --variant-chemins:       #0A8F6A;  /* émeraude */
+  /* Calques de référence (GPX guides, jusqu'à 4 à la fois, 17/11/2026) : tirets
+     de couleurs franches, distinctes du tracé (azur), des variantes (indigo,
+     émeraude) et des types de voie (encre, prune, blanc, chartreuse, gris). */
+  --ref-layer-1:           #E0218A;  /* magenta (le calque historique) */
+  --ref-layer-2:           #EA580C;  /* orange */
+  --ref-layer-3:           #0891B2;  /* cyan */
+  --ref-layer-4:           #A16207;  /* ocre */
   --variant-halo:          var(--way-halo-light);
   --variant-width:         6px;      /* variante sélectionnée, dessus */
   --variant-halo-width:    2px;

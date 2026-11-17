@@ -264,14 +264,18 @@ export const HELP_TRACER = {
         <strong>Chemins</strong> : vous retenez celle qui convient.</p>`,
 };
 
-/* === ANCRE — « ? » sur le chip « Calque de référence » === */
+/* === ANCRE — « ? » sur les calques de référence === */
 export const HELP_CALQUE = {
-    title: 'Calque de référence',
+    title: 'Calques de référence',
     html: `
-        <p>Une trace GPX <span class="help-muted">(Wikiloc, GPS…)</span> affichée
-        <strong>en fond</strong>, comme <strong>guide visuel</strong>.</p>
-        <p>Elle <strong>n'entre pas</strong> dans le tracé de votre circuit — elle vous sert
-        juste de <strong>repère</strong> pendant que vous le construisez.</p>`,
+        <p>Des traces GPX <span class="help-muted">(Wikiloc, GPS…)</span> affichées
+        <strong>en fond</strong>, comme <strong>guides visuels</strong> : jusqu'à
+        <strong>4</strong> à la fois, chacune de sa couleur.</p>
+        <p>Elles <strong>n'entrent pas</strong> dans le tracé de votre circuit — elles vous
+        servent juste de <strong>repères</strong> pendant que vous le construisez.</p>
+        <p><strong>« Calque »</strong> en ajoute une ; sur chaque ligne, l'œil l'affiche
+        ou la masque, la croix la retire. Après un re-tracé, le <strong>« Tracé
+        précédent »</strong> s'ajoute tout seul pour comparer avant et après.</p>`,
 };
 
 /* === ANCRE — « ? » sur la pastille « séquence modifiée » (tracé périmé) === */
@@ -386,13 +390,14 @@ export const GUIDE_CIRCUIT = {
                 <strong>poignées</strong> à ses tournants : <strong>tirez une poignée, ou le tracé
                 lui-même</strong>, vers le chemin voulu. Le point tiré devient un point de passage,
                 et ses deux poignées voisines aussi, pour que seul ce bout change. Un clic sur le
-                tracé pose un point ; cliquez un point pour le retirer. Les deux
+                tracé pose un point ; cliquez un point pour le retirer. Les points sont
+                <strong>numérotés</strong> dans l'ordre du parcours. Les deux
                 variantes passent par vos points : la variante choisie suit tout de suite ;
                 l'autre se met à jour en arrière-plan avec BRouter de ce PC, ou affiche
                 <strong>« Pas à jour »</strong> avec brouter.de <span class="help-muted">(bouton
                 « Recalculer »)</span>. <strong>« Voies »</strong> montre toutes les voies autour,
-                <strong>« Calque »</strong> une trace GPX en fond, et la liste des passages dit
-                combien de points chacun porte <span class="help-muted">(× pour les
+                <strong>« Calque »</strong> ajoute une trace GPX en fond, et la liste des passages
+                dit quels points chacun porte <span class="help-muted">(× pour les
                 retirer)</span>.</p>
                 <p>Choisissez une variante <span class="help-muted">(cliquez sa carte)</span>,
                 puis <strong>« Enregistrer avec Direct / Chemins »</strong> : tracé, variante et
@@ -460,9 +465,11 @@ export const GUIDE_CIRCUIT = {
                     <li><strong>« Importer un GPX »</strong> : apporte une trace GPX
                         <span class="help-muted">(Wikiloc, GPS…)</span> <strong>comme itinéraire du
                         circuit</strong>.</li>
-                    <li><strong>« Calque de référence »</strong> : affiche une trace GPX <strong>en
-                        fond, comme guide visuel</strong>. Elle <strong>n'entre pas</strong> dans le
-                        tracé — elle vous sert juste de repère.</li>
+                    <li><strong>« Calque de référence »</strong> : ajoute une trace GPX <strong>en
+                        fond, comme guide visuel</strong> <span class="help-muted">(jusqu'à 4, une
+                        couleur chacune ; l'œil les affiche ou les masque, la croix les
+                        retire)</span>. Elles <strong>n'entrent pas</strong> dans le tracé — elles
+                        vous servent juste de repères.</li>
                     <li><strong>« Boucler le circuit »</strong> : ajoute le <strong>premier lieu en
                         dernière étape</strong> (retour au départ).</li>
                     <li><strong>« Affiner dans GPX Studio »</strong> : outil externe, pour les montages

@@ -539,31 +539,32 @@ export function updatePolylines() {
     }
 }
 
-// --- CALQUE DE RÉFÉRENCE (PR3) ---
-// Trace importée (Wikiloc…) affichée en fond comme GUIDE VISUEL. N'entre PAS
-// dans le tracé du circuit (purement décoratif, en session). Pointillé gris
-// (.route-reference-layer), non interactif, sous les marqueurs.
-let referenceLayerPolyline = null;
+// --- CALQUES DE RÉFÉRENCE (PR3, plusieurs depuis le 17/11/2026) ---
+// Traces importées (Wikiloc…) affichées en fond comme GUIDES VISUELS. N'entrent
+// PAS dans le tracé du circuit (purement décoratif, en session). Tireté d'une
+// couleur par calque (.route-reference-layer--N), non interactif, sous les
+// marqueurs.
+const referenceLayerPolylines = new Map(); // id → L.polyline
 
-export function drawReferenceLayer(latlngs) {
-    clearReferenceLayer();
-    if (!Array.isArray(latlngs) || latlngs.length < 2 || !map) return;
-    referenceLayerPolyline = L.polyline(latlngs, {
-        className: 'route-reference-layer',
-        interactive: false,
-        renderer: svgRenderer,
-    }).addTo(map);
+/** Redessine les calques visibles : [{ id, latlngs, color }]. */
+export function drawReferenceLayers(layers) {
+    referenceLayerPolylines.forEach(p => p.remove());
+    referenceLayerPolylines.clear();
+    if (!map) return;
+    (layers || []).forEach(l => {
+        if (!Array.isArray(l.latlngs) || l.latlngs.length < 2) return;
+        referenceLayerPolylines.set(l.id, L.polyline(l.latlngs, {
+            className: `route-reference-layer route-reference-layer--${l.color}`,
+            interactive: false,
+            renderer: svgRenderer,
+        }).addTo(map));
+    });
 }
 
-export function clearReferenceLayer() {
-    if (referenceLayerPolyline) { referenceLayerPolyline.remove(); referenceLayerPolyline = null; }
-}
-
-// Cadre la carte sur le calque (après import) pour qu'on le voie tout de suite.
-export function fitReferenceLayer() {
-    if (referenceLayerPolyline && map) {
-        map.fitBounds(referenceLayerPolyline.getBounds(), { padding: [50, 50] });
-    }
+// Cadre la carte sur un calque (après import) pour qu'on le voie tout de suite.
+export function fitReferenceLayer(id) {
+    const line = referenceLayerPolylines.get(id);
+    if (line && map) map.fitBounds(line.getBounds(), { padding: [50, 50] });
 }
 
 // --- LE PEINTRE DE POINTS (Reçoit les données déjà filtrées) ---

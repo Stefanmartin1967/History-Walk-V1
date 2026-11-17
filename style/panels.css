@@ -180,15 +180,18 @@
    vol d'oiseau (rouge) et du segment en échec (gris, .route-fail-segment).
    N'entre pas dans le tracé. */
 .route-reference-layer {
-    /* Magenta #e0218a (07/06/2026) : le violet #7c3aed posé en #778 restait trop
-       proche du bleu du tracé BRouter → magenta franc pour la comparaison
-       réel/routé. Tireté net + opaque, distinct de l'ocre des POIs. */
-    stroke: #e0218a !important;
+    /* Magenta (07/06/2026) pour le 1er calque : le violet #7c3aed posé en #778
+       restait trop proche du bleu du tracé BRouter. Une couleur par calque
+       depuis le 17/11/2026 (--ref-layer-1..4, tokens.css). */
+    stroke: var(--ref-layer-1) !important;
     stroke-width: 4px !important;
     stroke-dasharray: 8 6 !important;
     opacity: 0.85 !important;
     fill: none !important;
 }
+.route-reference-layer--2 { stroke: var(--ref-layer-2) !important; }
+.route-reference-layer--3 { stroke: var(--ref-layer-3) !important; }
+.route-reference-layer--4 { stroke: var(--ref-layer-4) !important; }
 
 /* Migration V2 : la modale "Carnet de Voyage" (statistics.js) utilise
    désormais openHwModal({ size: 'md' }) — la classe .gamification-modal
@@ -2908,29 +2911,37 @@
 .fail-note .fn-link svg { width: 13px; height: 13px; }
 .fail-note .fn-link.muted { color: var(--ink-soft); }
 
-/* Calque de référence (chip) — un GPX guide (Wikiloc…) chargé en fond (PR3) */
+/* Calques de référence — GPX guides (Wikiloc…) chargés en fond (PR3) ; une
+   ligne par calque, à sa couleur, avec afficher / masquer et retirer (17/11/2026). */
 .layer-chip {
-    margin: 10px 0 2px; display: flex; align-items: center; gap: 9px;
-    padding: 9px 12px; border-radius: var(--radius-md);
+    margin: 10px 0 2px; padding: 9px 12px; border-radius: var(--radius-md);
     background: color-mix(in oklab, var(--ink) 4%, var(--surface));
     border: 1px dashed var(--line); font-size: 12.5px;
 }
+.layer-chip .lc-head { color: var(--ink); font-weight: 600; display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap; }
+.layer-chip .lc-head small { font-weight: 500; color: var(--ink-soft); font-size: 11px; }
+.layer-chip .lc-list { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.layer-chip .lc-row { display: flex; align-items: center; gap: 9px; min-height: 30px; }
 .layer-chip .lc-dot {
     width: 22px; height: 4px; border-radius: 2px; flex-shrink: 0;
-    background: repeating-linear-gradient(90deg, var(--ink-soft) 0 4px, transparent 4px 8px);
-    opacity: 0.7;
+    background: repeating-linear-gradient(90deg, var(--ref-layer-1) 0 6px, transparent 6px 10px);
 }
-.layer-chip .lc-txt { flex: 1; min-width: 0; color: var(--ink); font-weight: 600; }
-.layer-chip .lc-txt small {
-    display: block; font-weight: 500; color: var(--ink-soft); font-size: 11px;
+.layer-chip .lc-dot--2 { background: repeating-linear-gradient(90deg, var(--ref-layer-2) 0 6px, transparent 6px 10px); }
+.layer-chip .lc-dot--3 { background: repeating-linear-gradient(90deg, var(--ref-layer-3) 0 6px, transparent 6px 10px); }
+.layer-chip .lc-dot--4 { background: repeating-linear-gradient(90deg, var(--ref-layer-4) 0 6px, transparent 6px 10px); }
+.layer-chip .lc-name {
+    flex: 1; min-width: 0; color: var(--ink); font-weight: 500;
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
-.layer-chip .lc-remove {
+.layer-chip .lc-row.is-off .lc-name { color: var(--ink-soft); }
+.layer-chip .lc-row.is-off .lc-dot { opacity: 0.35; }
+.layer-chip .lc-btn {
     border: 0; background: transparent; color: var(--ink-soft); cursor: pointer; flex-shrink: 0;
-    width: 26px; height: 26px; border-radius: var(--radius-sm); display: grid; place-items: center;
+    width: 28px; height: 28px; border-radius: var(--radius-sm); display: grid; place-items: center;
 }
-.layer-chip .lc-remove:hover { background: var(--surface-muted); color: var(--danger-fg); }
-.layer-chip .lc-remove svg { width: 15px; height: 15px; }
+.layer-chip .lc-btn:hover { background: var(--surface-muted); color: var(--ink); }
+.layer-chip .lc-remove:hover { color: var(--danger-fg); }
+.layer-chip .lc-btn svg { width: 15px; height: 15px; }
 
 /* ----------- 5. TOP BAR ACTIONS ----------- */
 .circuit-actions {

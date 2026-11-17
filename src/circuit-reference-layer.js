@@ -1,13 +1,28 @@
-// circuit-reference-layer.js — Calque de référence (routing in-app PR3).
+// circuit-reference-layer.js — Calques de référence (routing in-app PR3).
 //
-// Importe une trace GPX (Wikiloc, Garmin…) et l'affiche en FOND comme guide
-// visuel pour comparer / affiner le tracé du circuit. Le calque N'ENTRE PAS dans
-// le tracé (purement décoratif, en session) : seul `circuit.realTrack` est le
-// vrai tracé. Pointillé gris (.route-reference-layer), non interactif, sous les
-// marqueurs. Le dessin Leaflet est délégué à map.js (qui possède le renderer SVG).
+// Importe des traces GPX (Wikiloc, Garmin…) et les affiche en FOND comme guides
+// visuels pour comparer / affiner le tracé du circuit. Un calque N'ENTRE PAS
+// dans le tracé (purement décoratif, en session) : seul `circuit.realTrack` est
+// le vrai tracé. Tireté coloré, non interactif, sous les marqueurs. Le dessin
+// Leaflet est délégué à map.js (qui possède le renderer SVG).
+//
+// PLUSIEURS calques depuis le 17/11/2026 (demande de Stefan, après Saint-Benoît :
+// comparer sa marche, deux traces Wikiloc et le tracé précédent). Jusque-là il
+// n'y en avait qu'un : le « Tracé précédent » posé tout seul après un re-tracé
+// occupait la place, et « Calque » ne faisait plus que l'afficher ou le masquer
+// — pour charger un GPX, il fallait d'abord le retirer.
+//
+// Chaque calque : { id, name, latlngs, visible, color (1..MAX), autoPrevious? }.
+// « Calque » en ajoute toujours un ; la puce de chacun l'affiche / le masque
+// (œil) ou le retire (×).
 import { state } from './state.js';
-import { drawReferenceLayer, clearReferenceLayer, fitReferenceLayer } from './map.js';
+import { drawReferenceLayers, fitReferenceLayer } from './map.js';
 import { showToast } from './toast.js';
+
+/** Nombre de calques à la fois (une couleur chacun, cf. --ref-layer-N). */
+export const MAX_REFERENCE_LAYERS = 4;
+
+let _nextId = 1;
 
 // Parse une trace GPX (texte) → [[lat, lon], …]. Gère <trkpt> (traces) et, à
 // défaut, <rtept> (routes). Tolérant : ignore les points sans coordonnées.
@@ -20,19 +35,41 @@ function parseGpxTrack(text) {
         .filter(([la, lo]) => Number.isFinite(la) && Number.isFinite(lo));
 }
 
-export function hasReferenceLayer() { return !!state.referenceLayer; }
-export function isReferenceVisible() { return !!(state.referenceLayer && state.referenceLayer.visible); }
-export function referenceLayerName() { return state.referenceLayer ? state.referenceLayer.name : ''; }
+/** Les calques chargés, dans l'ordre d'ajout. */
+export function referenceLayers() {
+    return Array.isArray(state.referenceLayers) ? state.referenceLayers : [];
+}
+export function hasReferenceLayer() { return referenceLayers().length > 0; }
+export function isReferenceVisible() { return referenceLayers().some(l => l.visible); }
 
-// (Re)dessine ou retire le calque selon l'état + sa visibilité.
-function refreshMap() {
-    if (state.referenceLayer && state.referenceLayer.visible) drawReferenceLayer(state.referenceLayer.latlngs);
-    else clearReferenceLayer();
+// Première couleur libre (1..MAX).
+function freeColor(layers) {
+    for (let c = 1; c <= MAX_REFERENCE_LAYERS; c++) if (!layers.some(l => l.color === c)) return c;
+    return null;
 }
 
-// Ouvre un sélecteur de fichier GPX, parse, affiche le calque et cadre dessus.
-// `onDone` rafraîchit l'UI appelante (chip / barre focus) en cas de succès.
+function setLayers(layers) {
+    state.referenceLayers = layers;
+    drawReferenceLayers(layers.filter(l => l.visible));
+}
+
+// Ajoute un calque ; null s'il n'y a plus de place.
+function addLayer(layer) {
+    const layers = referenceLayers();
+    const color = freeColor(layers);
+    if (!color) return null;
+    const entry = { id: `ref_${_nextId++}`, visible: true, ...layer, color };
+    setLayers([...layers, entry]);
+    return entry;
+}
+
+// Ouvre un sélecteur de fichier GPX, parse, ajoute le calque et cadre dessus.
+// `onDone` rafraîchit l'UI appelante (puces, panneau Itinéraire) en cas de succès.
 export function importReferenceGpx(onDone) {
+    if (referenceLayers().length >= MAX_REFERENCE_LAYERS) {
+        showToast(`${MAX_REFERENCE_LAYERS} calques au plus : retirez-en un pour en charger un autre.`, 'warning');
+        return;
+    }
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.gpx,.xml,application/gpx+xml';
@@ -48,9 +85,12 @@ export function importReferenceGpx(onDone) {
                     showToast('Aucune trace trouvée dans ce fichier GPX.', 'warning');
                     return;
                 }
-                state.referenceLayer = { name: file.name, latlngs, visible: true };
-                refreshMap();
-                fitReferenceLayer();
+                const entry = addLayer({ name: file.name.replace(/\.(gpx|xml)$/i, ''), latlngs });
+                if (!entry) {
+                    showToast(`${MAX_REFERENCE_LAYERS} calques au plus : retirez-en un pour en charger un autre.`, 'warning');
+                    return;
+                }
+                fitReferenceLayer(entry.id);
                 showToast('Calque de référence chargé', 'success');
                 if (onDone) onDone();
             } catch (err) {
@@ -67,29 +107,31 @@ export function importReferenceGpx(onDone) {
 
 // Affiche un tracé [[lat,lon],…] comme calque de référence — ex. l'ANCIEN tracé
 // d'un circuit juste avant un re-tracé, pour comparer « avant → après » sans le
-// geste manuel export GPX → import (point 5). Réutilise le rendu magenta.
-// Garde-fou : n'écrase PAS un calque IMPORTÉ manuellement (Wikiloc en guide) ;
-// remplace en revanche un précédent « Tracé précédent » auto (re-tracés
-// successifs → toujours l'avant-dernier). Renvoie true si le calque a été posé.
+// geste manuel export GPX → import (point 5). Un seul « Tracé précédent » à la
+// fois : il remplace le précédent (re-tracés successifs → toujours l'avant-
+// dernier) et ne touche jamais aux calques importés. Renvoie true si posé.
 export function showTraceAsReference(latlngs, name) {
     if (!Array.isArray(latlngs) || latlngs.length < 2) return false;
-    if (state.referenceLayer && !state.referenceLayer.autoPrevious) return false;
-    state.referenceLayer = { name: name || 'Tracé précédent', latlngs: latlngs.slice(), visible: true, autoPrevious: true };
-    refreshMap();
-    return true;
+    const others = referenceLayers().filter(l => !l.autoPrevious);
+    state.referenceLayers = others;
+    if (others.length >= MAX_REFERENCE_LAYERS) { setLayers(others); return false; }
+    return !!addLayer({ name: name || 'Tracé précédent', latlngs: latlngs.slice(), autoPrevious: true });
 }
 
-export function removeReferenceLayer(onDone) {
-    state.referenceLayer = null;
-    clearReferenceLayer();
+/** Retire le « Tracé précédent » posé automatiquement, s'il y en a un. */
+export function removePreviousTraceLayer() {
+    const layers = referenceLayers();
+    if (layers.some(l => l.autoPrevious)) setLayers(layers.filter(l => !l.autoPrevious));
+}
+
+/** Retire un calque. */
+export function removeReferenceLayer(id, onDone) {
+    setLayers(referenceLayers().filter(l => l.id !== id));
     if (onDone) onDone();
 }
 
-// Affiche / masque le calque sans le décharger (toggle « Calque » du focus).
-// Si aucun calque n'est chargé, déclenche l'import.
-export function toggleReferenceLayer(onDone) {
-    if (!state.referenceLayer) { importReferenceGpx(onDone); return; }
-    state.referenceLayer.visible = !state.referenceLayer.visible;
-    refreshMap();
+/** Affiche / masque un calque sans le décharger. */
+export function toggleReferenceLayerVisible(id, onDone) {
+    setLayers(referenceLayers().map(l => (l.id === id ? { ...l, visible: !l.visible } : l)));
     if (onDone) onDone();
 }

@@ -6,6 +6,11 @@
 
 ---
 
+- TRAÇAGE : POINTS DE PASSAGE NUMÉROTÉS, PLUSIEURS CALQUES (v3.7.539). Demandé par Stefan le 17/11/2026, après l'analyse du tracé Saint-Benoît.
+  - Les points de passage du panneau Itinéraire portent leur numéro dans l'ordre du parcours (passage après passage) ; la liste des passages dit « point 3 » ou « points 3 à 5 ».
+  - Calques de référence : jusqu'à 4 à la fois, une couleur chacun (`--ref-layer-1..4`). « Calque » (barre d'actions et panneau Itinéraire) en AJOUTE toujours un ; chaque ligne du panneau Circuit a « Afficher / Masquer » (œil) et « Retirer » (×). Avant, un seul calque : le « Tracé précédent » posé après un re-tracé occupait la place et « Calque » ne faisait plus que l'afficher ou le masquer.
+  - Le « Tracé précédent » reste unique (remplacé à chaque re-tracé) et ne touche plus aux GPX importés ; « Revenir au tracé précédent » ne retire que lui.
+
 - MES CIRCUITS : LA LISTE SUIT LA PUBLICATION (v3.7.538). Relevé par Stefan le 17/11/2026.
   - Après « Tout publier », la liste « Mes Circuits » gardait l'ancien nom du circuit renommé automatiquement (Kharoubi → Kharroubi, #1114) : la mémoire portait déjà le nouveau nom, mais rien ne redessinait la liste. La publication des circuits émet désormais `circuit:list-updated` dès que l'index a été réécrit.
   - Après un F5, la liste se lit dans l'index du site, qui ne change qu'au déploiement suivant (quelques minutes) : c'est voulu, l'index et les GPX servis restent ainsi d'accord entre eux.

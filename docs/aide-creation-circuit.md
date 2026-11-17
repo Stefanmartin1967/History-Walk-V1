@@ -73,11 +73,12 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   l'ouverture. Le tracé choisi porte des **poignées** à ses tournants : **tirez une poignée,
   ou le tracé lui-même**, vers le chemin voulu. Le point tiré devient un point de passage,
   et ses deux poignées voisines aussi, pour que seul ce bout change. Un clic sur le tracé
-  pose un point ; cliquez un point pour le retirer. Les deux variantes passent par vos points : la
+  pose un point ; cliquez un point pour le retirer. Les points sont **numérotés** dans l'ordre du
+  parcours. Les deux variantes passent par vos points : la
   variante choisie suit tout de suite ; l'autre se met à jour en arrière-plan avec BRouter
   de ce PC, ou affiche **« Pas à jour »** avec brouter.de *(bouton « Recalculer »)*.
-  **« Voies »** montre toutes les voies autour, **« Calque »** une trace GPX en fond, et la
-  liste des passages dit combien de points chacun porte *(× pour les retirer)*.
+  **« Voies »** montre toutes les voies autour, **« Calque »** ajoute une trace GPX en fond, et
+  la liste des passages dit quels points chacun porte *(× pour les retirer)*.
 - Choisissez une variante *(cliquez sa carte)*, puis **« Enregistrer avec Direct /
   Chemins »** : tracé, variante et points sont enregistrés ensemble. **« Annuler »** ne
   change rien.
@@ -121,8 +122,9 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
 ### 6 · Apporter ou afficher une trace existante
 - **« Importer un GPX »** : apporte une trace GPX *(Wikiloc, GPS…)* **comme itinéraire
   du circuit**.
-- **« Calque de référence »** : affiche une trace GPX **en fond, comme guide visuel**.
-  Elle **n'entre pas** dans le tracé — elle vous sert juste de repère.
+- **« Calque de référence »** : ajoute une trace GPX **en fond, comme guide visuel**
+  *(jusqu'à 4, une couleur chacune ; l'œil les affiche ou les masque, la croix les retire)*.
+  Elles **n'entrent pas** dans le tracé — elles vous servent juste de repères.
 - **« Boucler le circuit »** : ajoute le **premier lieu en dernière étape** (retour au
   départ).
 - **« Affiner dans GPX Studio »** : outil externe, pour les montages spéciaux *(option,
@@ -154,9 +156,11 @@ changement → ré-attachés à chaque rendu).
 > lieux) par une **trace réellement marchable**, et donne la **vraie distance**. Deux
 > variantes vous sont proposées, **Direct** et **Chemins** : vous retenez celle qui convient.
 
-**« ? » Calque** — sur le chip « Calque de référence »
-> **Calque de référence** — Une trace GPX (Wikiloc, GPS…) affichée **en fond**, comme
-> **guide visuel**. Elle **n'entre pas** dans le tracé de votre circuit — juste un **repère**.
+**« ? » Calques** — sur l'en-tête « Calque(s) de référence »
+> **Calques de référence** — Des traces GPX (Wikiloc, GPS…) affichées **en fond**, comme
+> **guides visuels** : jusqu'à **4**, chacune de sa couleur. Elles **n'entrent pas** dans le tracé
+> de votre circuit — juste des **repères**. « Calque » en ajoute une ; l'œil l'affiche ou la
+> masque, la croix la retire. Après un re-tracé, le « Tracé précédent » s'ajoute tout seul.
 
 **« ? » À mettre à jour** — sur la pastille « séquence modifiée »
 > **Tracé à mettre à jour** — Vous avez **changé les lieux** (ajout, retrait ou ordre)
@@ -208,7 +212,7 @@ est resté en ligne droite » / « Ajouter un point de passage ».
 **Panneau Itinéraire** (`src/circuit-compare.js`) : « Itinéraire » · « N lieux · N passages · N points
 de passage » · « Calcul en cours · passage N sur N » · « Mise à jour… » · « avant vos derniers
 points » / « Pas à jour » / « Recalculer Direct » · « Points de passage » / « Poser un point » /
-« Voies » / « Calque » / « aucun » / « N points » · « BRouter de ce PC ne répond pas : chaque point
+« Voies » / « Calque » / « aucun » / « point N » / « points N à M » · points numérotés sur la carte · « BRouter de ce PC ne répond pas : chaque point
 ne recalcule que la variante choisie. Les écarts reviennent quand l'autre est recalculée. » ·
 Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » au-delà de 100 m) ·
 « Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » / « Éviter de
@@ -221,7 +225,8 @@ cours » / « 2 variantes » / « Posez vos points, comparez, puis enregistrez. 
 **Barre d'actions** (`index.html` ~338-369, handlers `src/ui-circuit-editor.js`) :
 « Boucler le circuit » (ajoute le 1ᵉʳ lieu à la fin) · « Importer un GPX » (trace réelle du
 circuit ; en création, peut créer le circuit depuis la trace) · « Calque de référence (guide
-Wikiloc…) » (guide visuel, n'entre pas dans le tracé) · « Ouvrir GPX Studio » · « Exporter le
+Wikiloc…) » / « Ajouter un calque de référence (GPX guide) » (guides visuels, jusqu'à 4,
+n'entrent pas dans le tracé ; lignes « Calque(s) de référence » avec Masquer / Afficher et Retirer) · « Ouvrir GPX Studio » · « Exporter le
 GPX » · « Vider le brouillon ».
 
 **Modules** : `ui-circuit-list.js` (toolbar Mes Circuits + bouton Nouveau) ·

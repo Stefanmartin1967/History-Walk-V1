@@ -44,6 +44,13 @@
     cursor: grab;
 }
 .wp-marker .wp-ring:active { cursor: grabbing; }
+/* Point numéroté (panneau Itinéraire, 17/11/2026) : l'anneau porte son numéro
+   dans l'ordre du parcours. */
+.wp-marker .wp-ring--num {
+    width: 22px; height: 22px; display: grid; place-items: center;
+    font: 700 11px/1 var(--font-family-base);
+    color: var(--ink); font-variant-numeric: tabular-nums;
+}
 
 /* — Types de voie (circuit-way-types.js) : deux polylignes par tronçon, liseré
    dessous, trait dessus. Opacité 1 (le 0,8 du bleu laisse passer le fond). — */
