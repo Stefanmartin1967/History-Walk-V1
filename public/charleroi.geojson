@@ -794,7 +794,9 @@
         "osm_ref": "node/8119180917",
         "candidate": true,
         "HW_ID": "HW-01M616BNAR8FA2THSPYGTF9HF6",
-        "Zone": "Gerpinnes"
+        "Zone": "Gerpinnes",
+        "lat": 50.3630564,
+        "lng": 4.4594862
       }
     },
     {
