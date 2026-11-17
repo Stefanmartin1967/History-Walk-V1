@@ -399,6 +399,15 @@ export const GUIDE_CIRCUIT = {
                 <strong>« Calque »</strong> ajoute une trace GPX en fond, et la liste des passages
                 dit quels points chacun porte <span class="help-muted">(× pour les
                 retirer)</span>.</p>
+                <p>La liste donne aussi la <strong>longueur</strong> de chaque passage et son
+                <strong>rapport au vol d'oiseau</strong> <span class="help-muted">(« ×2,1 »)</span>.
+                En orange <span class="help-muted">(au-delà de ×1,8 avec plus de 800 m de
+                détour)</span>, le passage est <strong>forcé</strong> : trop de points le tirent
+                par des petits chemins, à revoir. Avec un <strong>calque affiché</strong> (votre
+                marche, une trace Wikiloc récente), elle dit quelle part du passage le
+                <strong>suit</strong> <span class="help-muted">(à 30 m près)</span>, et la carte
+                surligne en orange les morceaux qui s'en écartent : là, rien ne prouve que le
+                chemin existe.</p>
                 <p>Choisissez une variante <span class="help-muted">(cliquez sa carte)</span>,
                 puis <strong>« Enregistrer avec Direct / Chemins »</strong> : tracé, variante et
                 points sont enregistrés ensemble. <strong>« Annuler »</strong> ne change rien. La variante retenue est rappelée sous le tracé, avec le moteur :

@@ -79,6 +79,12 @@ Dès **2 lieux**, le bouton **« Tracer l'itinéraire »** apparaît.
   de ce PC, ou affiche **« Pas à jour »** avec brouter.de *(bouton « Recalculer »)*.
   **« Voies »** montre toutes les voies autour, **« Calque »** ajoute une trace GPX en fond, et
   la liste des passages dit quels points chacun porte *(× pour les retirer)*.
+- La liste donne aussi la **longueur** de chaque passage et son **rapport au vol d'oiseau**
+  *(« ×2,1 »)*. En orange *(au-delà de ×1,8 avec plus de 800 m de détour)*, le passage est
+  **forcé** : trop de points le tirent par des petits chemins, à revoir. Avec un **calque
+  affiché** (votre marche, une trace Wikiloc récente), elle dit quelle part du passage le
+  **suit** *(à 30 m près)*, et la carte surligne en orange les morceaux qui s'en écartent : là,
+  rien ne prouve que le chemin existe.
 - Choisissez une variante *(cliquez sa carte)*, puis **« Enregistrer avec Direct /
   Chemins »** : tracé, variante et points sont enregistrés ensemble. **« Annuler »** ne
   change rien.
@@ -212,7 +218,8 @@ est resté en ligne droite » / « Ajouter un point de passage ».
 **Panneau Itinéraire** (`src/circuit-compare.js`) : « Itinéraire » · « N lieux · N passages · N points
 de passage » · « Calcul en cours · passage N sur N » · « Mise à jour… » · « avant vos derniers
 points » / « Pas à jour » / « Recalculer Direct » · « Points de passage » / « Poser un point » /
-« Voies » / « Calque » / « aucun » / « point N » / « points N à M » · points numérotés sur la carte · « BRouter de ce PC ne répond pas : chaque point
+« Voies » / « Calque » / « aucun » / « point N » / « points N à M » · points numérotés sur la carte ·
+« X km » + « ×R » (orange si forcé) par passage · « Suit « nom » / les calques à N % » · morceaux hors calque surlignés · « BRouter de ce PC ne répond pas : chaque point
 ne recalcule que la variante choisie. Les écarts reviennent quand l'autre est recalculée. » ·
 Distance / D+ / Repassé · Route / Rue / Piste / Sentier (+ « Non classé » au-delà de 100 m) ·
 « Écarts avec Direct : mieux / moins bien » · « Ajuster » / « Force de Chemins » / « Éviter de

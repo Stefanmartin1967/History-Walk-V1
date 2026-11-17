@@ -223,6 +223,10 @@
   --ref-layer-2:           #EA580C;  /* orange */
   --ref-layer-3:           #0891B2;  /* cyan */
   --ref-layer-4:           #A16207;  /* ocre */
+  /* Morceaux d'un passage loin de tout calque (panneau Itinéraire, 17/11/2026) :
+     large halo ambre SOUS le tracé. Fixe : le fond de carte ne suit pas le moment
+     (l'ambre pâle --warn-fg du thème nuit disparaissait sur la carte claire). */
+  --route-off-calque:      #F59E0B;
   --variant-halo:          var(--way-halo-light);
   --variant-width:         6px;      /* variante sélectionnée, dessus */
   --variant-halo-width:    2px;

@@ -50,7 +50,8 @@ import { WAY_KEYS, repassedMeters, compareToDirect, WAY_BETTER, formatKmDelta } 
 import { WAY_CATEGORIES, formatKm } from './way-types.js';
 import { nearestPassage, insertionIndex, locateOnTrack, turningPoints, pinsAround } from './passage-order.js';
 import { paintZoneWaysLoading } from './circuit-way-types.js';
-import { importReferenceGpx } from './circuit-reference-layer.js';
+import { importReferenceGpx, referenceLayers } from './circuit-reference-layer.js';
+import { straightRatio, buildLineIndex, followShare, FORCED_RATIO } from './passage-measure.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 
 const VARIANTS = ['direct', 'chemins'];
@@ -63,6 +64,16 @@ const NON_CLASSE_MIN_M = 100;
 let cv = null; // session en cours (une à la fois)
 // « Voies » affichées ou non : gardé d'une ouverture à l'autre (session).
 let zoneVisible = true;
+
+// Calques ajoutés, masqués ou retirés (panneau Circuit ou bouton « Calque ») :
+// le suivi des calques par passage et les morceaux hors calque changent.
+if (typeof window !== 'undefined') {
+    window.addEventListener('reference-layers:changed', () => {
+        if (!cv) return;
+        drawOffCalque();
+        render();
+    });
+}
 
 /** Le panneau est-il ouvert ? */
 export function isComparing() {
@@ -118,6 +129,9 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
         suppressClick: false, // un tracé tiré : le clic qui suit n'est pas un point
         dragCleanup: null,
         zone: null,
+        offCalque: null,   // morceaux de la variante choisie loin des calques
+        measures: new WeakMap(), // coords d'un passage → { ratio, follow } (cf. passageMeasure)
+        calqueIndex: null, // { sig, index } des calques affichés
         onApply, onCancel,
         panel: null,
         applying: false,
@@ -132,6 +146,7 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
     cv.handles = L.layerGroup().addTo(map);
     cv.markers = L.layerGroup().addTo(map);
     cv.zone = L.layerGroup().addTo(map);
+    cv.offCalque = L.layerGroup().addTo(map);
     map.on('click', onMapClick);
     syncAddMode();
     drawMarkers();
@@ -438,6 +453,49 @@ function syncAddMode() {
     map.getContainer().classList.toggle('cv-placing', !!(cv && cv.addMode));
 }
 
+// --- Mesures d'un passage (17/11/2026) -------------------------------------
+// Index des calques AFFICHÉS, refait seulement quand ils changent.
+function calqueIndex() {
+    const visible = referenceLayers().filter(l => l.visible);
+    const sig = visible.map(l => l.id).join('|');
+    if (!cv.calqueIndex || cv.calqueIndex.sig !== sig) {
+        cv.calqueIndex = { sig, index: visible.length ? buildLineIndex(visible.map(l => l.latlngs)) : null, count: visible.length, name: visible[0]?.name || '' };
+        cv.measures = new WeakMap(); // le suivi dépend des calques
+    }
+    return cv.calqueIndex;
+}
+
+// Rapport au vol d'oiseau et suivi des calques d'un passage, gardés tant que
+// ses coordonnées ne changent pas (le rendu du panneau est fréquent).
+function passageMeasure(segment) {
+    const coords = segment && segment.ok ? segment.coords : null;
+    if (!Array.isArray(coords) || coords.length < 2) return null;
+    const ci = calqueIndex();
+    let m = cv.measures.get(coords);
+    if (!m) {
+        m = { ratio: straightRatio(coords), follow: ci.index ? followShare(coords, ci.index) : null };
+        cv.measures.set(coords, m);
+    }
+    return m;
+}
+
+// Morceaux de la variante choisie à plus de 30 m de tout calque affiché :
+// surlignés sous le tracé, pour voir où le circuit quitte les chemins marchés.
+function drawOffCalque() {
+    if (!cv || !cv.offCalque) return;
+    cv.offCalque.clearLayers();
+    const segs = selectedSegments();
+    if (!segs || !calqueIndex().index) return;
+    segs.forEach(s => {
+        const m = passageMeasure(s);
+        (m?.follow?.off || []).forEach(run => {
+            const line = L.polyline(run, { className: 'cv-off-calque', interactive: false, renderer: trackRenderer() });
+            cv.offCalque.addLayer(line);
+            line.bringToBack(); // sous les variantes, qui restent lisibles
+        });
+    });
+}
+
 function drawZone() {
     if (!cv || !cv.zone) return;
     cv.zone.clearLayers();
@@ -507,7 +565,7 @@ function setResult(variant, result) {
     run.stats = statsOf(result);
     drawLine(variant);
     restyleLines();
-    if (variant === cv.selected) { drawZone(); drawHandles(); }
+    if (variant === cv.selected) { drawZone(); drawHandles(); drawOffCalque(); }
 }
 
 function fail(run, message) {
@@ -707,6 +765,7 @@ function teardown() {
     cv.handles?.remove();
     cv.markers?.remove();
     cv.zone?.remove();
+    cv.offCalque?.remove();
     document.removeEventListener('keydown', cv.keyHandler);
     cv.panel?.remove();
     map?.getContainer().classList.remove('is-comparing', 'cv-placing');
@@ -791,6 +850,7 @@ function select(variant) {
     restyleLines();
     drawZone();
     drawHandles();
+    drawOffCalque();
     render();
 }
 
@@ -902,15 +962,31 @@ function renderPoints() {
     const nums = pointNumbers();
     const bySeg = {};
     cv.points.forEach(pt => { (bySeg[pt.seg] = bySeg[pt.seg] || []).push(nums.get(pt.id)); });
+    const segs = selectedSegments() || [];
+    const ci = calqueIndex();
+    const calqueLabel = ci.count > 1 ? 'les calques' : `« ${esc(ci.name)} »`;
     const list = p.querySelector('.pp-list');
     list.innerHTML = cv.features.slice(1).map((_, seg) => {
         const ns = (bySeg[seg] || []).sort((a, b) => a - b);
         const c = ns.length;
         const ends = `<span class="pp-num">${seg + 1}</span><span class="pp-arrow" aria-hidden="true">→</span><span class="pp-num">${seg + 2}</span>`;
         const which = c === 1 ? `point ${ns[0]}` : `points ${ns[0]} à ${ns[c - 1]}`;
+        // Longueur et rapport au vol d'oiseau de la variante choisie ; suivi
+        // des calques affichés (17/11/2026).
+        const m = passageMeasure(segs[seg]);
+        let meta = '';
+        if (m) {
+            const km = (m.ratio.lengthM / 1000).toFixed(1).replace('.', ',');
+            const r = m.ratio.ratio;
+            const ratio = r == null ? '' : `<span class="pp-ratio${m.ratio.forced ? ' is-forced' : ''}" title="Longueur ÷ vol d'oiseau entre les deux lieux${m.ratio.forced ? ` : au-delà de ×${String(FORCED_RATIO).replace('.', ',')} avec un long détour, le passage est forcé` : ''}">×${r.toFixed(1).replace('.', ',')}</span>`;
+            meta = `<span class="pp-meta">${km} km${ratio}</span>`;
+        }
+        const follow = m && m.follow
+            ? `<span class="pp-follow" title="Part du passage à moins de 30 m d'un calque affiché ; le reste est surligné sur la carte">Suit ${calqueLabel} à ${Math.round(m.follow.share * 100)} %</span>`
+            : '';
         return c
-            ? `<li>${ends}<span class="pp-pts">${which}</span><button class="pp-x" type="button" data-act="clear-seg" data-seg="${seg}" aria-label="Retirer les points du passage ${seg + 1} → ${seg + 2}"><i data-lucide="x"></i></button></li>`
-            : `<li>${ends}<span class="pp-pts is-none">aucun</span></li>`;
+            ? `<li>${ends}${meta}<span class="pp-pts">${which}</span><button class="pp-x" type="button" data-act="clear-seg" data-seg="${seg}" aria-label="Retirer les points du passage ${seg + 1} → ${seg + 2}"><i data-lucide="x"></i></button>${follow}</li>`
+            : `<li>${ends}${meta}<span class="pp-pts is-none">aucun</span>${follow}</li>`;
     }).join('');
     createIcons({ icons: appIcons, root: list });
 }
