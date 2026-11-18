@@ -158,9 +158,9 @@
         "Nom du site FR": "Clairière des résistants",
         "Catégorie": "Monument",
         "osm_ref": "node/2590496040",
-        "candidate": true,
         "HW_ID": "HW-01M616BMWMN6G8EK4FWJHFASM2",
-        "Zone": "Ham-sur-Heure-Nalinnes"
+        "Zone": "Ham-sur-Heure-Nalinnes",
+        "description": "Votre histoire n'est pas claire"
       }
     },
     {
