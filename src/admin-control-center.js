@@ -8,7 +8,7 @@ import { forgetDeletedCircuit, revertCircuitToPublished, renameCircuitCopies } f
 import { stripCircuitSignature } from './circuit-description.js';
 import { trackFingerprint, rememberPublishedTrack } from './track-fingerprint.js';
 import { gpxStepsOf, stepsFingerprint, rememberPublishedSteps } from './gpx-steps.js';
-import { getPoiId, getPoiProp, getRealDistance, isDestinationPublished, getDerivedZone } from './utils.js';
+import { getPoiId, getPoiProp, getRealDistance, isDestinationPublished, getDerivedZone, escapeXml } from './utils.js';
 import { generateGPXString } from './gpx.js';
 import { eventBus } from './events.js';
 import { createIcons, appIcons } from './lucide-icons.js';
@@ -802,6 +802,17 @@ export function buildPublishWarning() {
          + `Vérifiez que c'est voulu (une valeur peut revenir en arrière si la fiche a été rouverte sur un état ancien).\n\n`;
 }
 
+/**
+ * Texte de confirmation → HTML de la fenêtre : noms de fiches échappés, retours à
+ * la ligne gardés (showConfirm insère le message tel quel dans un <p>, où les
+ * retours à la ligne s'effaçaient : conflits, pertes de contenu et rejets en un
+ * seul bloc, constaté par Stefan le 18/11/2026).
+ * @param {string} text
+ */
+export function confirmHtml(text) {
+    return escapeXml(String(text ?? '')).replace(/\n/g, '<br>');
+}
+
 async function publishChanges() {
     const token = getStoredToken();
     if (!token) {
@@ -835,7 +846,7 @@ async function publishChanges() {
     // en les nommant. Pas de blocage : l'effacement peut être volontaire.
     const ok = await showConfirm(
         "Publication GitHub",
-        conflictNote + buildPublishWarning() + rejectedNote + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
+        confirmHtml(conflictNote + buildPublishWarning() + rejectedNote + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs."),
         "Publier",
         "Annuler"
     );

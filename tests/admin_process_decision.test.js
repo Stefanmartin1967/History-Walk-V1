@@ -63,7 +63,8 @@ vi.mock('../src/state.js', () => {
     return mod;
 });
 
-vi.mock('../src/utils.js', () => ({
+vi.mock('../src/utils.js', async (importOriginal) => ({
+    escapeXml: (await importOriginal()).escapeXml,
     getPoiId: (f) => f?.properties?.HW_ID
 }));
 
@@ -166,7 +167,7 @@ vi.mock('../src/circuit-actions.js', () => ({
 }));
 
 // L'import doit venir après les mocks
-import { processDecision, addToDraft, getAdminDraft, resolveConflicts, conflictHold } from '../src/admin-control-center.js';
+import { processDecision, addToDraft, getAdminDraft, resolveConflicts, conflictHold, confirmHtml } from '../src/admin-control-center.js';
 import { diffData } from '../src/admin-diff-engine.js';
 
 function setupPoi(id, props = {}, userData = null, geom = [10, 33]) {
@@ -504,5 +505,12 @@ describe('conflictHold', () => {
         const hold = conflictHold({ pois: [{ id: 'B', changes: [] }], circuits: [{ id: 'C1' }], originalFeatures: [] });
         expect(hold.fields.size).toBe(0);
         expect(hold.circuits.size).toBe(0);
+    });
+});
+
+// Confirmation de publication (18/11/2026) : retours à la ligne gardés, noms échappés.
+describe('confirmHtml', () => {
+    it('garde les retours à la ligne et échappe le HTML', () => {
+        expect(confirmHtml('1 conflit :\n• Grotte <b>\n\nPublier ?')).toBe('1 conflit :<br>• Grotte &lt;b&gt;<br><br>Publier ?');
     });
 });
