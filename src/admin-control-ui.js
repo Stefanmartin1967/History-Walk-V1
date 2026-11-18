@@ -12,7 +12,7 @@ import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { escapeXml } from './utils.js';
 import L from 'leaflet';
 import { isMobileView } from './mobile-state.js';
-import { markChanges, mergeTexts } from './text-merge.js';
+import { markChanges, mergeTexts, hasSentence, addSentence, removeSentence } from './text-merge.js';
 import { migrateExistingNotes } from './private-notes.js';
 import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
@@ -412,19 +412,10 @@ function bindCCEventDelegation(diffData, callbacks) {
                 const src = takeAll.dataset.side === 'online' ? 'online' : 'local';
                 const item = (diffData.pois || []).find(p => p.id === _conflictPoiId);
                 const c = item?.conflicts?.find(x => x.key === takeAll.dataset.key);
-                if (ta && c) ta.value = String(c[src] ?? '');
-                return;
-            }
-            const takePassage = e.target.closest('[data-action="conflict-take-passage"]');
-            if (takePassage) {
-                const ta = conflictTextarea(container, takePassage.dataset.key);
-                const here = takePassage.dataset.here || '';
-                const online = takePassage.dataset.online || '';
-                if (ta) {
-                    if (here && ta.value.includes(here)) ta.value = ta.value.replace(here, online);
-                    else ta.value = `${ta.value.replace(/\s+$/, '')} ${online}`.trim();
+                if (ta && c) {
+                    ta.value = String(c[src] ?? '');
+                    syncSentenceBoxes(ta.closest('.cc-conflict-field'));
                 }
-                takePassage.disabled = true;
                 return;
             }
             if (e.target.closest('[data-action="conflict-apply"]')) {
@@ -444,7 +435,25 @@ function bindCCEventDelegation(diffData, callbacks) {
             }
         });
 
+        // Version finale retouchée à la main : les cases suivent ce qu'elle contient.
+        container.addEventListener('input', (e) => {
+            if (e.target.matches('textarea[data-conflict-key]')) syncSentenceBoxes(e.target.closest('.cc-conflict-field'));
+        });
+
         container.addEventListener('change', (e) => {
+            // Écran « Résoudre », texte : une case par phrase (maquette validée
+            // le 18/11/2026). Cocher ajoute la phrase à la fin de la version
+            // finale, décocher la retire ; rien d'autre n'y bouge.
+            if (e.target.matches('input.cc-conflict-sentence')) {
+                const field = e.target.closest('.cc-conflict-field');
+                const ta = field && conflictTextarea(field, field.dataset.key);
+                if (ta) {
+                    const sentence = e.target.dataset.sentence || '';
+                    ta.value = e.target.checked ? addSentence(ta.value, sentence) : removeSentence(ta.value, sentence);
+                    syncSentenceBoxes(field);
+                }
+                return;
+            }
             // Écran « Résoudre » : la carte cochée est mise en avant.
             if (e.target.matches('.cc-conflict-choice input[type="radio"]')) {
                 const group = e.target.closest('.cc-conflict-field');
@@ -1729,9 +1738,27 @@ function choiceCard(name, value, label, body, checked) {
     </label>`;
 }
 
-function renderMarked(base, text) {
-    return markChanges(base ?? '', text ?? '')
-        .map(s => s.changed ? `<mark>${escapeXml(s.text)}</mark>` : escapeXml(s.text)).join('');
+// Phrases d'une version : celles qui ont changé depuis le départ portent une
+// case (cochée si la phrase est dans la version finale) ; les autres sont du
+// texte simple. Le blanc qui suit chaque phrase (retour à la ligne compris) est
+// gardé hors du libellé pour que la mise en page de la version reste lisible.
+function renderSentences(base, text, finalText) {
+    return markChanges(base ?? '', text ?? '').map(s => {
+        const body = s.text.replace(/\s+$/, '');
+        const tail = s.text.slice(body.length);
+        if (!s.changed || !body) return escapeXml(s.text);
+        const checked = hasSentence(finalText, body);
+        return `<label class="cc-conflict-sent"><input type="checkbox" class="cc-conflict-sentence" data-sentence="${escapeXml(body)}"${checked ? ' checked' : ''}><mark>${escapeXml(body)}</mark></label>${escapeXml(tail)}`;
+    }).join('');
+}
+
+/** Cases d'un champ texte alignées sur le contenu de sa version finale. */
+function syncSentenceBoxes(field) {
+    const ta = field && conflictTextarea(field, field.dataset.key);
+    if (!ta) return;
+    field.querySelectorAll('input.cc-conflict-sentence').forEach(box => {
+        box.checked = hasSentence(ta.value, box.dataset.sentence || '');
+    });
 }
 
 function renderConflictField(c, mobile) {
@@ -1758,24 +1785,17 @@ function renderConflictField(c, mobile) {
     }
     if (c.kind === 'text') {
         const merged = mergeTexts(c.base ?? '', c.local ?? '', c.online ?? '');
-        const passages = merged.conflicts.map(p => `
-            <div class="cc-conflict-passage">
-                <div><span class="cc-conflict-disputed">${escapeXml(p.here || '(supprimé ici)')}</span></div>
-                <div class="cc-conflict-passage-online">En ligne : « ${escapeXml(p.online || '(supprimé)')} »
-                    <button class="cc-diff-btn" type="button" data-action="conflict-take-passage" data-key="${key}" data-here="${escapeXml(p.here)}" data-online="${escapeXml(p.online)}">Prendre celle-ci</button>
-                </div>
-            </div>`).join('');
         return `<section class="cc-conflict-field" data-key="${key}" data-kind="text">
             <h3 class="cc-conflict-key">${label}</h3>
             <div class="cc-conflict-texts">
                 <div class="cc-conflict-text">
                     <div class="cc-conflict-text-head"><span class="cc-conflict-swatch cc-conflict-swatch--online"></span>En ligne · publié depuis un autre appareil</div>
-                    <p class="cc-conflict-text-body cc-conflict-text-body--online">${renderMarked(c.base, c.online)}</p>
+                    <p class="cc-conflict-text-body cc-conflict-text-body--online">${renderSentences(c.base, c.online, merged.text)}</p>
                     <button class="cc-diff-btn" type="button" data-action="conflict-take-all" data-side="online" data-key="${key}">Tout reprendre de celle-ci</button>
                 </div>
                 <div class="cc-conflict-text">
                     <div class="cc-conflict-text-head"><span class="cc-conflict-swatch cc-conflict-swatch--local"></span>Ici · cet appareil</div>
-                    <p class="cc-conflict-text-body cc-conflict-text-body--local">${renderMarked(c.base, c.local)}</p>
+                    <p class="cc-conflict-text-body cc-conflict-text-body--local">${renderSentences(c.base, c.local, merged.text)}</p>
                     <button class="cc-diff-btn" type="button" data-action="conflict-take-all" data-side="local" data-key="${key}">Tout reprendre de celle-ci</button>
                 </div>
             </div>
@@ -1783,9 +1803,8 @@ function renderConflictField(c, mobile) {
                 <label class="cc-conflict-final-label" for="cc-conf-final-${key}">Version finale · sera publiée</label>
                 ${merged.clean
                     ? `<div class="cc-conflict-merged" role="status"><i data-lucide="check"></i> Les deux changements ne touchaient pas la même phrase : ils ont été réunis. Relis avant de valider.</div>`
-                    : `<p class="cc-conflict-hint">Les deux versions ont changé le même passage : la version finale part de « Ici », l'autre version est juste en dessous.</p>`}
+                    : `<p class="cc-conflict-hint">Au départ : les phrases d'« Ici ». Une phrase cochée s'ajoute à la fin ; décochée, elle est retirée. Tes retouches ne bougent pas.</p>`}
                 <textarea id="cc-conf-final-${key}" class="cc-conflict-textarea" rows="6" data-conflict-key="${key}">${escapeXml(merged.text)}</textarea>
-                ${passages}
             </div>
         </section>`;
     }
