@@ -1278,3 +1278,25 @@ html[data-theme="nuit"] .cc-hero {
     .cc-conflict-map { min-height: 180px; }
     .cc-conflict-actions .cc-diff-btn { min-height: 44px; }
 }
+
+/* ============================================================
+   CANDIDATS SCOUT MODIFIÉS (18/11/2026, maquette « candidats Scout modifiés »)
+   ============================================================
+   Étiquette « Candidat » à côté de MODIFIÉ (destination brouillon : publiés) ;
+   section « En attente de validation » (destination publiée : non comptés,
+   partent une fois validés), cartes en pointillés. Tokens de thème uniquement. */
+.cc-cand-tag {
+    display: inline-flex; align-items: center; flex-shrink: 0;
+    font-size: 11px; font-weight: 600; padding: 1px 8px;
+    border-radius: var(--radius-pill);
+    border: 1px solid color-mix(in oklab, var(--info-fg) 55%, transparent);
+    color: var(--info-fg);
+}
+.cc-diff-group--pending .cc-diff-group-typed-title { color: var(--ink-soft); }
+.cc-diff--pending { background: transparent; border-style: dashed; }
+.cc-diff--pending .cc-diff-head { border-bottom-style: dashed; }
+.cc-pending-info {
+    display: flex; align-items: flex-start; gap: 8px;
+    margin: 0 0 var(--space-sm); font-size: 12.5px; line-height: 1.45; color: var(--ink-soft);
+}
+.cc-pending-info svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }

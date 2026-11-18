@@ -25,6 +25,7 @@ import { state } from './state.js';
 import { saveAppState, savePoiData, deletePoiData } from './database.js';
 import { getPoiId } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
+import { noteCandidateOriginals } from './candidate-edits.js';
 
 /**
  * Persiste `data` (paires champ→valeur) sur le POI `poiId`, en routant vers le
@@ -59,6 +60,9 @@ export async function persistPoiEdit(poiId, data) {
             await savePoiData(state.currentMapId, poiId, state.userData[poiId]);
         }
 
+        // Candidat Scout : valeur capturée notée au premier changement (Centre de
+        // contrôle, « candidats modifiés », 18/11/2026).
+        noteCandidateOriginals(feature.properties, patrimonialData);
         Object.assign(feature.properties, patrimonialData);
         // Champ vidé ("" / null) → on retire la clé (parité avec executeCreate) ;
         // les valeurs false / 0 (verified, Temps_minutes, Prix_TND) sont conservées.

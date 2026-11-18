@@ -187,3 +187,33 @@ describe('téléphone', () => {
         expect(callbacks.resolveConflicts).not.toHaveBeenCalled();
     });
 });
+
+// Candidats Scout modifiés (18/11/2026, point 2, maquette écrans 5 et 6).
+describe('candidats modifiés', () => {
+    it('brouillon : étiquette « Candidat », phrase, « Annuler » absent pour un candidat local', () => {
+        diff.pois = [
+            { id: 'K1', name: 'Grotte des Sarrasins', isCandidate: true, changes: [{ key: 'Position', old: 'a', new: 'b' }] },
+            { id: 'K2', name: 'Candidat local', isCandidate: true, isLocalCandidate: true, changes: [{ key: 'Catégorie', old: 'A définir', new: 'Chapelle' }] },
+        ];
+        diff.stats.conflictPois = 0;
+        renderTab('changes', diff, callbacks);
+        const k1 = content().querySelector('#cc-diff-item-K1');
+        expect(k1.querySelector('.cc-cand-tag').textContent).toBe('Candidat');
+        expect(k1.textContent).toContain('part avec cette publication');
+        expect(k1.querySelector('[data-action="refuse"]')).not.toBeNull();
+        expect(content().querySelector('#cc-diff-item-K2 [data-action="refuse"]')).toBeNull();
+    });
+
+    it('publiée : section « En attente de validation », non comptée', () => {
+        diff.pois = [];
+        diff.stats = { poisModified: 0, conflictPois: 0, circuitsModified: 0, pendingPhotoCount: 0, testedChanged: 0, rejectedPending: 0, pendingCandidates: 1 };
+        diff.pendingCandidates = [{ id: 'L1', name: 'Marabout X', isCandidate: true, isLocalCandidate: true, changes: [{ key: 'Nom du site FR', old: '—', new: 'Marabout X' }] }];
+        renderTab('changes', diff, callbacks);
+        const group = content().querySelector('.cc-diff-group--pending');
+        expect(group.textContent).toContain('En attente de validation');
+        expect(group.textContent).toContain('Marabout X');
+        expect(group.querySelector('[data-action="open-editor"]')).not.toBeNull();
+        expect(group.querySelector('[data-action="refuse"]')).toBeNull();
+        expect(document.getElementById('btn-cc-publish').disabled).toBe(true);
+    });
+});

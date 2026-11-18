@@ -36,7 +36,7 @@ import { computeChangesSubviewItems, setChangesSubView, getChangesSubView } from
 describe('computeChangesSubviewItems', () => {
     it('retourne 3 listes vides si diffData vide', () => {
         const r = computeChangesSubviewItems({ pois: [], circuits: [] });
-        expect(r).toEqual({ lieux: [], photos: [], circuits: [] });
+        expect(r).toEqual({ lieux: [], photos: [], circuits: [], pendingCandidates: [] });
     });
 
     it('résiste aux propriétés manquantes (pois/circuits absents)', () => {

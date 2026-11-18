@@ -1285,12 +1285,14 @@ export function renderTab(tab, diffData, callbacks) {
         const rejectedLabel = `${rejectedPending} rejet${rejectedPending > 1 ? 's' : ''} de candidats`;
 
         // Topbar title : indique le total à publier
+        const pendingCand = subviewItems.pendingCandidates.length;
         const subParts = [];
         if (totalCount > 0) subParts.push(`${totalCount} en attente`);
+        if (pendingCand > 0) subParts.push(`${pendingCand} candidat${pendingCand > 1 ? 's' : ''} à valider`);
         if (rejectedPending > 0) subParts.push(rejectedLabel);
         updateTopbarTitle('changes', { subOverride: subParts.join(' · ') });
 
-        if (totalCount === 0 && rejectedPending > 0) {
+        if (totalCount === 0 && rejectedPending > 0 && pendingCand === 0) {
             container.innerHTML = `
                 <div class="cc-empty">
                     <div class="cc-empty-mark"><i data-lucide="trash-2"></i></div>
@@ -1302,7 +1304,7 @@ export function renderTab(tab, diffData, callbacks) {
             return;
         }
 
-        if (totalCount === 0) {
+        if (totalCount === 0 && pendingCand === 0) {
             container.innerHTML = `
                 <div class="cc-empty">
                     <div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div>
@@ -1336,7 +1338,7 @@ export function renderTab(tab, diffData, callbacks) {
             createIcons({ icons: appIcons, root: container });
             return;
         } else if (_changesSubView === 'lieux') {
-            bodyHtml = renderLieuxView(subviewItems.lieux);
+            bodyHtml = renderLieuxView(subviewItems.lieux, subviewItems.pendingCandidates);
         } else if (_changesSubView === 'photos') {
             bodyHtml = renderPhotosView(subviewItems.photos);
         } else if (_changesSubView === 'circuits') {
@@ -1622,7 +1624,11 @@ export function computeChangesSubviewItems(diffData) {
     // Photos : POI avec photos en attente (qu'ils aient ou non des changes texte).
     const photos = pois.filter(p => p.hasPendingPhotos);
 
-    return { lieux, photos, circuits };
+    // Candidats Scout modifiés sur une destination publiée (18/11/2026) : montrés
+    // dans Lieux, à part, NON comptés (ils ne partent qu'une fois validés).
+    const pendingCandidates = diffData.pendingCandidates || [];
+
+    return { lieux, photos, circuits, pendingCandidates };
 }
 
 /**
@@ -1643,8 +1649,8 @@ function renderChangesSubtabs(subviewItems, activeView) {
          + tab('circuits', 'Circuits', subviewItems.circuits.length);
 }
 
-function renderLieuxView(items) {
-    if (items.length === 0) {
+function renderLieuxView(items, pendingCandidates = []) {
+    if (items.length === 0 && pendingCandidates.length === 0) {
         return `<div class="cc-empty"><div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div><h3 class="cc-empty-title">Aucun lieu modifié.</h3></div>`;
     }
     const groups = {
@@ -1667,7 +1673,43 @@ function renderLieuxView(items) {
     html += renderItemGroup('Modifié',   groups.mod, 'mod', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
     html += renderItemGroup('Supprimé',  groups.del, 'del', { showEdit: false, showPhotoGrid: false, scope: 'poi' });
     html += renderItemGroup('Migré',     groups.mig, 'mig', { showEdit: false, showPhotoGrid: false, scope: 'poi' });
+    html += renderPendingCandidates(pendingCandidates);
     return html;
+}
+
+// Destination publiée : candidats Scout modifiés sur cet appareil, qui ne
+// partiront qu'une fois validés (maquette « candidats Scout modifiés », écran 6).
+function renderPendingCandidates(items) {
+    if (!items.length) return '';
+    const cards = items.map(item => `
+        <div class="cc-diff cc-diff--pending" id="cc-diff-item-${item.id}">
+            <div class="cc-diff-head">
+                <span class="cc-cand-tag">Candidat</span>
+                <div class="cc-diff-name">${escapeXml(item.name)}</div>
+                <div class="cc-diff-actions">
+                    <button class="cc-diff-btn" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour valider ce candidat">
+                        <i data-lucide="edit-3"></i> Réviser
+                    </button>
+                </div>
+            </div>
+            <div class="cc-diff-body">${renderChangeRows(item.changes)}</div>
+        </div>`).join('');
+    return `<div class="cc-diff-group cc-diff-group--pending">
+        <h4 class="cc-diff-group-typed-title">En attente de validation<span class="cc-diff-group-count">· ${items.length}</span></h4>
+        <p class="cc-pending-info"><i data-lucide="info"></i><span>Ces candidats ont été modifiés sur cet appareil. Ils ne partent pas avec « Tout publier » : ils partiront quand tu les valideras (« Valider &amp; enregistrer » dans l'éditeur).</span></p>
+        ${cards}
+    </div>`;
+}
+
+function renderChangeRows(changes) {
+    return (changes || []).map(c => `
+        <div class="cc-diff-key">${escapeXml(c.key)}</div>
+        <div class="cc-diff-val">
+            ${c.old !== undefined && c.old !== null && c.old !== ''
+                ? `<div class="cc-diff-old">${escapeXml(c.old)}</div>` : ''}
+            <div class="cc-diff-new">${c.new !== undefined ? escapeXml(c.new) : '—'}</div>
+        </div>
+    `).join('');
 }
 
 function renderPhotosView(items) {
@@ -1933,12 +1975,13 @@ function renderItemGroup(title, items, kind, opts) {
         const headerHtml = `
             <div class="cc-diff-head">
                 <span class="cc-diff-tag ${tagClass}">${tagLabels[kind] || tagLabels.mod}</span>
+                ${item.isCandidate ? '<span class="cc-cand-tag">Candidat</span>' : ''}
                 <div class="cc-diff-name">${escapeXml(item.name)}</div>
                 <div class="cc-diff-actions">
                     ${showEdit ? `<button class="cc-diff-btn cc-diff-btn--primary" data-action="open-editor" data-id="${item.id}" title="Ouvrir l'éditeur pour vérifier avant publication">
                         <i data-lucide="edit-3"></i> Réviser
                     </button>` : ''}
-                    ${item.fromSteps ? '' : `<button class="cc-diff-btn cc-diff-btn--danger" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
+                    ${item.fromSteps || item.isLocalCandidate ? '' : `<button class="cc-diff-btn cc-diff-btn--danger" data-action="refuse" data-id="${item.id}" data-scope="${opts.scope}" title="${refuseTitle}">
                         <i data-lucide="${refuseIcon}"></i> ${refuseLabel}
                     </button>`}
                 </div>
@@ -1972,7 +2015,9 @@ function renderItemGroup(title, items, kind, opts) {
             // sa publication (17/11/2026) : rien d'autre à faire que republier.
             const stepsNote = item.fromSteps
                 ? `<div class="cc-diff-note cc-diff-note--new"><i data-lucide="info"></i> Des fiches de ce circuit ont changé depuis sa publication : republier met son GPX à jour.</div>`
-                : '';
+                : item.isCandidate
+                    ? `<div class="cc-diff-note cc-diff-note--new">Candidat non validé : part avec cette publication, comme le reste de la destination brouillon.</div>`
+                    : '';
             bodyHtml = `<div class="cc-diff-body">${rows}${stepsNote}</div>`;
         }
 
