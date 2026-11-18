@@ -76,9 +76,12 @@ function editsOf(B, X) {
 }
 
 // Deux changements touchent-ils la même partie du départ ?
-function overlaps(a, b) {
+// Deux AJOUTS au même endroit ne se gênent pas : ils sont réunis (celui d'ici
+// d'abord) — sauf si le départ était vide, où chacun a écrit son propre texte
+// (« Grotte des Sarrasins », 18/11/2026) : là, c'est un conflit.
+function overlaps(a, b, baseEmpty) {
     const insA = a.s === a.e, insB = b.s === b.e;
-    if (insA && insB) return a.s === b.s;
+    if (insA && insB) return baseEmpty && a.s === b.s;
     if (insA) return a.s > b.s && a.s < b.e;
     if (insB) return b.s > a.s && b.s < a.e;
     return a.s < b.e && b.s < a.e;
@@ -118,7 +121,7 @@ export function mergeTexts(base, here, online) {
     const all = [...eh, ...eo].sort((x, y) => x.s - y.s || x.e - y.e);
     const groups = [];
     for (const d of all) {
-        const g = groups.find(gr => gr.items.some(x => x.side !== d.side && overlaps(x, d)));
+        const g = groups.find(gr => gr.items.some(x => x.side !== d.side && overlaps(x, d, B.length === 0)));
         if (g) { g.items.push(d); g.s = Math.min(g.s, d.s); g.e = Math.max(g.e, d.e); }
         else groups.push({ s: d.s, e: d.e, items: [d] });
     }

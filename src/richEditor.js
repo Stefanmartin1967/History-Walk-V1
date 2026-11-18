@@ -22,7 +22,7 @@ import { GUIDE_LIEU, HELP_LIEU_ZONE, HELP_LIEU_CATEGORIE, HELP_LIEU_DESC_COURTE,
 import {
     getWorkPhotosById, getKeptWorkPhotosById, setWorkPhotoKept, uploadWorkPhoto, loadWorkPhotoBlob
 } from './work-photos.js';
-import { savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
+import { noteEdited } from './note-sync.js';
 import { getStoredToken } from './github-sync.js';
 import { openWebSearch } from './web-search.js';
 
@@ -85,8 +85,8 @@ let currentMode = 'CREATE'; // 'CREATE' | 'EDIT'
 let currentFeatureId = null; // Pour le mode EDIT
 let currentDraftCoords = null; // Pour le mode CREATE
 let currentPhotos = []; // Pour le mode CREATE (import photos)
-// Note privée affichée à l'ouverture (mode EDIT) : un champ vide qui l'était déjà
-// n'efface rien sur heripia-travail (cf. shouldSyncPrivateNote).
+// Note privée affichée à l'ouverture (mode EDIT) : on ne marque la note « à
+// envoyer » que si elle a vraiment changé (note-sync.js).
 let initialNotesValue = '';
 let isDirty = false;
 // État OSM tel que CHARGÉ (avant modif de la session en cours) — sert à ne
@@ -1636,10 +1636,8 @@ async function executeCreate(data) {
     // Fire-and-forget, même motif qu'executeEdit — la copie locale (dans
     // newFeature.properties, cf. poi-persistence.js pour la bascule vers
     // l'overlay userData au prochain edit) est déjà sauve.
-    if (state.isAdmin && getStoredToken() && data.notes) {
-        savePrivateNote(state.currentMapId, actualId, data.notes).catch(err => {
-            console.warn('[PrivateNotes] Envoi heripia-travail échoué (création):', err.message);
-        });
+    if (state.isAdmin && data.notes) {
+        noteEdited(actualId, data.notes).catch(err => console.warn('[NoteSync] (création) :', err.message));
     }
 
     // PR 2/5 chantier point d'accès v2 : pré-pose silencieuse à la création
@@ -1714,10 +1712,12 @@ async function executeEdit(data, validated = false) {
     // `undefined` effacerait la note du dépôt. Lieu local : le champ est toujours
     // envoyé, d'où la seconde garde (une note locale manquante effaçait celle du
     // dépôt, 14/09/2026).
-    if (getStoredToken() && 'notes' in data && shouldSyncPrivateNote(initialNotesValue, data.notes)) {
-        savePrivateNote(state.currentMapId, poiId, data.notes).catch(err => {
-            console.warn('[PrivateNotes] Envoi heripia-travail échoué (Rich Editor):', err.message);
-        });
+    // Synchronisation par version (18/11/2026, note-sync.js) : la note n'est
+    // marquée « à envoyer » que si elle a changé ; l'envoi ne part que depuis la
+    // version connue du dépôt (conflit sinon), et un échec est refait au retour
+    // du réseau.
+    if ('notes' in data && String(data.notes ?? '').trim() !== String(initialNotesValue ?? '').trim()) {
+        noteEdited(poiId).catch(err => console.warn('[NoteSync] (Rich Editor) :', err.message));
     }
 
     // Si c'est un POI "pending" (création mobile en attente), on finalise la persistance

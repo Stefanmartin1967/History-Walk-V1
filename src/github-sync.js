@@ -252,8 +252,11 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
     //    fichier nouveau. Tout autre échec arrête l'envoi avec son vrai code :
     //    l'ignorer faisait partir une « création » que GitHub refusait avec un
     //    message trompeur (« sha wasn't supplied »).
+    // opts.create (18/11/2026, notes privées) : le fichier ne doit PAS exister →
+    // pas de relecture ni de sha ; GitHub refuse (422) si un autre appareil l'a
+    // créé entre-temps, au lieu de l'écraser.
     let sha = opts.expectedSha || null;
-    const checkResponse = sha ? null : await fetchWithTimeout(apiUrl, {
+    const checkResponse = (sha || opts.create) ? null : await fetchWithTimeout(apiUrl, {
         headers: {
             'Authorization': `token ${token}`,
             'Accept': 'application/vnd.github.v3+json'
@@ -305,9 +308,21 @@ export async function uploadFileToGitHub(file, token, owner, repo, path, message
  * @param {string} path Le chemin du fichier à supprimer
  * @param {string} message Le message de commit
  */
-export async function deleteFileFromGitHub(token, owner, repo, path, message) {
+export async function deleteFileFromGitHub(token, owner, repo, path, message, opts = {}) {
     const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
     const action = `Suppression de ${fileLabel(path)}`;
+
+    // opts.expectedSha (18/11/2026, notes privées) : supprimer CETTE version
+    // seulement ; GitHub refuse (409) si le fichier a changé entre-temps.
+    if (opts.expectedSha) {
+        const resp = await fetchWithTimeout(apiUrl, {
+            method: 'DELETE',
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: message || `Delete ${path} via Admin`, sha: opts.expectedSha }),
+        });
+        if (!resp.ok) throw await githubHttpError(resp, action);
+        return await resp.json();
+    }
 
     // 1. Récupérer le SHA du fichier (obligatoire pour DELETE). « Introuvable »
     //    pour un vrai 404 seulement : un 500 annoncé « introuvable » passait pour

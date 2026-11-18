@@ -76,10 +76,8 @@ vi.mock('../src/ui-sidebar.js', () => ({ switchSidebarTab: vi.fn() }));
 vi.mock('../src/access-point-editor.js', () => ({ startAccessPointPlacement: vi.fn() }));
 vi.mock('../src/help-popover.js', () => ({ configureHelp: vi.fn(), attachHelp: vi.fn() }));
 vi.mock('../src/help-content.js', () => ({ GUIDE_LIRE_LIEU: {} }));
-vi.mock('../src/private-notes.js', () => ({
-    loadPrivateNote: vi.fn(() => Promise.resolve(null)),
-    savePrivateNote: vi.fn(),
-}));
+vi.mock('../src/note-sync.js', () => ({ noteEdited: vi.fn(), syncNote: vi.fn(() => Promise.resolve('none')) }));
+vi.mock('../src/note-conflict-ui.js', () => ({ openNoteConflict: vi.fn() }));
 vi.mock('../src/github-sync.js', () => ({ getStoredToken: vi.fn(() => null) }));
 
 // vi.mock est hoisté au-dessus du corps du fichier : le panel doit l'être aussi,

@@ -1,59 +1,31 @@
 // @vitest-environment jsdom
 //
-// Note privée (chantier 10/08/2026) — remplace la sync Gist de `notes` par
-// heripia-travail. Les tests portent sur les GARANTIES : bon dépôt, jamais
-// perte silencieuse, jamais confondu avec le dépôt public.
+// Note privée — transport vers heripia-travail. Depuis le 18/11/2026 (point 3
+// des conflits), par VERSION : lecture avec la version du fichier, liste du
+// dossier en une requête, écriture et suppression seulement depuis une version
+// connue (sinon GitHub refuse au lieu d'écraser). Garanties gardées : bon
+// dépôt, chemin déterministe, jamais confondu avec le dépôt public.
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-vi.mock('../src/state.js', () => {
-    const mod = ({
-    state: { userData: {} }
-});
-    // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
-    // pour qu'un test qui change currentMapId change aussi la cle resolue.
-    mod.DEFAULT_MAP_ID = 'djerba';
-    mod.getActiveMapId = () => mod.state.currentMapId || mod.state.destinations?.activeMapId || 'djerba';
-    return mod;
-});
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => 'fake-token'),
-    uploadFileToGitHub: vi.fn(() => Promise.resolve()),
+    uploadFileToGitHub: vi.fn(() => Promise.resolve({ content: { sha: 'new-sha' } })),
     deleteFileFromGitHub: vi.fn(() => Promise.resolve()),
 }));
 vi.mock('../src/net.js', () => ({ fetchWithTimeout: vi.fn() }));
 
-import { state } from '../src/state.js';
 import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from '../src/github-sync.js';
 import { fetchWithTimeout } from '../src/net.js';
 import { GITHUB_REPO, GITHUB_WORK_REPO } from '../src/config.js';
-import { loadPrivateNote, savePrivateNote, migrateExistingNotes, shouldSyncPrivateNote } from '../src/private-notes.js';
+import { readNoteFile, listNoteFiles, writeNoteFile, removeNoteFile } from '../src/private-notes.js';
 
-// Règle d'envoi (14/09/2026) : envoyer une note vide EFFACE le fichier distant.
-// Un champ resté vide parce que la note locale manquait effaçait la seule copie.
-describe('shouldSyncPrivateNote', () => {
-    it('envoie une note non vide, modifiée ou non', () => {
-        expect(shouldSyncPrivateNote('', 'nouvelle')).toBe(true);
-        expect(shouldSyncPrivateNote('même', 'même')).toBe(true);
-        expect(shouldSyncPrivateNote('avant', 'après')).toBe(true);
-    });
-
-    it("envoie l'effacement d'une note qui existait et a été vidée", () => {
-        expect(shouldSyncPrivateNote('ma note', '')).toBe(true);
-        expect(shouldSyncPrivateNote('ma note', '   ')).toBe(true);
-    });
-
-    it("n'envoie RIEN pour un champ vide qui l'était déjà (note locale manquante)", () => {
-        expect(shouldSyncPrivateNote('', '')).toBe(false);
-        expect(shouldSyncPrivateNote(undefined, undefined)).toBe(false);
-        expect(shouldSyncPrivateNote(null, '  ')).toBe(false);
-    });
-});
+const b64 = (t) => btoa(String.fromCharCode(...new TextEncoder().encode(t)));
+const resp = (status, body) => ({ ok: status >= 200 && status < 300, status, json: async () => body });
 
 beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(getStoredToken).mockReturnValue('fake-token');
-    state.userData = {};
 });
 
 describe('garanties de transport', () => {
@@ -61,167 +33,74 @@ describe('garanties de transport', () => {
         expect(GITHUB_WORK_REPO).not.toBe(GITHUB_REPO);
     });
 
-    it("l'envoi vise le dépôt de travail, jamais le dépôt public", async () => {
-        await savePrivateNote('djerba', 'HW-1', 'une note');
-        const repoArg = vi.mocked(uploadFileToGitHub).mock.calls[0][3];
-        expect(repoArg).toBe(GITHUB_WORK_REPO);
-        expect(repoArg).not.toBe(GITHUB_REPO);
-    });
-
-    it('le chemin est déterministe (mapId + poiId), pas d\'ID opaque à découvrir', async () => {
-        await savePrivateNote('djerba', 'HW-42', 'une note');
-        const pathArg = vi.mocked(uploadFileToGitHub).mock.calls[0][4];
-        expect(pathArg).toBe('djerba/note_HW-42.txt');
+    it("l'écriture vise le dépôt de travail, au chemin déterministe", async () => {
+        await writeNoteFile('djerba', 'HW-42', 'une note', 'sha1');
+        const [, , owner, repo, path] = vi.mocked(uploadFileToGitHub).mock.calls[0];
+        expect(owner).toBeTruthy();
+        expect(repo).toBe(GITHUB_WORK_REPO);
+        expect(path).toBe('djerba/note_HW-42.txt');
     });
 });
 
-describe('savePrivateNote', () => {
-    it('sans token → échec explicite (pas une perte silencieuse)', async () => {
+describe('writeNoteFile', () => {
+    it('depuis une version connue : la donne à GitHub (refus si changée ailleurs)', async () => {
+        const sha = await writeNoteFile('djerba', 'HW-1', ' texte ', 'sha1');
+        expect(sha).toBe('new-sha');
+        expect(vi.mocked(uploadFileToGitHub).mock.calls[0][6]).toEqual({ expectedSha: 'sha1' });
+    });
+    it('sans version : création seulement (jamais d’écrasement d’un fichier créé ailleurs)', async () => {
+        await writeNoteFile('djerba', 'HW-1', 'texte', null);
+        expect(vi.mocked(uploadFileToGitHub).mock.calls[0][6]).toEqual({ create: true });
+    });
+    it('sans jeton : échec explicite', async () => {
         vi.mocked(getStoredToken).mockReturnValue(null);
-        await expect(savePrivateNote('djerba', 'HW-1', 'texte')).rejects.toThrow(/Token/);
-    });
-
-    it('texte vide → SUPPRIME le fichier distant plutôt que d\'écrire un fichier vide', async () => {
-        await savePrivateNote('djerba', 'HW-1', '');
-        expect(deleteFileFromGitHub).toHaveBeenCalledWith(
-            'fake-token', expect.any(String), GITHUB_WORK_REPO, 'djerba/note_HW-1.txt', expect.any(String)
-        );
-        expect(uploadFileToGitHub).not.toHaveBeenCalled();
-    });
-
-    it('texte composé uniquement d\'espaces → traité comme vide (suppression)', async () => {
-        await savePrivateNote('djerba', 'HW-1', '   \n  ');
-        expect(deleteFileFromGitHub).toHaveBeenCalled();
-        expect(uploadFileToGitHub).not.toHaveBeenCalled();
-    });
-
-    // Erreur telle que deleteFileFromGitHub la lève : message + code (err.status).
-    const ghError = (message, status) => Object.assign(new Error(message), { status });
-
-    it('suppression d\'une note qui n\'a jamais existé sur le dépôt (404) → pas une erreur', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(
-            ghError('Suppression de note_HW-1.txt : fichier introuvable sur le serveur.', 404));
-        await expect(savePrivateNote('djerba', 'HW-1', '')).resolves.toBeUndefined();
-    });
-
-    it('une vraie erreur de suppression remonte quand même', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(ghError('Suppression de note_HW-1.txt : HTTP 409 — Conflict', 409));
-        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow('HTTP 409');
-    });
-
-    it('GitHub indisponible (500) pendant la suppression → remonte (avant : pris pour « introuvable » et avalé)', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(
-            ghError('Suppression de note_HW-1.txt : GitHub indisponible (HTTP 500) — réessayez dans quelques minutes.', 500));
-        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow('GitHub indisponible (HTTP 500)');
-    });
-
-    it('message contenant « introuvable » mais sans code 404 → remonte (on se fie au code, pas au texte)', async () => {
-        vi.mocked(deleteFileFromGitHub).mockRejectedValue(new Error('Fichier introuvable sur le serveur: x'));
-        await expect(savePrivateNote('djerba', 'HW-1', '')).rejects.toThrow(/introuvable/);
+        await expect(writeNoteFile('djerba', 'HW-1', 'x', 'sha1')).rejects.toThrow(/Jeton/);
     });
 });
 
-describe('loadPrivateNote', () => {
-    it('sans token → null, silencieux', async () => {
-        vi.mocked(getStoredToken).mockReturnValue(null);
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBeNull();
-        expect(fetchWithTimeout).not.toHaveBeenCalled();
-    });
-
-    it('404 (cas normal : pas de note) → null', async () => {
-        vi.mocked(fetchWithTimeout).mockResolvedValue({ status: 404, ok: false });
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBeNull();
-    });
-
-    it('200 → texte décodé', async () => {
-        vi.mocked(fetchWithTimeout).mockResolvedValue({
-            status: 200, ok: true,
-            json: () => Promise.resolve({ content: btoa('Chercher l\'oratoire') }),
-        });
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBe('Chercher l\'oratoire');
-    });
-
-    it('base64 avec retours à la ligne (formatage API GitHub) → décodé quand même', async () => {
-        const wrapped = btoa('texte de la note').replace(/(.{4})/g, '$1\n');
-        vi.mocked(fetchWithTimeout).mockResolvedValue({
-            status: 200, ok: true,
-            json: () => Promise.resolve({ content: wrapped }),
-        });
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBe('texte de la note');
-    });
-
-    it('accents préservés (décodage UTF-8 explicite, pas atob seul)', async () => {
-        const text = 'Vérifier la présence d\'un mausolée à Ouchachna';
-        const bytes = new TextEncoder().encode(text);
-        const b64 = btoa(String.fromCharCode(...bytes));
-        vi.mocked(fetchWithTimeout).mockResolvedValue({
-            status: 200, ok: true,
-            json: () => Promise.resolve({ content: b64 }),
-        });
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBe(text);
-    });
-
-    it('erreur réseau → null, ne jette pas', async () => {
-        vi.mocked(fetchWithTimeout).mockRejectedValue(new Error('offline'));
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBeNull();
-    });
-
-    it('5xx → null (l\'appelant décide de la suite, ce module reste silencieux)', async () => {
-        vi.mocked(fetchWithTimeout).mockResolvedValue({ status: 500, ok: false });
-        await expect(loadPrivateNote('djerba', 'HW-1')).resolves.toBeNull();
+describe('removeNoteFile', () => {
+    it('supprime CETTE version seulement', async () => {
+        await removeNoteFile('djerba', 'HW-1', 'sha1');
+        const call = vi.mocked(deleteFileFromGitHub).mock.calls[0];
+        expect(call[2]).toBe(GITHUB_WORK_REPO);
+        expect(call[3]).toBe('djerba/note_HW-1.txt');
+        expect(call[5]).toEqual({ expectedSha: 'sha1' });
     });
 });
 
-describe('migrateExistingNotes — one-shot, additif seulement', () => {
-    it('pousse chaque note locale non vide vers heripia-travail', async () => {
-        state.userData = {
-            'HW-1': { notes: 'note un' },
-            'HW-2': { notes: '' },
-            'HW-3': { vu: true }, // pas de notes du tout
-            'HW-4': { notes: 'note quatre' },
-        };
-        const result = await migrateExistingNotes('djerba');
-        expect(result.total).toBe(2);
-        expect(result.success).toBe(2);
-        expect(result.failed).toEqual([]);
-        expect(uploadFileToGitHub).toHaveBeenCalledTimes(2);
+describe('readNoteFile', () => {
+    it('200 → texte décodé (accents, base64 avec retours à la ligne) et version', async () => {
+        const content = b64('Grotte visitable\nSombre à l’intérieur').replace(/(.{20})/g, '$1\n');
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(200, { content, sha: 'abc' }));
+        expect(await readNoteFile('charleroi', 'HW-1')).toEqual({ text: 'Grotte visitable\nSombre à l’intérieur', sha: 'abc' });
     });
-
-    it('rien à migrer → aucun appel réseau', async () => {
-        state.userData = { 'HW-1': { vu: true } };
-        const result = await migrateExistingNotes('djerba');
-        expect(result.total).toBe(0);
-        expect(uploadFileToGitHub).not.toHaveBeenCalled();
+    it('404 → null (pas de note)', async () => {
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(404, {}));
+        expect(await readNoteFile('charleroi', 'HW-1')).toBeNull();
     });
-
-    it('un échec sur un POI n\'interrompt pas les suivants', async () => {
-        state.userData = {
-            'HW-1': { notes: 'ok' },
-            'HW-2': { notes: 'va échouer' },
-            'HW-3': { notes: 'ok aussi' },
-        };
-        vi.mocked(uploadFileToGitHub)
-            .mockResolvedValueOnce(undefined)
-            .mockRejectedValueOnce(new Error('rate limit'))
-            .mockResolvedValueOnce(undefined);
-
-        const result = await migrateExistingNotes('djerba');
-        expect(result.total).toBe(3);
-        expect(result.success).toBe(2);
-        expect(result.failed).toEqual([{ poiId: 'HW-2', error: 'rate limit' }]);
+    it('5xx ou réseau → LÈVE (« absente » ≠ « inconnue »)', async () => {
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(500, {}));
+        await expect(readNoteFile('charleroi', 'HW-1')).rejects.toThrow();
+        vi.mocked(fetchWithTimeout).mockRejectedValue(new Error('réseau'));
+        await expect(readNoteFile('charleroi', 'HW-1')).rejects.toThrow();
     });
+});
 
-    it('rapporte la progression au fil de l\'envoi', async () => {
-        state.userData = { 'HW-1': { notes: 'a' }, 'HW-2': { notes: 'b' } };
-        const progress = [];
-        await migrateExistingNotes('djerba', (done, total) => progress.push([done, total]));
-        expect(progress).toEqual([[1, 2], [2, 2]]);
+describe('listNoteFiles', () => {
+    it('une requête : versions de toutes les notes du dossier', async () => {
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(200, [
+            { type: 'file', name: 'note_HW-A.txt', sha: 's1' },
+            { type: 'file', name: 'work_HW-A_1.jpg', sha: 'x' },
+            { type: 'file', name: 'note_HW-B.txt', sha: 's2' },
+        ]));
+        const m = await listNoteFiles('charleroi');
+        expect([...m.entries()]).toEqual([['HW-A', 's1'], ['HW-B', 's2']]);
+        expect(fetchWithTimeout).toHaveBeenCalledTimes(1);
     });
-
-    it('ne touche JAMAIS à state.userData (additif seulement, cf. no-direct-data-edits)', async () => {
-        state.userData = { 'HW-1': { notes: 'a', vu: true } };
-        const before = JSON.stringify(state.userData);
-        await migrateExistingNotes('djerba');
-        expect(JSON.stringify(state.userData)).toBe(before);
+    it('dossier absent → aucune note ; échec → LÈVE', async () => {
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(404, {}));
+        expect((await listNoteFiles('charleroi')).size).toBe(0);
+        vi.mocked(fetchWithTimeout).mockResolvedValue(resp(503, {}));
+        await expect(listNoteFiles('charleroi')).rejects.toThrow();
     });
 });

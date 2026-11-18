@@ -78,17 +78,14 @@ vi.mock('../src/suggestion-email.js', () => ({ buildNewPlaceSuggestion: vi.fn(()
 vi.mock('../src/github-sync.js', () => ({
     getStoredToken: vi.fn(() => null), uploadFileToGitHub: vi.fn(), deleteFileFromGitHub: vi.fn(),
 }));
-vi.mock('../src/private-notes.js', async (importOriginal) => ({
-    ...(await importOriginal()),
-    savePrivateNote: vi.fn(() => Promise.resolve()),
-}));
+vi.mock('../src/note-sync.js', () => ({ noteEdited: vi.fn(() => Promise.resolve('push')) }));
 
 import { state } from '../src/state.js';
 import { savePoiData } from '../src/database.js';
 import { closeHwModal } from '../src/modal.js';
 import { eventBus } from '../src/events.js';
 import { getStoredToken } from '../src/github-sync.js';
-import { savePrivateNote } from '../src/private-notes.js';
+import { noteEdited } from '../src/note-sync.js';
 import { getPoiProp } from '../src/utils.js';
 import { RichEditor } from '../src/richEditor.js';
 
@@ -249,7 +246,7 @@ describe('note privée (heripia-travail) sur une fiche publiée', () => {
         type('rich-poi-hours', '8h-12h');
         await save();
 
-        expect(savePrivateNote).not.toHaveBeenCalled();
+        expect(noteEdited).not.toHaveBeenCalled();
         expect(state.userData[ID]).toEqual({ notes: 'Note existante', Horaires: '8h-12h' });
     });
 
@@ -264,7 +261,7 @@ describe('note privée (heripia-travail) sur une fiche publiée', () => {
         type('rich-poi-notes', 'Note revue');
         await save();
 
-        expect(savePrivateNote).toHaveBeenCalledWith('djerba', ID, 'Note revue');
+        expect(noteEdited).toHaveBeenCalledWith(ID);
     });
 });
 

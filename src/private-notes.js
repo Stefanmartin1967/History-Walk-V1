@@ -17,13 +17,12 @@
 // la note reste sur l'appareil, point (cf. l'aide « Mes notes... Restent sur
 // votre appareil »).
 //
-// Puisque `notes` reste local en premier lieu, il n'y a pas besoin d'un cache
-// séparé ici : `loadPrivateNote` n'est appelée QUE quand le local est vide
-// (nouvel appareil qui n'a jamais vu cette note) — si elle trouve du contenu,
-// l'appelant l'écrit dans `userData` via `updatePoiData`, qui devient dès
-// lors la seule copie qui compte sur cet appareil.
+// 18/11/2026 : transport seulement. La décision (prendre, envoyer, conflit)
+// et la passe de synchronisation sont dans note-plan.js et note-sync.js.
+// Retirés : loadPrivateNote / savePrivateNote / shouldSyncPrivateNote /
+// migrateExistingNotes (lecture seulement si la note locale était vide,
+// écriture et migration qui écrasaient le dépôt sans regarder sa version).
 
-import { state } from './state.js';
 import { getStoredToken, uploadFileToGitHub, deleteFileFromGitHub } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_WORK_REPO } from './config.js';
 import { fetchWithTimeout } from './net.js';
@@ -33,139 +32,85 @@ function notePath(mapId, poiId) {
     return `${mapId}/note_${safePoiId}.txt`;
 }
 
-/**
- * Contenu de la note privée d'un POI sur heripia-travail.
- * @returns {Promise<string|null>} null si aucune note (jamais créée, 404, ou
- *   pas de token) — TOUJOURS silencieux : l'appelant décide s'il s'agit d'une
- *   vraie absence ou d'un échec réseau, il n'y a rien d'actionnable ici.
- */
-export async function loadPrivateNote(mapId, poiId) {
-    const token = getStoredToken();
-    if (!token) return null;
+// ─── Synchronisation par version (18/11/2026, point 3 des conflits) ───────────
+// Chaque note locale retient la VERSION du fichier du dépôt sur laquelle elle
+// est basée (note-sync.js). Ces fonctions donnent la version avec le contenu,
+// et n'écrivent ou ne suppriment qu'à partir d'une version connue : si un autre
+// appareil a changé le fichier entre-temps, GitHub refuse (409 / 422) au lieu
+// d'écraser.
 
-    const path = notePath(mapId, poiId);
-    try {
-        const res = await fetchWithTimeout(
-            `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_WORK_REPO}/contents/${path}`,
-            {
-                headers: {
-                    'Authorization': `token ${token}`,
-                    'Accept': 'application/vnd.github.v3+json'
-                }
-            }
-        );
-        if (res.status === 404) return null; // Cas normal : pas de note pour ce lieu
-        if (!res.ok) {
-            console.warn('[PrivateNotes] Lecture impossible:', path, res.status);
-            return null;
-        }
-        const data = await res.json();
-        if (!data.content) return null;
-
-        // L'API insère des retours à la ligne dans le base64 (comme pour les
-        // photos de travail) — décodage UTF-8 explicite (atob seul mutile les
-        // accents : le texte n'est pas ASCII pur).
-        const binary = atob(String(data.content).replace(/\s/g, ''));
-        const bytes = new Uint8Array(binary.length);
-        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        return new TextDecoder('utf-8').decode(bytes);
-    } catch (e) {
-        console.warn('[PrivateNotes] Lecture échouée:', path, e.message);
-        return null;
-    }
+function decodeBase64Utf8(b64) {
+    const binary = atob(String(b64).replace(/\s/g, ''));
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return new TextDecoder('utf-8').decode(bytes);
 }
 
 /**
- * Pousse (ou efface) la note privée d'un POI vers heripia-travail.
- *
- * Un texte vide SUPPRIME le fichier distant plutôt que d'écrire un fichier
- * vide — cohérent avec « pas de fichier » comme signal d'absence de note, et
- * ça évite d'accumuler des fichiers vides au fil des brouillons effacés.
- *
- * @throws si aucun token n'est configuré — l'appelant (qui a déjà persisté en
- *   local avant d'appeler ceci) décide comment présenter l'échec de l'envoi
- *   distant, qui n'est JAMAIS une perte de donnée.
+ * Note du dépôt avec sa version. null = pas de note (404). LÈVE si la lecture
+ * échoue (pas de jeton, réseau, 5xx) : « absente » et « inconnue » ne se
+ * confondent pas.
+ * @returns {Promise<{text: string, sha: string}|null>}
  */
-export async function savePrivateNote(mapId, poiId, text) {
+export async function readNoteFile(mapId, poiId) {
     const token = getStoredToken();
-    if (!token) {
-        throw new Error("Token GitHub introuvable. Configurez-le dans le Centre de Contrôle.");
-    }
-    const path = notePath(mapId, poiId);
-    const trimmed = (text || '').trim();
-
-    if (!trimmed) {
-        try {
-            await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_WORK_REPO, path, `travail: note supprimée pour ${poiId}`);
-        } catch (e) {
-            // Rien à supprimer (note jamais créée sur ce dépôt) : pas une erreur.
-            // Sur le CODE 404 seulement — tout autre échec (GitHub indisponible…)
-            // remonte, sinon la note resterait sur le dépôt sans aucun signal.
-            if (e.status !== 404) throw e;
-        }
-        return;
-    }
-
-    const bytes = new TextEncoder().encode(trimmed);
-    await uploadFileToGitHub(
-        new File([bytes], `note_${poiId}.txt`, { type: 'text/plain' }),
-        token,
-        GITHUB_OWNER,
-        GITHUB_WORK_REPO,
-        path,
-        `travail: note pour ${poiId}`
+    if (!token) throw new Error('Jeton GitHub manquant');
+    const res = await fetchWithTimeout(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_WORK_REPO}/contents/${notePath(mapId, poiId)}`,
+        { cache: 'no-store', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
     );
+    if (res.status === 404) return null;
+    if (!res.ok) throw new Error(`Note illisible (HTTP ${res.status})`);
+    const data = await res.json();
+    return { text: data.content ? decodeBase64Utf8(data.content) : '', sha: data.sha };
 }
 
 /**
- * Faut-il envoyer la note vers heripia-travail à l'enregistrement ?
- *
- * Oui pour toute note non vide (même inchangée : c'est aussi le geste qui
- * renvoie une note manquante sur le dépôt). Un EFFACEMENT distant, lui, ne part
- * que si la note existait à l'ouverture du champ et a été vidée.
- *
- * Pourquoi (14/09/2026) : envoyer une note vide efface le fichier distant. Un
- * champ resté vide parce que la note locale manquait (perdue, ou pas encore
- * rapatriée depuis le dépôt) effaçait donc la seule copie existante — 3 notes
- * trouvées dans ce cas chez Stefan.
- * @param {string|null|undefined} initialText Note à l'ouverture du champ.
- * @param {string|null|undefined} nextText Note enregistrée.
- * @returns {boolean}
+ * Versions de toutes les notes d'une destination, en UNE requête (dossier).
+ * Map(poiId → sha) ; Map vide si le dossier n'existe pas encore. LÈVE si la
+ * lecture échoue.
+ * @returns {Promise<Map<string, string>>}
  */
-export function shouldSyncPrivateNote(initialText, nextText) {
-    const before = String(initialText ?? '').trim();
-    const after = String(nextText ?? '').trim();
-    return after !== '' || before !== '';
+export async function listNoteFiles(mapId) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Jeton GitHub manquant');
+    const res = await fetchWithTimeout(
+        `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_WORK_REPO}/contents/${mapId}`,
+        { cache: 'no-store', headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.v3+json' } }
+    );
+    if (res.status === 404) return new Map();
+    if (!res.ok) throw new Error(`Notes illisibles (HTTP ${res.status})`);
+    const items = await res.json();
+    const out = new Map();
+    (Array.isArray(items) ? items : []).forEach(it => {
+        const m = it?.type === 'file' && /^note_(.+)\.txt$/.exec(it.name || '');
+        if (m) out.set(m[1], it.sha);
+    });
+    return out;
 }
 
 /**
- * Migration one-shot : pousse vers heripia-travail toutes les notes déjà
- * présentes en LOCAL (userData), pour qu'elles deviennent visibles sur les
- * autres appareils — remplace le rôle que jouait le Gist pour ce champ.
- *
- * N'écrit JAMAIS dans `userData` ni ne touche au Gist : purement additif côté
- * heripia-travail. Déclenchée depuis le Centre de Contrôle par Stefan
- * lui-même (pas automatique) — cf. project_gist_to_private_repo_migration.
- *
- * @param {string} mapId
- * @param {(done: number, total: number) => void} [onProgress]
- * @returns {Promise<{total: number, success: number, failed: Array<{poiId: string, error: string}>}>}
+ * Écrit la note à partir d'une version connue (expectedSha) ou en création
+ * (expectedSha null : le fichier ne doit pas exister). Renvoie la nouvelle version.
+ * @returns {Promise<string>}
  */
-export async function migrateExistingNotes(mapId, onProgress) {
-    const entries = Object.entries(state.userData || {})
-        .filter(([, data]) => typeof data?.notes === 'string' && data.notes.trim());
+export async function writeNoteFile(mapId, poiId, text, expectedSha) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Jeton GitHub manquant');
+    const bytes = new TextEncoder().encode(String(text ?? '').trim());
+    const result = await uploadFileToGitHub(
+        new File([bytes], `note_${poiId}.txt`, { type: 'text/plain' }),
+        token, GITHUB_OWNER, GITHUB_WORK_REPO, notePath(mapId, poiId),
+        `travail: note pour ${poiId}`,
+        expectedSha ? { expectedSha } : { create: true }
+    );
+    return result?.content?.sha || null;
+}
 
-    const result = { total: entries.length, success: 0, failed: [] };
-    let done = 0;
-    for (const [poiId, data] of entries) {
-        try {
-            await savePrivateNote(mapId, poiId, data.notes);
-            result.success++;
-        } catch (e) {
-            result.failed.push({ poiId, error: e.message });
-        }
-        done++;
-        if (onProgress) onProgress(done, result.total);
-    }
-    return result;
+/** Supprime la note du dépôt, CETTE version seulement (expectedSha). */
+export async function removeNoteFile(mapId, poiId, expectedSha) {
+    const token = getStoredToken();
+    if (!token) throw new Error('Jeton GitHub manquant');
+    await deleteFileFromGitHub(token, GITHUB_OWNER, GITHUB_WORK_REPO, notePath(mapId, poiId),
+        `travail: note supprimée pour ${poiId}`, expectedSha ? { expectedSha } : {});
 }

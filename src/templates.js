@@ -289,6 +289,12 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     const facebookUrl = /^https?:\/\//i.test(fbRaw) ? fbRaw : '';
 
     const notes = (allProps.notes || '').toString();
+    // Note changée sur un autre appareil ET ici (note-sync.js, 18/11/2026) :
+    // bandeau dans « Mon suivi ». PC : « Résoudre » ; téléphone : à régler sur le PC.
+    const noteConflict = allProps.noteSync && allProps.noteSync.remote !== undefined;
+    const noteConflictHtml = !noteConflict ? '' : (mobile
+        ? `<div class="poi-note-conflict" role="status"><i data-lucide="monitor"></i><span><strong>Cette note a changé sur un autre appareil.</strong> Elle se règle <strong>sur le PC</strong>. Ta version reste gardée ici, rien n'est perdu.</span></div>`
+        : `<div class="poi-note-conflict" role="status"><i data-lucide="alert-triangle"></i><span><strong>Cette note a changé sur un autre appareil.</strong> Ta version ci-dessous n'est pas encore envoyée.</span><button class="poi-note-conflict-btn" type="button" id="poi-note-resolve">Résoudre</button></div>`);
 
     // Ligne d'état du cartel (v3) — le STATUT descend de la photo vers le cartel,
     // sous le titre (.cartel-status). L'identité (zone, catégorie) reste portée
@@ -396,6 +402,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                     <i class="poi-toggle-icon" data-lucide="${isIncontournable ? 'star' : 'star-off'}"></i>
                     <div class="lab-text">Incontournable<span class="lab-hint">Ignore les filtres visités/planifiés</span></div>
                 </div>
+                ${noteConflictHtml}
                 <div class="poi-note-block">
                     <div class="poi-note-view${notes ? '' : ' is-empty'}" id="poi-note-view" role="button" tabindex="0" aria-label="${notes ? 'Modifier la note' : 'Ajouter une note'}">${notes ? linkifyText(notes) : 'Ajouter une note : impressions, conseils, photos manquantes…'}</div>
                     <textarea class="poi-notes-area is-hidden" id="poi-note-edit" placeholder="Mes notes : impressions, conseils, photos manquantes…">${escapeXml(notes)}</textarea>

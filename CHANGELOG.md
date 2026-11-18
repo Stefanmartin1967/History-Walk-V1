@@ -6,6 +6,13 @@
 
 ---
 
+- NOTES PRIVÉES : SYNCHRONISATION PAR VERSION ENTRE APPAREILS (v3.7.550). Point 3, maquette « notes privées » validée le 18/11/2026.
+  - Avant : une note n'était relue du dépôt que si l'appareil n'en avait pas ; le dernier qui enregistrait écrasait l'autre ; un envoi raté (terrain sans réseau) n'était jamais refait, malgré le message « réessayé plus tard ».
+  - Chaque note retient la version du dépôt sur laquelle elle est basée (`noteSync`, donnée personnelle jamais publiée). Au démarrage et au retour du réseau, une lecture du dossier de la destination ; seules les notes concernées sont relues ou envoyées (note-plan.js, note-sync.js). Un envoi ne part que depuis une version connue : un fichier changé ailleurs est refusé par GitHub et devient un conflit.
+  - Conflit : bandeau dans « Mon suivi » de la fiche ; sur le PC, « Résoudre » ouvre la fenêtre à trois zones avec une case par phrase (sentence-picker.js, partagé avec le Centre de contrôle) ; sur le téléphone, « à régler sur le PC ». Le tableau de bord du Centre de contrôle signale les notes en conflit.
+  - Candidat rejeté : sa note est retirée du dépôt. « Migrer mes notes » (qui écrasait le dépôt) devient « Synchroniser mes notes maintenant ».
+  - Fusion de texte : deux ajouts différents au même endroit sont réunis (sauf départ vide).
+
 - CONFIRMATION DE PUBLICATION : RETOURS À LA LIGNE GARDÉS (v3.7.549). Constaté par Stefan le 18/11/2026 : conflits laissés de côté, pertes de contenu et rejets s'affichaient en un seul bloc. Le message est maintenant échappé et ses retours à la ligne rendus (`confirmHtml`).
 
 - CONFLITS : PUBLIER LE RESTE + CARTE D'UN CANDIDAT LOCAL PROPRE (v3.7.548). Retour de Stefan le 18/11/2026.
