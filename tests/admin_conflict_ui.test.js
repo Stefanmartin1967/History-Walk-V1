@@ -130,6 +130,52 @@ describe('écran « Résoudre »', () => {
     });
 });
 
+// Une case par phrase (18/11/2026), cas réel de Stefan : la fiche n'avait pas
+// de description au départ, tout le texte est disputé.
+describe('une case par phrase', () => {
+    const ONLINE = "Grotte visitable\nSombre à l'intérieur\nAttention, terrain glissant à la montée";
+    const LOCAL = "Grotte\nCette grotte est noire à l'intérieur\nTable de pique nique à proximité";
+    const open = () => {
+        diff.pois = [{ id: 'S', name: 'Grotte des Sarrasins', changes: [{ key: 'Description', old: 'a', new: 'b' }],
+            conflicts: [{ key: 'description', kind: 'text', base: undefined, online: ONLINE, local: LOCAL }] }];
+        diff.stats.conflictPois = 1;
+        renderTab('changes', diff, callbacks);
+        click('[data-action="resolve-conflict"][data-id="S"]');
+    };
+    const box = (sentence) => [...content().querySelectorAll('input.cc-conflict-sentence')].find(b => b.dataset.sentence === sentence);
+    const toggle = (b) => { b.checked = !b.checked; b.dispatchEvent(new Event('change', { bubbles: true })); };
+    const ta = () => content().querySelector('textarea');
+
+    it('cases cochées = phrases d’« Ici » ; pas de bloc « Prendre celle-ci »', () => {
+        open();
+        expect(content().querySelectorAll('input.cc-conflict-sentence')).toHaveLength(6);
+        expect(box('Grotte').checked).toBe(true);
+        expect(box('Attention, terrain glissant à la montée').checked).toBe(false);
+        expect(content().querySelector('[data-action="conflict-take-passage"]')).toBeNull();
+        expect(ta().value).toBe(LOCAL);
+    });
+
+    it('cocher une phrase en ligne l’ajoute à la fin ; décocher la retire', () => {
+        open();
+        toggle(box('Attention, terrain glissant à la montée'));
+        expect(ta().value).toBe(LOCAL + '\nAttention, terrain glissant à la montée');
+        toggle(box('Table de pique nique à proximité'));
+        expect(ta().value).toBe("Grotte\nCette grotte est noire à l'intérieur\nAttention, terrain glissant à la montée");
+        expect(box('Table de pique nique à proximité').checked).toBe(false);
+    });
+
+    it('« Tout reprendre » et retouche à la main : les cases suivent', () => {
+        open();
+        click('[data-action="conflict-take-all"][data-side="online"]');
+        expect(box('Grotte visitable').checked).toBe(true);
+        expect(box('Grotte').checked).toBe(false); // phrase entière : « Grotte » ≠ « Grotte visitable »
+        expect(box('Table de pique nique à proximité').checked).toBe(false);
+        ta().value = 'Grotte visitable';
+        ta().dispatchEvent(new Event('input', { bubbles: true }));
+        expect(box("Sombre à l'intérieur").checked).toBe(false);
+    });
+});
+
 describe('téléphone', () => {
     it('un texte se règle sur le PC : pas de zone, rien renvoyé pour lui', () => {
         h.mobile = true;

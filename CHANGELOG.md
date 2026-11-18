@@ -6,6 +6,11 @@
 
 ---
 
+- CONFLITS À LA PUBLICATION : UNE CASE PAR PHRASE (v3.7.546). Idée de Stefan le 18/11/2026, maquette mise à jour et validée : dans un conflit de texte, chaque phrase changée d'« En ligne » et d'« Ici » porte une case. Cocher l'ajoute à la fin de la version finale, décocher la retire ; les retouches à la main ne bougent pas, et les cases suivent la version finale (« Tout reprendre », saisie).
+  - Unité = la phrase, pas la ligne : sur les descriptions publiées, une ligne sur quatre contient plusieurs phrases (mesuré le 18/11 : 71 % des lignes à Djerba, 74 % à Charleroi n'en ont qu'une).
+  - Comparaison par phrase ENTIÈRE (« Grotte » ≠ « Grotte visitable ») : décocher une phrase courte n'ampute pas une phrase qui la contient.
+  - Le bloc « Prendre celle-ci » sous la version finale est retiré (remplacé par les cases).
+
 - CONFLITS À LA PUBLICATION : RETOURS À LA LIGNE GARDÉS DANS LA VERSION FINALE (v3.7.545). Constaté par Stefan le 18/11/2026 sur la « Grotte des Sarrasins » : la version finale proposée mettait le passage disputé sur une seule ligne.
   - text-merge.js : le passage disputé n'est plus normalisé (blancs compris) ; une phrase ajoutée après une autre reprend le retour à la ligne de sa version.
 

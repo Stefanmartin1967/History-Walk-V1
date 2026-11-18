@@ -148,3 +148,40 @@ export function mergeTexts(base, here, online) {
     out.push(...B.slice(i));
     return { text: join(out).replace(/\s+$/, ''), clean: conflicts.length === 0, conflicts };
 }
+
+// ─── Une case par phrase (18/11/2026, maquette « Texte : une case par phrase ») ──
+// Cocher une phrase l'ajoute à la fin de la version finale ; la décocher la
+// retire. Rien d'autre ne bouge : les retouches faites à la main restent.
+
+/**
+ * La phrase figure-t-elle, ENTIÈRE, dans le texte (blancs ignorés) ? Une phrase
+ * contenue dans une autre ne compte pas (« Grotte » ≠ « Grotte visitable »).
+ */
+export function hasSentence(text, sentence) {
+    const s = key(sentence);
+    return !!s && splitSentences(text).some(x => key(x) === s);
+}
+
+/** Ajoute la phrase à la fin, sur une nouvelle ligne ; sans effet si elle y est déjà. */
+export function addSentence(text, sentence) {
+    const t = String(text ?? '');
+    const s = String(sentence ?? '').trim();
+    if (!s || hasSentence(t, s)) return t;
+    const head = t.replace(/\s+$/, '');
+    return head ? `${head}\n${s}` : s;
+}
+
+/**
+ * Retire la phrase (première occurrence entière) avec le blanc qui la suit ;
+ * en fin de texte, avec le blanc qui la précède. Sans effet si elle a été
+ * retouchée à la main et ne se retrouve plus telle quelle.
+ */
+export function removeSentence(text, sentence) {
+    const s = key(sentence);
+    const segs = splitSentences(text);
+    const at = s ? segs.findIndex(x => key(x) === s) : -1;
+    if (at < 0) return String(text ?? '');
+    segs.splice(at, 1);
+    if (at === segs.length && at > 0) segs[at - 1] = segs[at - 1].replace(/\s+$/, '');
+    return segs.join('');
+}

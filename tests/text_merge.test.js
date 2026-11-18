@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { splitSentences, markChanges, mergeTexts } from '../src/text-merge.js';
+import { splitSentences, markChanges, mergeTexts, hasSentence, addSentence, removeSentence } from '../src/text-merge.js';
 
 // Conflits à la publication, écran « Texte : trois zones » (18/11/2026).
 const BASE = 'Église classée depuis 1942. Transformée en 1956.';
@@ -69,3 +69,32 @@ describe('mergeTexts', () => {
         expect(r.text).toBe('Texte ici.');
     });
 });
+
+describe('une case par phrase : ajouter / retirer', () => {
+    const ICI = "Grotte\nCette grotte est noire à l'intérieur\nTable de pique nique à proximité";
+    it('ajoute à la fin, sur une nouvelle ligne, une seule fois', () => {
+        const t = addSentence(ICI, 'Attention, terrain glissant à la montée');
+        expect(t).toBe(ICI + '\nAttention, terrain glissant à la montée');
+        expect(addSentence(t, 'Attention, terrain glissant à la montée')).toBe(t);
+        expect(addSentence('', 'Grotte visitable')).toBe('Grotte visitable');
+    });
+    it('retire une ligne entière, ou une phrase dans une ligne', () => {
+        expect(removeSentence(ICI, "Cette grotte est noire à l'intérieur")).toBe('Grotte\nTable de pique nique à proximité');
+        expect(removeSentence(ICI, 'Table de pique nique à proximité')).toBe("Grotte\nCette grotte est noire à l'intérieur");
+        expect(removeSentence('A. B. C.', 'B.')).toBe('A. C.');
+        expect(removeSentence('A. B.', 'B.')).toBe('A.');
+    });
+    it('phrase retouchée à la main : rien n’est retiré', () => {
+        expect(removeSentence('Grotte très sombre', 'Grotte sombre')).toBe('Grotte très sombre');
+    });
+    it('hasSentence ignore les blancs', () => {
+        expect(hasSentence('A.\n  B.', 'B.')).toBe(true);
+        expect(hasSentence('A.', 'B.')).toBe(false);
+        expect(hasSentence('Grotte visitable', 'Grotte')).toBe(false);
+    });
+    it('retirer une phrase courte ne touche pas une phrase qui la contient', () => {
+        expect(removeSentence('Grotte visitable\nGrotte', 'Grotte')).toBe('Grotte visitable');
+        expect(removeSentence('Grotte visitable', 'Grotte')).toBe('Grotte visitable');
+    });
+});
+
