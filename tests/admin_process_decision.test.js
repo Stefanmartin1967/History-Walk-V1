@@ -166,7 +166,7 @@ vi.mock('../src/circuit-actions.js', () => ({
 }));
 
 // L'import doit venir après les mocks
-import { processDecision, addToDraft, getAdminDraft, resolveConflicts } from '../src/admin-control-center.js';
+import { processDecision, addToDraft, getAdminDraft, resolveConflicts, conflictHold } from '../src/admin-control-center.js';
 import { diffData } from '../src/admin-diff-engine.js';
 
 function setupPoi(id, props = {}, userData = null, geom = [10, 33]) {
@@ -478,5 +478,31 @@ describe('resolveConflicts', () => {
         await resolveConflicts('G', [{ key: 'position', choice: 'online' }]);
         expect(mockState.userData.G.lat).toBe(50.36277);
         expect(h.removePoiDataKeysSpy).not.toHaveBeenCalled();
+    });
+});
+
+// Publier malgré un conflit (18/11/2026) : ce que « Tout publier » laisse de côté.
+describe('conflictHold', () => {
+    it('champs retenus (position → lat + lng), circuits passant par une position en conflit', () => {
+        mockState.officialCircuits = [];
+        mockState.myCircuits = [{ id: 'C1', name: 'Boucle', poiIds: ['G', 'X'] }, { id: 'C2', name: 'Autre', poiIds: ['X'] }];
+        const diff = {
+            pois: [
+                { id: 'G', name: 'Grotte', conflicts: [{ key: 'position' }, { key: 'description' }] },
+                { id: 'B', name: 'Beffroi', changes: [{ key: 'Accès' }] },
+            ],
+            circuits: [{ id: 'C1', name: 'Boucle' }, { id: 'C2', name: 'Autre' }],
+            originalFeatures: [{ properties: { HW_ID: 'G' } }],
+        };
+        const hold = conflictHold(diff);
+        expect([...hold.fields.keys()]).toEqual(['G']);
+        expect([...hold.fields.get('G').keys].sort()).toEqual(['description', 'lat', 'lng']);
+        expect([...hold.circuits]).toEqual(['C1']);
+    });
+
+    it('sans conflit : rien de côté', () => {
+        const hold = conflictHold({ pois: [{ id: 'B', changes: [] }], circuits: [{ id: 'C1' }], originalFeatures: [] });
+        expect(hold.fields.size).toBe(0);
+        expect(hold.circuits.size).toBe(0);
     });
 });

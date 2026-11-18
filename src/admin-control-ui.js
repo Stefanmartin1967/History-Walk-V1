@@ -133,7 +133,7 @@ export function syncFooterAndNavCount(diffData) {
 
     const btn = overlay.querySelector('#btn-cc-publish');
     if (btn) {
-        btn.disabled = (totalCount === 0 || conflictPois > 0);
+        btn.disabled = (totalCount === 0);
         let countSpan = btn.querySelector('.cc-cta-count');
         if (totalCount > 0) {
             if (countSpan) countSpan.textContent = String(totalCount);
@@ -1665,7 +1665,7 @@ function renderLieuxView(items, pendingCandidates = []) {
         const n = groups.conf.length;
         html += `<div class="cc-conflict-banner" role="status">
             <i data-lucide="alert-triangle"></i>
-            <span><strong>${n} conflit${n > 1 ? 's' : ''} à résoudre avant de publier.</strong> Ces champs ont été publiés depuis un autre appareil après que tu les as modifiés ici. Choisis quelle version garder.</span>
+            <span><strong>${n} conflit${n > 1 ? 's' : ''} à résoudre.</strong> Ces champs ont été publiés depuis un autre appareil après que tu les as modifiés ici. Choisis quelle version garder. Tu peux aussi publier le reste : ${n > 1 ? 'ces champs garderont' : 'ce champ gardera'} la version en ligne.</span>
         </div>`;
         html += renderConflictGroup(groups.conf);
     }

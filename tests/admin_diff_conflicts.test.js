@@ -132,3 +132,27 @@ describe('candidats modifiés', () => {
         state.customFeatures = [];
     });
 });
+
+// « Calvaire Monom » (18/11/2026) : candidat capturé resté sur l'appareil, déjà
+// dans le fichier publié de Charleroi, modifié dans l'éditeur.
+describe('carte d’un candidat local du fichier brouillon', () => {
+    it('ni note interne, ni « false » par défaut ; pas d’« Annuler »', async () => {
+        state.destinations = { maps: { charleroi: { status: 'draft' } } };
+        h.onlineSha = S1;
+        const pub = { type: 'Feature', geometry: { type: 'Point', coordinates: [4.45, 50.36] }, properties: { HW_ID: 'HW-MONOM', 'Nom du site FR': 'Calvaire Monom', candidate: true } };
+        h.online = { type: 'FeatureCollection', features: [pub] };
+        const local = { type: 'Feature', geometry: { type: 'Point', coordinates: [4.45, 50.36] }, properties: {
+            HW_ID: 'HW-MONOM', 'Nom du site FR': 'Calvaire Monom', candidate: true,
+            description: 'Test', verified: false, mapsChecked: false, osmChecked: true,
+            _candidateOrig: { description: null } } };
+        state.customFeatures = [local];
+        state.loadedFeatures = [local];
+        state.userData['HW-MONOM'] = { lat: 50.36, lng: 4.45 };
+        local.properties.userData = state.userData['HW-MONOM'];
+        await prepareDiffData({ pendingPois: { 'HW-MONOM': { type: 'update' } }, pendingCircuits: {} });
+        const item = diffData.pois.find(p => p.id === 'HW-MONOM');
+        expect(item.changes.map(c => c.rawKey || c.key).sort()).toEqual(['description', 'osmChecked']);
+        expect(item.isLocalCandidate).toBe(true);
+        state.customFeatures = [];
+    });
+});

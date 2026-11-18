@@ -246,3 +246,26 @@ describe('admin-geojson — generateMasterGeoJSONData', () => {
         expect(generateMasterGeoJSONData().features[0].geometry.coordinates).toEqual([10, 33]);
     });
 });
+
+// Conflit laissé de côté (18/11/2026) : « Tout publier » publie le reste ; les
+// champs en conflit partent avec leur valeur EN LIGNE.
+describe('admin-geojson — conflits laissés de côté', () => {
+    it('champ et position retenus : valeur en ligne ; autres champs : valeur d’ici', () => {
+        state.loadedFeatures = [buildFeature('poi_g',
+            { description: 'Ancienne', 'Accès': '' },
+            { description: 'Ici', 'Accès': 'Intérieur visitable', lat: 50.36277, lng: 4.45956 },
+            [4.4592714, 50.3627415])];
+        const original = { geometry: { type: 'Point', coordinates: [4.4594862, 50.3630564] }, properties: { HW_ID: 'poi_g', description: 'En ligne' } };
+        const hold = new Map([['poi_g', { keys: new Set(['description', 'lat', 'lng']), original }]]);
+        const out = generateMasterGeoJSONData([], { hold }).features[0];
+        expect(out.properties.description).toBe('En ligne');
+        expect(out.geometry.coordinates).toEqual([4.4594862, 50.3630564]);
+        expect(out.properties['Accès']).toBe('Intérieur visitable');
+    });
+
+    it('champ absent en ligne : retiré du fichier publié', () => {
+        state.loadedFeatures = [buildFeature('poi_h', {}, { Horaires: 'Ici' })];
+        const hold = new Map([['poi_h', { keys: new Set(['Horaires']), original: { geometry: { coordinates: [10, 33] }, properties: { HW_ID: 'poi_h' } } }]]);
+        expect(generateMasterGeoJSONData([], { hold }).features[0].properties).not.toHaveProperty('Horaires');
+    });
+});

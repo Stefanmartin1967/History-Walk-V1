@@ -18,7 +18,7 @@ import { ORIG_KEY } from './candidate-edits.js';
 // geojson ENTIER depuis state.loadedFeatures → sans cette exclusion, un candidat
 // capturé en « Repasse » sur une destination publiée fuirait dans sa source
 // publique au prochain « Tout publier ».
-export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = false } = {}) {
+export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = false, hold = null } = {}) {
     if (!state.loadedFeatures || state.loadedFeatures.length === 0) {
         return null;
     }
@@ -58,6 +58,21 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
             if (moved) geometry = { ...f.geometry, type: 'Point', coordinates: moved };
             delete properties.lat;
             delete properties.lng;
+
+            // Conflit laissé de côté (18/11/2026) : le champ part avec sa valeur EN
+            // LIGNE, la version d'ici reste en attente sur l'appareil.
+            const held = hold && hold.get(standardizedHWID);
+            if (held?.original) {
+                held.keys.forEach(k => {
+                    if (k === 'lat' || k === 'lng') {
+                        geometry = { ...held.original.geometry };
+                    } else if (held.original.properties?.[k] === undefined) {
+                        delete properties[k];
+                    } else {
+                        properties[k] = held.original.properties[k];
+                    }
+                });
+            }
 
             // Dégel de Zone : on cuit une Zone FRAÎCHE (dérivée des coordonnées sur le
             // jeu de quartiers courant) dans le geojson public, pour qu'un visiteur

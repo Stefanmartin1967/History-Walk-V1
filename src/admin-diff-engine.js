@@ -2,7 +2,7 @@ import { state, getActiveMapId} from './state.js';
 import { fetchRepoFile, listRepoDir, repoFileSha, fetchRepoBlobJson } from './repo-read.js';
 import { BASE_KEY, findConflicts, pruneStamps } from './overlay-base.js';
 import { getPoiId, getPoiName, isCandidate, isDestinationPublished } from './utils.js';
-import { candidateChanges } from './candidate-edits.js';
+import { candidateChanges, ORIG_KEY } from './candidate-edits.js';
 import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
@@ -438,7 +438,7 @@ export async function prepareDiffData(adminDraft) {
         const allKeys = new Set([...Object.keys(current.properties), ...Object.keys(userData)]);
 
         // Clés structurelles (comparées séparément) + clés perso (jamais affichées dans le diff).
-        const skipKeys = new Set(['lat', 'lng', 'userData', BASE_KEY, ...PERSONAL_KEYS]);
+        const skipKeys = new Set(['lat', 'lng', 'userData', BASE_KEY, ORIG_KEY, ...PERSONAL_KEYS]);
         allKeys.forEach(key => {
             if (skipKeys.has(key)) return;
 
@@ -524,7 +524,9 @@ export async function prepareDiffData(adminDraft) {
             }
 
             // Simple equality check — ignore undefined→0/null/"" (champs vides par défaut)
-            const isDefaultEmpty = oldVal === undefined && (newVal === "" || newVal === 0 || newVal === "0" || newVal === null);
+            // `false` aussi (18/11/2026) : l'éditeur écrit verified/mapsChecked… à false
+            // à l'enregistrement d'un candidat ; ce n'est pas une modification.
+            const isDefaultEmpty = oldVal === undefined && (newVal === "" || newVal === 0 || newVal === "0" || newVal === null || newVal === false);
             if (String(oldVal) !== String(newVal) && !isDefaultEmpty) {
                 changes.push({
                     key: displayKey, // Use friendly name
@@ -543,6 +545,9 @@ export async function prepareDiffData(adminDraft) {
                 name: getPoiName(current),
                 changes: changes,
                 ...(isCandidate(current) ? { isCandidate: true } : {}),
+                // Candidat capturé resté sur l'appareil (customPois) : « Annuler » le
+                // supprimerait → jamais proposé (18/11/2026, « Calvaire Monom »).
+                ...(isCandidate(current) && (state.customFeatures || []).some(f => getPoiId(f) === id) ? { isLocalCandidate: true } : {}),
                 ...(conflicts.length > 0 ? { conflicts } : {})
             });
             diffData.stats.poisModified++;

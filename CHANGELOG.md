@@ -6,6 +6,10 @@
 
 ---
 
+- CONFLITS : PUBLIER LE RESTE + CARTE D'UN CANDIDAT LOCAL PROPRE (v3.7.548). Retour de Stefan le 18/11/2026.
+  - « Tout publier » n'est plus bloqué par un conflit : une confirmation nomme les conflits laissés de côté. Leurs champs partent avec la valeur EN LIGNE (rien n'écrase l'autre appareil), la version d'ici reste en attente avec son estampille ; les circuits qui passent par un lieu dont la position est en conflit attendent aussi.
+  - Carte d'un candidat capturé resté sur l'appareil (« Calvaire Monom ») : la note interne `_candidateOrig` n'est plus listée, les `false` écrits par défaut par l'éditeur ne comptent plus comme modifications, et « Annuler » (qui supprimerait le lieu) n'est plus proposé.
+
 - CENTRE DE CONTRÔLE : CANDIDATS SCOUT MODIFIÉS VISIBLES (v3.7.547). Point 2, maquette validée le 18/11/2026. Constaté par Stefan (Scout de Djerba) : un candidat modifié n'apparaissait nulle part ; sur une destination brouillon, il partait pourtant à chaque « Tout publier ».
   - Destination brouillon (Charleroi, Hammamet) : les candidats modifiés sont dans « Modifié », étiquette « Candidat », comptés, contrôle de conflit et rangement après publication compris. Un candidat gardé sur l'appareil n'a pas « Annuler » (il le supprimerait).
   - Destination publiée (Djerba) : section « En attente de validation », non comptée, bouton « Réviser » ; ils partent une fois validés.
