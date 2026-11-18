@@ -1262,7 +1262,7 @@ html[data-theme="nuit"] .cc-hero {
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
     padding: 10px 12px; resize: vertical; min-height: 110px;
 }
-.cc-conflict-passage { display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.5; color: var(--ink); }
+.cc-conflict-passage { display: flex; flex-direction: column; gap: 4px; font-size: 13px; line-height: 1.5; color: var(--ink); white-space: pre-wrap; }
 .cc-conflict-disputed { border-bottom: 2px solid var(--danger-fg); }
 .cc-conflict-passage-online { margin-left: 14px; font-size: 12px; color: var(--info-fg); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .cc-conflict-later { margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13px; line-height: 1.45; color: var(--ink); }

@@ -66,7 +66,10 @@ function editsOf(B, X) {
     const edits = [];
     let pb = 0, px = 0;
     for (const [i, j] of pairs) {
-        if (i > pb || j > px) edits.push({ s: pb, e: i, repl: X.slice(px, j) });
+        // `lead` : blanc qui suit, dans cette version, la phrase d'avant le
+        // changement (ex. retour à la ligne avant une phrase ajoutée en fin).
+        const lead = px > 0 ? X[px - 1].match(/\s*$/)[0] : '';
+        if (i > pb || j > px) edits.push({ s: pb, e: i, repl: X.slice(px, j), lead });
         pb = i + 1; px = j + 1;
     }
     return edits;
@@ -93,7 +96,10 @@ function regionText(B, edits, s, e) {
         i = Math.max(i, d.e);
     }
     out.push(...B.slice(i, e));
-    return key(join(out));
+    // Texte BRUT : retours à la ligne compris (avant le 18/11/2026, il était
+    // normalisé → la version finale perdait les retours à la ligne du passage
+    // disputé ; constaté par Stefan sur la « Grotte des Sarrasins »).
+    return join(out);
 }
 
 /**
@@ -125,11 +131,17 @@ export function mergeTexts(base, here, online) {
         out.push(...B.slice(i, g.s));
         const sides = new Set(g.items.map(d => d.side));
         if (sides.size === 1) {
-            for (const d of g.items) out.push(...d.repl);
+            for (const d of g.items) {
+                const last = out.length - 1;
+                if (d.lead && last >= 0 && !/\s$/.test(out[last])) out[last] += d.lead;
+                out.push(...d.repl);
+            }
         } else {
             const hereText = regionText(B, eh, g.s, g.e);
             if (hereText) out.push(hereText);
-            conflicts.push({ here: hereText, online: regionText(B, eo, g.s, g.e) });
+            // Passages affichés sans blancs de fin (le retour à la ligne qui les
+            // suit reste dans la version finale) : sous-chaînes de la version finale.
+            conflicts.push({ here: hereText.replace(/\s+$/, ''), online: regionText(B, eo, g.s, g.e).replace(/\s+$/, '') });
         }
         i = Math.max(i, g.e);
     }

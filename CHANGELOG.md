@@ -6,6 +6,9 @@
 
 ---
 
+- CONFLITS À LA PUBLICATION : RETOURS À LA LIGNE GARDÉS DANS LA VERSION FINALE (v3.7.545). Constaté par Stefan le 18/11/2026 sur la « Grotte des Sarrasins » : la version finale proposée mettait le passage disputé sur une seule ligne.
+  - text-merge.js : le passage disputé n'est plus normalisé (blancs compris) ; une phrase ajoutée après une autre reprend le retour à la ligne de sa version.
+
 - CENTRE DE CONTRÔLE : CONFLITS À LA PUBLICATION (v3.7.544). Décidé avec Stefan le 18/11/2026 (maquette « Conflits à la publication » validée), après la « Grotte des Sarrasins » : une fiche modifiée sur deux appareils avant publication, le dernier qui publiait gagnait, champ par champ, sans alerte.
   - Chaque champ publié modifié note la version de la carte sur laquelle il l'a été (`_baseSha`, overlay-base.js), à un seul endroit : l'écriture en base (savePoiData). Au Centre de contrôle, la version en ligne est comparée à cette valeur de départ : conflit si elle a changé et diffère de la valeur d'ici.
   - Liste : section « Conflit » et bandeau ; « Tout publier » bloqué tant qu'un conflit reste. Écran « Résoudre » : champ simple (deux choix), position (deux choix + petite carte), texte en trois zones (en ligne, ici, version finale modifiable, les deux changements réunis d'avance quand ils touchent des phrases différentes, text-merge.js). Sur le téléphone, un texte se règle sur le PC.
