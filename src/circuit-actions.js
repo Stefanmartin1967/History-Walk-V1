@@ -1,6 +1,6 @@
 
 // circuit-actions.js
-import { state, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
+import { state, setActiveCircuitId, setHasUnexportedChanges, setOfficialCircuits, setHiddenCircuitIds, setHiddenCircuitIdsUpdatedAt, setCircuitCreationMode, setEditingMode, getActiveMapId} from './state.js';
 import { setOfficialCircuitDeleted, withoutServerDeletedCircuits } from './circuit-deletion-state.js';
 import { fetchRepoFile } from './repo-read.js';
 import { softDeleteCircuit, getAppState, saveAppState } from './database.js';
@@ -36,8 +36,12 @@ export async function setCircuitHidden(id, hidden) {
         ? (current.includes(sid) ? current : [...current, sid])
         : current.filter(x => x !== sid);
     setHiddenCircuitIds(next);
+    // Date du geste : entre appareils, le plus récent gagne (sync-stamps.js).
+    const stamps = { ...(state.hiddenCircuitIdsUpdatedAt || {}), [sid]: Date.now() };
+    setHiddenCircuitIdsUpdatedAt(stamps);
     try {
         await saveAppState('hiddenCircuitIds', next);
+        await saveAppState('hiddenCircuitIdsUpdatedAt', stamps);
     } catch (err) {
         console.error('[circuit-actions] saveAppState (hiddenCircuitIds) a échoué', err);
     }

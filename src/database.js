@@ -2,6 +2,7 @@
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 import { BASE_KEY, pruneStamps } from './overlay-base.js';
+import { syncStampsFor } from './sync-stamps.js';
 
 // ─── Estampille de la version de départ (18/11/2026, conflits à la publication) ──
 // Toutes les écritures de fiche passent par savePoiData / batchSavePoiData : c'est
@@ -11,7 +12,19 @@ import { BASE_KEY, pruneStamps } from './overlay-base.js';
 let _writeHook = null;
 export function setPoiDataWriteHook(fn) { _writeHook = typeof fn === 'function' ? fn : null; }
 
+// Dates de changement des champs synchronisés par le Gist (18/11/2026, point 4 :
+// le changement le plus récent gagne, cf. sync-stamps.js). Posées ici pour la
+// même raison ; l'écouteur recopie la date dans la mémoire (lue par l'envoi Gist).
+let _syncStampListener = null;
+export function setSyncStampListener(fn) { _syncStampListener = typeof fn === 'function' ? fn : null; }
+
 function withStamps(mapId, poiId, existing, data) {
+    const dated = syncStampsFor(existing, data);
+    if (dated) {
+        data = { ...data, ...dated };
+        try { _syncStampListener?.(mapId, poiId, dated); }
+        catch (e) { console.warn('[database] date de synchro non recopiée en mémoire :', e); }
+    }
     if (!_writeHook) return data;
     let extra = null;
     try { extra = _writeHook(mapId, poiId, existing, data); }

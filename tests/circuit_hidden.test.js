@@ -22,7 +22,8 @@ vi.mock('../src/state.js', () => {
     setHasUnexportedChanges: vi.fn(),
     setUserData: vi.fn(),
     setOfficialCircuits: vi.fn(),
-    setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : []; })
+    setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : []; }),
+    setHiddenCircuitIdsUpdatedAt: vi.fn((s) => { state.hiddenCircuitIdsUpdatedAt = s || {}; })
 });
     // Ajout 07/09/2026 : getActiveMapId lit le MEME etat mocke que le module,
     // pour qu'un test qui change currentMapId change aussi la cle resolue.

@@ -9,8 +9,20 @@
 // remplaçait tout le contenu du Gist. Désormais l'envoi RELIT le Gist et ne
 // réécrit que la section de la destination active ; les autres sont recopiées
 // telles quelles. Un Gist au format 1 est lu comme la section de son `mapId`.
+//
+// 18/11/2026 (point 4 des conflits) : l'envoi relisait le Gist, mais réécrivait
+// la section de la destination avec le seul état de l'appareil. Un appareil
+// resté ouvert effaçait donc ce que l'autre avait envoyé entre-temps (et, pour
+// les photos de travail, la référence disparaissait ensuite de l'autre appareil
+// aussi). Désormais :
+//  - A. chaque envoi FUSIONNE la section relue avant d'écrire ;
+//  - B. Incontournable, photos de travail et circuits cachés : le changement le
+//       plus récent gagne (sync-stamps.js), comme visité et circuits faits ;
+//  - C. relecture aussi au retour au premier plan et au retour du réseau ;
+//  - D. un envoi en attente est retenu sur l'appareil (localStorage) et refait
+//       au démarrage suivant.
 
-import { state, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setHiddenPoiIds, setHiddenCircuitIds } from './state.js';
+import { state, setOfficialCircuitStatus, setOfficialCircuitsStatusUpdatedAt, setHiddenPoiIds, setHiddenCircuitIds, setHiddenCircuitIdsUpdatedAt } from './state.js';
 import { getStoredToken } from './github-sync.js';
 import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
@@ -19,6 +31,7 @@ import { eventBus } from './events.js';
 import { fetchWithTimeout } from './net.js';
 import { isOffline, onNetworkBack } from './network-status.js';
 import { mergeVisited, mergeCircuitDone, computeVu } from './visited-state.js';
+import { newer, mergeHiddenCircuits } from './sync-stamps.js';
 
 const GIST_ID_KEY    = 'hw_gist_id';
 const GIST_FILE_NAME = 'history_walk_userdata.json';
@@ -28,12 +41,41 @@ const PUSH_DEBOUNCE_MS = 3000;
 
 let _pushTimer = null;
 
-// Sync « en attente » : passe à true quand un push n'a pas pu être confirmé
-// (hors-ligne, ou échec réseau en cours de route). Le retour du réseau le rejoue
-// alors (cf. initGistReconnectSync). C'est ce qui rend VRAIE la réassurance
-// « vos modifications restent enregistrées et repartiront au retour du réseau ».
-let _pendingPush = false;
+// Sync « en attente » : posée dès qu'une modification est faite, levée quand
+// l'envoi est confirmé. Le retour du réseau la rejoue (initGistReconnectSync),
+// ce qui rend VRAIE la réassurance « vos modifications restent enregistrées et
+// repartiront au retour du réseau ».
+// 18/11/2026 : retenue sur l'appareil (localStorage), par destination. En
+// mémoire seulement, elle se perdait si l'appli était fermée hors-ligne ou
+// dans les 3 s suivant une modification — rien ne repartait au démarrage.
+const PENDING_KEY = 'hw_gist_pending';
 let _reconnectBound = false;
+
+function pendingMaps() {
+    try {
+        const list = JSON.parse(localStorage.getItem(PENDING_KEY) || '[]');
+        return Array.isArray(list) ? list : [];
+    } catch { return []; }
+}
+function setPending(mapId, on) {
+    if (!mapId) return;
+    const list = pendingMaps().filter(m => m !== mapId);
+    if (on) list.push(mapId);
+    try { localStorage.setItem(PENDING_KEY, JSON.stringify(list)); } catch { /* stockage indisponible */ }
+}
+/** Un envoi vers le Gist attend-il pour cette destination ? */
+export function isPushPending(mapId = state.currentMapId) {
+    return pendingMaps().includes(mapId);
+}
+
+// Lecture et envoi ne se chevauchent jamais : une lecture au retour au premier
+// plan pendant un envoi fusionnerait un état à moitié écrit.
+let _chain = Promise.resolve();
+function serial(fn) {
+    const run = _chain.then(fn, fn);
+    _chain = run.catch(() => {});
+    return run;
+}
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 
@@ -113,7 +155,7 @@ export function buildSection() {
     // de ce Gist. Voir project_gist_to_private_repo_migration.
     // vuUpdatedAt : date du dernier changement du statut visité — la fusion fait
     // gagner le plus récent (visited-state.js, fix 17/09/2026).
-    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'vuUpdatedAt', 'incontournable', 'workPhotos', 'keptWorkPhotos'];
+    const SYNC_KEYS = ['vu', 'vuManual', 'visitedByCircuits', 'vuUpdatedAt', 'incontournable', 'incontournableUpdatedAt', 'workPhotos', 'keptWorkPhotos', 'workPhotosUpdatedAt'];
     const filtered = {};
     for (const [poiId, data] of Object.entries(state.userData || {})) {
         const slim = {};
@@ -137,6 +179,8 @@ export function buildSection() {
         // cachés via le bouton "Cacher ce circuit". Stratégie merge : UNION
         // (cohérent avec hiddenPoiIds, validé Stefan).
         hiddenCircuitIds: state.hiddenCircuitIds || [],
+        // Date du dernier « cacher / réafficher » par circuit (sync-stamps.js).
+        hiddenCircuitIdsUpdatedAt: state.hiddenCircuitIdsUpdatedAt || {},
         lastSync: new Date().toISOString()
     };
 }
@@ -162,8 +206,17 @@ export function mergeRemoteIntoLocal(remote) {
             merged.vu = computeVu(merged);
             changed = true;
         }
-        // incontournable : true gagne
-        if (remoteData.incontournable === true && !local.incontournable) {
+        // incontournable : le changement le plus récent gagne ; sans date des
+        // deux côtés (données d'avant le 18/11/2026), « oui » gagne comme avant.
+        const incWin = newer(local.incontournableUpdatedAt, remoteData.incontournableUpdatedAt);
+        if (incWin === 'remote') {
+            const val = remoteData.incontournable === true;
+            if (val !== (local.incontournable === true) || local.incontournableUpdatedAt !== remoteData.incontournableUpdatedAt) {
+                merged.incontournable = val;
+                merged.incontournableUpdatedAt = remoteData.incontournableUpdatedAt;
+                changed = true;
+            }
+        } else if (incWin === null && remoteData.incontournable === true && !local.incontournable) {
             merged.incontournable = true;
             changed = true;
         }
@@ -180,7 +233,13 @@ export function mergeRemoteIntoLocal(remote) {
         //
         // keptWorkPhotos (25/09/2026) suit la MÊME règle : c'est une marque sur
         // workPhotos, les deux doivent venir du même écrivain pour rester cohérents.
-        for (const key of ['workPhotos', 'keptWorkPhotos']) {
+        //
+        // 18/11/2026 : avec une date d'un côté au moins, le changement le plus
+        // récent gagne (sync-stamps.js) — un appareil resté ouvert renvoyait
+        // sa vieille liste, qui l'emportait ensuite partout. Sans date des deux
+        // côtés, la règle ci-dessus (le distant gagne).
+        const photosWin = newer(local.workPhotosUpdatedAt, remoteData.workPhotosUpdatedAt);
+        for (const key of photosWin === 'local' ? [] : ['workPhotos', 'keptWorkPhotos']) {
             if (remoteData[key] === undefined) continue;
             const remoteList = Array.isArray(remoteData[key]) ? remoteData[key] : [];
             const localList = Array.isArray(local[key]) ? local[key] : [];
@@ -188,6 +247,10 @@ export function mergeRemoteIntoLocal(remote) {
                 merged[key] = remoteList;
                 changed = true;
             }
+        }
+        if (photosWin === 'remote' && local.workPhotosUpdatedAt !== remoteData.workPhotosUpdatedAt) {
+            merged.workPhotosUpdatedAt = remoteData.workPhotosUpdatedAt;
+            changed = true;
         }
 
         if (changed) {
@@ -232,19 +295,27 @@ export function mergeRemoteIntoLocal(remote) {
         }
     }
 
-    // hiddenCircuitIds : UNION (user peut cacher différents circuits sur PC
-    // vs mobile). Refonte Mon Espace V2 PR4 (15/05/2026) — même stratégie que
-    // hiddenPoiIds, validée par Stefan.
-    if (Array.isArray(remote.hiddenCircuitIds) && remote.hiddenCircuitIds.length > 0) {
-        const localList = Array.isArray(state.hiddenCircuitIds) ? state.hiddenCircuitIds : [];
-        const union = Array.from(new Set([...localList, ...remote.hiddenCircuitIds]));
-        if (union.length !== localList.length) {
-            setHiddenCircuitIds(union);
+    // hiddenCircuitIds : UNION à l'origine (refonte Mon Espace V2 PR4,
+    // 15/05/2026) — mais un circuit réaffiché sur un appareil était caché de
+    // nouveau par l'autre. 18/11/2026 : par circuit, le geste le plus récent
+    // gagne ; sans date des deux côtés, la réunion reste (sync-stamps.js).
+    // (Les lieux masqués gardent la réunion : masquer un lieu = le supprimer,
+    // l'appli n'a pas de geste « réafficher ».)
+    let hiddenCircuitsChanged = false;
+    if (Array.isArray(remote.hiddenCircuitIds) || remote.hiddenCircuitIdsUpdatedAt) {
+        const res = mergeHiddenCircuits(
+            { ids: state.hiddenCircuitIds || [], stamps: state.hiddenCircuitIdsUpdatedAt || {} },
+            { ids: Array.isArray(remote.hiddenCircuitIds) ? remote.hiddenCircuitIds : [], stamps: remote.hiddenCircuitIdsUpdatedAt || {} },
+        );
+        if (res.changed) {
+            setHiddenCircuitIds(res.ids);
+            setHiddenCircuitIdsUpdatedAt(res.stamps);
+            hiddenCircuitsChanged = true;
             hiddenChanged = true;
         }
     }
 
-    return { updates, circuitsChanged, hiddenChanged };
+    return { updates, circuitsChanged, hiddenChanged, hiddenCircuitsChanged };
 }
 
 /**
@@ -255,7 +326,7 @@ export function mergeRemoteIntoLocal(remote) {
  * porte seul ne doit jamais être perdu avant d'écraser avec l'état local.
  */
 async function applyRemoteMerge(remote) {
-    const { updates, circuitsChanged, hiddenChanged } = mergeRemoteIntoLocal(remote);
+    const { updates, circuitsChanged, hiddenChanged, hiddenCircuitsChanged } = mergeRemoteIntoLocal(remote);
     if (updates.length > 0) {
         await batchSavePoiData(state.currentMapId, updates);
     }
@@ -265,6 +336,12 @@ async function applyRemoteMerge(remote) {
     }
     if (hiddenChanged) {
         await saveAppState(`hiddenPois_${state.currentMapId}`, state.hiddenPoiIds);
+    }
+    // Circuits cachés : jamais enregistrés après une fusion avant le 18/11/2026
+    // (perdus au redémarrage suivant).
+    if (hiddenCircuitsChanged) {
+        await saveAppState('hiddenCircuitIds', state.hiddenCircuitIds);
+        await saveAppState('hiddenCircuitIdsUpdatedAt', state.hiddenCircuitIdsUpdatedAt || {});
     }
     if (updates.length > 0 || circuitsChanged || hiddenChanged) {
         eventBus.emit('data:apply-filters');
@@ -371,7 +448,7 @@ async function createFreshGist(token, message) {
     const id = await createGist(token, buildPayload());
     setGistId(id);
     showToast(message, 'success', 4000);
-    _pendingPush = false;
+    setPending(state.currentMapId, false);
 }
 
 async function updateGist(token, gistId, payload) {
@@ -444,7 +521,13 @@ function httpStatusOf(err) {
  * Pull depuis le Gist → merge dans le state local → sauvegarde IndexedDB.
  * Appelé au démarrage de l'app.
  */
-export async function pullFromGist() {
+let _lastPull = 0;
+export function pullFromGist() {
+    return serial(pullNow);
+}
+
+async function pullNow() {
+    _lastPull = Date.now();
     const token = getStoredToken();
     if (!token) return; // Pas de token → silencieux
     if (!state.currentMapId) return; // aucune section à lire sans destination active
@@ -506,16 +589,21 @@ export async function pullFromGist() {
  * Push le state courant vers le Gist.
  * Crée le Gist s'il n'existe pas encore.
  */
-export async function pushToGist() {
+export function pushToGist() {
+    return serial(pushNow);
+}
+
+async function pushNow() {
     const token = getStoredToken();
     if (!token) return;
     // Sans destination active, la section n'aurait pas de clé (format 2).
-    if (!state.currentMapId) return;
+    const mapId = state.currentMapId;
+    if (!mapId) return;
 
     // Hors-ligne : inutile de lancer un fetch voué à l'échec. On mémorise que la
     // sync est en attente — le retour du réseau la rejouera (initGistReconnectSync).
     if (isOffline()) {
-        _pendingPush = true;
+        setPending(mapId, true);
         return;
     }
 
@@ -560,18 +648,24 @@ export async function pushToGist() {
                 }
                 ({ id: gistId, remote } = adopted);
             }
+            // Point 4 (18/11/2026) : ce que l'autre appareil a envoyé depuis la
+            // dernière lecture est FUSIONNÉ ici avant d'écrire (mêmes règles
+            // qu'au démarrage). Avant, la section était réécrite avec le seul
+            // état d'ici : un appareil resté ouvert effaçait l'autre.
+            const section = sectionFor(remote, mapId);
+            if (section) await applyRemoteMerge(section);
         }
 
         // Reconstruit APRÈS une éventuelle fusion ci-dessus : le payload doit
         // refléter l'état local à jour, pas celui d'avant la fusion.
         await updateGist(token, gistId, buildPayload(remote));
 
-        _pendingPush = false; // push confirmé → plus rien en attente
+        setPending(mapId, false); // push confirmé → plus rien en attente
 
     } catch (e) {
         // Échec (réseau coupé en cours, 5xx, rate-limit…) : on garde la sync en
         // attente pour la rejouer au prochain retour de connectivité.
-        _pendingPush = true;
+        setPending(mapId, true);
         console.warn('[GistSync] Push failed:', e.message);
     }
 }
@@ -580,6 +674,9 @@ export async function pushToGist() {
  * Push différé (debounced) — appelé après chaque modification utilisateur.
  */
 export function schedulePush() {
+    // En attente dès maintenant : fermée dans les 3 s, l'appli la refera au
+    // prochain démarrage.
+    if (getStoredToken()) setPending(state.currentMapId, true);
     if (_pushTimer) clearTimeout(_pushTimer);
     _pushTimer = setTimeout(() => {
         pushToGist();
@@ -594,11 +691,30 @@ export function schedulePush() {
  * Idempotent : on ne s'abonne qu'une seule fois. À appeler une fois au boot
  * (cf. app-startup.js, après pullFromGist).
  */
+// Relecture au retour au premier plan : au plus une toutes les 30 s.
+const FOREGROUND_PULL_MIN_MS = 30000;
+
+/** Relit le Gist, puis envoie ce qui attendait (retour réseau / premier plan). */
+async function pullThenPush() {
+    await pullFromGist();
+    if (isPushPending()) await pushToGist();
+}
+
 export function initGistReconnectSync() {
-    if (_reconnectBound) return;
-    _reconnectBound = true;
-    onNetworkBack(() => {
-        if (_pendingPush) pushToGist();
-    });
+    if (!_reconnectBound) {
+        _reconnectBound = true;
+        onNetworkBack(() => { void pullThenPush(); });
+        // Téléphone sorti de la poche, onglet du PC réaffiché : l'autre appareil a
+        // pu changer des choses depuis (avant le 18/11/2026 : lu au démarrage seulement).
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'visible' || isOffline()) return;
+            if (Date.now() - _lastPull < FOREGROUND_PULL_MIN_MS) return;
+            void pullThenPush();
+        });
+    }
+    // Envoi resté en attente au dernier passage (appli fermée hors-ligne, ou
+    // juste après une modification) : refait maintenant, après la lecture du
+    // démarrage (les deux sont mis en file).
+    if (isPushPending() && !isOffline()) void pushToGist();
 }
 

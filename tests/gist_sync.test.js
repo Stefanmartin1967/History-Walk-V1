@@ -26,7 +26,8 @@ vi.mock('../src/state.js', () => {
         }),
         setOfficialCircuitsStatusUpdatedAt: vi.fn((stamps) => { state.officialCircuitsStatusUpdatedAt = stamps || {}; }),
         setHiddenPoiIds: vi.fn((ids) => { state.hiddenPoiIds = Array.isArray(ids) ? ids : []; }),
-        setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids : []; })
+        setHiddenCircuitIds: vi.fn((ids) => { state.hiddenCircuitIds = Array.isArray(ids) ? ids : []; }),
+        setHiddenCircuitIdsUpdatedAt: vi.fn((s) => { state.hiddenCircuitIdsUpdatedAt = s || {}; })
     };
 });
 
@@ -1050,5 +1051,88 @@ describe('Gist multi-destination (format 2)', () => {
             expect(state.userData).toEqual({});
             expect(showToast).not.toHaveBeenCalled();
         });
+    });
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Point 4 des conflits (18/11/2026) : relire et fusionner avant d'écrire, le
+// changement le plus récent gagne, envoi en attente retenu sur l'appareil.
+describe('Gist : relire et fusionner avant d’écrire (18/11/2026)', () => {
+    beforeEach(() => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        localStorage.setItem('hw_gist_id', 'gist-existing');
+        net.offline = false;
+        state.hiddenCircuitIdsUpdatedAt = {};
+    });
+    afterEach(() => { delete global.fetch; });
+
+    function mockGist(doc) {
+        const calls = [];
+        global.fetch = vi.fn((url, opts = {}) => {
+            const method = opts.method || 'GET';
+            calls.push({ method, body: opts.body });
+            if (method === 'GET') return Promise.resolve({ ok: true, json: () => Promise.resolve({ files: { 'history_walk_userdata.json': { content: JSON.stringify(doc) } } }) });
+            return Promise.resolve({ ok: true, json: () => Promise.resolve({}) });
+        });
+        return calls;
+    }
+    const written = (calls) => JSON.parse(JSON.parse(calls.find(c => c.method === 'PATCH').body).files['history_walk_userdata.json'].content).maps.djerba;
+
+    it('appareil resté ouvert : la photo ajoutée ailleurs n’est plus effacée', async () => {
+        // L'autre appareil a ajouté une photo (datée) ; ici, vieille liste, autre modification.
+        state.userData = { P: { workPhotos: ['a.jpg'], workPhotosUpdatedAt: 100 }, Q: { vuManual: true, vuUpdatedAt: 500 } };
+        const calls = mockGist({ format: 2, maps: { djerba: { userData: { P: { workPhotos: ['a.jpg', 'b.jpg'], workPhotosUpdatedAt: 200 } } } } });
+        await pushToGist();
+        expect(written(calls).userData.P.workPhotos).toEqual(['a.jpg', 'b.jpg']);
+        expect(written(calls).userData.Q.vuManual).toBe(true);
+        expect(state.userData.P.workPhotos).toEqual(['a.jpg', 'b.jpg']);
+    });
+
+    it('« visité » envoyé par l’autre appareil : gardé dans le Gist et repris ici', async () => {
+        state.userData = { Q: { incontournable: true, incontournableUpdatedAt: 50 } };
+        const calls = mockGist({ format: 2, maps: { djerba: { userData: { V: { vuManual: true, vuUpdatedAt: 300 } } } } });
+        await pushToGist();
+        expect(written(calls).userData.V).toMatchObject({ vuManual: true, vuUpdatedAt: 300 });
+        expect(state.userData.V.vuManual).toBe(true);
+    });
+
+    it('Incontournable retiré plus tard ailleurs : retiré ici', () => {
+        state.userData = { P: { incontournable: true, incontournableUpdatedAt: 10 } };
+        mergeRemoteIntoLocal({ userData: { P: { incontournable: false, incontournableUpdatedAt: 20 } } });
+        expect(state.userData.P.incontournable).toBe(false);
+    });
+
+    it('Incontournable posé ici plus tard : gardé', () => {
+        state.userData = { P: { incontournable: false, incontournableUpdatedAt: 30 } };
+        mergeRemoteIntoLocal({ userData: { P: { incontournable: true, incontournableUpdatedAt: 20 } } });
+        expect(state.userData.P.incontournable).toBe(false);
+    });
+
+    it('photos changées ici plus tard : la vieille liste du Gist ne l’emporte plus', () => {
+        state.userData = { P: { workPhotos: ['x.jpg'], workPhotosUpdatedAt: 300 } };
+        mergeRemoteIntoLocal({ userData: { P: { workPhotos: [], workPhotosUpdatedAt: 200 } } });
+        expect(state.userData.P.workPhotos).toEqual(['x.jpg']);
+    });
+
+    it('circuit réaffiché plus tard ailleurs : réaffiché ici, et enregistré', async () => {
+        state.hiddenCircuitIds = ['c1'];
+        state.hiddenCircuitIdsUpdatedAt = { c1: 10 };
+        const { saveAppState } = await import('../src/database.js');
+        mockGist({ format: 2, maps: { djerba: { userData: {}, hiddenCircuitIds: [], hiddenCircuitIdsUpdatedAt: { c1: 20 } } } });
+        await pullFromGist();
+        expect(state.hiddenCircuitIds).toEqual([]);
+        expect(saveAppState).toHaveBeenCalledWith('hiddenCircuitIds', []);
+    });
+
+    it('modification faite hors-ligne : « à envoyer » retenu sur l’appareil, refait au démarrage', async () => {
+        net.offline = true;
+        schedulePush();
+        expect(JSON.parse(localStorage.getItem('hw_gist_pending'))).toEqual(['djerba']);
+        // appli fermée, rouverte en ligne
+        net.offline = false;
+        const calls = mockGist({ format: 2, maps: {} });
+        initGistReconnectSync();
+        await vi.waitFor(() => expect(calls.some(c => c.method === 'PATCH')).toBe(true));
+        await vi.waitFor(() => expect(JSON.parse(localStorage.getItem('hw_gist_pending'))).toEqual([]));
     });
 });
