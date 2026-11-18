@@ -401,6 +401,51 @@ export function openEditorForPoi(id) {
  * @param {string} poiId
  * @param {Array<{key: string, choice: 'online'|'local'|'final', value?: string}>} choices
  */
+/**
+ * Ce que « Tout publier » laisse de côté quand des conflits restent :
+ *  - fields : Map(poiId → { keys: Set, original }) — champs publiés avec leur
+ *    valeur EN LIGNE (position → lat + lng) ;
+ *  - circuits : ids des circuits qui passent par un lieu dont la position est
+ *    en conflit (leur GPX prendrait la position d'ici).
+ */
+export function conflictHold(diff) {
+    const fields = new Map();
+    const heldPositions = new Set();
+    for (const p of diff.pois || []) {
+        if (!p.conflicts?.length) continue;
+        const original = (diff.originalFeatures || []).find(f => getPoiId(f) === p.id) || null;
+        const keys = new Set();
+        p.conflicts.forEach(c => {
+            if (c.key === 'position') { keys.add('lat'); keys.add('lng'); heldPositions.add(String(p.id)); }
+            else keys.add(c.key);
+        });
+        fields.set(p.id, { keys, original });
+    }
+    const circuits = new Set();
+    if (heldPositions.size > 0) {
+        for (const c of diff.circuits || []) {
+            const full = getAllCircuits().find(x => String(x.id) === String(c.id));
+            if ((full?.poiIds || []).some(id => heldPositions.has(String(id)))) circuits.add(String(c.id));
+        }
+    }
+    return { fields, circuits };
+}
+
+function buildConflictNote(diff, hold) {
+    if (hold.fields.size === 0) return '';
+    const label = (k) => (k === 'position' ? 'Position' : k === 'description' ? 'Description' : k);
+    const lines = (diff.pois || []).filter(p => p.conflicts?.length)
+        .map(p => `• ${p.name} · ${p.conflicts.map(c => label(c.key)).join(', ')}`);
+    const n = lines.length;
+    let note = `${n} conflit${n > 1 ? 's seront laissés' : ' sera laissé'} de côté :\n${lines.join('\n')}\n`
+        + `La version en ligne est gardée pour ${n > 1 ? 'ces champs' : 'ce champ'} ; ta version reste en attente ici.\n\n`;
+    if (hold.circuits.size > 0) {
+        const names = (diff.circuits || []).filter(c => hold.circuits.has(String(c.id))).map(c => `• ${c.name}`);
+        note += `Circuit${names.length > 1 ? 's' : ''} laissé${names.length > 1 ? 's' : ''} de côté (${names.length > 1 ? 'ils passent' : 'il passe'} par une position en conflit) :\n${names.join('\n')}\n\n`;
+    }
+    return note;
+}
+
 export async function resolveConflicts(poiId, choices) {
     const onlineSha = diffData.onlineGeojsonSha;
     const original = (diffData.originalFeatures || []).find(f => getPoiId(f) === poiId);
@@ -764,13 +809,13 @@ async function publishChanges() {
         return;
     }
 
-    // Conflits à la publication (18/11/2026) : rien ne part tant qu'un champ
-    // publié depuis un autre appareil n'a pas été tranché (bouton déjà grisé).
-    const conflictPois = diffData.stats?.conflictPois || 0;
-    if (conflictPois > 0) {
-        showToast(`${conflictPois} conflit${conflictPois > 1 ? 's' : ''} à résoudre avant de publier.`, 'warning');
-        return;
-    }
+    // Conflits à la publication : publier le reste, laisser les conflits de côté
+    // (18/11/2026, demande de Stefan ; avant, « Tout publier » était bloqué). Les
+    // champs en conflit partent avec leur valeur EN LIGNE (rien n'écrase l'autre
+    // appareil), la version d'ici reste en attente ; les circuits qui passent par
+    // un lieu dont la POSITION est en conflit attendent aussi.
+    const hold = conflictHold(diffData);
+    const conflictNote = buildConflictNote(diffData, hold);
 
     // MODÈLE C : « Tout publier » fonctionne sur une destination brouillon (status:draft)
     // comme sur une publiée — son entrée + ses fichiers existent déjà sur GitHub
@@ -790,7 +835,7 @@ async function publishChanges() {
     // en les nommant. Pas de blocage : l'effacement peut être volontaire.
     const ok = await showConfirm(
         "Publication GitHub",
-        buildPublishWarning() + rejectedNote + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
+        conflictNote + buildPublishWarning() + rejectedNote + "Publier toutes les modifications sur GitHub ?\n\nCette action rendra visibles toutes vos modifications pour tous les utilisateurs.",
         "Publier",
         "Annuler"
     );
@@ -921,7 +966,7 @@ async function publishChanges() {
         // garde (ils s'y curent ensuite). Cible inconnue → exclusion (sûr).
         const activeDest = state.destinations?.maps?.[mapId];
         const keepCandidates = !!activeDest && !isDestinationPublished(activeDest);
-        const geojson = generateMasterGeoJSONData(idsToDelete, { keepCandidates });
+        const geojson = generateMasterGeoJSONData(idsToDelete, { keepCandidates, hold: hold.fields });
         if (!geojson) throw new Error("Erreur données GeoJSON");
         const filename = `${mapId}.geojson`;
         const blob = new Blob([JSON.stringify(geojson, null, 2)], { type: 'application/geo+json' });
@@ -985,7 +1030,7 @@ async function publishChanges() {
         // depuis le 25/05/2026 (son push sur `main` protégée était rejeté à tous
         // les coups), et le workflow a été retiré le 05/09/2026. Le seul repli
         // est manuel : `npm run update-circuits` en local, puis commit.
-        const circuitChanges = diffData.circuits || [];
+        const circuitChanges = (diffData.circuits || []).filter(c => !hold.circuits.has(String(c.id)));
         if (circuitChanges.length > 0) {
             try {
                 let circuitProgress = 0;
@@ -1217,16 +1262,24 @@ async function publishChanges() {
                 return;
             }
 
+            // Champs en conflit laissés de côté : ils RESTENT en attente, avec leur
+            // estampille (le conflit réapparaît à la réouverture).
+            const held = hold.fields.get(p.id)?.keys || new Set();
             const personal = {};
             Object.entries(overlay).forEach(([key, value]) => {
-                if (PERSONAL_KEYS.includes(key)) personal[key] = value;
+                if (PERSONAL_KEYS.includes(key) || held.has(key)) personal[key] = value;
                 else if (key === BASE_KEY) return; // estampilles : retirées avec les champs publiés
                 else if (feature) feature.properties[key] = value;
             });
+            if (held.size > 0 && overlay[BASE_KEY]) {
+                const stamps = Object.fromEntries(Object.entries(overlay[BASE_KEY]).filter(([k]) => held.has(k)));
+                if (Object.keys(stamps).length > 0) personal[BASE_KEY] = stamps;
+            }
 
             if (Object.keys(personal).length > 0) {
                 newUserData[p.id] = personal;
-                const published = Object.keys(overlay).filter(k => !PERSONAL_KEYS.includes(k));
+                const published = Object.keys(overlay).filter(k => !PERSONAL_KEYS.includes(k) && !held.has(k) && k !== BASE_KEY);
+                if (personal[BASE_KEY] === undefined && overlay[BASE_KEY]) published.push(BASE_KEY);
                 if (published.length > 0) poisToTrimInIdb.push({ id: p.id, keys: published });
             } else {
                 delete newUserData[p.id];

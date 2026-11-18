@@ -77,13 +77,14 @@ beforeEach(async () => {
 });
 
 describe('liste', () => {
-    it('section Conflit avant Modifié, bannière, et « Tout publier » bloqué', () => {
+    it('section Conflit avant Modifié, bannière ; « Tout publier » reste actif (le reste peut partir)', () => {
         expect(content().querySelector('.cc-conflict-banner').textContent).toContain('2 conflits à résoudre');
+        expect(content().querySelector('.cc-conflict-banner').textContent).toContain('publier le reste');
         const groups = [...content().querySelectorAll('.cc-diff-group')].map(g => g.className);
         expect(groups[0]).toContain('cc-diff-group--conf');
         expect(content().querySelectorAll('.cc-diff--conflict')).toHaveLength(2);
         expect(content().querySelector('.cc-diff-group--mod').textContent).toContain('Beffroi');
-        expect(document.getElementById('btn-cc-publish').disabled).toBe(true);
+        expect(document.getElementById('btn-cc-publish').disabled).toBe(false);
     });
 });
 
