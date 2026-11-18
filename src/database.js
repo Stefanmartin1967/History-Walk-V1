@@ -1,6 +1,24 @@
 // database.js
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
+import { BASE_KEY, pruneStamps } from './overlay-base.js';
+
+// ─── Estampille de la version de départ (18/11/2026, conflits à la publication) ──
+// Toutes les écritures de fiche passent par savePoiData / batchSavePoiData : c'est
+// ici, et seulement ici, qu'on note sur quelle version de la carte un champ publié
+// a été modifié (cf. overlay-base.js). Le crochet est posé au démarrage par
+// installOverlayBaseHook (overlay-base-hook.js) ; sans lui (tests), rien n'est noté.
+let _writeHook = null;
+export function setPoiDataWriteHook(fn) { _writeHook = typeof fn === 'function' ? fn : null; }
+
+function withStamps(mapId, poiId, existing, data) {
+    if (!_writeHook) return data;
+    let extra = null;
+    try { extra = _writeHook(mapId, poiId, existing, data); }
+    catch (e) { console.warn('[database] estampille de version ignorée :', e); }
+    if (!extra) return data;
+    return { ...data, [BASE_KEY]: { ...(existing?.[BASE_KEY] || {}), ...(data[BASE_KEY] || {}), ...extra } };
+}
 
 const DB_VERSION = 9;
 
@@ -347,7 +365,7 @@ export async function savePoiData(mapId, poiId, data) {
 
         getRequest.onsuccess = () => {
             const existingData = getRequest.result || {};
-            const dataToSave = { ...existingData, ...data, mapId, poiId };
+            const dataToSave = { ...existingData, ...withStamps(mapId, poiId, getRequest.result || null, data), mapId, poiId };
 
             const putRequest = store.put(dataToSave);
             putRequest.onsuccess = () => resolve();
@@ -400,7 +418,9 @@ export async function removePoiDataKeys(mapId, poiId, keys) {
             const existing = getReq.result;
             if (!existing) return;
             const next = { ...existing };
+            if (next[BASE_KEY]) next[BASE_KEY] = { ...next[BASE_KEY] };
             (keys || []).forEach(k => { delete next[k]; });
+            pruneStamps(next); // plus d'estampille pour un champ retiré
             remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId').length;
             if (remaining === 0) store.delete([mapId, poiId]);
             else store.put({ ...next, mapId, poiId });
@@ -445,7 +465,7 @@ export async function batchSavePoiData(mapId, dataArray) {
                 const getRequest = store.get([mapId, poiId]);
                 getRequest.onsuccess = () => {
                     const existingData = getRequest.result || {};
-                    const dataToSave = { ...existingData, ...data, mapId, poiId };
+                    const dataToSave = { ...existingData, ...withStamps(mapId, poiId, getRequest.result || null, data), mapId, poiId };
 
                     const putRequest = store.put(dataToSave);
                     putRequest.onerror = (e) => errors.push({ id: poiId, error: e.target.error });

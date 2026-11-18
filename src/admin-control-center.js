@@ -20,6 +20,7 @@ import { getTestedSteps, rememberTestedSteps, stepsInvalidateVerified, pushTeste
 import { showConfirm, showAlert } from './modal.js';
 import { assertGeojsonBaseCurrent, uploadGeojsonGuarded, StaleBaseError } from './publish-base.js';
 import { fetchRepoFile } from './repo-read.js';
+import { BASE_KEY } from './overlay-base.js';
 import { saveAppState, getAppState, getPendingAdminPhotos, setPendingAdminPhotos, clearPendingAdminPhotos, deletePoiData, savePoiData, removePoiDataKeys } from './database.js';
 import { uploadPhotoForPoi } from './photo-service.js';
 import { pendingRejectedCount } from './rejected.js';
@@ -213,7 +214,8 @@ export async function openControlCenter(initialTab = 'dashboard') {
         openEditorForPoi: openEditorForPoi,
         togglePhotoSkip: togglePhotoSkip,
         removeAdminPhoto: removeAdminPhoto,
-        bulkSetPhotoSkip: bulkSetPhotoSkip
+        bulkSetPhotoSkip: bulkSetPhotoSkip,
+        resolveConflicts: resolveConflicts
     };
 
     openControlCenterModal(diffData, callbacks);
@@ -381,10 +383,67 @@ export function openEditorForPoi(id) {
             openEditorForPoi,
             togglePhotoSkip,
             removeAdminPhoto,
-            bulkSetPhotoSkip
+            bulkSetPhotoSkip,
+            resolveConflicts
         };
         renderTab('changes', diffData, callbacks);
     }, { once: true });
+}
+
+/**
+ * Résout les conflits d'une fiche (18/11/2026, écran « Résoudre » du Centre de
+ * contrôle ; principe dans overlay-base.js). Pour chaque champ :
+ *  - 'online' : on garde la version en ligne → le champ quitte l'overlay ;
+ *  - 'local'  : on garde celle d'ici → le champ reste, et son départ devient la
+ *               version en ligne (il apparaît alors en modification normale) ;
+ *  - 'final'  : la version finale composée (texte) remplace celle d'ici, même
+ *               départ que 'local'.
+ * @param {string} poiId
+ * @param {Array<{key: string, choice: 'online'|'local'|'final', value?: string}>} choices
+ */
+export async function resolveConflicts(poiId, choices) {
+    const onlineSha = diffData.onlineGeojsonSha;
+    const original = (diffData.originalFeatures || []).find(f => getPoiId(f) === poiId);
+    const ud = state.userData[poiId];
+    if (!onlineSha || !original || !ud || !Array.isArray(choices) || choices.length === 0) return;
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    const mapId = getActiveMapId();
+    const stamps = { ...(ud[BASE_KEY] || {}) };
+    const toRemove = [];
+    const toWrite = {};
+
+    for (const c of choices) {
+        const keys = c.key === 'position' ? ['lat', 'lng'] : [c.key];
+        if (c.choice === 'online') {
+            keys.forEach(k => { toRemove.push(k); delete ud[k]; delete stamps[k]; });
+            if (feature && c.key === 'position') {
+                feature.geometry.coordinates = [...original.geometry.coordinates];
+            } else if (feature) {
+                if (original.properties[c.key] === undefined) delete feature.properties[c.key];
+                else feature.properties[c.key] = original.properties[c.key];
+            }
+        } else if (c.choice === 'local' || c.choice === 'final') {
+            if (c.choice === 'final') { ud[c.key] = c.value; toWrite[c.key] = c.value; }
+            keys.forEach(k => { stamps[k] = onlineSha; });
+        }
+    }
+
+    if (Object.keys(stamps).length > 0) ud[BASE_KEY] = stamps;
+    else delete ud[BASE_KEY];
+    try {
+        if (toRemove.length > 0) await removePoiDataKeys(mapId, poiId, toRemove);
+        if (Object.keys(toWrite).length > 0 || ud[BASE_KEY]) {
+            await savePoiData(mapId, poiId, { ...toWrite, ...(ud[BASE_KEY] ? { [BASE_KEY]: ud[BASE_KEY] } : {}) });
+        }
+    } catch (e) {
+        console.error('[CC] résolution du conflit non enregistrée :', poiId, e);
+        showToast("Choix non enregistrés, réessaie.", 'error');
+    }
+    if (Object.keys(ud).length === 0) delete state.userData[poiId];
+    if (feature) feature.properties.userData = state.userData[poiId] || {};
+
+    await prepareDiffAndPurge();
+    renderTab('changes', diffData, { publishChanges, processDecision, openEditorForPoi, togglePhotoSkip, removeAdminPhoto, bulkSetPhotoSkip, resolveConflicts });
 }
 
 // « Annuler » sur un lieu créé sur cet appareil et jamais publié : le lieu
@@ -702,6 +761,14 @@ async function publishChanges() {
     const token = getStoredToken();
     if (!token) {
         showToast("Token manquant. Vérifiez la configuration.", "error");
+        return;
+    }
+
+    // Conflits à la publication (18/11/2026) : rien ne part tant qu'un champ
+    // publié depuis un autre appareil n'a pas été tranché (bouton déjà grisé).
+    const conflictPois = diffData.stats?.conflictPois || 0;
+    if (conflictPois > 0) {
+        showToast(`${conflictPois} conflit${conflictPois > 1 ? 's' : ''} à résoudre avant de publier.`, 'warning');
         return;
     }
 
@@ -1153,6 +1220,7 @@ async function publishChanges() {
             const personal = {};
             Object.entries(overlay).forEach(([key, value]) => {
                 if (PERSONAL_KEYS.includes(key)) personal[key] = value;
+                else if (key === BASE_KEY) return; // estampilles : retirées avec les champs publiés
                 else if (feature) feature.properties[key] = value;
             });
 

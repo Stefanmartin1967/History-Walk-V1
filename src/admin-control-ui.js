@@ -10,6 +10,9 @@ import { renderMaintenanceTab } from './admin-maintenance.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { escapeXml } from './utils.js';
+import L from 'leaflet';
+import { isMobileView } from './mobile-state.js';
+import { markChanges, mergeTexts } from './text-merge.js';
 import { migrateExistingNotes } from './private-notes.js';
 import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
@@ -36,6 +39,11 @@ function computePublishCount(stats = {}) {
 // Persistant entre les renders du même onglet, reset implicite à 'lieux' au prochain
 // boot (variable module-level non sérialisée).
 let _changesSubView = 'lieux';
+
+// Conflits à la publication (18/11/2026) : fiche dont l'écran « Résoudre » est
+// ouvert dans l'onglet Modifications (null : la liste), et sa petite carte.
+let _conflictPoiId = null;
+let _conflictMap = null;
 
 // C2 — Track des blob URLs créées par renderPendingPhotoGrid pour pouvoir les
 // revoke (URL.revokeObjectURL) lors du re-render de la grille ou de la
@@ -119,9 +127,13 @@ export function syncFooterAndNavCount(diffData) {
     const stats = (diffData && diffData.stats) || {};
     const totalCount = computePublishCount(stats);
 
+    // Conflits à la publication (18/11/2026) : « Tout publier » bloqué tant qu'un
+    // conflit n'est pas résolu (choix validé par Stefan).
+    const conflictPois = stats.conflictPois || 0;
+
     const btn = overlay.querySelector('#btn-cc-publish');
     if (btn) {
-        btn.disabled = (totalCount === 0);
+        btn.disabled = (totalCount === 0 || conflictPois > 0);
         let countSpan = btn.querySelector('.cc-cta-count');
         if (totalCount > 0) {
             if (countSpan) countSpan.textContent = String(totalCount);
@@ -133,9 +145,12 @@ export function syncFooterAndNavCount(diffData) {
 
     const info = overlay.querySelector('.cc-footer-info');
     if (info) {
-        info.textContent = totalCount > 0
-            ? 'Brouillon local · sauvegardé automatiquement'
-            : 'Aucune modification locale';
+        info.textContent = conflictPois > 0
+            ? `${conflictPois} conflit${conflictPois > 1 ? 's' : ''} à résoudre`
+            : totalCount > 0
+                ? 'Brouillon local · sauvegardé automatiquement'
+                : 'Aucune modification locale';
+        info.classList.toggle('cc-footer-info--conflict', conflictPois > 0);
     }
 
     const navChanges = overlay.querySelector('.cc-nav-item[data-tab="changes"]');
@@ -157,6 +172,8 @@ export function syncFooterAndNavCount(diffData) {
 export function closeCCModal() {
     if (!_ccModalOverlay) return;
     revokeAllPendingBlobUrls();
+    _conflictPoiId = null; // à la réouverture, l'onglet repart de la liste
+    destroyConflictMap();
     _ccModalOverlay.classList.remove('is-active');
     if (_ccEscHandler) {
         document.removeEventListener('keydown', _ccEscHandler);
@@ -376,6 +393,49 @@ function bindCCEventDelegation(diffData, callbacks) {
                 }
                 return;
             }
+            // Conflits à la publication (18/11/2026)
+            const resolveBtn = e.target.closest('[data-action="resolve-conflict"]');
+            if (resolveBtn) {
+                _conflictPoiId = resolveBtn.dataset.id;
+                renderTab('changes', diffData, callbacks);
+                container.scrollTop = 0;
+                return;
+            }
+            if (e.target.closest('[data-action="conflict-back"]')) {
+                _conflictPoiId = null;
+                renderTab('changes', diffData, callbacks);
+                return;
+            }
+            const takeAll = e.target.closest('[data-action="conflict-take-all"]');
+            if (takeAll) {
+                const ta = conflictTextarea(container, takeAll.dataset.key);
+                const src = takeAll.dataset.side === 'online' ? 'online' : 'local';
+                const item = (diffData.pois || []).find(p => p.id === _conflictPoiId);
+                const c = item?.conflicts?.find(x => x.key === takeAll.dataset.key);
+                if (ta && c) ta.value = String(c[src] ?? '');
+                return;
+            }
+            const takePassage = e.target.closest('[data-action="conflict-take-passage"]');
+            if (takePassage) {
+                const ta = conflictTextarea(container, takePassage.dataset.key);
+                const here = takePassage.dataset.here || '';
+                const online = takePassage.dataset.online || '';
+                if (ta) {
+                    if (here && ta.value.includes(here)) ta.value = ta.value.replace(here, online);
+                    else ta.value = `${ta.value.replace(/\s+$/, '')} ${online}`.trim();
+                }
+                takePassage.disabled = true;
+                return;
+            }
+            if (e.target.closest('[data-action="conflict-apply"]')) {
+                const id = _conflictPoiId;
+                const choices = collectConflictChoices(container, diffData, id);
+                _conflictPoiId = null;
+                if (choices.length > 0 && callbacks.resolveConflicts) callbacks.resolveConflicts(id, choices);
+                else renderTab('changes', diffData, callbacks);
+                return;
+            }
+
             const editorBtn = e.target.closest('[data-action="open-editor"]');
             if (editorBtn) {
                 const id = editorBtn.dataset.id;
@@ -385,6 +445,14 @@ function bindCCEventDelegation(diffData, callbacks) {
         });
 
         container.addEventListener('change', (e) => {
+            // Écran « Résoudre » : la carte cochée est mise en avant.
+            if (e.target.matches('.cc-conflict-choice input[type="radio"]')) {
+                const group = e.target.closest('.cc-conflict-field');
+                group?.querySelectorAll('.cc-conflict-choice').forEach(l => {
+                    l.classList.toggle('is-checked', !!l.querySelector('input:checked'));
+                });
+                return;
+            }
             // (« update-draft » retiré le 14/09/2026 : écouteur sans émetteur — aucun
             // rendu ne produisait data-action="update-draft".)
             // Toggle skipPublish sur une photo pending. La fonction côté admin
@@ -1248,7 +1316,17 @@ export function renderTab(tab, diffData, callbacks) {
 
         // — Body : la sous-vue active uniquement —
         let bodyHtml = '';
-        if (_changesSubView === 'lieux') {
+        const conflictItem = _conflictPoiId
+            ? subviewItems.lieux.find(p => p.id === _conflictPoiId && p.conflicts?.length)
+            : null;
+        if (!conflictItem) _conflictPoiId = null;
+        destroyConflictMap();
+        if (_changesSubView === 'lieux' && conflictItem) {
+            container.innerHTML = renderConflictView(conflictItem);
+            initConflictMap(container, conflictItem);
+            createIcons({ icons: appIcons, root: container });
+            return;
+        } else if (_changesSubView === 'lieux') {
             bodyHtml = renderLieuxView(subviewItems.lieux);
         } else if (_changesSubView === 'photos') {
             bodyHtml = renderPhotosView(subviewItems.photos);
@@ -1561,12 +1639,21 @@ function renderLieuxView(items) {
         return `<div class="cc-empty"><div class="cc-empty-mark"><i data-lucide="check-circle-2"></i></div><h3 class="cc-empty-title">Aucun lieu modifié.</h3></div>`;
     }
     const groups = {
+        conf: items.filter(p => p.conflicts?.length),
         new: items.filter(p => p.isCreation),
-        mod: items.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration),
+        mod: items.filter(p => !p.isCreation && !p.isDeletion && !p.isMigration && !p.conflicts?.length),
         del: items.filter(p => p.isDeletion),
         mig: items.filter(p => p.isMigration),
     };
     let html = '';
+    if (groups.conf.length > 0) {
+        const n = groups.conf.length;
+        html += `<div class="cc-conflict-banner" role="status">
+            <i data-lucide="alert-triangle"></i>
+            <span><strong>${n} conflit${n > 1 ? 's' : ''} à résoudre avant de publier.</strong> Ces champs ont été publiés depuis un autre appareil après que tu les as modifiés ici. Choisis quelle version garder.</span>
+        </div>`;
+        html += renderConflictGroup(groups.conf);
+    }
     html += renderItemGroup('Nouveau',   groups.new, 'new', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
     html += renderItemGroup('Modifié',   groups.mod, 'mod', { showEdit: true,  showPhotoGrid: false, scope: 'poi' });
     html += renderItemGroup('Supprimé',  groups.del, 'del', { showEdit: false, showPhotoGrid: false, scope: 'poi' });
@@ -1595,6 +1682,196 @@ function renderCircuitsView(items) {
     html += renderItemGroup('Modifié',  groups.mod, 'mod', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
     html += renderItemGroup('Supprimé', groups.del, 'del', { showEdit: false, showPhotoGrid: false, scope: 'circuit' });
     return html;
+}
+
+// ─── CONFLITS À LA PUBLICATION (18/11/2026, maquette validée) ─────────────────
+// Liste : section « Conflit » avant « Modifié », bouton « Résoudre ». Écran
+// « Résoudre » : champ simple (deux choix), position (deux choix + petite carte),
+// texte (en ligne / ici / version finale modifiable). Sur le téléphone, un texte
+// se règle sur le PC. Principe : overlay-base.js ; enregistrement des choix :
+// resolveConflicts (admin-control-center.js).
+
+const CONFLICT_LABELS = { position: 'Position', description: 'Description', info_gpx: 'Info GPX', 'Nom du site FR': 'Nom' };
+const conflictLabel = (key) => CONFLICT_LABELS[key] || key;
+
+function renderConflictGroup(items) {
+    return `<div class="cc-diff-group cc-diff-group--conf">
+        <h4 class="cc-diff-group-typed-title">Conflit<span class="cc-diff-group-count">· ${items.length}</span></h4>
+        ${items.map(item => `
+        <div class="cc-diff cc-diff--conflict" id="cc-diff-item-${item.id}">
+            <div class="cc-diff-head">
+                <span class="cc-diff-tag tag-del">Conflit</span>
+                <div class="cc-diff-name">${escapeXml(item.name)}
+                    <span class="cc-conflict-fields">· ${escapeXml(item.conflicts.map(c => conflictLabel(c.key)).join(', '))}</span>
+                </div>
+                <div class="cc-diff-actions">
+                    <button class="cc-diff-btn" type="button" data-action="resolve-conflict" data-id="${item.id}">Résoudre</button>
+                </div>
+            </div>
+        </div>`).join('')}
+    </div>`;
+}
+
+const fmtLatLng = (ll) => (Array.isArray(ll) ? `${(+ll[0]).toFixed(5)}, ${(+ll[1]).toFixed(5)}` : '—');
+const showVal = (v) => (v === undefined || v === null || v === '' ? '(vide)' : String(typeof v === 'object' ? JSON.stringify(v) : v));
+
+function distanceM(a, b) {
+    const R = 6371000, toRad = (d) => d * Math.PI / 180;
+    const dLat = toRad(b[0] - a[0]), dLng = toRad(b[1] - a[1]);
+    const h = Math.sin(dLat / 2) ** 2 + Math.cos(toRad(a[0])) * Math.cos(toRad(b[0])) * Math.sin(dLng / 2) ** 2;
+    return Math.round(2 * R * Math.asin(Math.sqrt(h)));
+}
+
+function choiceCard(name, value, label, body, checked) {
+    return `<label class="cc-conflict-choice${checked ? ' is-checked' : ''}">
+        <input type="radio" name="${name}" value="${value}"${checked ? ' checked' : ''}>
+        <span class="cc-conflict-choice-text"><span class="cc-conflict-choice-label">${label}</span>${body}</span>
+    </label>`;
+}
+
+function renderMarked(base, text) {
+    return markChanges(base ?? '', text ?? '')
+        .map(s => s.changed ? `<mark>${escapeXml(s.text)}</mark>` : escapeXml(s.text)).join('');
+}
+
+function renderConflictField(c, mobile) {
+    const key = escapeXml(c.key);
+    const name = `cc-conf-${key}`;
+    const label = escapeXml(conflictLabel(c.key));
+    if (c.kind === 'position') {
+        const d = distanceM(c.online, c.local);
+        return `<section class="cc-conflict-field cc-conflict-field--position" data-key="${key}" data-kind="position">
+            <div class="cc-conflict-pos-choices">
+                <h3 class="cc-conflict-key">${label}</h3>
+                <p class="cc-conflict-hint">Les deux points sont à <strong>${d} m</strong> l'un de l'autre.</p>
+                ${choiceCard(name, 'online', '<span class="cc-conflict-pin cc-conflict-pin--a">A</span> En ligne · publié depuis un autre appareil', `<strong>${fmtLatLng(c.online)}</strong>`, false)}
+                ${choiceCard(name, 'local', '<span class="cc-conflict-pin cc-conflict-pin--b">B</span> Ici · cet appareil', `<strong>${fmtLatLng(c.local)}</strong>`, true)}
+            </div>
+            <div class="cc-conflict-map" id="cc-conflict-map" role="img" aria-label="Carte : point A en ligne, point B ici, ${d} mètres d'écart"></div>
+        </section>`;
+    }
+    if (c.kind === 'text' && mobile) {
+        return `<section class="cc-conflict-field" data-key="${key}" data-kind="text-later">
+            <h3 class="cc-conflict-key">${label}</h3>
+            <p class="cc-conflict-later"><i data-lucide="monitor"></i> <span>Un texte se règle <strong>sur le PC</strong>. Ta version reste gardée ici, rien n'est perdu.</span></p>
+        </section>`;
+    }
+    if (c.kind === 'text') {
+        const merged = mergeTexts(c.base ?? '', c.local ?? '', c.online ?? '');
+        const passages = merged.conflicts.map(p => `
+            <div class="cc-conflict-passage">
+                <div><span class="cc-conflict-disputed">${escapeXml(p.here || '(supprimé ici)')}</span></div>
+                <div class="cc-conflict-passage-online">En ligne : « ${escapeXml(p.online || '(supprimé)')} »
+                    <button class="cc-diff-btn" type="button" data-action="conflict-take-passage" data-key="${key}" data-here="${escapeXml(p.here)}" data-online="${escapeXml(p.online)}">Prendre celle-ci</button>
+                </div>
+            </div>`).join('');
+        return `<section class="cc-conflict-field" data-key="${key}" data-kind="text">
+            <h3 class="cc-conflict-key">${label}</h3>
+            <div class="cc-conflict-texts">
+                <div class="cc-conflict-text">
+                    <div class="cc-conflict-text-head"><span class="cc-conflict-swatch cc-conflict-swatch--online"></span>En ligne · publié depuis un autre appareil</div>
+                    <p class="cc-conflict-text-body cc-conflict-text-body--online">${renderMarked(c.base, c.online)}</p>
+                    <button class="cc-diff-btn" type="button" data-action="conflict-take-all" data-side="online" data-key="${key}">Tout reprendre de celle-ci</button>
+                </div>
+                <div class="cc-conflict-text">
+                    <div class="cc-conflict-text-head"><span class="cc-conflict-swatch cc-conflict-swatch--local"></span>Ici · cet appareil</div>
+                    <p class="cc-conflict-text-body cc-conflict-text-body--local">${renderMarked(c.base, c.local)}</p>
+                    <button class="cc-diff-btn" type="button" data-action="conflict-take-all" data-side="local" data-key="${key}">Tout reprendre de celle-ci</button>
+                </div>
+            </div>
+            <div class="cc-conflict-final">
+                <label class="cc-conflict-final-label" for="cc-conf-final-${key}">Version finale · sera publiée</label>
+                ${merged.clean
+                    ? `<div class="cc-conflict-merged" role="status"><i data-lucide="check"></i> Les deux changements ne touchaient pas la même phrase : ils ont été réunis. Relis avant de valider.</div>`
+                    : `<p class="cc-conflict-hint">Les deux versions ont changé le même passage : la version finale part de « Ici », l'autre version est juste en dessous.</p>`}
+                <textarea id="cc-conf-final-${key}" class="cc-conflict-textarea" rows="6" data-conflict-key="${key}">${escapeXml(merged.text)}</textarea>
+                ${passages}
+            </div>
+        </section>`;
+    }
+    return `<section class="cc-conflict-field" data-key="${key}" data-kind="simple">
+        <h3 class="cc-conflict-key">${label}</h3>
+        <p class="cc-conflict-hint">Avant les deux modifications : ${escapeXml(showVal(c.base))}</p>
+        <div class="cc-conflict-choices">
+            ${choiceCard(name, 'online', 'En ligne · publié depuis un autre appareil', `<strong>${escapeXml(showVal(c.online))}</strong>`, false)}
+            ${choiceCard(name, 'local', 'Ici · cet appareil', `<strong>${escapeXml(showVal(c.local))}</strong>`, true)}
+        </div>
+    </section>`;
+}
+
+function renderConflictView(item) {
+    const mobile = isMobileView();
+    const fields = item.conflicts.map(c => renderConflictField(c, mobile)).join('');
+    const hasText = !mobile && item.conflicts.some(c => c.kind === 'text');
+    const n = item.conflicts.length;
+    return `<div class="cc-conflict-view">
+        <div class="cc-conflict-view-head">
+            <button class="cc-conflict-back" type="button" data-action="conflict-back"><i data-lucide="arrow-left"></i> Modifications</button>
+            <span class="cc-diff-tag tag-del">Conflit</span>
+            <h2 class="cc-conflict-title">${escapeXml(item.name)}</h2>
+        </div>
+        <p class="cc-conflict-intro">Tu as modifié ${n > 1 ? 'ces champs' : 'ce champ'} ici. Entre-temps, une autre version a été <strong>publiée depuis un autre appareil</strong>. ${n > 1 ? 'Pour chaque champ, choisis' : 'Choisis'} celle à garder.</p>
+        ${fields}
+        <div class="cc-conflict-actions">
+            <span class="cc-conflict-actions-note">${hasText ? 'Ta version finale est gardée' : 'Tes choix sont gardés'} dans le brouillon, rien n'est publié ici.</span>
+            <button class="cc-diff-btn" type="button" data-action="conflict-back">Plus tard</button>
+            <button class="cc-diff-btn cc-diff-btn--primary" type="button" data-action="conflict-apply">${hasText ? 'Garder la version finale' : 'Garder ces choix'}</button>
+        </div>
+    </div>`;
+}
+
+/** Choix lus dans l'écran « Résoudre » (un texte « à régler sur le PC » est laissé). */
+function collectConflictChoices(container, diffData, poiId) {
+    const item = (diffData.pois || []).find(p => p.id === poiId);
+    if (!item?.conflicts) return [];
+    const out = [];
+    container.querySelectorAll('.cc-conflict-field').forEach(sec => {
+        const key = sec.dataset.key;
+        const kind = sec.dataset.kind;
+        if (kind === 'text') {
+            const ta = sec.querySelector('textarea');
+            if (ta) out.push({ key, choice: 'final', value: ta.value });
+        } else if (kind === 'simple' || kind === 'position') {
+            const checked = sec.querySelector('input[type="radio"]:checked');
+            if (checked) out.push({ key, choice: checked.value === 'online' ? 'online' : 'local' });
+        }
+    });
+    return out;
+}
+
+/** Zone « Version finale » d'un champ (clé quelconque, sans sélecteur à échapper). */
+function conflictTextarea(container, key) {
+    return [...container.querySelectorAll('textarea[data-conflict-key]')].find(t => t.dataset.conflictKey === key) || null;
+}
+
+function destroyConflictMap() {
+    if (_conflictMap) {
+        try { _conflictMap.remove(); } catch { /* déjà détruite avec le DOM */ }
+        _conflictMap = null;
+    }
+}
+
+// Petite carte des deux positions (A en ligne, B ici).
+function initConflictMap(container, item) {
+    const c = item.conflicts.find(x => x.kind === 'position');
+    const el = container.querySelector('#cc-conflict-map');
+    if (!c || !el) return;
+    try {
+        _conflictMap = L.map(el, { zoomControl: true, attributionControl: true, scrollWheelZoom: false });
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, attribution: '© OpenStreetMap',
+        }).addTo(_conflictMap);
+        L.polyline([c.online, c.local], { className: 'cc-conflict-line', interactive: false }).addTo(_conflictMap);
+        const pin = (ll, letter, cls) => L.marker(ll, {
+            interactive: false,
+            icon: L.divIcon({ className: '', html: `<span class="cc-conflict-pin ${cls}">${letter}</span>`, iconSize: [24, 24], iconAnchor: [12, 12] }),
+        }).addTo(_conflictMap);
+        pin(c.online, 'A', 'cc-conflict-pin--a');
+        pin(c.local, 'B', 'cc-conflict-pin--b');
+        _conflictMap.fitBounds(L.latLngBounds([c.online, c.local]), { padding: [40, 40], maxZoom: 19 });
+    } catch (e) {
+        console.warn('[CC] carte du conflit indisponible', e);
+    }
 }
 
 /**

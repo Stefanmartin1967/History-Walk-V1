@@ -28,6 +28,7 @@ const h = vi.hoisted(() => {
         clearPendingAdminPhotosSpy: vi.fn(() => Promise.resolve()),
         deletePoiDataSpy: vi.fn(() => Promise.resolve()),
         savePoiDataSpy: vi.fn(() => Promise.resolve()),
+        removePoiDataKeysSpy: vi.fn(() => Promise.resolve(0)),
         saveAppStateSpy: vi.fn(() => Promise.resolve()),
         prepareDiffDataSpy: vi.fn(() => Promise.resolve()),
         renderTabSpy: vi.fn(),
@@ -133,6 +134,7 @@ vi.mock('../src/database.js', () => ({
     clearPendingAdminPhotos: (m, id) => h.clearPendingAdminPhotosSpy(m, id),
     deletePoiData: (m, id) => h.deletePoiDataSpy(m, id),
     savePoiData: (m, id, d) => h.savePoiDataSpy(m, id, d),
+    removePoiDataKeys: (m, id, k) => h.removePoiDataKeysSpy(m, id, k),
 }));
 
 vi.mock('../src/photo-service.js', () => ({
@@ -164,7 +166,7 @@ vi.mock('../src/circuit-actions.js', () => ({
 }));
 
 // L'import doit venir après les mocks
-import { processDecision, addToDraft, getAdminDraft } from '../src/admin-control-center.js';
+import { processDecision, addToDraft, getAdminDraft, resolveConflicts } from '../src/admin-control-center.js';
 import { diffData } from '../src/admin-diff-engine.js';
 
 function setupPoi(id, props = {}, userData = null, geom = [10, 33]) {
@@ -431,5 +433,50 @@ describe("processDecision — scope='circuit' : annuler un circuit NOUVEAU", () 
 
         expect(h.performCircuitDeletionSpy).not.toHaveBeenCalled();
         expect(h.revertCircuitToPublishedSpy).toHaveBeenCalled();
+    });
+});
+
+// Conflits à la publication (18/11/2026) : enregistrement des choix de l'écran
+// « Résoudre ». En ligne = le champ quitte l'overlay ; ici / version finale = le
+// champ reste et son départ devient la version en ligne.
+describe('resolveConflicts', () => {
+    const S1 = '1'.repeat(40), S2 = '2'.repeat(40);
+    let feature;
+    beforeEach(() => {
+        vi.clearAllMocks();
+        feature = { geometry: { coordinates: [4.45956, 50.36277] }, properties: { HW_ID: 'G', 'Accès': '' } };
+        mockState.loadedFeatures = [feature];
+        mockState.userData = { G: {
+            lat: 50.36277, lng: 4.45956, 'Accès': 'Intérieur visitable', description: 'Ici.', notes: 'perso',
+            _baseSha: { lat: S1, lng: S1, 'Accès': S1, description: S1 },
+        } };
+        diffData.onlineGeojsonSha = S2;
+        diffData.originalFeatures = [{ geometry: { coordinates: [4.4594862, 50.3630564] }, properties: { HW_ID: 'G', 'Accès': 'Extérieur seulement', description: 'En ligne.' } }];
+    });
+
+    it('en ligne pour la position, ici pour l’accès, version finale pour le texte', async () => {
+        await resolveConflicts('G', [
+            { key: 'position', choice: 'online' },
+            { key: 'Accès', choice: 'local' },
+            { key: 'description', choice: 'final', value: 'Ici. En ligne.' },
+        ]);
+        const ud = mockState.userData.G;
+        expect(ud.lat).toBeUndefined();
+        expect(ud.lng).toBeUndefined();
+        expect(feature.geometry.coordinates).toEqual([4.4594862, 50.3630564]);
+        expect(ud['Accès']).toBe('Intérieur visitable');
+        expect(ud.description).toBe('Ici. En ligne.');
+        expect(ud.notes).toBe('perso');
+        expect(ud._baseSha).toEqual({ 'Accès': S2, description: S2 });
+        expect(h.removePoiDataKeysSpy).toHaveBeenCalledWith('djerba', 'G', ['lat', 'lng']);
+        expect(h.savePoiDataSpy).toHaveBeenCalledWith('djerba', 'G', { description: 'Ici. En ligne.', _baseSha: { 'Accès': S2, description: S2 } });
+        expect(prepareDiffDataSpy).toHaveBeenCalled();
+    });
+
+    it('sans version en ligne connue : rien n’est touché', async () => {
+        diffData.onlineGeojsonSha = null;
+        await resolveConflicts('G', [{ key: 'position', choice: 'online' }]);
+        expect(mockState.userData.G.lat).toBe(50.36277);
+        expect(h.removePoiDataKeysSpy).not.toHaveBeenCalled();
     });
 });

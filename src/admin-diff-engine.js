@@ -1,5 +1,6 @@
 import { state, getActiveMapId} from './state.js';
-import { fetchRepoFile, listRepoDir } from './repo-read.js';
+import { fetchRepoFile, listRepoDir, repoFileSha, fetchRepoBlobJson } from './repo-read.js';
+import { BASE_KEY, findConflicts, pruneStamps } from './overlay-base.js';
 import { getPoiId, getPoiName, isCandidate } from './utils.js';
 import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
@@ -73,7 +74,7 @@ export function reconcileLocalChanges(adminDraft, saveDraftCallback, updateBadge
             // On filtre pour ne pas pister les simples visites/favoris
             // On cherche des modifications structurelles (lat, lng, _deleted, ou propriétés de contenu)
             // Champs personnels (Gist sync privé) — ne doivent jamais apparaître dans le CC.
-            const meaningfulKeys = Object.keys(data).filter(k => !PERSONAL_KEYS.includes(k));
+            const meaningfulKeys = Object.keys(data).filter(k => !PERSONAL_KEYS.includes(k) && k !== BASE_KEY);
 
             if (meaningfulKeys.length > 0) {
                  // Est-ce une création déjà gérée ?
@@ -253,6 +254,7 @@ async function checkPublishedSteps(local, remote, allCircuits, changes) {
  */
 export async function prepareDiffData(adminDraft) {
     let originalFeatures = [];
+    let onlineGeojsonSha = null;
     let remoteCircuits = [];
     let remoteTested = {};
     const mapId = getActiveMapId();
@@ -270,6 +272,7 @@ export async function prepareDiffData(adminDraft) {
         if (respGeo.ok) {
             const json = await respGeo.json();
             originalFeatures = json.features;
+            onlineGeojsonSha = repoFileSha(respGeo);
         }
         if (respCirc.ok) {
             remoteCircuits = await respCirc.json();
@@ -296,10 +299,34 @@ export async function prepareDiffData(adminDraft) {
     diffData.testedChanges = { additions: [], removals: [], hasChanges: false, snapshot: {} };
     diffData.pendingPhotos = {};
     diffData.originalFeatures = originalFeatures;
-    diffData.stats = { poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0, rejectedPending: 0 };
+    diffData.onlineGeojsonSha = onlineGeojsonSha;
+    diffData.stats = { conflictPois: 0, poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0, rejectedPending: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
+
+    // Conflits à la publication (18/11/2026, overlay-base.js) : relire chaque
+    // ancienne version de la carte sur laquelle un champ en attente a été
+    // modifié. Version illisible → undefined : aucun conflit n'est conclu.
+    const baseVersions = new Map();
+    if (onlineGeojsonSha) {
+        const shas = new Set();
+        pendingIds.forEach(id => {
+            Object.values(state.userData?.[id]?.[BASE_KEY] || {}).forEach(sha => {
+                if (sha && sha !== onlineGeojsonSha) shas.add(sha);
+            });
+        });
+        for (const sha of shas) {
+            const json = await fetchRepoBlobJson(sha);
+            baseVersions.set(sha, Array.isArray(json?.features)
+                ? new Map(json.features.map(f => [getPoiId(f), f]))
+                : undefined);
+        }
+    }
+    const baseOfFor = (id) => (sha) => {
+        const version = baseVersions.get(sha);
+        return version === undefined ? undefined : (version.get(id) || null);
+    };
 
     pendingIds.forEach(id => {
         const current = state.loadedFeatures.find(f => getPoiId(f) === id);
@@ -401,7 +428,7 @@ export async function prepareDiffData(adminDraft) {
         const allKeys = new Set([...Object.keys(current.properties), ...Object.keys(userData)]);
 
         // Clés structurelles (comparées séparément) + clés perso (jamais affichées dans le diff).
-        const skipKeys = new Set(['lat', 'lng', 'userData', ...PERSONAL_KEYS]);
+        const skipKeys = new Set(['lat', 'lng', 'userData', BASE_KEY, ...PERSONAL_KEYS]);
         allKeys.forEach(key => {
             if (skipKeys.has(key)) return;
 
@@ -500,12 +527,15 @@ export async function prepareDiffData(adminDraft) {
 
         if (changes.length > 0) {
             annotateLosses(changes);
+            const conflicts = findConflicts({ userData, online: original, onlineSha: onlineGeojsonSha, baseOf: baseOfFor(id) });
             diffData.pois.push({
                 id: id,
                 name: getPoiName(current),
-                changes: changes
+                changes: changes,
+                ...(conflicts.length > 0 ? { conflicts } : {})
             });
             diffData.stats.poisModified++;
+            if (conflicts.length > 0) diffData.stats.conflictPois++;
         }
     });
 
@@ -917,7 +947,7 @@ export async function purgeOrphanPendingPois(adminDraft) {
         if (userData && original) {
             // Clés à retirer : non personnelles ET strictement identiques au publié.
             const toRemove = Object.keys(userData).filter(key =>
-                !PERSONAL_KEYS.includes(key) &&
+                !PERSONAL_KEYS.includes(key) && key !== BASE_KEY &&
                 isNoChangeAgainstOriginal(key, userData[key], original));
             if (toRemove.length > 0) {
                 // Retrait CIBLÉ en base (relecture + suppression des seules clés
@@ -929,6 +959,7 @@ export async function purgeOrphanPendingPois(adminDraft) {
                 // Mémoire alignée EN PLACE (feature.properties.userData pointe sur
                 // le même objet).
                 toRemove.forEach(key => { delete userData[key]; });
+                pruneStamps(userData);
                 if (Object.keys(userData).length === 0) delete state.userData[id];
             }
         }
