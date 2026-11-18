@@ -6,6 +6,11 @@
 
 ---
 
+- CENTRE DE CONTRÔLE : CONFLITS À LA PUBLICATION (v3.7.544). Décidé avec Stefan le 18/11/2026 (maquette « Conflits à la publication » validée), après la « Grotte des Sarrasins » : une fiche modifiée sur deux appareils avant publication, le dernier qui publiait gagnait, champ par champ, sans alerte.
+  - Chaque champ publié modifié note la version de la carte sur laquelle il l'a été (`_baseSha`, overlay-base.js), à un seul endroit : l'écriture en base (savePoiData). Au Centre de contrôle, la version en ligne est comparée à cette valeur de départ : conflit si elle a changé et diffère de la valeur d'ici.
+  - Liste : section « Conflit » et bandeau ; « Tout publier » bloqué tant qu'un conflit reste. Écran « Résoudre » : champ simple (deux choix), position (deux choix + petite carte), texte en trois zones (en ligne, ici, version finale modifiable, les deux changements réunis d'avance quand ils touchent des phrases différentes, text-merge.js). Sur le téléphone, un texte se règle sur le PC.
+  - Les modifications faites avant cette version n'ont pas de valeur de départ : elles s'affichent comme avant.
+
 - LIEU DÉPLACÉ : À SA NOUVELLE PLACE SUR LE TÉLÉPHONE ET DANS LA PUBLICATION (v3.7.543). Constaté le 17/11/2026 sur la « Grotte des Sarrasins » (Charleroi) : publiée à son ancien point OSM, la nouvelle position en propriétés `lat`/`lng`, où rien ne la lit.
   - Démarrage mobile (app-startup.js) : le déplacement (`userData.lat/lng`) n'était pas rejoué sur la géométrie, contrairement au PC (data.js). Les deux passent maintenant par `applyMovedPosition` (utils.js).
   - Publication (admin-geojson.js) : une position déplacée va dans la géométrie publiée ; `lat`/`lng` ne sont plus jamais écrits en propriétés (ceux déjà publiés sont remis dans la géométrie à la prochaine publication).

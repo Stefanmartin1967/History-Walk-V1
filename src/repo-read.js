@@ -131,6 +131,36 @@ export async function getRepoFileSha(path) {
     return sha;
 }
 
+/**
+ * Contenu JSON d'une ANCIENNE version d'un fichier, par son SHA git (API Git
+ * Blobs, jeton requis). Sert au Centre de contrôle à relire la carte sur
+ * laquelle un champ a été modifié (conflits à la publication, 18/11/2026).
+ * Mis en cache : une version ne change jamais. null si illisible (pas de jeton,
+ * réseau, version inconnue) : l'appelant ne conclut alors rien.
+ * @param {string} sha
+ * @returns {Promise<object|null>}
+ */
+const blobJsonCache = new Map();
+export async function fetchRepoBlobJson(sha) {
+    if (!sha) return null;
+    if (blobJsonCache.has(sha)) return blobJsonCache.get(sha);
+    let token = null;
+    try { token = getStoredToken(); } catch { /* pas de stockage */ }
+    if (!token) return null;
+    try {
+        const resp = await fetchWithTimeout(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/blobs/${sha}`, {
+            headers: { 'Authorization': `token ${token}`, 'Accept': 'application/vnd.github.raw' },
+        });
+        if (!resp.ok) return null;
+        const json = await resp.json();
+        blobJsonCache.set(sha, json);
+        return json;
+    } catch (e) {
+        console.warn(`[repo-read] version ${sha} illisible`, e);
+        return null;
+    }
+}
+
 // ─── Version de la carte chargée dans l'app ──────────────────────────────────
 // SHA git du `{mapId}.geojson` sur lequel repose `state.loadedFeatures` : posé
 // au démarrage (null si la carte ne vient pas de l'API : repli RAW/Pages ou

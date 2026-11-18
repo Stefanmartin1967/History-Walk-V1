@@ -23,6 +23,7 @@ import { fetchRepoFile, fetchRepoFileFresh, repoFileSha, setLoadedGeojsonSha } f
 import { getStoredToken } from './github-sync.js';
 import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished, applyMovedPosition } from './utils.js';
+import { installOverlayBaseHook } from './overlay-base-hook.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -304,6 +305,10 @@ export async function loadAndInitializeMap() {
     // outils PC, refonte 11/05/2026) n'est plus utilisée. Cleanup pour les
     // users existants. No-op si la clé n'existe pas.
     try { localStorage.removeItem('hw_poi_tools_open'); } catch {}
+
+    // Conflits à la publication (18/11/2026) : chaque champ publié modifié note
+    // la version de la carte sur laquelle il l'a été (overlay-base.js).
+    installOverlayBaseHook();
 
     // 0. Configs (CRITIQUE : On attend les configs avant tout)
     await Promise.all([
