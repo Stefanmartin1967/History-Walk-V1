@@ -1,5 +1,5 @@
 // app-startup.js
-import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, getDestinationLabel, DEFAULT_MAP_ID} from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, setMyCircuits, setOfficialCircuits, setDestinations, setUserData, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt, setTestedCircuits, setCustomFeatures, setHiddenCircuitIds, setHiddenCircuitIdsUpdatedAt, setDeletedOfficialCircuitIds, setPoiCategories, getActiveMapId, getDestinationLabel, DEFAULT_MAP_ID} from './state.js';
 import { setTaxonomy, getCategoryLabels } from './taxonomy.js';
 import { setZonesData } from './zones.js';
 import { setRejectedData } from './rejected.js';
@@ -95,6 +95,7 @@ export async function loadOfficialCircuits() {
         if (Array.isArray(savedHidden)) {
             setHiddenCircuitIds(savedHidden);
         }
+        setHiddenCircuitIdsUpdatedAt((await getAppState('hiddenCircuitIdsUpdatedAt')) || {});
 
         // Si on est déjà en mode Admin, on déclenche une migration pour mettre à jour les circuits chargés
         if (state.isAdmin) {

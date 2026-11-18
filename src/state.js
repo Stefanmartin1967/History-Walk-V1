@@ -1,7 +1,7 @@
 ﻿// state.js
 import { getCategoryLabels } from './taxonomy.js';
 
-export const APP_VERSION = '3.7.550'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
+export const APP_VERSION = '3.7.551'; // Historique des livraisons -> voir CHANGELOG.md (a la racine)
 // Plafond TECHNIQUE, pas une règle éditoriale (15 → 30 le 05/11/2026, Charleroi :
 // lieux urbains serrés, 15 lieux ≈ 3 km). Ce qui le borne : le QR de partage mobile
 // (?import= liste chaque id, ~1 000 caractères à 30 lieux) et le tracé (une requête
@@ -99,6 +99,9 @@ export const state = {
     // [] (défaut) = tous visibles. Cohérence : la blacklist filtre la sidebar
     // Mes Circuits, le compteur planifié des POIs et le calcul du Carnet de voyage.
     hiddenCircuitIds: [],
+    // Date (ms) du dernier « cacher / réafficher », par circuit — synchro Gist,
+    // le plus récent gagne (sync-stamps.js, 18/11/2026).
+    hiddenCircuitIdsUpdatedAt: {},
     // [ADMIN] Intentions de suppression de circuits OFFICIELS, en attente de
     // publication. Persisté (IndexedDB) car officialCircuits est rechargé depuis
     // l'index distant à chaque démarrage : sans ça, un F5 avant publication
@@ -327,6 +330,10 @@ export function setHiddenPoiIds(ids) {
 
 export function setHiddenCircuitIds(ids) {
     state.hiddenCircuitIds = Array.isArray(ids) ? ids.map(String) : [];
+}
+
+export function setHiddenCircuitIdsUpdatedAt(stamps) {
+    state.hiddenCircuitIdsUpdatedAt = stamps && typeof stamps === 'object' ? stamps : {};
 }
 
 export function setDeletedOfficialCircuitIds(ids) {

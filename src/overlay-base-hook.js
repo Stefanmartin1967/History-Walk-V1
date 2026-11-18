@@ -7,7 +7,7 @@
 
 import { state } from './state.js';
 import { getLoadedGeojsonSha } from './repo-read.js';
-import { setPoiDataWriteHook } from './database.js';
+import { setPoiDataWriteHook, setSyncStampListener } from './database.js';
 import { BASE_KEY, newStamps } from './overlay-base.js';
 
 export function installOverlayBaseHook() {
@@ -21,5 +21,11 @@ export function installOverlayBaseHook() {
             if (ud) ud[BASE_KEY] = { ...(ud[BASE_KEY] || {}), ...extra };
         }
         return extra;
+    });
+    // Dates de synchro Gist (sync-stamps.js) : même recopie en mémoire.
+    setSyncStampListener((mapId, poiId, dated) => {
+        if (mapId !== state.currentMapId) return;
+        const ud = state.userData?.[poiId];
+        if (ud) Object.assign(ud, dated);
     });
 }

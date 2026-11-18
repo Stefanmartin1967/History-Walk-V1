@@ -27,6 +27,7 @@ vi.mock('../src/database.js', () => ({
     getAllPendingAdminPhotos: vi.fn(async () => ({})),
     removePoiDataKeys: vi.fn(async () => 0),
     setPoiDataWriteHook: vi.fn((fn) => { h.hook = fn; }),
+    setSyncStampListener: vi.fn(),
 }));
 
 import { state } from '../src/state.js';

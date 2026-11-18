@@ -6,6 +6,14 @@
 
 ---
 
+- GIST : RELIRE ET FUSIONNER AVANT D'ÉCRIRE (v3.7.551). Point 4 des conflits entre appareils, 18/11/2026.
+  - Avant : l'envoi relisait le Gist, mais réécrivait la section de la destination avec le seul état de l'appareil. Un appareil resté ouvert effaçait ce que l'autre avait envoyé entre-temps ; pour les photos de travail (« le Gist gagne »), la référence disparaissait ensuite aussi de l'autre appareil.
+  - Chaque envoi fusionne d'abord la section relue (mêmes règles qu'au démarrage), puis écrit.
+  - Incontournable, photos de travail et circuits cachés : le changement le plus récent gagne (sync-stamps.js), comme visité et circuits faits. Avant : « oui gagne », « le Gist gagne », « réunion » — un retrait revenait par l'autre appareil. Sans date des deux côtés (données d'avant), l'ancienne règle. Les dates sont posées à un seul endroit, l'écriture d'une fiche en base. Les lieux masqués gardent la réunion (masquer = supprimer, sans geste inverse).
+  - Relecture aussi au retour au premier plan (au plus toutes les 30 s) et au retour du réseau.
+  - « À envoyer » retenu sur l'appareil, par destination : refait au démarrage suivant si l'appli a été fermée hors-ligne ou dans les 3 s suivant une modification.
+  - Circuits cachés reçus du Gist : désormais enregistrés (ils se perdaient au redémarrage).
+
 - NOTES PRIVÉES : SYNCHRONISATION PAR VERSION ENTRE APPAREILS (v3.7.550). Point 3, maquette « notes privées » validée le 18/11/2026.
   - Avant : une note n'était relue du dépôt que si l'appareil n'en avait pas ; le dernier qui enregistrait écrasait l'autre ; un envoi raté (terrain sans réseau) n'était jamais refait, malgré le message « réessayé plus tard ».
   - Chaque note retient la version du dépôt sur laquelle elle est basée (`noteSync`, donnée personnelle jamais publiée). Au démarrage et au retour du réseau, une lecture du dossier de la destination ; seules les notes concernées sont relues ou envoyées (note-plan.js, note-sync.js). Un envoi ne part que depuis une version connue : un fichier changé ailleurs est refusé par GitHub et devient un conflit.
