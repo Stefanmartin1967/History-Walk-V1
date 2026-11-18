@@ -12,8 +12,9 @@ import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
 import { escapeXml } from './utils.js';
 import L from 'leaflet';
 import { isMobileView } from './mobile-state.js';
-import { markChanges, mergeTexts, hasSentence, addSentence, removeSentence } from './text-merge.js';
-import { migrateExistingNotes } from './private-notes.js';
+import { mergeTexts } from './text-merge.js';
+import { renderSentences, syncSentenceBoxes, applySentenceBox } from './sentence-picker.js';
+import { syncAllNotes, notesInConflict } from './note-sync.js';
 import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
 // NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
 // handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
@@ -414,7 +415,7 @@ function bindCCEventDelegation(diffData, callbacks) {
                 const c = item?.conflicts?.find(x => x.key === takeAll.dataset.key);
                 if (ta && c) {
                     ta.value = String(c[src] ?? '');
-                    syncSentenceBoxes(ta.closest('.cc-conflict-field'));
+                    syncSentenceBoxes(ta.closest('.cc-conflict-field'), ta);
                 }
                 return;
             }
@@ -437,7 +438,7 @@ function bindCCEventDelegation(diffData, callbacks) {
 
         // Version finale retouchée à la main : les cases suivent ce qu'elle contient.
         container.addEventListener('input', (e) => {
-            if (e.target.matches('textarea[data-conflict-key]')) syncSentenceBoxes(e.target.closest('.cc-conflict-field'));
+            if (e.target.matches('textarea[data-conflict-key]')) syncSentenceBoxes(e.target.closest('.cc-conflict-field'), e.target);
         });
 
         container.addEventListener('change', (e) => {
@@ -448,9 +449,8 @@ function bindCCEventDelegation(diffData, callbacks) {
                 const field = e.target.closest('.cc-conflict-field');
                 const ta = field && conflictTextarea(field, field.dataset.key);
                 if (ta) {
-                    const sentence = e.target.dataset.sentence || '';
-                    ta.value = e.target.checked ? addSentence(ta.value, sentence) : removeSentence(ta.value, sentence);
-                    syncSentenceBoxes(field);
+                    applySentenceBox(e.target, ta);
+                    syncSentenceBoxes(field, ta);
                 }
                 return;
             }
@@ -849,7 +849,15 @@ export function renderTab(tab, diffData, callbacks) {
 
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
         // redondants avec le hero « tout synchronisé ». OUTILS toujours rendus.
-        container.innerHTML = heroHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
+        // Notes privées en conflit (18/11/2026) : elles se règlent dans la fiche,
+        // on les signale ici pour ne pas passer à côté.
+        const noteConflicts = notesInConflict();
+        const notesHtml = noteConflicts.length === 0 ? '' : `
+            <div class="cc-conflict-banner" role="status">
+                <i data-lucide="alert-triangle"></i>
+                <span><strong>${noteConflicts.length} note${noteConflicts.length > 1 ? 's' : ''} en conflit</strong> : ${noteConflicts.map(n => escapeXml(n.name)).join(', ')}. Ouvre la fiche pour la résoudre.</span>
+            </div>`;
+        container.innerHTML = notesHtml + heroHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
 
         setTimeout(() => {
             // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
@@ -1455,22 +1463,20 @@ export function renderTab(tab, diffData, callbacks) {
             </div>
         `;
 
-        // — Section Migration des notes (10/08/2026) — one-shot, admin uniquement —
-        // Les notes existantes vivent déjà en local (userData, jamais touché par
-        // ce chantier) ; ce bouton les pousse une fois vers heripia-travail pour
-        // qu'elles deviennent visibles sur les autres appareils (remplace le rôle
-        // du Gist pour ce champ, cf. project_gist_to_private_repo_migration).
-        // N'écrit JAMAIS sur le Gist ni ne touche userData — additif seulement.
+        // — Section Notes privées (18/11/2026) — remplace « Migrer mes notes »
+        // (10/08/2026), qui envoyait toutes les notes locales en ÉCRASANT celles
+        // du dépôt. La synchronisation par version (note-sync.js) tourne seule au
+        // démarrage et au retour du réseau ; ce bouton la lance à la demande.
         const migrateNotesHtml = tokenOk ? `
             <h4 class="cc-section-title">Notes privées</h4>
             <div class="cc-card cc-card--padded cc-card--block">
                 <p class="cc-card-hint">
-                    Envoie tes notes existantes (déjà enregistrées sur cet appareil)
-                    vers heripia-travail, pour qu'elles apparaissent aussi sur tes
-                    autres appareils. Sans effet sur ce qui est déjà en local.
+                    Tes notes se synchronisent seules avec heripia-travail, au démarrage
+                    et au retour du réseau. Une note changée sur les deux appareils
+                    n'est jamais écrasée : la fiche te propose de la résoudre.
                 </p>
                 <button id="btn-migrate-notes" class="cc-btn-cta cc-btn-cta--full">
-                    <i data-lucide="upload-cloud"></i> Migrer mes notes vers heripia-travail
+                    <i data-lucide="refresh-cw"></i> Synchroniser mes notes maintenant
                 </button>
             </div>
         ` : '';
@@ -1560,30 +1566,25 @@ export function renderTab(tab, diffData, callbacks) {
                 renderTab('settings', diffData, callbacks);
             });
 
-            // — Migration one-shot des notes vers heripia-travail —
+            // — Synchronisation des notes à la demande —
             const btnMigrate = document.getElementById('btn-migrate-notes');
             if (btnMigrate) btnMigrate.onclick = async () => {
                 btnMigrate.disabled = true;
                 const originalHTML = btnMigrate.innerHTML;
+                btnMigrate.textContent = 'Synchronisation…';
                 try {
-                    const mapId = state.currentMapId;
-                    const result = await migrateExistingNotes(mapId, (done, total) => {
-                        btnMigrate.textContent = `Envoi… ${done}/${total}`;
-                    });
-                    if (result.total === 0) {
-                        showToast('Aucune note locale à migrer.', 'info');
-                    } else if (result.failed.length === 0) {
-                        showToast(`${result.success} note(s) envoyée(s) vers heripia-travail.`, 'success', 4000);
+                    const r = await syncAllNotes();
+                    if (r.failed) {
+                        showToast("Synchronisation impossible pour l'instant (réseau ou jeton).", 'warning', 5000);
                     } else {
-                        showToast(
-                            `${result.success}/${result.total} envoyées — ${result.failed.length} échec(s) (réessaie plus tard).`,
-                            'warning',
-                            6000
-                        );
-                        console.warn('[PrivateNotes] Échecs de migration:', result.failed);
+                        const parts = [];
+                        if (r.changed) parts.push(`${r.changed} note(s) mise(s) à jour`);
+                        if (r.conflicts) parts.push(`${r.conflicts} en conflit (à résoudre dans la fiche)`);
+                        if (r.errors) parts.push(`${r.errors} en attente (réseau)`);
+                        showToast(parts.length ? parts.join(' · ') : 'Notes déjà à jour.', r.conflicts || r.errors ? 'warning' : 'success', 5000);
                     }
                 } catch (e) {
-                    showToast('Migration impossible : ' + (e.message || e), 'error', 5000);
+                    showToast('Synchronisation impossible : ' + (e.message || e), 'error', 5000);
                 } finally {
                     btnMigrate.disabled = false;
                     btnMigrate.innerHTML = originalHTML;
@@ -1778,29 +1779,6 @@ function choiceCard(name, value, label, body, checked) {
         <input type="radio" name="${name}" value="${value}"${checked ? ' checked' : ''}>
         <span class="cc-conflict-choice-text"><span class="cc-conflict-choice-label">${label}</span>${body}</span>
     </label>`;
-}
-
-// Phrases d'une version : celles qui ont changé depuis le départ portent une
-// case (cochée si la phrase est dans la version finale) ; les autres sont du
-// texte simple. Le blanc qui suit chaque phrase (retour à la ligne compris) est
-// gardé hors du libellé pour que la mise en page de la version reste lisible.
-function renderSentences(base, text, finalText) {
-    return markChanges(base ?? '', text ?? '').map(s => {
-        const body = s.text.replace(/\s+$/, '');
-        const tail = s.text.slice(body.length);
-        if (!s.changed || !body) return escapeXml(s.text);
-        const checked = hasSentence(finalText, body);
-        return `<label class="cc-conflict-sent"><input type="checkbox" class="cc-conflict-sentence" data-sentence="${escapeXml(body)}"${checked ? ' checked' : ''}><mark>${escapeXml(body)}</mark></label>${escapeXml(tail)}`;
-    }).join('');
-}
-
-/** Cases d'un champ texte alignées sur le contenu de sa version finale. */
-function syncSentenceBoxes(field) {
-    const ta = field && conflictTextarea(field, field.dataset.key);
-    if (!ta) return;
-    field.querySelectorAll('input.cc-conflict-sentence').forEach(box => {
-        box.checked = hasSentence(ta.value, box.dataset.sentence || '');
-    });
 }
 
 function renderConflictField(c, mobile) {

@@ -24,6 +24,7 @@ import { getStoredToken } from './github-sync.js';
 import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished, applyMovedPosition } from './utils.js';
 import { installOverlayBaseHook } from './overlay-base-hook.js';
+import { initNoteSync } from './note-sync.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -713,5 +714,8 @@ export async function loadAndInitializeMap() {
     // Gist sync : pull après chargement complet, puis armer le retry au retour
     // du réseau (un push tenté hors-ligne sera rejoué, cf. network-status.js).
     pullFromGist();
+    // Notes privées (18/11/2026) : passe de synchronisation par version, puis à
+    // chaque retour du réseau (note-sync.js). Admin avec jeton seulement.
+    initNoteSync();
     initGistReconnectSync();
 }

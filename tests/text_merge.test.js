@@ -70,6 +70,15 @@ describe('mergeTexts', () => {
     });
 });
 
+describe('deux ajouts au même endroit', () => {
+    it('après la même phrase de départ : réunis, celui d’ici d’abord', () => {
+        const base = "Position enregistrée sur le sentier d'où grimper vers la grotte.";
+        const r = mergeTexts(base, base + ' Entrée 25 m plus au sud-est.', base + ' Panneau « Fond des Haies » n° 5.');
+        expect(r.clean).toBe(true);
+        expect(r.text).toBe(base + ' Entrée 25 m plus au sud-est. Panneau « Fond des Haies » n° 5.');
+    });
+});
+
 describe('une case par phrase : ajouter / retirer', () => {
     const ICI = "Grotte\nCette grotte est noire à l'intérieur\nTable de pique nique à proximité";
     it('ajoute à la fin, sur une nouvelle ligne, une seule fois', () => {

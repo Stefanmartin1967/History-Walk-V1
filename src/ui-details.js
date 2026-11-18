@@ -13,7 +13,8 @@ import { switchSidebarTab } from './ui-sidebar.js';
 import { DOM } from './ui-dom.js';
 import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getWorkPhotosById, getKeptWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
-import { loadPrivateNote, savePrivateNote, shouldSyncPrivateNote } from './private-notes.js';
+import { noteEdited, syncNote } from './note-sync.js';
+import { openNoteConflict } from './note-conflict-ui.js';
 import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
@@ -388,6 +389,11 @@ function setupSuiviToggles(poiId) {
 // debounce par frappe comme l'ancien champ (Gist) : l'envoi vers
 // heripia-travail est un commit git, un par lettre tapée serait absurde.
 function setupNoteEditToggle(poiId) {
+    // Bandeau « Cette note a changé sur un autre appareil » → fenêtre Résoudre.
+    document.getElementById('poi-note-resolve')?.addEventListener('click', () => {
+        const f = state.loadedFeatures.find(x => getPoiId(x) === poiId);
+        openNoteConflict(poiId, f ? getPatrimonialName(f) : '');
+    });
     const view = document.getElementById('poi-note-view');
     const editEl = document.getElementById('poi-note-edit');
     if (!view || !editEl) return;
@@ -414,16 +420,17 @@ function setupNoteEditToggle(poiId) {
         // sauvegarde Lite/Complète, cf. project_work_photos_feature).
         await updatePoiData(poiId, 'notes', value);
 
-        // En plus, UNIQUEMENT avec un token : synchronisation inter-appareils
-        // via heripia-travail (remplace le Gist pour ce champ). Un échec ici
-        // n'est JAMAIS une perte de donnée — la copie locale est déjà sauve.
-        // Un champ vide qui l'était déjà n'efface rien à distance
-        // (shouldSyncPrivateNote) : c'est la seule copie si la note locale manque.
-        if (getStoredToken() && shouldSyncPrivateNote(initialNote, value)) {
-            savePrivateNote(state.currentMapId, poiId, value).catch(err => {
-                console.warn('[PrivateNotes] Envoi heripia-travail échoué:', err.message);
-                showToast('Note enregistrée en local — envoi vers heripia-travail différé (réessayé plus tard).', 'warning', 4500);
-            });
+        // En plus, UNIQUEMENT avec un token : synchronisation par version vers
+        // heripia-travail (note-sync.js, 18/11/2026). Seulement si la note a
+        // changé. Un échec n'est JAMAIS une perte : la note reste « à envoyer »
+        // et repart au retour du réseau (ce que le message promettait sans le
+        // faire avant le 18/11/2026).
+        if (getStoredToken() && value.trim() !== String(initialNote ?? '').trim()) {
+            noteEdited(poiId).then(result => {
+                if (result === 'error' || result === 'pending') {
+                    showToast('Note enregistrée sur cet appareil — envoi vers heripia-travail au retour du réseau.', 'warning', 4500);
+                }
+            }).catch(err => console.warn('[NoteSync] :', err.message));
         }
 
         // Re-rendu complet le plus simple et le plus sûr : pas de patch DOM
@@ -439,23 +446,22 @@ function setupNoteEditToggle(poiId) {
 // local, sans req réseau à chaque ouverture de fiche.
 async function hydratePrivateNoteIfNeeded(poiId) {
     if (!state.isAdmin) return; // Sans token, rien à vérifier à distance.
-    const current = state.userData?.[poiId]?.notes;
-    if (current) return;
+    if (state.userData?.[poiId]?.notes) return;
+    if (state.userData?.[poiId]?.noteSync) return; // déjà synchronisée (passe du démarrage)
     if (!getStoredToken()) return;
+    // Lecture + décision par version (note-sync.js) ; un changement émet
+    // « notes:synced », qui rafraîchit la fiche ouverte (cf. plus bas).
+    await syncNote(poiId);
+}
 
-    const remote = await loadPrivateNote(state.currentMapId, poiId);
-    if (!remote) return;
-
-    // Le panel a pu changer entretemps (autre POI ouvert) : ne pas patcher
-    // un panel obsolète (même garde que hydrateHeroFromBlobs).
+// Notes synchronisées en arrière-plan (démarrage, retour du réseau) : la fiche
+// ouverte se redessine si sa note a changé ou est passée en conflit.
+eventBus.on('notes:synced', ({ poiIds } = {}) => {
     const idx = state.currentFeatureId;
     if (idx === null || idx === undefined) return;
     const openFeature = state.loadedFeatures[idx];
-    if (!openFeature || getPoiId(openFeature) !== poiId) return;
-
-    await updatePoiData(poiId, 'notes', remote);
-    refreshCurrentDetailsPanel();
-}
+    if (openFeature && (poiIds || []).includes(getPoiId(openFeature))) refreshCurrentDetailsPanel();
+});
 
 // Rassemble TOUTES les photos consultables d'un POI pour le viewer : URLs
 // publiées/draft d'abord (urls[0] = la photo affichée par le hero), puis blobs

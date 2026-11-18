@@ -19,6 +19,7 @@ import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
 import { noteCandidatePosition, ORIG_KEY } from './candidate-edits.js';
+import { forgetNote } from './note-sync.js';
 import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked, applyMovedPosition } from './utils.js';
 import { addRejected } from './rejected.js';
 import { savePendingRejected } from './rejected-store.js';
@@ -977,7 +978,12 @@ export async function deletePoi(poiId, { tombstone = true } = {}) {
         // qu'il n'y a rien à supprimer côté dépôt. On se contente du retrait local
         // (hiddenPoiIds + customFeatures ci-dessus). Filet côté diff : la garde
         // « pas d'original GitHub » d'admin-diff-engine (prepareDiffData).
-        if (!(feature && isCandidate(feature))) {
+        const isCand = !!(feature && isCandidate(feature));
+        // Note privée d'un candidat rejeté : retirée du dépôt, sinon elle y
+        // resterait rattachée à aucun lieu (18/11/2026, point 3).
+        if (isCand) void forgetNote(poiId);
+
+        if (!isCand) {
             // On marque l'intention de suppression
             addToDraft('poi', poiId, { type: 'delete' });
             // On marque aussi l'objet en mémoire pour l'exporteur

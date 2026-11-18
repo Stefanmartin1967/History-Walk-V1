@@ -91,12 +91,13 @@ vi.mock('../src/database.js', () => ({
     getPendingAdminPhotos: vi.fn(() => Promise.resolve([])),
 }));
 vi.mock('../src/work-photos.js', () => ({ getWorkPhotosById: vi.fn(() => []), loadWorkPhotoBlob: vi.fn() }));
-// shouldSyncPrivateNote reste la VRAIE règle (c'est elle qu'on veut câbler).
-vi.mock('../src/private-notes.js', async (importOriginal) => ({
-    ...(await importOriginal()),
-    loadPrivateNote: vi.fn(() => Promise.resolve(null)),
-    savePrivateNote: vi.fn(() => Promise.resolve()),
+// Synchronisation par version (18/11/2026) : la décision et l'envoi sont dans
+// note-sync.js (testés à part) ; ici, seulement le câblage de la fiche.
+vi.mock('../src/note-sync.js', () => ({
+    noteEdited: vi.fn(() => Promise.resolve('push')),
+    syncNote: vi.fn(() => Promise.resolve('none')),
 }));
+vi.mock('../src/note-conflict-ui.js', () => ({ openNoteConflict: vi.fn() }));
 vi.mock('../src/github-sync.js', () => ({ getStoredToken: vi.fn(() => null) }));
 vi.mock('../src/access-point-editor.js', () => ({ startAccessPointPlacement: vi.fn() }));
 vi.mock('../src/help-popover.js', () => ({ configureHelp: vi.fn(), attachHelp: vi.fn() }));
@@ -105,7 +106,7 @@ vi.mock('../src/help-content.js', () => ({ GUIDE_LIRE_LIEU: {} }));
 import { state } from '../src/state.js';
 import { updatePoiData } from '../src/data.js';
 import { getStoredToken } from '../src/github-sync.js';
-import { loadPrivateNote, savePrivateNote } from '../src/private-notes.js';
+import { noteEdited, syncNote } from '../src/note-sync.js';
 import { openDetailsPanel } from '../src/ui-details.js';
 
 // hydratePrivateNoteIfNeeded lit `state.userData` directement (comme le vrai
@@ -128,7 +129,6 @@ beforeEach(() => {
     state.currentMapId = 'djerba';
     state.userData = {};
     vi.mocked(getStoredToken).mockReturnValue(null);
-    vi.mocked(loadPrivateNote).mockResolvedValue(null);
 });
 
 describe('bascule lecture/édition', () => {
@@ -159,7 +159,7 @@ describe('sauvegarde au blur — locale TOUJOURS, distante SI token', () => {
         await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
 
         expect(updatePoiData).toHaveBeenCalledWith('HW-1', 'notes', 'nouvelle note');
-        expect(savePrivateNote).not.toHaveBeenCalled();
+        expect(noteEdited).not.toHaveBeenCalled();
     });
 
     it('avec token : sauvegarde locale ET envoi vers heripia-travail', async () => {
@@ -173,7 +173,7 @@ describe('sauvegarde au blur — locale TOUJOURS, distante SI token', () => {
         await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
 
         expect(updatePoiData).toHaveBeenCalledWith('HW-1', 'notes', 'note admin');
-        expect(savePrivateNote).toHaveBeenCalledWith('djerba', 'HW-1', 'note admin');
+        expect(noteEdited).toHaveBeenCalledWith('HW-1');
     });
 
     // Régression du 14/09/2026 : envoyer une note vide efface le fichier distant.
@@ -188,7 +188,7 @@ describe('sauvegarde au blur — locale TOUJOURS, distante SI token', () => {
         edit.dispatchEvent(new Event('blur'));
         await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
 
-        expect(savePrivateNote).not.toHaveBeenCalled();
+        expect(noteEdited).not.toHaveBeenCalled();
     });
 
     it("note existante vidée volontairement : l'effacement part vers le dépôt", async () => {
@@ -201,12 +201,12 @@ describe('sauvegarde au blur — locale TOUJOURS, distante SI token', () => {
         edit.dispatchEvent(new Event('blur'));
         await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
 
-        expect(savePrivateNote).toHaveBeenCalledWith('djerba', 'HW-1', '');
+        expect(noteEdited).toHaveBeenCalledWith('HW-1');
     });
 
     it('un échec d\'envoi distant ne fait pas planter la sauvegarde locale', async () => {
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
-        vi.mocked(savePrivateNote).mockRejectedValue(new Error('rate limit'));
+        vi.mocked(noteEdited).mockRejectedValue(new Error('rate limit'));
         state.loadedFeatures = [feature('HW-1', '')];
         openDetailsPanel(0);
 
@@ -227,21 +227,19 @@ describe('hydratation depuis heripia-travail (multi-appareils)', () => {
         openDetailsPanel(0);
         await Promise.resolve(); await Promise.resolve();
 
-        expect(loadPrivateNote).not.toHaveBeenCalled();
+        expect(syncNote).not.toHaveBeenCalled();
     });
 
-    it('local vide + admin + token → vérifie heripia-travail', async () => {
+    it('local vide + admin + token → synchronise la note (lecture par version)', async () => {
         state.isAdmin = true;
         vi.mocked(getStoredToken).mockReturnValue('fake-token');
-        vi.mocked(loadPrivateNote).mockResolvedValue('trouvée sur un autre appareil');
         state.loadedFeatures = [feature('HW-1', '')];
-        state.currentFeatureId = 0; // simule le panel déjà "ouvert" pour la garde anti-obsolescence
+        state.currentFeatureId = 0;
 
         openDetailsPanel(0);
         await Promise.resolve(); await Promise.resolve(); await Promise.resolve();
 
-        expect(loadPrivateNote).toHaveBeenCalledWith('djerba', 'HW-1');
-        expect(updatePoiData).toHaveBeenCalledWith('HW-1', 'notes', 'trouvée sur un autre appareil');
+        expect(syncNote).toHaveBeenCalledWith('HW-1');
     });
 
     it('visiteur sans token → aucune vérification réseau', async () => {
@@ -251,6 +249,6 @@ describe('hydratation depuis heripia-travail (multi-appareils)', () => {
         openDetailsPanel(0);
         await Promise.resolve(); await Promise.resolve();
 
-        expect(loadPrivateNote).not.toHaveBeenCalled();
+        expect(syncNote).not.toHaveBeenCalled();
     });
 });
