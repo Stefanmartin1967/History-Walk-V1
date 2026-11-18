@@ -49,6 +49,20 @@ describe('mergeTexts', () => {
         expect(r.text).toBe('A. C. D.');
     });
 
+    it('retours à la ligne gardés dans un passage disputé (Grotte des Sarrasins, 18/11)', () => {
+        const here = "Grotte visitable seulement sur quelques mètres\nCette grotte est noire à l'intérieur";
+        const online = "Grotte visitable\nSombre à l'intérieur";
+        const r = mergeTexts('', here, online);
+        expect(r.clean).toBe(false);
+        expect(r.text).toBe(here);
+        expect(r.conflicts).toEqual([{ here, online }]);
+    });
+
+    it('retours à la ligne gardés quand les deux changements sont réunis', () => {
+        const r = mergeTexts('A.\nB.', 'A modifié.\nB.', 'A.\nB.\nC ajouté.');
+        expect(r).toEqual({ text: 'A modifié.\nB.\nC ajouté.', clean: true, conflicts: [] });
+    });
+
     it('départ vide (champ nouveau des deux côtés) : conflit si différents', () => {
         const r = mergeTexts('', 'Texte ici.', 'Texte en ligne.');
         expect(r.clean).toBe(false);
