@@ -1,7 +1,8 @@
 import { state, getActiveMapId} from './state.js';
 import { fetchRepoFile, listRepoDir, repoFileSha, fetchRepoBlobJson } from './repo-read.js';
 import { BASE_KEY, findConflicts, pruneStamps } from './overlay-base.js';
-import { getPoiId, getPoiName, isCandidate } from './utils.js';
+import { getPoiId, getPoiName, isCandidate, isDestinationPublished } from './utils.js';
+import { candidateChanges } from './candidate-edits.js';
 import { GITHUB_PATHS, PERSONAL_KEYS } from './config.js';
 import { getAllPendingAdminPhotos, removePoiDataKeys } from './database.js';
 import { withoutServerDeletedCircuits } from './circuit-deletion-state.js';
@@ -300,10 +301,19 @@ export async function prepareDiffData(adminDraft) {
     diffData.pendingPhotos = {};
     diffData.originalFeatures = originalFeatures;
     diffData.onlineGeojsonSha = onlineGeojsonSha;
-    diffData.stats = { conflictPois: 0, poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0, rejectedPending: 0 };
+    diffData.pendingCandidates = [];
+    diffData.stats = { pendingCandidates: 0, conflictPois: 0, poisModified: 0, photosAdded: 0, circuitsModified: 0, testedChanged: 0, pendingPhotoCount: 0, contentLosses: 0, rejectedPending: 0 };
 
     // --- A. ANALYSE DES POIS (Via adminDraft + Comparaison directe) ---
     const pendingIds = Object.keys(adminDraft.pendingPois);
+
+    // Candidats Scout (18/11/2026, point 2) : sur une destination BROUILLON, ils
+    // sont dans le fichier publié et partent à chaque « Tout publier » → leurs
+    // modifications sont listées comme les autres. Sur une destination PUBLIÉE,
+    // ils restent sur l'appareil jusqu'à validation → section « En attente de
+    // validation », non comptée. Même règle que la publication (keepCandidates).
+    const activeDest = state.destinations?.maps?.[mapId];
+    const keepCandidates = !!activeDest && !isDestinationPublished(activeDest);
 
     // Conflits à la publication (18/11/2026, overlay-base.js) : relire chaque
     // ancienne version de la carte sur laquelle un champ en attente a été
@@ -334,7 +344,7 @@ export async function prepareDiffData(adminDraft) {
 
         // Réunif C1 : ceinture+bretelles — un candidat « à curer » ne part JAMAIS
         // dans le diff/publication, même s'il s'est retrouvé dans pendingPois.
-        if (current && isCandidate(current)) return;
+        if (current && isCandidate(current) && !keepCandidates) return;
 
         // Cas spécial : Suppression
         if (adminDraft.pendingPois[id].type === 'delete') {
@@ -532,10 +542,32 @@ export async function prepareDiffData(adminDraft) {
                 id: id,
                 name: getPoiName(current),
                 changes: changes,
+                ...(isCandidate(current) ? { isCandidate: true } : {}),
                 ...(conflicts.length > 0 ? { conflicts } : {})
             });
             diffData.stats.poisModified++;
             if (conflicts.length > 0) diffData.stats.conflictPois++;
+        }
+    });
+
+    // --- A bis. CANDIDATS SCOUT GARDÉS SUR L'APPAREIL, MODIFIÉS (18/11/2026) ---
+    // Leurs modifications sont écrites dans le lieu : on compare aux valeurs
+    // notées à la capture (candidate-edits.js). « Annuler » n'est pas proposé :
+    // pour un lieu local, il le supprimerait.
+    (state.customFeatures || []).forEach(f => {
+        if (!isCandidate(f)) return;
+        const id = getPoiId(f);
+        const current = state.loadedFeatures.find(x => getPoiId(x) === id) || f;
+        const changes = candidateChanges(current);
+        if (changes.length === 0) return;
+        const item = { id, name: getPoiName(current), changes, isCandidate: true, isLocalCandidate: true };
+        if (keepCandidates) {
+            if (diffData.pois.some(p => p.id === id)) return;
+            diffData.pois.push(item);
+            diffData.stats.poisModified++;
+        } else {
+            diffData.pendingCandidates.push(item);
+            diffData.stats.pendingCandidates++;
         }
     });
 

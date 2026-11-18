@@ -7,6 +7,7 @@ import { state } from './state.js';
 import { getPoiId, isCandidate, deriveZoneSafe, movedPosition } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 import { BASE_KEY } from './overlay-base.js';
+import { ORIG_KEY } from './candidate-edits.js';
 
 // `keepCandidates` : faut-il laisser passer les candidats Scout non curés
 // (`properties.candidate`) ? Défaut = false (sûr) → ils sont EXCLUS. Un candidat
@@ -84,6 +85,8 @@ export function generateMasterGeoJSONData(excludedIds = [], { keepCandidates = f
             PERSONAL_KEYS.forEach(k => { delete properties[k]; });
             // Estampilles de version (conflits à la publication) : propres à l'appareil.
             delete properties[BASE_KEY];
+            // Valeurs capturées d'un candidat Scout (candidate-edits.js) : propres à l'appareil.
+            delete properties[ORIG_KEY];
 
             // Nettoyage critique : photos base64 exclues (on ne garde que les URL).
             if (properties.photos && Array.isArray(properties.photos)) {

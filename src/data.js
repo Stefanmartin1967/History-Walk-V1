@@ -18,6 +18,7 @@ import {
 import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
 import { showToast } from './toast.js';
+import { noteCandidatePosition, ORIG_KEY } from './candidate-edits.js';
 import { getPoiId, getPoiName, getPoiProp, generateHWID, getDerivedZone, isCandidate, isOsmChecked, isMapsChecked, applyMovedPosition } from './utils.js';
 import { addRejected } from './rejected.js';
 import { savePendingRejected } from './rejected-store.js';
@@ -849,6 +850,14 @@ export async function updatePoiCoordinates(poiId, lat, lng) {
 
     // Mise à jour de la géométrie en mémoire vive
     const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+
+    // Candidat Scout gardé sur l'appareil : position capturée notée AVANT le
+    // déplacement (Centre de contrôle, « candidats modifiés », 18/11/2026).
+    const customEntry = (state.customFeatures || []).find(f => getPoiId(f) === poiId);
+    if (customEntry && feature) {
+        noteCandidatePosition(feature.properties, feature.geometry?.coordinates);
+        if (customEntry !== feature) customEntry.properties[ORIG_KEY] = feature.properties[ORIG_KEY];
+    }
 
     // [ADMIN] Capture des coordonnées ORIGINALES AVANT mutation, pour
     // permettre un revert propre en cas de "Ignorer" dans le CC.

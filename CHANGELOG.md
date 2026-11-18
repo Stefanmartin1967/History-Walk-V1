@@ -6,6 +6,11 @@
 
 ---
 
+- CENTRE DE CONTRÔLE : CANDIDATS SCOUT MODIFIÉS VISIBLES (v3.7.547). Point 2, maquette validée le 18/11/2026. Constaté par Stefan (Scout de Djerba) : un candidat modifié n'apparaissait nulle part ; sur une destination brouillon, il partait pourtant à chaque « Tout publier ».
+  - Destination brouillon (Charleroi, Hammamet) : les candidats modifiés sont dans « Modifié », étiquette « Candidat », comptés, contrôle de conflit et rangement après publication compris. Un candidat gardé sur l'appareil n'a pas « Annuler » (il le supprimerait).
+  - Destination publiée (Djerba) : section « En attente de validation », non comptée, bouton « Réviser » ; ils partent une fois validés.
+  - Candidat gardé sur l'appareil : la valeur capturée est notée au premier changement (`_candidateOrig`, candidate-edits.js), jamais publiée. Les modifications faites avant cette version n'ont pas cette note : elles n'apparaissent pas.
+
 - CONFLITS À LA PUBLICATION : UNE CASE PAR PHRASE (v3.7.546). Idée de Stefan le 18/11/2026, maquette mise à jour et validée : dans un conflit de texte, chaque phrase changée d'« En ligne » et d'« Ici » porte une case. Cocher l'ajoute à la fin de la version finale, décocher la retire ; les retouches à la main ne bougent pas, et les cases suivent la version finale (« Tout reprendre », saisie).
   - Unité = la phrase, pas la ligne : sur les descriptions publiées, une ligne sur quatre contient plusieurs phrases (mesuré le 18/11 : 71 % des lignes à Djerba, 74 % à Charleroi n'en ont qu'une).
   - Comparaison par phrase ENTIÈRE (« Grotte » ≠ « Grotte visitable ») : décocher une phrase courte n'ampute pas une phrase qui la contient.

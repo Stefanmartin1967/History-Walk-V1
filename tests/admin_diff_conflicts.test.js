@@ -95,3 +95,40 @@ describe('prepareDiffData', () => {
         expect(diffData.pois.find(p => p.id === ID).conflicts).toBeUndefined();
     });
 });
+
+// Candidats Scout modifiés (18/11/2026, point 2).
+describe('candidats modifiés', () => {
+    const CID = 'HW-CAND';
+    const baseCand = (coords) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: coords }, properties: { HW_ID: CID, 'Nom du site FR': 'Candidat', candidate: true } });
+
+    it('destination brouillon : candidat du fichier modifié → listé, étiqueté, compté', async () => {
+        state.destinations = { maps: { charleroi: { status: 'draft' } } };
+        h.onlineSha = S1;
+        h.online = { type: 'FeatureCollection', features: [baseCand([...OSM])] };
+        const f = baseCand([...OSM]);
+        state.loadedFeatures = [f];
+        state.userData[CID] = { lat: 50.36277, lng: 4.45956 };
+        f.properties.userData = state.userData[CID];
+        await prepareDiffData({ pendingPois: { [CID]: { type: 'update' } }, pendingCircuits: {} });
+        const item = diffData.pois.find(p => p.id === CID);
+        expect(item).toMatchObject({ isCandidate: true });
+        expect(diffData.stats.poisModified).toBe(1);
+        expect(diffData.pendingCandidates).toEqual([]);
+    });
+
+    it('destination publiée : candidat local modifié → en attente, non compté', async () => {
+        state.destinations = { maps: { charleroi: { status: 'published' } } };
+        h.onlineSha = S1;
+        h.online = { type: 'FeatureCollection', features: [] };
+        const local = { type: 'Feature', geometry: { type: 'Point', coordinates: [10.9, 33.8] },
+            properties: { HW_ID: 'HW-LOC', 'Nom du site FR': 'Marabout X', candidate: true, _candidateOrig: { 'Nom du site FR': '' } } };
+        state.customFeatures = [local];
+        state.loadedFeatures = [local];
+        await prepareDiffData({ pendingPois: {}, pendingCircuits: {} });
+        expect(diffData.pois).toEqual([]);
+        expect(diffData.stats.poisModified).toBe(0);
+        expect(diffData.pendingCandidates).toHaveLength(1);
+        expect(diffData.pendingCandidates[0]).toMatchObject({ id: 'HW-LOC', isLocalCandidate: true });
+        state.customFeatures = [];
+    });
+});
