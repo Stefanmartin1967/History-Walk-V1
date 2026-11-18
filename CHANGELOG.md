@@ -6,6 +6,8 @@
 
 ---
 
+- CONFIRMATION DE PUBLICATION : RETOURS À LA LIGNE GARDÉS (v3.7.549). Constaté par Stefan le 18/11/2026 : conflits laissés de côté, pertes de contenu et rejets s'affichaient en un seul bloc. Le message est maintenant échappé et ses retours à la ligne rendus (`confirmHtml`).
+
 - CONFLITS : PUBLIER LE RESTE + CARTE D'UN CANDIDAT LOCAL PROPRE (v3.7.548). Retour de Stefan le 18/11/2026.
   - « Tout publier » n'est plus bloqué par un conflit : une confirmation nomme les conflits laissés de côté. Leurs champs partent avec la valeur EN LIGNE (rien n'écrase l'autre appareil), la version d'ici reste en attente avec son estampille ; les circuits qui passent par un lieu dont la position est en conflit attendent aussi.
   - Carte d'un candidat capturé resté sur l'appareil (« Calvaire Monom ») : la note interne `_candidateOrig` n'est plus listée, les `false` écrits par défaut par l'éditeur ne comptent plus comme modifications, et « Annuler » (qui supprimerait le lieu) n'est plus proposé.
