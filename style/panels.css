@@ -3287,3 +3287,12 @@ body.admin-mode #circuit-panel[data-mode="consult"][data-flag="verified"] #btn-d
     padding: 6px 11px; border-radius: var(--radius-sm); border: 0; cursor: pointer;
     background: var(--cta-bg); color: var(--cta-fg);
 }
+/* Téléphone (19/11/2026, maquette écran 9) : bouton sous le texte, à la taille du doigt. */
+.poi-note-conflict--stack { flex-wrap: wrap; }
+/* Le texte prend toute la ligne (moins l'icône) : le bouton passe dessous. */
+.poi-note-conflict--stack > span { flex: 1 1 calc(100% - 26px); }
+.poi-note-conflict--stack .poi-note-conflict-btn {
+    flex: 0 0 auto; align-self: flex-start;
+    min-height: 44px; padding: 10px 18px; font-size: 14px;
+    margin-left: 26px;
+}

@@ -290,11 +290,13 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
 
     const notes = (allProps.notes || '').toString();
     // Note changée sur un autre appareil ET ici (note-sync.js, 18/11/2026) :
-    // bandeau dans « Mon suivi ». PC : « Résoudre » ; téléphone : à régler sur le PC.
+    // bandeau dans « Mon suivi », « Résoudre » ouvre la fenêtre à cases par
+    // phrase. 19/11/2026 : aussi sur le téléphone — un conflit découvert sur le
+    // téléphone n'existe que là (le PC ne connaît pas sa version) ; « à régler
+    // sur le PC » le rendait insoluble. Téléphone : bouton sous le texte.
     const noteConflict = allProps.noteSync && allProps.noteSync.remote !== undefined;
-    const noteConflictHtml = !noteConflict ? '' : (mobile
-        ? `<div class="poi-note-conflict" role="status"><i data-lucide="monitor"></i><span><strong>Cette note a changé sur un autre appareil.</strong> Elle se règle <strong>sur le PC</strong>. Ta version reste gardée ici, rien n'est perdu.</span></div>`
-        : `<div class="poi-note-conflict" role="status"><i data-lucide="alert-triangle"></i><span><strong>Cette note a changé sur un autre appareil.</strong> Ta version ci-dessous n'est pas encore envoyée.</span><button class="poi-note-conflict-btn" type="button" id="poi-note-resolve">Résoudre</button></div>`);
+    const noteConflictHtml = !noteConflict ? '' :
+        `<div class="poi-note-conflict${mobile ? ' poi-note-conflict--stack' : ''}" role="status"><i data-lucide="alert-triangle"></i><span><strong>Cette note a changé sur un autre appareil.</strong> Ta version ci-dessous n'est pas encore envoyée.</span><button class="poi-note-conflict-btn" type="button" id="poi-note-resolve">Résoudre</button></div>`;
 
     // Ligne d'état du cartel (v3) — le STATUT descend de la photo vers le cartel,
     // sous le titre (.cartel-status). L'identité (zone, catégorie) reste portée

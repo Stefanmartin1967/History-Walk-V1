@@ -6,6 +6,10 @@
 
 ---
 
+- NOTE EN CONFLIT : RÉSOLUE AUSSI SUR LE TÉLÉPHONE (v3.7.553). Constaté par Stefan le 19/11/2026 : 7 notes de Charleroi en conflit sur le téléphone (vieilles versions jamais relues avant le point 3), aucune sur le PC. Le bandeau du téléphone disait « se règle sur le PC », mais le PC ne connaît pas la version du téléphone : conflit insoluble. Maquette écrans 9 et 10 validée.
+  - Téléphone : bandeau avec « Résoudre » (bouton sous le texte, 44 px), même fenêtre que sur le PC : zones empilées, chaque phrase à cocher sur une ligne pleine largeur, sans cadre dans le cadre ; « Plus tard » et « Garder la version finale » toujours visibles.
+  - note-sync.js : deux caractères NUL écrits en dur (empreinte Git) remplacés par `\0` (même valeur) ; git voyait le fichier comme binaire.
+
 - FICHE OUVERTE REDESSINÉE APRÈS UNE SYNCHRO GIST (v3.7.552). Constaté par Stefan le 19/11/2026 : Incontournable retiré sur le téléphone, toast « Sync Gist » sur le PC, mais l'étoile restait dans la fiche ouverte. La lecture du Gist émet `userdata:synced` avec les lieux mis à jour ; la fiche ouverte concernée se redessine (même écouteur que les notes).
 
 - GIST : RELIRE ET FUSIONNER AVANT D'ÉCRIRE (v3.7.551). Point 4 des conflits entre appareils, 18/11/2026.

@@ -1,6 +1,8 @@
 // note-conflict-ui.js — fenêtre « Résoudre la note » (18/11/2026, maquette
-// « notes privées », écran 8). Ouverte depuis le bandeau de la fiche (PC) quand
-// la note a changé sur un autre appareil ET ici (note-sync.js).
+// « notes privées », écran 8). Ouverte depuis le bandeau de la fiche quand la
+// note a changé sur un autre appareil ET ici (note-sync.js). Depuis le
+// 19/11/2026 aussi sur le téléphone (écran 10) : zones empilées, une ligne à
+// cocher par phrase (admin-cc.css, max-width 767px).
 //
 // Même principe qu'une description au Centre de contrôle : « Autre appareil »
 // et « Ici » côte à côte, une case par phrase changée (sentence-picker.js),
