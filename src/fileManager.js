@@ -1,10 +1,12 @@
 // fileManager.js
-import { state, setCurrentMap, setLoadedFeatures, setUserData, setTestedCircuits, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
+import { state, setCurrentMap, setLoadedFeatures, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
 import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
-import { saveAppState, savePoiData, saveCircuit, deleteCircuitsForMap, getAllPoiPhotosForMap, savePoiPhotos, blobToBase64, base64ToBlob } from './database.js';
+import { saveAppState, getAllPoiPhotosForMap, blobToBase64 } from './database.js';
+import { applyRestore } from './restore-apply.js';
+import { confirmRestore } from './restore-ui.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
@@ -281,115 +283,51 @@ export function isValidBackup(json) {
 }
 
 export async function restoreBackup(json) {
-    try {
-        showToast("Restauration intelligente en cours...", "info");
+    // Sémantique DIFFÉRENTE de getActiveMapId() : une sauvegarde antérieure au
+    // multi-destination ne porte pas de `mapId`, et elle ne peut venir que de
+    // Djerba (seule destination à l'époque). On restaure donc là, PAS dans la
+    // destination active du moment.
+    const mapId = json.mapId || DEFAULT_MAP_ID;
 
-        // Sémantique DIFFÉRENTE de getActiveMapId() : une sauvegarde antérieure au
-        // multi-destination ne porte pas de `mapId`, et elle ne peut venir que de
-        // Djerba (seule destination à l'époque). On restaure donc là, PAS dans la
-        // destination active du moment — qui écraserait les données d'une autre.
-        const mapId = json.mapId || DEFAULT_MAP_ID;
+    // Lieux créés du fichier. Dest publiée : seuls les POIs créés à la main
+    // (HW-PC-, HW-MOB-) ou importés (auto_). Brouillon LOCAL (Option A) : TOUS
+    // ses lieux sont custom (les captures Scout ont un id HW-ULID).
+    const isDraftRestore = !!json.draftDestination;
+    const isPlace = isDraftRestore ? () => true : isUserCreatedFeature;
+
+    // 19/11/2026 (PR 2 « synchro users ») : on montre d'abord ce que contient le
+    // fichier ; la restauration RÉUNIT au lieu de remplacer (restore-merge.js),
+    // avec une copie de sécurité pour l'annuler (restore-apply.js). Avant, elle
+    // s'appliquait sans rien demander et remplaçait circuits perso, lieux
+    // masqués, statuts et lieux créés.
+    if (!await confirmRestore(json, mapId, isPlace)) return;
+
+    try {
+        showToast("Restauration en cours…", "info");
         setCurrentMap(mapId);
         await saveAppState('lastMapId', mapId);
 
-        // 1. Restaurer les données utilisateur (Notes, Visites, Positions modifiées)
-        //    Les photos perso arrivent en base64 dans userData.photos (cf. export) :
-        //    on les redécode en Blob vers le store poiPhotos, et poiUserData ne
-        //    conserve que les références légères (URLs/chemins admin).
-        if (json.userData) {
-            setUserData(json.userData);
-            for (const [id, data] of Object.entries(state.userData)) {
-                const allPhotos = Array.isArray(data.photos) ? data.photos : [];
-                const base64Photos = allPhotos.filter(p => typeof p === 'string' && p.startsWith('data:'));
-                if (base64Photos.length > 0) {
-                    const blobs = base64Photos.map((b64, i) => ({
-                        id: `restored_${id}_${i}_${Date.now()}`,
-                        blob: base64ToBlob(b64)
-                    }));
-                    await savePoiPhotos(mapId, id, blobs);
-                }
-                const lightPhotos = allPhotos.filter(p => typeof p === 'string' && !p.startsWith('data:'));
-                const cleanData = { ...data };
-                if (lightPhotos.length > 0) cleanData.photos = lightPhotos;
-                else delete cleanData.photos;
-                await savePoiData(mapId, id, cleanData);
-            }
-        }
+        // Les circuits « vérifiés » (testedCircuits) ne sont plus repris du
+        // fichier : c'est une autorité serveur (tested_<map>.json), qu'une
+        // sauvegarde ancienne ferait reculer.
+        await applyRestore(mapId, json, isPlace);
 
-        // 2. Extraire et Restaurer les Lieux Créés (Custom POIs).
-        // Dest publiée : seuls les POIs créés à la main (HW-PC-, HW-MOB-) ou importés (auto_).
-        // Brouillon LOCAL (Option A) : TOUS ses lieux sont custom — les captures Scout
-        // ont un id HW-ULID (hors du filtre HW-PC-/HW-MOB-/auto_) ; sans ce cas un brouillon
-        // restauré perdrait ses lieux.
-        const isDraftRestore = !!json.draftDestination;
-        if (json.baseGeoJSON && json.baseGeoJSON.features) {
-            const customFeatures = isDraftRestore
-                ? json.baseGeoJSON.features
-                : json.baseGeoJSON.features.filter(isUserCreatedFeature);
-
-            if (customFeatures.length > 0) {
-                await saveAppState(`customPois_${mapId}`, customFeatures);
-            }
-        }
-
-        // 3. Restaurer les circuits : REMPLACE ceux de CETTE destination seulement.
-        //    - entrées malformées filtrées ;
-        //    - copies d'officiels (`isOfficial`) écartées : une sauvegarde d'avant
-        //      le 12/09/2026 peut contenir les copies que créait l'ouverture d'un
-        //      officiel. Invisibles jusqu'ici (sans mapId), elles deviendraient,
-        //      une fois restaurées avec un mapId, prioritaires sur l'index publié
-        //      au boot — une version figée ;
-        //    - `mapId` posé s'il manque (sinon circuit écrit mais invisible).
-        if (json.myCircuits && Array.isArray(json.myCircuits)) {
-            const validCircuits = json.myCircuits.filter(c =>
-                c && typeof c.id === 'string' && typeof c.name === 'string' && Array.isArray(c.poiIds)
-            );
-            const skipped = json.myCircuits.length - validCircuits.length;
-            if (skipped > 0) console.warn(`[Restauration] ${skipped} circuit(s) ignoré(s) — données manquantes.`);
-            const persoCircuits = validCircuits.filter(c => !c.isOfficial);
-            const officialCopies = validCircuits.length - persoCircuits.length;
-            if (officialCopies > 0) console.warn(`[Restauration] ${officialCopies} copie(s) de circuit officiel écartée(s).`);
-            await deleteCircuitsForMap(mapId);
-            for (const circuit of persoCircuits) {
-                await saveCircuit({ ...circuit, mapId: circuit.mapId || mapId });
-            }
-        }
-        
-        // 4. Restaurer les suppressions (Corbeille)
-        if (json.hiddenPoiIds) {
-            await saveAppState(`hiddenPois_${mapId}`, json.hiddenPoiIds);
-        }
-
-        // 5. Restaurer le statut des circuits officiels
-        if (json.officialCircuitsStatus) {
-            await saveAppState(`official_circuits_status_${mapId}`, json.officialCircuitsStatus);
-        }
-
-        // 6. Restaurer les circuits testés sur le terrain
-        if (json.testedCircuits) {
-            await saveAppState(`tested_circuits_${mapId}`, json.testedCircuits);
-        }
-
-        // 7. BROUILLON LOCAL (Option A) : recréer sa définition. Elle n'existe que dans
+        // BROUILLON LOCAL (Option A) : recréer sa définition. Elle n'existe que dans
         // la sauvegarde — un brouillon ne vit jamais sur GitHub. On (re)pose l'entrée
         // draftDestinations + ses quartiers + un geojson base vide (les lieux sont déjà
-        // en customPois, step 2), et on bascule dessus pour que le reload l'affiche.
+        // en customPois), et on bascule dessus pour que le reload l'affiche.
         if (json.draftDestination) {
             const zones = json.draftZones || { type: 'FeatureCollection', features: [] };
             await createLocalDraftDestination(mapId, json.draftDestination, { type: 'FeatureCollection', features: [] }, zones);
             try { localStorage.setItem('hw_active_dest', mapId); } catch (_) { /* ignore */ }
         }
 
-        // 8. REDÉMARRAGE POUR FUSION PROPRE
-        // On recharge la page pour que l'application :
-        // - Charge le dernier GeoJSON officiel depuis le serveur (ou l'IDB pour un brouillon)
-        // - Applique les userData restaurés (dont les déplacements)
-        // - Ajoute les customPois restaurés
-        // - Masque les hiddenPois restaurés
-        showToast("Données restaurées ! Redémarrage...", "success");
+        // Redémarrage : l'app recharge la carte officielle, y applique les données
+        // réunies, et montre le résumé (restore-ui.js, showRestoreSummaryIfPending).
+        showToast("Données réunies ! Redémarrage…", "success");
         setTimeout(() => {
             window.location.reload();
-        }, 1500);
+        }, 1200);
 
     } catch (error) {
         console.error("Erreur restauration:", error);

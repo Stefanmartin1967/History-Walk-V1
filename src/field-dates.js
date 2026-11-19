@@ -16,13 +16,19 @@
 // Règle commune : une valeur qui CHANGE reçoit la date du moment, sauf si
 // l'écriture apporte elle-même une autre date (fusion d'une version venue
 // d'ailleurs : elle garde la date de l'autre appareil).
+//
+// Chaque changement retient aussi la date de la version DONT IL PART
+// (`_fieldFrom`, PR 2, 19/11/2026). C'est ce qui distingue « le PC a corrigé le
+// texte reçu du téléphone » (il en descend : pas de question) de « les deux ont
+// été écrits chacun de son côté » (vrai conflit) — cf. restore-merge.js.
 
 export const FIELD_DATES_KEY = '_fieldDates';
+export const FIELD_FROM_KEY = '_fieldFrom';
 
 // Clés techniques : jamais datées (ce ne sont pas des choix du user, ou elles
 // ont déjà leur propre date — visité, Incontournable, photos de travail).
 const META = new Set([
-    FIELD_DATES_KEY, '_baseSha', '_candidateOrig', '_pending', 'noteSync', 'userData',
+    FIELD_DATES_KEY, '_fieldFrom', '_baseSha', '_candidateOrig', '_pending', 'noteSync', 'userData',
     'mapId', 'poiId', 'HW_ID', 'vu', 'accessPointStatus',
     'vuUpdatedAt', 'incontournableUpdatedAt', 'workPhotosUpdatedAt',
 ]);
@@ -44,45 +50,57 @@ export function sameValue(a, b) {
 }
 
 /**
- * Dates des champs qui changent dans une écriture.
+ * Dates des champs qui changent dans une écriture, et la date de la version
+ * dont chacun part.
  * @param {object|null} existing  état avant l'écriture
- * @param {object} data           champs écrits (peut porter `_fieldDates`)
+ * @param {object} data           champs écrits (peut porter `_fieldDates` / `_fieldFrom`)
  * @param {number} [now]
- * @returns {object|null} `_fieldDates` complet après l'écriture, ou null si rien ne change
+ * @returns {{_fieldDates: object, _fieldFrom: object}|null} les deux maps complètes
+ *          après l'écriture, ou null si rien ne change
  */
-export function mergedFieldDates(existing, data, now = Date.now()) {
+export function fieldStamps(existing, data, now = Date.now()) {
     if (!data || typeof data !== 'object') return null;
     const before = existing?.[FIELD_DATES_KEY] || {};
+    const beforeFrom = existing?.[FIELD_FROM_KEY] || {};
     const given = data[FIELD_DATES_KEY] || {};
+    const givenFrom = data[FIELD_FROM_KEY] || {};
     const fresh = {};
+    const freshFrom = {};
     for (const key of Object.keys(data)) {
         if (!isDatedKey(key)) continue;
         if (sameValue(data[key], existing?.[key])) continue;
         if (given[key] !== undefined && given[key] !== before[key]) continue; // date apportée
         fresh[key] = now;
+        if (before[key] !== undefined) freshFrom[key] = before[key];
     }
-    const givenChanged = Object.keys(given).some(k => given[k] !== before[k]);
+    const givenChanged = Object.keys(given).some(k => given[k] !== before[k])
+        || Object.keys(givenFrom).some(k => givenFrom[k] !== beforeFrom[k]);
     if (!Object.keys(fresh).length && !givenChanged) return null;
-    return { ...before, ...given, ...fresh };
+    return {
+        [FIELD_DATES_KEY]: { ...before, ...given, ...fresh },
+        [FIELD_FROM_KEY]: { ...beforeFrom, ...givenFrom, ...freshFrom },
+    };
 }
 
-/** Dates après le retrait de champs : un retrait est un changement (retour à l'officiel). */
-export function datesAfterRemoval(existingDates, keys, now = Date.now()) {
-    const out = { ...(existingDates || {}) };
+/** Après le retrait de champs : un retrait est un changement (retour à l'officiel). */
+export function stampsAfterRemoval(existing, keys, now = Date.now()) {
+    const dates = { ...(existing?.[FIELD_DATES_KEY] || {}) };
+    const from = { ...(existing?.[FIELD_FROM_KEY] || {}) };
     let changed = false;
     for (const k of keys || []) {
         if (!isDatedKey(k)) continue;
-        out[k] = now;
+        if (dates[k] !== undefined) from[k] = dates[k];
+        dates[k] = now;
         changed = true;
     }
-    return changed ? out : null;
+    return changed ? { [FIELD_DATES_KEY]: dates, [FIELD_FROM_KEY]: from } : null;
 }
 
 // ─── Lieux créés ──────────────────────────────────────────────────────────
 
-const POSITION = '_position';
+export const POSITION = '_position';
 
-function placeFields(feature) {
+export function placeFields(feature) {
     const props = feature?.properties || {};
     const out = {};
     for (const [k, v] of Object.entries(props)) if (isDatedKey(k)) out[k] = v;
@@ -101,15 +119,12 @@ export function stampCreatedPlaces(previous, next, now = Date.now()) {
     const before = new Map((Array.isArray(previous) ? previous : [])
         .map(f => [f?.properties?.HW_ID, f]).filter(([id]) => id));
     let count = 0;
+    const withStamps = (f) => ({ ...placeFields(f), [FIELD_DATES_KEY]: f.properties[FIELD_DATES_KEY], [FIELD_FROM_KEY]: f.properties[FIELD_FROM_KEY] });
     for (const feature of next) {
         if (!feature?.properties) continue;
         const old = before.get(feature.properties.HW_ID) || null;
-        const dates = mergedFieldDates(
-            old ? { ...placeFields(old), [FIELD_DATES_KEY]: old.properties[FIELD_DATES_KEY] } : null,
-            { ...placeFields(feature), [FIELD_DATES_KEY]: feature.properties[FIELD_DATES_KEY] },
-            now,
-        );
-        if (dates) { feature.properties[FIELD_DATES_KEY] = dates; count++; }
+        const stamps = fieldStamps(old ? withStamps(old) : null, withStamps(feature), now);
+        if (stamps) { Object.assign(feature.properties, stamps); count++; }
     }
     return count;
 }

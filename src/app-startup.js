@@ -25,6 +25,7 @@ import { fetchDestinationsJson } from './publish-destination.js';
 import { isDestinationPublished, applyMovedPosition } from './utils.js';
 import { installOverlayBaseHook } from './overlay-base-hook.js';
 import { initNoteSync } from './note-sync.js';
+import { showRestoreSummaryIfPending } from './restore-ui.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -718,5 +719,7 @@ export async function loadAndInitializeMap() {
     // Notes privées (18/11/2026) : passe de synchronisation par version, puis à
     // chaque retour du réseau (note-sync.js). Admin avec jeton seulement.
     initNoteSync();
+    // Restauration qui vient d'avoir lieu (19/11/2026) : son résumé, ses textes à choisir.
+    void showRestoreSummaryIfPending();
     initGistReconnectSync();
 }
