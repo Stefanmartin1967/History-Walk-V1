@@ -1277,6 +1277,22 @@ html[data-theme="nuit"] .cc-hero {
     .cc-conflict-field--position { grid-template-columns: minmax(0, 1fr); }
     .cc-conflict-map { min-height: 180px; }
     .cc-conflict-actions .cc-diff-btn { min-height: 44px; }
+    /* Note privée sur le téléphone (19/11/2026, maquette écran 10) : chaque
+       phrase à cocher devient une ligne pleine largeur à la taille du doigt. */
+    .cc-note-conflict .cc-conflict-sent {
+        display: flex; align-items: center; gap: 10px;
+        min-height: 44px; margin: 4px 0; padding: 4px 10px; border-radius: var(--radius-sm);
+    }
+    .cc-note-conflict .cc-conflict-text-body--online .cc-conflict-sent { background: var(--info-soft); }
+    .cc-note-conflict .cc-conflict-text-body--local .cc-conflict-sent { background: color-mix(in oklab, var(--cta-bg) 18%, transparent); }
+    .cc-note-conflict .cc-conflict-sent input { width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
+    .cc-note-conflict .cc-conflict-sent mark { background: transparent; padding: 0; }
+    .cc-note-conflict .cc-conflict-text .cc-diff-btn { min-height: 40px; }
+    /* Pas de cadre dans le cadre : la fenêtre en sert déjà (place gagnée en largeur). */
+    .cc-note-conflict.cc-conflict-field { padding: 0; border: 0; background: transparent; }
+    .cc-note-conflict .cc-conflict-text,
+    .cc-note-conflict .cc-conflict-final { padding: 10px; }
+    .hw-modal-footer .cc-conflict-actions-note { display: none; }
 }
 
 /* ============================================================
