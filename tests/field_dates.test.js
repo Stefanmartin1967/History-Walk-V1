@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { mergedFieldDates, datesAfterRemoval, stampCreatedPlaces, circuitUpdatedAt, FIELD_DATES_KEY } from '../src/field-dates.js';
+import { fieldStamps, stampsAfterRemoval, stampCreatedPlaces, circuitUpdatedAt, FIELD_DATES_KEY, FIELD_FROM_KEY } from '../src/field-dates.js';
+
+const mergedFieldDates = (existing, data, now) => fieldStamps(existing, data, now)?.[FIELD_DATES_KEY] ?? null;
+const datesAfterRemoval = (dates, keys, now) => stampsAfterRemoval({ [FIELD_DATES_KEY]: dates }, keys, now)?.[FIELD_DATES_KEY] ?? null;
 
 // PR 1 du chantier « synchro users » (19/11/2026) : la date de changement de
 // chaque donnée, fondation de la restauration qui fusionne et de la synchro.
@@ -40,6 +43,22 @@ describe('mergedFieldDates (fiches)', () => {
     });
 });
 
+describe('date de départ (_fieldFrom, PR 2)', () => {
+    it('un changement retient la date de la version dont il part', () => {
+        const existing = { description: 'A', [FIELD_DATES_KEY]: { description: 50 } };
+        expect(fieldStamps(existing, { description: 'B' }, 100)).toEqual({
+            [FIELD_DATES_KEY]: { description: 100 }, [FIELD_FROM_KEY]: { description: 50 },
+        });
+    });
+    it('premier changement d’un champ jamais daté : pas de départ', () => {
+        expect(fieldStamps({ description: 'A' }, { description: 'B' }, 100)[FIELD_FROM_KEY]).toEqual({});
+    });
+    it('un retrait part aussi de la version d’avant', () => {
+        expect(stampsAfterRemoval({ [FIELD_DATES_KEY]: { notes: 40 } }, ['notes'], 100))
+            .toEqual({ [FIELD_DATES_KEY]: { notes: 100 }, [FIELD_FROM_KEY]: { notes: 40 } });
+    });
+});
+
 describe('datesAfterRemoval', () => {
     it('retirer un champ (retour à l’officiel) est daté', () => {
         expect(datesAfterRemoval({ notes: 5 }, ['description'], 100)).toEqual({ notes: 5, description: 100 });
@@ -63,6 +82,7 @@ describe('stampCreatedPlaces (lieux créés)', () => {
         const next = [place('A', { 'Nom du site FR': 'Chapelle Saint-Fiacre', description: 'x', [FIELD_DATES_KEY]: { 'Nom du site FR': 10, description: 10, _position: 10 } }, [4.41, 50.3])];
         stampCreatedPlaces(prev, next, 100);
         expect(next[0].properties[FIELD_DATES_KEY]).toEqual({ 'Nom du site FR': 100, description: 10, _position: 100 });
+        expect(next[0].properties[FIELD_FROM_KEY]).toEqual({ 'Nom du site FR': 10, _position: 10 });
     });
 
     it('liste réenregistrée sans changement : aucune date ne bouge', () => {

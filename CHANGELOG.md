@@ -6,6 +6,13 @@
 
 ---
 
+- RESTAURATION QUI RÉUNIT (v3.7.556). PR 2 du chantier « synchro users », maquette écrans 17-19 validée par Stefan le 19/11/2026.
+  - Avant : la restauration s'appliquait sans rien demander et remplaçait circuits perso, lieux masqués, statuts et lieux créés ; un circuit préparé sur le PC après la sauvegarde disparaissait.
+  - Avant de restaurer : ce que contient le fichier (date, destination, visites, notes, lieux, circuits) et « Elle va être réunie… ». Après le redémarrage : le résumé (ajouté, mis à jour, gardé), les textes à choisir, « Annuler la restauration » (aussi dans l'écran Sauvegarder, jusqu'à la prochaine restauration).
+  - Règles (restore-merge.js, pur) : ce qui n'existe que d'un côté est gardé ; des deux côtés, la version qui DESCEND de l'autre gagne ; écrites chacune de son côté : conflit pour un texte (la version de l'appareil reste en attendant), la plus récente pour le reste ; sans date des deux côtés, le fichier gagne. Visité, Incontournable, photos de travail, circuits faits / cachés : règles du Gist. Un champ absent du fichier n'efface rien.
+  - Chaque changement retient la date de la version dont il part (`_fieldFrom`, field-dates.js) : « corrigé après réception » ne pose plus de question.
+  - Copie de sécurité de ce que la restauration touche, choix de textes compris (restore-apply.js, `putPoiDataExact`). Les circuits « vérifiés » ne sont plus repris du fichier (autorité serveur). `deleteCircuitsForMap` retiré.
+
 - DATES DE CHANGEMENT DES DONNÉES DU USER (v3.7.555). PR 1 du chantier « synchro users » (Google Drive), décidé avec Stefan le 19/11/2026. Rien ne change à l'écran : c'est la fondation de la restauration qui fusionne et de la synchronisation.
   - Chaque champ modifié d'une fiche porte sa date (`_fieldDates`, donnée personnelle jamais publiée) ; un champ retiré (retour à l'officiel) est daté aussi. Lieux créés : chaque champ et la position (`_position`). Circuits perso : `updatedAt` quand le contenu change, `trashUpdatedAt` au geste Corbeille. Une date apportée par une fusion est gardée (field-dates.js).
   - Posées aux points d'écriture uniques (database.js : savePoiData, batchSavePoiData, removePoiDataKeys, saveCircuit, softDeleteCircuit/restoreCircuit, saveAppState des lieux créés), recopiées en mémoire, d'où partent les sauvegardes.

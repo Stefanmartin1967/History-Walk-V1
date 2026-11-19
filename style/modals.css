@@ -825,3 +825,50 @@ html[data-theme="nuit"] .hw-modal-overlay.is-photo-viewer {
     padding: 2px 4px;
 }
 .sp-edit:hover { text-decoration: none; }
+
+/* ============================================================
+   RESTAURATION QUI FUSIONNE (19/11/2026, restore-ui.js,
+   maquette « synchro users » écrans 17-19). Tokens de thème uniquement.
+   ============================================================ */
+.rs-stack { display: flex; flex-direction: column; gap: 12px; }
+.rs-text { margin: 0; font-size: 14px; line-height: 1.55; color: var(--ink); }
+.rs-sub { margin: 0; padding: 0 var(--space-md, 16px); font-size: 13px; color: var(--ink-soft); }
+.rs-file {
+    display: flex; flex-direction: column; gap: 6px;
+    padding: 12px 14px; border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface-muted);
+}
+.rs-file-head { display: flex; align-items: center; gap: 8px; color: var(--ink); }
+.rs-file-head svg { width: 18px; height: 18px; color: var(--cta-bg); flex-shrink: 0; }
+.rs-file-content { font-size: 13.5px; color: var(--ink); }
+.rs-safe { margin: 0; display: flex; align-items: flex-start; gap: 8px; font-size: 13.5px; line-height: 1.5; color: var(--ink-soft); }
+.rs-safe svg { width: 18px; height: 18px; flex-shrink: 0; color: var(--ok-fg); }
+.rs-row { display: flex; align-items: flex-start; gap: 12px; }
+.rs-ico { width: 30px; height: 30px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.rs-ico svg { width: 16px; height: 16px; }
+.rs-row--added .rs-ico { background: var(--ok-soft); color: var(--ok-fg); }
+.rs-row--updated .rs-ico { background: var(--info-soft); color: var(--info-fg); }
+.rs-row--kept .rs-ico { background: var(--surface-muted); color: var(--ink-soft); }
+.rs-row-text { display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; color: var(--ink); }
+.rs-conflicts {
+    display: flex; flex-direction: column; gap: 10px;
+    padding: 12px 14px; border-radius: var(--radius-md); background: var(--warn-soft); border: 1px solid color-mix(in oklab, var(--warn-fg) 40%, transparent);
+}
+.rs-conflicts-head { display: flex; align-items: flex-start; gap: 10px; font-size: 13.5px; color: var(--ink); }
+.rs-conflicts-head > svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; color: var(--warn-fg); }
+.rs-conflicts-head > span { display: flex; flex-direction: column; gap: 2px; }
+.rs-conflict {
+    display: flex; align-items: center; gap: 12px;
+    padding: 8px 10px; border-radius: var(--radius-sm); background: var(--surface); font-size: 13.5px; color: var(--ink);
+}
+.rs-conflict > span { flex: 1; min-width: 0; }
+.rs-undo { margin-right: auto; display: flex; flex-direction: column; gap: 2px; font-size: 12px; color: var(--ink-soft); }
+.rs-undo-btn {
+    align-self: flex-start; min-height: 40px; padding: 0 2px; border: 0; background: transparent;
+    font: inherit; font-size: 13.5px; font-weight: 600; color: var(--ink); text-decoration: underline; cursor: pointer;
+}
+@media (max-width: 600px) {
+    .rs-conflict { flex-wrap: wrap; }
+    .rs-conflict .btn { width: 100%; min-height: 44px; }
+    .rs-undo { margin-right: 0; width: 100%; text-align: center; }
+    .rs-undo-btn { align-self: center; }
+}

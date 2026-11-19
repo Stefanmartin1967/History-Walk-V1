@@ -3,7 +3,7 @@ const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 import { BASE_KEY, pruneStamps } from './overlay-base.js';
 import { syncStampsFor } from './sync-stamps.js';
-import { FIELD_DATES_KEY, mergedFieldDates, datesAfterRemoval, stampCreatedPlaces, circuitUpdatedAt } from './field-dates.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, fieldStamps, stampsAfterRemoval, stampCreatedPlaces, circuitUpdatedAt } from './field-dates.js';
 
 // ─── Estampille de la version de départ (18/11/2026, conflits à la publication) ──
 // Toutes les écritures de fiche passent par savePoiData / batchSavePoiData : c'est
@@ -32,10 +32,10 @@ function withStamps(mapId, poiId, existing, data) {
         data = { ...data, ...dated };
         notifyStamps(mapId, poiId, dated);
     }
-    const fieldDates = mergedFieldDates(existing, data);
-    if (fieldDates) {
-        data = { ...data, [FIELD_DATES_KEY]: fieldDates };
-        notifyStamps(mapId, poiId, { [FIELD_DATES_KEY]: fieldDates });
+    const stamps = fieldStamps(existing, data);
+    if (stamps) {
+        data = { ...data, ...stamps };
+        notifyStamps(mapId, poiId, stamps);
     }
     if (!_writeHook) return data;
     let extra = null;
@@ -467,14 +467,33 @@ export async function replacePoiData(mapId, poiId, data) {
             const existing = getReq.result || null;
             // Les dates déjà posées suivent ; un champ absent de `data` est un
             // retrait, daté comme tel.
-            const carried = { ...(existing?.[FIELD_DATES_KEY] || {}), ...(data?.[FIELD_DATES_KEY] || {}) };
+            const carried = {
+                [FIELD_DATES_KEY]: { ...(existing?.[FIELD_DATES_KEY] || {}), ...(data?.[FIELD_DATES_KEY] || {}) },
+                [FIELD_FROM_KEY]: { ...(existing?.[FIELD_FROM_KEY] || {}), ...(data?.[FIELD_FROM_KEY] || {}) },
+            };
             const removed = existing
                 ? Object.keys(existing).filter(k => k !== 'mapId' && k !== 'poiId' && !(k in data))
                 : [];
-            const dates = datesAfterRemoval(carried, removed) || carried;
-            const next = Object.keys(dates).length ? { ...data, [FIELD_DATES_KEY]: dates } : data;
+            const stamps = stampsAfterRemoval(carried, removed) || carried;
+            const next = Object.keys(stamps[FIELD_DATES_KEY]).length ? { ...data, ...stamps } : data;
             store.put({ ...withStamps(mapId, poiId, existing, next), mapId, poiId });
         };
+    }));
+}
+
+/**
+ * Remet l'entrée d'une fiche EXACTEMENT telle qu'elle était (null = pas
+ * d'entrée), sans poser de date : sert à « Annuler la restauration »
+ * (restore-apply.js), qui doit rendre l'appareil comme avant, dates comprises.
+ */
+export async function putPoiDataExact(mapId, poiId, data) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+        if (data) store.put({ ...data, mapId, poiId });
+        else store.delete([mapId, poiId]);
     }));
 }
 
@@ -497,9 +516,9 @@ export async function removePoiDataKeys(mapId, poiId, keys) {
             // Retirer un champ (retour à la valeur officielle) est un changement
             // daté : une fusion saura qu'il est plus récent qu'une version qui
             // le portait encore.
-            const dates = datesAfterRemoval(next[FIELD_DATES_KEY], removed);
-            if (dates) { next[FIELD_DATES_KEY] = dates; notifyStamps(mapId, poiId, { [FIELD_DATES_KEY]: dates }); }
-            remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId' && k !== FIELD_DATES_KEY).length;
+            const stamps = stampsAfterRemoval(next, removed);
+            if (stamps) { Object.assign(next, stamps); notifyStamps(mapId, poiId, stamps); }
+            remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId' && k !== FIELD_DATES_KEY && k !== FIELD_FROM_KEY).length;
             if (remaining === 0) store.delete([mapId, poiId]);
             else store.put({ ...next, mapId, poiId });
         };
@@ -934,30 +953,6 @@ export async function getAllPoiPhotosForMap(mapId) {
         req.onsuccess = () => resolve(req.result || []);
         req.onerror = (e) => reject(e.target.error);
     });
-}
-
-/**
- * Supprime les circuits enregistrés d'UNE destination (index `mapId_index`).
- * Remplace l'ancien `clearStore('circuits')` de la restauration — nom de store
- * erroné (le store s'appelle `savedCircuits`), donc rien n'était vidé et la
- * restauration AJOUTAIT les circuits au lieu de les remplacer. Vider tout le store
- * aurait été pire : une sauvegarde ne porte qu'une destination, les circuits des
- * autres auraient été effacés (audit du cycle circuits, 12/09/2026).
- * @param {string} mapId
- * @returns {Promise<number>} Nombre de circuits supprimés.
- */
-export async function deleteCircuitsForMap(mapId) {
-    return withRetry(db => new Promise((resolve, reject) => {
-        let count = 0;
-        const tx = db.transaction('savedCircuits', 'readwrite');
-        tx.oncomplete = () => resolve(count);
-        tx.onerror = (e) => reject(e.target.error);
-        const req = tx.objectStore('savedCircuits').index('mapId_index').openCursor(IDBKeyRange.only(mapId));
-        req.onsuccess = (ev) => {
-            const cur = ev.target.result;
-            if (cur) { cur.delete(); count++; cur.continue(); }
-        };
-    }));
 }
 
 /**

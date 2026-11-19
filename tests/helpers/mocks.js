@@ -56,7 +56,6 @@ export function createDatabaseMock(overrides = {}) {
         setPendingAdminPhotos: vi.fn(() => Promise.resolve()),
         clearPendingAdminPhotos: vi.fn(() => Promise.resolve()),
         getAllPoiPhotosForMap: vi.fn(() => Promise.resolve({})),
-        deleteCircuitsForMap: vi.fn(() => Promise.resolve(0)),
         countCircuitsWithoutMapId: vi.fn(() => Promise.resolve(0)),
         clearModificationLog: vi.fn(() => Promise.resolve()),
     };

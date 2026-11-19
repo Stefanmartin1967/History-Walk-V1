@@ -45,16 +45,24 @@ vi.mock('../src/toast.js', () => ({
     showToast: vi.fn()
 }));
 
+// Base simulée : l'appareil (device) que lit la restauration qui fusionne.
+const device = vi.hoisted(() => ({ userData: {}, appState: {}, circuits: [] }));
 vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn(),
-    savePoiData: vi.fn(),
+    getAppState: vi.fn(async (k) => device.appState[k]),
+    getAllPoiDataForMap: vi.fn(async () => device.userData),
+    getAllCircuitsForMap: vi.fn(async () => device.circuits),
+    replacePoiData: vi.fn(async () => {}),
+    putPoiDataExact: vi.fn(async () => {}),
+    deleteCircuitById: vi.fn(async () => {}),
     saveCircuit: vi.fn(),
-    deleteCircuitsForMap: vi.fn(async () => 0),
     getAllPoiPhotosForMap: vi.fn(async () => []),
     savePoiPhotos: vi.fn(async () => {}),
     blobToBase64: vi.fn(async () => 'data:image/jpeg;base64,MOCKDATA'),
     base64ToBlob: vi.fn((b64) => new Blob([b64], { type: 'image/jpeg' }))
 }));
+// L'écran « avant de restaurer » : le user confirme (testé à part).
+vi.mock('../src/restore-ui.js', () => ({ confirmRestore: vi.fn(async () => true) }));
 
 vi.mock('../src/gpx.js', () => ({
     processImportedGpx: vi.fn()
@@ -87,7 +95,8 @@ vi.mock('../src/local-destinations.js', () => ({
 
 import { state } from '../src/state.js';
 import { showToast } from '../src/toast.js';
-import { getAllPoiPhotosForMap, savePoiPhotos, savePoiData, base64ToBlob, saveAppState, saveCircuit, deleteCircuitsForMap } from '../src/database.js';
+import { getAllPoiPhotosForMap, savePoiPhotos, replacePoiData, base64ToBlob, saveAppState, saveCircuit } from '../src/database.js';
+import { confirmRestore } from '../src/restore-ui.js';
 import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
     backupFileName,
@@ -115,6 +124,9 @@ beforeEach(() => {
     resetState();
     vi.clearAllMocks();
     localStorage.clear();
+    device.userData = {};
+    device.appState = {};
+    device.circuits = [];
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -435,7 +447,7 @@ describe('restoreBackup (photos)', () => {
         expect(base64ToBlob).toHaveBeenCalledWith('data:image/jpeg;base64,AAA');
 
         // poiUserData ne conserve que les références légères (URL), plus aucun base64
-        const call = savePoiData.mock.calls.find(c => c[1] === 'p1');
+        const call = replacePoiData.mock.calls.find(c => c[1] === 'p1');
         expect(call[2].photos).toEqual(['photos/admin.jpg']);
         expect(call[2].vu).toBe(true);
     });
@@ -586,19 +598,23 @@ describe('restoreBackup — brouillon local (Option A)', () => {
 // donc rien n'était vidé et les circuits s'AJOUTAIENT. Vider tout le store aurait
 // effacé les autres destinations : une sauvegarde n'en porte qu'une.
 describe('restoreBackup — circuits', () => {
-    beforeEach(() => {
-        vi.clearAllMocks();
-    });
-
     const backup = (myCircuits) => ({ backupVersion: '3.0', mapId: 'hammamet', myCircuits });
 
-    it('vide les circuits de la destination restaurée SEULEMENT, avant d\'écrire', async () => {
+    // 19/11/2026 : la restauration RÉUNIT. Avant, elle vidait les circuits perso
+    // de la destination : un circuit préparé sur le PC après la sauvegarde
+    // disparaissait sans un mot.
+    it('garde les circuits de l\'appareil et ajoute ceux du fichier', async () => {
+        device.circuits = [{ id: 'HW-pc', name: 'Préparé sur le PC', poiIds: ['x'], mapId: 'hammamet', updatedAt: 50 }];
         await restoreBackup(backup([{ id: 'HW-p1', name: 'Perso', poiIds: ['a'], mapId: 'hammamet' }]));
 
-        expect(deleteCircuitsForMap).toHaveBeenCalledTimes(1);
-        expect(deleteCircuitsForMap).toHaveBeenCalledWith('hammamet');
-        expect(deleteCircuitsForMap.mock.invocationCallOrder[0])
-            .toBeLessThan(saveCircuit.mock.invocationCallOrder[0]);
+        expect(saveCircuit.mock.calls.map(c => c[0].id)).toEqual(['HW-p1']);
+    });
+
+    it('rien n\'est appliqué si le user ne confirme pas', async () => {
+        vi.mocked(confirmRestore).mockResolvedValueOnce(false);
+        await restoreBackup(backup([{ id: 'HW-p1', name: 'Perso', poiIds: ['a'] }]));
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(saveAppState).not.toHaveBeenCalled();
     });
 
     it('pose le mapId manquant (sinon invisible), garde un mapId existant', async () => {
@@ -623,8 +639,14 @@ describe('restoreBackup — circuits', () => {
     it('ne touche pas aux circuits si la sauvegarde n\'en contient pas', async () => {
         await restoreBackup({ backupVersion: '3.0', mapId: 'hammamet', userData: {} });
 
-        expect(deleteCircuitsForMap).not.toHaveBeenCalled();
         expect(saveCircuit).not.toHaveBeenCalled();
+    });
+
+    it('range le résumé et la copie de sécurité (Annuler la restauration)', async () => {
+        await restoreBackup(backup([{ id: 'HW-p1', name: 'Perso', poiIds: ['a'] }]));
+        const call = saveAppState.mock.calls.find(c => c[0] === 'lastRestore_hammamet');
+        expect(call[1]).toMatchObject({ showSummary: true, summary: { circuits: ['Perso'] } });
+        expect(call[1].undo.circuits).toEqual([{ id: 'HW-p1', before: null }]);
     });
 });
 

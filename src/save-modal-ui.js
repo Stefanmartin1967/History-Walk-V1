@@ -20,6 +20,8 @@ import {
     handleRestoreFile,
     saveUserData,
 } from './fileManager.js';
+import { getLastRestore } from './restore-apply.js';
+import { runUndo } from './restore-ui.js';
 
 let _backupChoice = 'light'; // 'light' | 'complete' — persisté entre re-renders
 
@@ -84,6 +86,11 @@ async function renderBody(bodyEl) {
     const sel = _backupChoice;
 
     const photoWeight = formatSize(await estimatePhotoWeight(state.currentMapId));
+    // Dernière restauration annulable (19/11/2026, restauration qui fusionne).
+    const lastRestore = await getLastRestore(state.currentMapId);
+    const undoDate = lastRestore?.undo && lastRestore.at
+        ? new Date(lastRestore.at).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })
+        : null;
     // Si la modale a été fermée pendant l'await → on abandonne silencieusement.
     if (!bodyEl.isConnected) return;
     const completeNote = photoWeight ? ` · ${photoWeight} de photos` : '';
@@ -137,8 +144,8 @@ async function renderBody(bodyEl) {
       <div class="me-status-row">
         <div class="me-status-ico"><i data-lucide="upload"></i></div>
         <div class="me-status-text">
-          <p class="me-status-title">Recharger un fichier de sauvegarde</p>
-          <div class="me-status-sub">Formats acceptés : <strong>.json</strong>, <strong>.txt</strong></div>
+          <p class="me-status-title">Ajouter le contenu d'un fichier de sauvegarde</p>
+          <div class="me-status-sub">Il est réuni avec ce qui est sur cet appareil. Si un même texte diffère, vous choisissez.</div>
         </div>
         <button class="me-btn secondary" id="sm-btn-restore" type="button">
           <i data-lucide="folder-open"></i> Choisir un fichier…
@@ -146,6 +153,9 @@ async function renderBody(bodyEl) {
       </div>
     </div>
     <input type="file" id="sm-restore-loader" accept=".json,.txt" class="is-hidden">
+    ${undoDate ? `<button class="me-btn secondary" id="sm-btn-undo-restore" type="button">
+      <i data-lucide="rotate-ccw"></i> Annuler la dernière restauration (${undoDate})
+    </button>` : ''}
   </section>
 
   <p class="me-footnote" aria-label="Statut du backup auto local">
@@ -178,6 +188,10 @@ function attachListeners(bodyEl) {
 
     bodyEl.querySelector('#sm-btn-restore')?.addEventListener('click', () => {
         bodyEl.querySelector('#sm-restore-loader')?.click();
+    });
+    bodyEl.querySelector('#sm-btn-undo-restore')?.addEventListener('click', () => {
+        closeHwModal();
+        runUndo(state.currentMapId);
     });
     bodyEl.querySelector('#sm-restore-loader')?.addEventListener('change', (event) => {
         handleRestoreFile(event);
