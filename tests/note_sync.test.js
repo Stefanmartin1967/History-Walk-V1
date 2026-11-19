@@ -149,3 +149,38 @@ describe('gitBlobSha', () => {
         expect(ud('A').noteSync).toMatchObject({ sha: h.remote.A.sha, dirty: false });
     });
 });
+
+// 19/11/2026 : le dépôt gagne pour les notes d'avant le chantier.
+describe('anciennes notes : le dépôt gagne', () => {
+    it('84 conflicts du téléphone (enregistrés avant la règle) : version du dépôt reprise', async () => {
+        h.remote = { H: { text: 'Pas de traces sur OSM (bâtiment) ; hameau.', sha: 'sh' } };
+        state.userData = { H: { notes: 'Pas de traces sur OSM', noteSync: { sha: null, base: '', dirty: true, remote: 'Pas de traces sur OSM (bâtiment) ; hameau.', remoteSha: 'sh' } } };
+        const r = await syncAllNotes();
+        expect(ud('H').notes).toBe('Pas de traces sur OSM (bâtiment) ; hameau.');
+        expect(ud('H').noteSync).toEqual({ sha: 'sh', base: 'Pas de traces sur OSM (bâtiment) ; hameau.', dirty: false });
+        expect(notesInConflict()).toEqual([]);
+        expect(r.conflicts).toBe(0);
+    });
+
+    it('ancienne note supprimée du dépôt : retirée ici, pas renvoyée', async () => {
+        state.userData = { J: { notes: 'Pas de trace dans le répertoire de Jalel' } };
+        await syncAllNotes();
+        expect(writeNoteFile).not.toHaveBeenCalled();
+        expect(ud('J').notes).toBe('');
+    });
+
+    it('conflit récent (marqué) : jamais touché', async () => {
+        h.remote = { G: { text: 'Départ. Ailleurs.', sha: 's9' } };
+        state.userData = { G: { notes: 'Départ. Ici.', noteSync: { sha: 's8', base: 'Départ.', dirty: true, remote: 'Départ. Ailleurs.', remoteSha: 's9', legacy: false } } };
+        await syncAllNotes();
+        expect(ud('G').notes).toBe('Départ. Ici.');
+        expect(notesInConflict().map(n => n.poiId)).toEqual(['G']);
+    });
+
+    it('un vrai conflit enregistré maintenant porte la marque legacy: false', async () => {
+        h.remote = { G: { text: 'Départ. Ailleurs.', sha: 's9' } };
+        state.userData = { G: { notes: 'Départ. Ici.', noteSync: { sha: 's8', base: 'Départ.', dirty: true } } };
+        expect(await syncNote('G')).toBe('conflict');
+        expect(ud('G').noteSync.legacy).toBe(false);
+    });
+});

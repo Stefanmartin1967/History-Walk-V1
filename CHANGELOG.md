@@ -6,6 +6,11 @@
 
 ---
 
+- NOTES D'AVANT LE CHANTIER : LE DÉPÔT GAGNE (v3.7.554). Décision de Stefan le 19/11/2026.
+  - Constat : 84 notes de Djerba en conflit sur le téléphone (versions de mars, jamais relues avant le point 3 pendant que le PC les corrigeait), et 13 notes supprimées en août-octobre RESSUSCITÉES par le téléphone (absentes du dépôt, donc « jamais envoyées » selon l'ancienne règle).
+  - Une note jamais synchronisée et pas modifiée depuis prend la version du dépôt ; absente du dépôt, elle est retirée de l'appareil. Ne joue qu'une fois : ensuite chaque note a sa version de départ. Les vrais conflits (modifiée des deux côtés) ne changent pas.
+  - Les conflits de ce type déjà enregistrés sont rejoués avec la règle au passage suivant ; les conflits écrits désormais portent `legacy: false` et ne sont jamais touchés.
+
 - NOTE EN CONFLIT : RÉSOLUE AUSSI SUR LE TÉLÉPHONE (v3.7.553). Constaté par Stefan le 19/11/2026 : 7 notes de Charleroi en conflit sur le téléphone (vieilles versions jamais relues avant le point 3), aucune sur le PC. Le bandeau du téléphone disait « se règle sur le PC », mais le PC ne connaît pas la version du téléphone : conflit insoluble. Maquette écrans 9 et 10 validée.
   - Téléphone : bandeau avec « Résoudre » (bouton sous le texte, 44 px), même fenêtre que sur le PC : zones empilées, chaque phrase à cocher sur une ligne pleine largeur, sans cadre dans le cadre ; « Plus tard » et « Garder la version finale » toujours visibles.
   - note-sync.js : deux caractères NUL écrits en dur (empreinte Git) remplacés par `\0` (même valeur) ; git voyait le fichier comme binaire.
