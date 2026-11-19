@@ -454,14 +454,19 @@ async function hydratePrivateNoteIfNeeded(poiId) {
     await syncNote(poiId);
 }
 
-// Notes synchronisées en arrière-plan (démarrage, retour du réseau) : la fiche
-// ouverte se redessine si sa note a changé ou est passée en conflit.
-eventBus.on('notes:synced', ({ poiIds } = {}) => {
+// Synchronisation en arrière-plan : la fiche ouverte se redessine si elle est
+// concernée. Notes (note-sync.js : note changée ou en conflit) et Gist
+// (gist-sync.js : visité, Incontournable… reçus de l'autre appareil — avant le
+// 19/11/2026 l'étoile retirée sur le téléphone restait affichée sur le PC tant
+// que la fiche n'était pas rouverte).
+function refreshIfOpen({ poiIds } = {}) {
     const idx = state.currentFeatureId;
     if (idx === null || idx === undefined) return;
     const openFeature = state.loadedFeatures[idx];
     if (openFeature && (poiIds || []).includes(getPoiId(openFeature))) refreshCurrentDetailsPanel();
-});
+}
+eventBus.on('notes:synced', refreshIfOpen);
+eventBus.on('userdata:synced', refreshIfOpen);
 
 // Rassemble TOUTES les photos consultables d'un POI pour le viewer : URLs
 // publiées/draft d'abord (urls[0] = la photo affichée par le hero), puis blobs

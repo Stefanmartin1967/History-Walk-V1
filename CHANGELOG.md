@@ -6,6 +6,8 @@
 
 ---
 
+- FICHE OUVERTE REDESSINÉE APRÈS UNE SYNCHRO GIST (v3.7.552). Constaté par Stefan le 19/11/2026 : Incontournable retiré sur le téléphone, toast « Sync Gist » sur le PC, mais l'étoile restait dans la fiche ouverte. La lecture du Gist émet `userdata:synced` avec les lieux mis à jour ; la fiche ouverte concernée se redessine (même écouteur que les notes).
+
 - GIST : RELIRE ET FUSIONNER AVANT D'ÉCRIRE (v3.7.551). Point 4 des conflits entre appareils, 18/11/2026.
   - Avant : l'envoi relisait le Gist, mais réécrivait la section de la destination avec le seul état de l'appareil. Un appareil resté ouvert effaçait ce que l'autre avait envoyé entre-temps ; pour les photos de travail (« le Gist gagne »), la référence disparaissait ensuite aussi de l'autre appareil.
   - Chaque envoi fusionne d'abord la section relue (mêmes règles qu'au démarrage), puis écrit.
