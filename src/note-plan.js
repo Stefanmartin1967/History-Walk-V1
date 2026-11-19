@@ -23,6 +23,18 @@ export function decideNote(local, sync, remote) {
     const L = norm(local);
     if (remote && norm(remote.text) === L) return { action: 'adopt' };         // déjà pareil
 
+    // Note d'avant ce chantier, jamais synchronisée ni touchée depuis : LE DÉPÔT
+    // GAGNE (décision de Stefan, 19/11/2026). Avant, un appareil qui avait déjà
+    // une note ne la relisait jamais : sa copie est restée à la version de
+    // l'époque pendant que l'autre appareil la corrigeait (84 notes de Djerba
+    // sur le téléphone, version de mars). Et une note absente du dépôt y avait
+    // été SUPPRIMÉE ailleurs : la renvoyer la ressuscitait (13 notes le
+    // 19/11). Ne joue qu'une fois : ensuite chaque note a sa version de départ.
+    if (isUntouchedLegacy(sync)) {
+        if (!remote) return { action: L ? 'clear' : 'adopt' };
+        return { action: 'take' };
+    }
+
     if (!remote) {
         if (!L) return { action: sync && sync.sha === null && !sync.dirty ? 'none' : 'adopt' };
         // Supprimée ailleurs, intacte ici → on la retire ici aussi.
@@ -40,3 +52,20 @@ export function decideNote(local, sync, remote) {
     if (sync && sync.sha !== undefined && !sync.dirty && L === norm(sync.base)) return { action: 'take' };
     return { action: 'conflict', base: sync && sync.sha !== undefined ? (sync.base ?? '') : '' };
 }
+
+/** Note d'avant ce chantier : aucune version retenue, pas modifiée ici depuis. */
+function isUntouchedLegacy(sync) {
+    return !sync || (sync.sha === undefined && !sync.dirty);
+}
+
+/**
+ * Conflit enregistré AVANT la règle « le dépôt gagne » (18-19/11/2026) pour
+ * une note d'avant ce chantier : départ vide, aucune version, pas de marque
+ * `legacy`. Il est rejoué avec la nouvelle règle. Les conflits écrits depuis
+ * portent `legacy: false` et ne sont jamais touchés.
+ */
+export function isPreRuleLegacyConflict(sync) {
+    return !!sync && sync.remote !== undefined && sync.legacy === undefined
+        && (sync.sha === null || sync.sha === undefined) && (sync.base ?? '') === '';
+}
+

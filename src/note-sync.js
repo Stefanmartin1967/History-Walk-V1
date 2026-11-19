@@ -22,7 +22,7 @@ import { getStoredToken } from './github-sync.js';
 import { eventBus } from './events.js';
 import { isOffline, onNetworkBack } from './network-status.js';
 import { readNoteFile, listNoteFiles, writeNoteFile, removeNoteFile } from './private-notes.js';
-import { decideNote } from './note-plan.js';
+import { decideNote, isPreRuleLegacyConflict } from './note-plan.js';
 
 const KEY = 'noteSync';
 
@@ -82,7 +82,7 @@ export async function syncNote(poiId, { retried = false } = {}) {
                 await writeLocal(poiId, { [KEY]: { sha: null, base: '', dirty: false } });
             }
         } else if (action === 'conflict') {
-            await writeLocal(poiId, { [KEY]: { ...(sync || {}), sha: sync?.sha ?? null, base: base ?? '', dirty: true, remote: remote.text, remoteSha: remote.sha } });
+            await writeLocal(poiId, { [KEY]: { ...(sync || {}), sha: sync?.sha ?? null, base: base ?? '', dirty: true, remote: remote.text, remoteSha: remote.sha, legacy: false } });
         }
     } catch (e) {
         // Fichier changé ailleurs entre la lecture et l'écriture : on recommence une fois.
@@ -158,6 +158,9 @@ export async function syncAllNotes() {
         Object.entries(state.userData || {}).forEach(([id, d]) => { if (d?.notes || d?.[KEY]) ids.add(id); });
         const changed = [];
         for (const id of ids) {
+            // Conflit d'une ancienne note, enregistré avant la règle « le dépôt
+            // gagne » (19/11/2026) : rejoué avec elle (une fois).
+            if (isPreRuleLegacyConflict(syncOf(id))) await writeLocal(id, { [KEY]: undefined });
             const sync = syncOf(id);
             if (sync?.remote !== undefined) continue;                     // conflit en attente
             const remoteSha = remoteShas.get(id) ?? null;
