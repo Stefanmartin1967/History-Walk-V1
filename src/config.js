@@ -104,6 +104,7 @@ export const PERSONAL_KEYS = [
     'workPhotos',          // photos de travail : chemins dans le dépôt PRIVÉ (cf. GITHUB_WORK_REPO). Photos de tiers, jamais publiables — leur place ici est la garantie structurelle qu'elles ne fuient pas dans le geojson public.
     'keptWorkPhotos',      // sous-ensemble de workPhotos marqué « gardé » (survit à l'import des photos de Stefan) — mêmes chemins privés, même garantie.
     'incontournableUpdatedAt', // date (ms) du dernier changement d'Incontournable — synchro Gist (sync-stamps.js)
+    '_fieldDates',         // date (ms) du dernier changement de chaque champ modifié (field-dates.js) — fusion/synchro, propre à l'appareil
     'workPhotosUpdatedAt', // date (ms) du dernier changement des photos de travail — synchro Gist (sync-stamps.js)
     'noteSync',            // version du dépôt privé sur laquelle la note d'ici est basée, et conflit en attente (note-sync.js, 18/11/2026) — propre à l'appareil, jamais publiée.
 ];

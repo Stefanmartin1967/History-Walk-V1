@@ -142,9 +142,10 @@ function refreshCircuitList() {
 
 async function restoreDeletedCircuit(circuitId) {
     const circuit = (state.myCircuits || []).find(c => String(c.id) === String(circuitId));
-    await restoreCircuit(circuitId);
+    const trashUpdatedAt = await restoreCircuit(circuitId);
     if (circuit) {
         circuit.isDeleted = false;
+        if (trashUpdatedAt) circuit.trashUpdatedAt = trashUpdatedAt;
         showToast(`Circuit "${circuit.name || 'Sans nom'}" restauré.`, 'success');
     }
 }

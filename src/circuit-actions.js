@@ -137,11 +137,14 @@ export async function performCircuitDeletion(id) {
             await setOfficialCircuitDeleted(id, true);
         } else {
             // STANDARD : Suppression logique (Corbeille)
-            await softDeleteCircuit(id);
+            const trashUpdatedAt = await softDeleteCircuit(id);
 
             // Mise à jour de la mémoire (state) pour les locaux
             const circuit = state.myCircuits.find(c => c.id === id);
-            if (circuit) circuit.isDeleted = true;
+            if (circuit) {
+                circuit.isDeleted = true;
+                if (trashUpdatedAt) circuit.trashUpdatedAt = trashUpdatedAt;
+            }
         }
         
         // FLAG CHANGEMENT
