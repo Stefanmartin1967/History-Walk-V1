@@ -6,6 +6,8 @@
 
 ---
 
+- RESTAURATION : REDÉMARRE SUR LA DESTINATION DU FICHIER (v3.7.557). Constaté par Stefan le 19/11/2026 : un fichier de Charleroi restauré depuis Djerba rechargeait Djerba, et le résumé restait caché (il ne s'affiche que sur sa destination). Le démarrage lit `?map=` puis `hw_active_dest`, plus `lastMapId` : la restauration bascule maintenant par `switchActiveDestination`, comme le sélecteur. Au passage, un texte ne diffère plus par ses espaces de début / fin ni ses fins de ligne (une note du téléphone finie par une espace passait pour « mise à jour »).
+
 - RESTAURATION QUI RÉUNIT (v3.7.556). PR 2 du chantier « synchro users », maquette écrans 17-19 validée par Stefan le 19/11/2026.
   - Avant : la restauration s'appliquait sans rien demander et remplaçait circuits perso, lieux masqués, statuts et lieux créés ; un circuit préparé sur le PC après la sauvegarde disparaissait.
   - Avant de restaurer : ce que contient le fichier (date, destination, visites, notes, lieux, circuits) et « Elle va être réunie… ». Après le redémarrage : le résumé (ajouté, mis à jour, gardé), les textes à choisir, « Annuler la restauration » (aussi dans l'écran Sauvegarder, jusqu'à la prochaine restauration).

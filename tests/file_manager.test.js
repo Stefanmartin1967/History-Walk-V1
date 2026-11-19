@@ -63,6 +63,7 @@ vi.mock('../src/database.js', () => ({
 }));
 // L'écran « avant de restaurer » : le user confirme (testé à part).
 vi.mock('../src/restore-ui.js', () => ({ confirmRestore: vi.fn(async () => true) }));
+vi.mock('../src/destination-switch.js', () => ({ switchActiveDestination: vi.fn() }));
 
 vi.mock('../src/gpx.js', () => ({
     processImportedGpx: vi.fn()
@@ -97,6 +98,7 @@ import { state } from '../src/state.js';
 import { showToast } from '../src/toast.js';
 import { getAllPoiPhotosForMap, savePoiPhotos, replacePoiData, base64ToBlob, saveAppState, saveCircuit } from '../src/database.js';
 import { confirmRestore } from '../src/restore-ui.js';
+import { switchActiveDestination } from '../src/destination-switch.js';
 import { getDraftZones, createLocalDraftDestination } from '../src/local-destinations.js';
 import {
     backupFileName,
@@ -574,9 +576,25 @@ describe('restoreBackup — brouillon local (Option A)', () => {
         expect(call[1].map((f) => f.properties.HW_ID)).toContain('HW-01TESTCAPTURE0000000000001');
     });
 
-    it('bascule hw_active_dest sur le brouillon restauré', async () => {
-        await restoreBackup(draftBackup());
-        expect(localStorage.getItem('hw_active_dest')).toBe('venise');
+    it('redémarre sur le brouillon restauré', async () => {
+        vi.useFakeTimers();
+        try {
+            await restoreBackup(draftBackup());
+            vi.runAllTimers();
+            expect(switchActiveDestination).toHaveBeenCalledWith('venise');
+        } finally { vi.useRealTimers(); }
+    });
+
+    // 19/11/2026 (constaté par Stefan) : restaurer un fichier de Charleroi depuis
+    // Djerba rechargeait Djerba, et le résumé de la restauration restait caché.
+    it('redémarre sur la destination DU FICHIER, pas celle ouverte', async () => {
+        state.currentMapId = 'djerba';
+        vi.useFakeTimers();
+        try {
+            await restoreBackup({ backupVersion: '3.0', mapId: 'charleroi', userData: {} });
+            vi.runAllTimers();
+            expect(switchActiveDestination).toHaveBeenCalledWith('charleroi');
+        } finally { vi.useRealTimers(); }
     });
 
     it('un backup de dest publiée (sans draftDestination) ne recrée aucun brouillon et garde le filtre HW-PC-/auto_', async () => {

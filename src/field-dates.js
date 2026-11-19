@@ -40,6 +40,10 @@ export function isDatedKey(key) {
 // « Vide » : absent, null, '', false ou liste vide valent la même chose (un
 // éditeur qui écrit false par défaut ne change rien).
 function norm(v) {
+    // Un texte ne diffère pas par ses espaces de début / fin ni ses fins de
+    // ligne (19/11/2026 : une note du téléphone finie par une espace passait
+    // pour « mise à jour » à la restauration).
+    if (typeof v === 'string') v = v.replace(/\r\n/g, '\n').trim();
     if (v === undefined || v === null || v === '' || v === false) return '';
     if (Array.isArray(v) && v.length === 0) return '';
     return JSON.stringify(v);
