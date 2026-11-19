@@ -1136,3 +1136,33 @@ describe('Gist : relire et fusionner avant d’écrire (18/11/2026)', () => {
         await vi.waitFor(() => expect(JSON.parse(localStorage.getItem('hw_gist_pending'))).toEqual([]));
     });
 });
+
+// 19/11/2026 : Incontournable retiré sur le téléphone, toast « Sync Gist » sur
+// le PC, mais l'étoile restait dans la fiche ouverte (jamais redessinée).
+describe('Gist : la fiche ouverte est prévenue (19/11/2026)', () => {
+    beforeEach(() => {
+        vi.mocked(getStoredToken).mockReturnValue('fake-token');
+        localStorage.setItem('hw_gist_id', 'gist-existing');
+        net.offline = false;
+    });
+    afterEach(() => { delete global.fetch; });
+
+    it('lieu mis à jour par la lecture du Gist : userdata:synced avec son id', async () => {
+        const { eventBus } = await import('../src/events.js');
+        state.userData = { G: { incontournable: true, incontournableUpdatedAt: 10 } };
+        const doc = { format: 2, maps: { djerba: { userData: { G: { incontournable: false, incontournableUpdatedAt: 20 } } } } };
+        global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ files: { 'history_walk_userdata.json': { content: JSON.stringify(doc) } } }) }));
+        await pullFromGist();
+        expect(state.userData.G.incontournable).toBe(false);
+        expect(eventBus.emit).toHaveBeenCalledWith('userdata:synced', { poiIds: ['G'] });
+    });
+
+    it('rien de changé : pas d’événement', async () => {
+        const { eventBus } = await import('../src/events.js');
+        state.userData = { G: { incontournable: true, incontournableUpdatedAt: 30 } };
+        const doc = { format: 2, maps: { djerba: { userData: { G: { incontournable: false, incontournableUpdatedAt: 20 } } } } };
+        global.fetch = vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve({ files: { 'history_walk_userdata.json': { content: JSON.stringify(doc) } } }) }));
+        await pullFromGist();
+        expect(eventBus.emit).not.toHaveBeenCalledWith('userdata:synced', expect.anything());
+    });
+});

@@ -347,6 +347,8 @@ async function applyRemoteMerge(remote) {
         eventBus.emit('data:apply-filters');
         eventBus.emit('circuit:list-updated');
     }
+    // Fiche ouverte concernée : redessinée (ui-details.js).
+    if (updates.length > 0) eventBus.emit('userdata:synced', { poiIds: updates.map(u => u.poiId) });
     return { updates, circuitsChanged, hiddenChanged };
 }
 
