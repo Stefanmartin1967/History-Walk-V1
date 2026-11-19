@@ -152,6 +152,11 @@ export async function saveUserData(forceFullMode = false) {
         myCircuits: state.myCircuits,
         hiddenPoiIds: state.hiddenPoiIds,
         officialCircuitsStatus: state.officialCircuitsStatus || {},
+        // Dates et circuits cachés (19/11/2026) : la restauration qui fusionne
+        // en a besoin pour savoir quelle version est la plus récente.
+        officialCircuitsStatusUpdatedAt: state.officialCircuitsStatusUpdatedAt || {},
+        hiddenCircuitIds: state.hiddenCircuitIds || [],
+        hiddenCircuitIdsUpdatedAt: state.hiddenCircuitIdsUpdatedAt || {},
         testedCircuits: state.testedCircuits || {}
     });
     await attachLocalDraft(exportData, mapId);
@@ -555,6 +560,11 @@ export async function prepareExportData(includePhotos = false) {
         myCircuits: state.myCircuits || [],
         hiddenPoiIds: state.hiddenPoiIds || [],
         officialCircuitsStatus: state.officialCircuitsStatus || {},
+        // Dates et circuits cachés (19/11/2026) : la restauration qui fusionne
+        // en a besoin pour savoir quelle version est la plus récente.
+        officialCircuitsStatusUpdatedAt: state.officialCircuitsStatusUpdatedAt || {},
+        hiddenCircuitIds: state.hiddenCircuitIds || [],
+        hiddenCircuitIdsUpdatedAt: state.hiddenCircuitIdsUpdatedAt || {},
         testedCircuits: state.testedCircuits || {}
     };
 

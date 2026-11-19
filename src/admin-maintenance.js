@@ -218,9 +218,12 @@ function bindEvents(container) {
 async function handleRestoreLocal(id, container) {
     if (!await showConfirm("Restaurer", "Voulez-vous restaurer ce circuit ?", "Restaurer", "Annuler")) return;
     try {
-        await restoreCircuit(id);
+        const trashUpdatedAt = await restoreCircuit(id);
         const c = state.myCircuits.find(x => String(x.id) === String(id));
-        if (c) c.isDeleted = false;
+        if (c) {
+            c.isDeleted = false;
+            if (trashUpdatedAt) c.trashUpdatedAt = trashUpdatedAt;
+        }
 
         showToast("Circuit restauré !", "success");
         runAnalysis(container);

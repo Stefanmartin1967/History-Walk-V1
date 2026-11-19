@@ -19,13 +19,14 @@ vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn(() => Promise.resolve()),
     savePoiData: vi.fn(() => Promise.resolve()),
     deletePoiData: vi.fn(() => Promise.resolve()),
+    replacePoiData: vi.fn(() => Promise.resolve()),
 }));
 vi.mock('../src/utils.js', () => ({
     getPoiId: (f) => f?.properties?.HW_ID || f?.id,
 }));
 
 import { state } from '../src/state.js';
-import { saveAppState, savePoiData, deletePoiData } from '../src/database.js';
+import { saveAppState, savePoiData, deletePoiData, replacePoiData } from '../src/database.js';
 import { persistPoiEdit, isCustomPoi, keepChangedFields, stripAdminOnlyFields } from '../src/poi-persistence.js';
 
 function poi(id, props = {}) {
@@ -124,7 +125,7 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         // L'overlay reste référencé par le feature (lisible en session) + persisté
         // intégralement (les photos/accessPoint/vu survivent).
         expect(f.properties.userData).toBe(state.userData['HW-CUST-3']);
-        expect(savePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-3', state.userData['HW-CUST-3']);
+        expect(replacePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-3', state.userData['HW-CUST-3']);
     });
 
     it('P7 — fold `candidate:false` (custom) : conservé dans properties (≠ vide), POI plus candidat', async () => {
@@ -186,12 +187,12 @@ describe('persistPoiEdit — POI CUSTOM (properties + customPois, overlay purgé
         expect(f.properties['Catégorie']).toBe('Fortification');
         expect(state.userData['HW-CUST-4']).toEqual({ photos: ['a.jpg'] });
         // CLÉ DU FIX reload-revert : savePoiData MERGE (ne supprime pas une clé du
-        // store) → on doit REMPLACER l'entrée (delete puis save) pour que la clé
-        // taxonomie obsolète ne ressorte pas au boot via getAllPoiDataForMap.
-        expect(deletePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-4');
-        expect(savePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-4', { photos: ['a.jpg'] });
-        // L'ordre garantit le replace : delete AVANT save.
-        expect(deletePoiData.mock.invocationCallOrder[0]).toBeLessThan(savePoiData.mock.invocationCallOrder[0]);
+        // store) → on REMPLACE l'entrée pour que la clé taxonomie obsolète ne
+        // ressorte pas au boot via getAllPoiDataForMap. Depuis le 19/11/2026 par
+        // replacePoiData (et non plus « delete puis save », qui faisait passer
+        // chaque champ pour neuf dans les dates de changement).
+        expect(replacePoiData).toHaveBeenCalledWith('djerba', 'HW-CUST-4', { photos: ['a.jpg'] });
+        expect(deletePoiData).not.toHaveBeenCalled();
     });
 });
 

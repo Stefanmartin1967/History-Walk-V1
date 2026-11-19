@@ -22,7 +22,7 @@
 //     BRUTES par-dessus et MASQUERAIT la version curée de GitHub — c'est le
 //     revert de curation qu'on évite, SANS détruire l'enrichissement.
 import { state } from './state.js';
-import { saveAppState, savePoiData, deletePoiData } from './database.js';
+import { saveAppState, savePoiData, deletePoiData, replacePoiData } from './database.js';
 import { getPoiId } from './utils.js';
 import { PERSONAL_KEYS } from './config.js';
 import { noteCandidateOriginals } from './candidate-edits.js';
@@ -94,8 +94,9 @@ export async function persistPoiEdit(poiId, data) {
                 // la ressortirait au boot et masquerait la valeur curée (revert au reload).
                 // On REMPLACE donc l'entrée (delete puis save) pour que le store reflète
                 // EXACTEMENT l'overlay courant.
-                try { await deletePoiData(state.currentMapId, poiId); } catch (e) { console.warn('[persistPoiEdit] purge du store poiUserData échouée (une clé obsolète pourrait réapparaître au reload) :', e); }
-                await savePoiData(state.currentMapId, poiId, overlay);
+                // replacePoiData (19/11/2026) : remplace en comparant à l'ancienne
+                // entrée, pour que seuls les champs vraiment changés soient datés.
+                await replacePoiData(state.currentMapId, poiId, overlay);
             }
         } else {
             delete feature.properties.userData;

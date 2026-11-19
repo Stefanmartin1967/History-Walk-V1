@@ -3,6 +3,7 @@ const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 import { BASE_KEY, pruneStamps } from './overlay-base.js';
 import { syncStampsFor } from './sync-stamps.js';
+import { FIELD_DATES_KEY, mergedFieldDates, datesAfterRemoval, stampCreatedPlaces, circuitUpdatedAt } from './field-dates.js';
 
 // ─── Estampille de la version de départ (18/11/2026, conflits à la publication) ──
 // Toutes les écritures de fiche passent par savePoiData / batchSavePoiData : c'est
@@ -12,18 +13,29 @@ import { syncStampsFor } from './sync-stamps.js';
 let _writeHook = null;
 export function setPoiDataWriteHook(fn) { _writeHook = typeof fn === 'function' ? fn : null; }
 
-// Dates de changement des champs synchronisés par le Gist (18/11/2026, point 4 :
-// le changement le plus récent gagne, cf. sync-stamps.js). Posées ici pour la
-// même raison ; l'écouteur recopie la date dans la mémoire (lue par l'envoi Gist).
-let _syncStampListener = null;
-export function setSyncStampListener(fn) { _syncStampListener = typeof fn === 'function' ? fn : null; }
+// Dates de changement, posées ici pour la même raison (une écriture = un seul
+// endroit) : champs synchronisés par le Gist (18/11/2026, sync-stamps.js) et,
+// depuis le 19/11/2026, chaque champ modifié d'une fiche (`_fieldDates`,
+// field-dates.js — fondation de la restauration qui fusionne et de la synchro
+// des users). L'écouteur recopie ces dates dans la mémoire, d'où partent les
+// sauvegardes et l'envoi Gist.
+let _stampListener = null;
+export function setStampListener(fn) { _stampListener = typeof fn === 'function' ? fn : null; }
+function notifyStamps(mapId, poiId, fields) {
+    try { _stampListener?.(mapId, poiId, fields); }
+    catch (e) { console.warn('[database] dates non recopiées en mémoire :', e); }
+}
 
 function withStamps(mapId, poiId, existing, data) {
     const dated = syncStampsFor(existing, data);
     if (dated) {
         data = { ...data, ...dated };
-        try { _syncStampListener?.(mapId, poiId, dated); }
-        catch (e) { console.warn('[database] date de synchro non recopiée en mémoire :', e); }
+        notifyStamps(mapId, poiId, dated);
+    }
+    const fieldDates = mergedFieldDates(existing, data);
+    if (fieldDates) {
+        data = { ...data, [FIELD_DATES_KEY]: fieldDates };
+        notifyStamps(mapId, poiId, { [FIELD_DATES_KEY]: fieldDates });
     }
     if (!_writeHook) return data;
     let extra = null;
@@ -192,8 +204,11 @@ export async function softDeleteCircuit(id) {
             const circuit = getRequest.result;
             if (circuit) {
                 circuit.isDeleted = true;
+                // Date du geste Corbeille (field-dates.js), renvoyée à l'appelant
+                // pour la mémoire.
+                circuit.trashUpdatedAt = Date.now();
                 const putRequest = store.put(circuit);
-                putRequest.onsuccess = () => resolve();
+                putRequest.onsuccess = () => resolve(circuit.trashUpdatedAt);
                 putRequest.onerror = (e) => reject(e.target.error);
             } else {
                 resolve();
@@ -214,8 +229,11 @@ export async function restoreCircuit(id) {
             const circuit = getRequest.result;
             if (circuit) {
                 circuit.isDeleted = false;
+                // Date du geste Corbeille (field-dates.js), renvoyée à l'appelant
+                // pour la mémoire.
+                circuit.trashUpdatedAt = Date.now();
                 const putRequest = store.put(circuit);
-                putRequest.onsuccess = () => resolve();
+                putRequest.onsuccess = () => resolve(circuit.trashUpdatedAt);
                 putRequest.onerror = (e) => reject(e.target.error);
             } else {
                 resolve();
@@ -228,9 +246,22 @@ export async function restoreCircuit(id) {
 export async function saveAppState(key, value) {
     return withRetry(db => new Promise((resolve, reject) => {
         const transaction = db.transaction('appState', 'readwrite');
-        const request = transaction.objectStore('appState').put({ key, value });
-        request.onsuccess = () => resolve();
-        request.onerror = (event) => reject(event.target.error);
+        const store = transaction.objectStore('appState');
+        const put = () => {
+            const request = store.put({ key, value });
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        };
+        // Lieux créés (`customPois_<destination>`, une dizaine de sites
+        // d'écriture) : leurs champs changés sont datés ici, à l'unique point
+        // d'écriture (field-dates.js), sur les objets reçus, ceux de la mémoire.
+        if (typeof key === 'string' && key.startsWith('customPois_') && Array.isArray(value)) {
+            const getRequest = store.get(key);
+            getRequest.onsuccess = () => { stampCreatedPlaces(getRequest.result?.value, value); put(); };
+            getRequest.onerror = (event) => reject(event.target.error);
+        } else {
+            put();
+        }
     }));
 }
 
@@ -419,6 +450,34 @@ export async function deletePoiData(mapId, poiId) {
  * @param {string[]} keys
  * @returns {Promise<number>} Nombre de clés restantes.
  */
+/**
+ * REMPLACE l'entrée d'une fiche par `data` (sans fusion avec l'ancienne), en
+ * comparant à l'ancienne pour les dates. Remplace le couple « deletePoiData puis
+ * savePoiData », qui faisait passer chaque champ pour neuf (ancienne entrée
+ * effacée avant la comparaison).
+ */
+export async function replacePoiData(mapId, poiId, data) {
+    return withRetry(db => new Promise((resolve, reject) => {
+        const tx = db.transaction('poiUserData', 'readwrite');
+        const store = tx.objectStore('poiUserData');
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+        const getReq = store.get([mapId, poiId]);
+        getReq.onsuccess = () => {
+            const existing = getReq.result || null;
+            // Les dates déjà posées suivent ; un champ absent de `data` est un
+            // retrait, daté comme tel.
+            const carried = { ...(existing?.[FIELD_DATES_KEY] || {}), ...(data?.[FIELD_DATES_KEY] || {}) };
+            const removed = existing
+                ? Object.keys(existing).filter(k => k !== 'mapId' && k !== 'poiId' && !(k in data))
+                : [];
+            const dates = datesAfterRemoval(carried, removed) || carried;
+            const next = Object.keys(dates).length ? { ...data, [FIELD_DATES_KEY]: dates } : data;
+            store.put({ ...withStamps(mapId, poiId, existing, next), mapId, poiId });
+        };
+    }));
+}
+
 export async function removePoiDataKeys(mapId, poiId, keys) {
     return withRetry(db => new Promise((resolve, reject) => {
         const tx = db.transaction('poiUserData', 'readwrite');
@@ -432,9 +491,15 @@ export async function removePoiDataKeys(mapId, poiId, keys) {
             if (!existing) return;
             const next = { ...existing };
             if (next[BASE_KEY]) next[BASE_KEY] = { ...next[BASE_KEY] };
-            (keys || []).forEach(k => { delete next[k]; });
+            const removed = (keys || []).filter(k => k in next);
+            removed.forEach(k => { delete next[k]; });
             pruneStamps(next); // plus d'estampille pour un champ retiré
-            remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId').length;
+            // Retirer un champ (retour à la valeur officielle) est un changement
+            // daté : une fusion saura qu'il est plus récent qu'une version qui
+            // le portait encore.
+            const dates = datesAfterRemoval(next[FIELD_DATES_KEY], removed);
+            if (dates) { next[FIELD_DATES_KEY] = dates; notifyStamps(mapId, poiId, { [FIELD_DATES_KEY]: dates }); }
+            remaining = Object.keys(next).filter(k => k !== 'mapId' && k !== 'poiId' && k !== FIELD_DATES_KEY).length;
             if (remaining === 0) store.delete([mapId, poiId]);
             else store.put({ ...next, mapId, poiId });
         };
@@ -501,13 +566,25 @@ export async function getAllCircuitsForMap(mapId) {
     });
 }
 
+/**
+ * Enregistre un circuit. Sa date de modification (`updatedAt`, field-dates.js)
+ * est posée ici si son contenu change ; elle est aussi écrite sur l'objet reçu
+ * (souvent celui de la mémoire, d'où partent les sauvegardes).
+ */
 export async function saveCircuit(circuitData) {
     const db = await initDB();
     return new Promise((resolve, reject) => {
         const transaction = db.transaction('savedCircuits', 'readwrite');
-        const request = transaction.objectStore('savedCircuits').put(circuitData);
-        request.onsuccess = () => resolve();
-        request.onerror = (event) => reject(event.target.error);
+        const store = transaction.objectStore('savedCircuits');
+        const getRequest = store.get(circuitData.id);
+        getRequest.onsuccess = () => {
+            const updatedAt = circuitUpdatedAt(getRequest.result || null, circuitData);
+            if (updatedAt !== undefined) circuitData.updatedAt = updatedAt;
+            const request = store.put(circuitData);
+            request.onsuccess = () => resolve();
+            request.onerror = (event) => reject(event.target.error);
+        };
+        getRequest.onerror = (event) => reject(event.target.error);
     });
 }
 

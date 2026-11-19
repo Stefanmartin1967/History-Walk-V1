@@ -6,6 +6,12 @@
 
 ---
 
+- DATES DE CHANGEMENT DES DONNÉES DU USER (v3.7.555). PR 1 du chantier « synchro users » (Google Drive), décidé avec Stefan le 19/11/2026. Rien ne change à l'écran : c'est la fondation de la restauration qui fusionne et de la synchronisation.
+  - Chaque champ modifié d'une fiche porte sa date (`_fieldDates`, donnée personnelle jamais publiée) ; un champ retiré (retour à l'officiel) est daté aussi. Lieux créés : chaque champ et la position (`_position`). Circuits perso : `updatedAt` quand le contenu change, `trashUpdatedAt` au geste Corbeille. Une date apportée par une fusion est gardée (field-dates.js).
+  - Posées aux points d'écriture uniques (database.js : savePoiData, batchSavePoiData, removePoiDataKeys, saveCircuit, softDeleteCircuit/restoreCircuit, saveAppState des lieux créés), recopiées en mémoire, d'où partent les sauvegardes.
+  - `replacePoiData` remplace le couple « supprimer puis réenregistrer » de l'éditeur, qui aurait fait passer chaque champ pour neuf.
+  - Le fichier de sauvegarde gagne ce qui lui manquait : circuits cachés et dates des circuits faits / cachés.
+
 - NOTES D'AVANT LE CHANTIER : LE DÉPÔT GAGNE (v3.7.554). Décision de Stefan le 19/11/2026.
   - Constat : 84 notes de Djerba en conflit sur le téléphone (versions de mars, jamais relues avant le point 3 pendant que le PC les corrigeait), et 13 notes supprimées en août-octobre RESSUSCITÉES par le téléphone (absentes du dépôt, donc « jamais envoyées » selon l'ancienne règle).
   - Une note jamais synchronisée et pas modifiée depuis prend la version du dépôt ; absente du dépôt, elle est retirée de l'appareil. Ne joue qu'une fois : ensuite chaque note a sa version de départ. Les vrais conflits (modifiée des deux côtés) ne changent pas.
