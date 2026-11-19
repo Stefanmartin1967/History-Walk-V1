@@ -7,6 +7,7 @@ import { showToast } from './toast.js';
 import { saveAppState, getAllPoiPhotosForMap, blobToBase64 } from './database.js';
 import { applyRestore } from './restore-apply.js';
 import { confirmRestore } from './restore-ui.js';
+import { switchActiveDestination } from './destination-switch.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
@@ -319,14 +320,17 @@ export async function restoreBackup(json) {
         if (json.draftDestination) {
             const zones = json.draftZones || { type: 'FeatureCollection', features: [] };
             await createLocalDraftDestination(mapId, json.draftDestination, { type: 'FeatureCollection', features: [] }, zones);
-            try { localStorage.setItem('hw_active_dest', mapId); } catch (_) { /* ignore */ }
         }
 
-        // Redémarrage : l'app recharge la carte officielle, y applique les données
-        // réunies, et montre le résumé (restore-ui.js, showRestoreSummaryIfPending).
+        // Redémarrage SUR LA DESTINATION DU FICHIER : l'app recharge sa carte, y
+        // applique les données réunies, et montre le résumé (restore-ui.js,
+        // showRestoreSummaryIfPending). 19/11/2026 : un simple rechargement
+        // rouvrait la destination ouverte au moment de restaurer (le démarrage
+        // lit `?map=` puis `hw_active_dest`, pas `lastMapId`) — restaurer un
+        // fichier de Charleroi depuis Djerba cachait le résumé (constaté par Stefan).
         showToast("Données réunies ! Redémarrage…", "success");
         setTimeout(() => {
-            window.location.reload();
+            switchActiveDestination(mapId);
         }, 1200);
 
     } catch (error) {

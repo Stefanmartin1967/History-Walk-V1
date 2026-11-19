@@ -34,6 +34,11 @@ describe('mergedFieldDates (fiches)', () => {
             .toEqual({ description: 80 });
     });
 
+    it('espaces de fin et fins de ligne ne comptent pas comme un changement', () => {
+        expect(mergedFieldDates({ notes: 'Essai 2' }, { notes: 'Essai 2 ' }, 100)).toBeNull();
+        expect(mergedFieldDates({ notes: 'A\nB' }, { notes: 'A\r\nB' }, 100)).toBeNull();
+    });
+
     it('les clés techniques ne sont jamais datées', () => {
         expect(mergedFieldDates({}, { _baseSha: { lat: 'x' }, noteSync: { sha: 's' }, vu: true, vuUpdatedAt: 5 }, 100)).toBeNull();
     });
