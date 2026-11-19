@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Essai Google Drive</title>
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#0D3B66">
+<!--
+  Page d'ESSAI (19/11/2026), hors application : Heripia peut-elle synchroniser
+  les données d'un user dans SON Google Drive (dossier caché appDataFolder,
+  accès drive.appdata), sans serveur ?
+
+  Questions auxquelles elle répond, sur le PC et dans l'application installée
+  du téléphone :
+   1. la fenêtre de connexion Google s'ouvre-t-elle (application installée) ?
+   2. combien de temps dure l'accès (expires_in) ?
+   3. une fois expiré, le renouvellement demande-t-il de se reconnecter, ou la
+      fenêtre s'ouvre-t-elle et se ferme-t-elle d'elle-même ?
+   4. un renouvellement SANS geste (au démarrage) est-il bloqué ?
+
+  Rien n'est envoyé ailleurs que dans le Drive de la personne connectée. Le
+  journal reste dans ce navigateur (localStorage), à copier à la main.
+-->
+<style>
+:root {
+  --bg: #F6F3EC; --surface: #FFFFFF; --ink: #22201B; --soft: #5E574B; --line: rgba(34,32,27,.16);
+  --cta: #B5532F; --cta-ink: #FFFFFF; --ok: #2F6B3A; --ko: #A3302A; --mono: ui-monospace, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #1B1A17; --surface: #262420; --ink: #EEE8DC; --soft: #B5AC9C; --line: rgba(238,232,220,.16);
+          --cta: #D06A43; --cta-ink: #1B1A17; --ok: #7FC48A; --ko: #F08A80; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+main { max-width: 640px; margin: 0 auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+h1 { margin: 0; font-size: 20px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px; }
+.row { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.lbl { color: var(--soft); }
+.ok { color: var(--ok); font-weight: 600; }
+.ko { color: var(--ko); font-weight: 600; }
+.btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+button { min-height: 46px; border-radius: 10px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font: inherit; font-weight: 600; padding: 8px 10px; cursor: pointer; }
+button.primary { background: var(--cta); color: var(--cta-ink); border: 0; }
+button:disabled { opacity: .5; cursor: default; }
+#log { font: 12px/1.45 var(--mono); white-space: pre-wrap; word-break: break-word; max-height: 50vh; overflow: auto; margin: 0; }
+small { color: var(--soft); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Essai Google Drive</h1>
+  <small>Page d'essai pour Heripia, sans rapport avec l'application. Elle écrit un petit fichier dans un dossier caché de ton Google Drive, réservé à cet essai.</small>
+
+  <section class="card" aria-label="État">
+    <div class="row"><span class="lbl">Ouverte</span><span id="mode">…</span></div>
+    <div class="row"><span class="lbl">Accès Google</span><span id="access">aucun</span></div>
+    <div class="row"><span class="lbl">Expire</span><span id="expires">—</span></div>
+    <div class="row"><span class="lbl">Première connexion</span><span id="first">—</span></div>
+  </section>
+
+  <section class="btns" aria-label="Actions">
+    <button class="primary" id="b-connect" type="button">1. Se connecter</button>
+    <button id="b-write" type="button">2. Écrire</button>
+    <button id="b-read" type="button">3. Lire</button>
+    <button id="b-renew" type="button">4. Renouveler l'accès</button>
+    <button id="b-delete" type="button">Effacer le fichier</button>
+    <button id="b-revoke" type="button">Retirer l'accès</button>
+  </section>
+
+  <section class="card" aria-label="Journal">
+    <div class="row"><strong>Journal</strong><span><button id="b-copy" type="button">Copier</button> <button id="b-clear" type="button">Vider</button></span></div>
+    <pre id="log"></pre>
+  </section>
+</main>
+
+<script>
+// ─── Réglage ────────────────────────────────────────────────────────────────
+// Identifiant du client OAuth (console Google Cloud, type « Application Web »).
+// Public par nature : il n'est pas secret.
+const CLIENT_ID = '618075568540-dbd6ein7nsbmgu3ieadcf9jjmgmcdke4.apps.googleusercontent.com';
+const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
+const FILE_NAME = 'essai-heripia.json';
+const LOG_KEY = 'essai_drive_log';
+const FIRST_KEY = 'essai_drive_first_grant';
+const GRANTED_KEY = 'essai_drive_granted';
+
+// ─── Journal (gardé dans ce navigateur) ────────────────────────────────────
+const logEl = document.getElementById('log');
+function readLog() { try { return JSON.parse(localStorage.getItem(LOG_KEY) || '[]'); } catch { return []; } }
+function writeLog(list) { try { localStorage.setItem(LOG_KEY, JSON.stringify(list.slice(-300))); } catch {} }
+function stamp(d = new Date()) {
+  const p = n => String(n).padStart(2, '0');
+  return `${p(d.getDate())}/${p(d.getMonth() + 1)} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function log(msg) {
+  const list = readLog();
+  list.push(`${stamp()} [${modeLabel()}] ${msg}`);
+  writeLog(list);
+  render();
+}
+function render() { logEl.textContent = readLog().slice().reverse().join('\n'); }
+
+function modeLabel() {
+  return window.matchMedia('(display-mode: standalone)').matches || navigator.standalone ? 'appli installée' : 'navigateur';
+}
+function device() {
+  const ua = navigator.userAgent;
+  if (/Android/i.test(ua)) return 'Android';
+  if (/iPhone|iPad/i.test(ua)) return 'iOS';
+  if (/Windows/i.test(ua)) return 'Windows';
+  return 'autre';
+}
+
+// ─── Accès Google (modèle par jeton, sans serveur) ─────────────────────────
+let token = null;        // { value, expiresAt }
+let client = null;
+let pendingAction = null;
+let requestStartedAt = 0;
+
+function hasToken() { return token && Date.now() < token.expiresAt - 30000; }
+
+function initClient() {
+  if (!CLIENT_ID) { log("⚠️ Identifiant du client Google pas encore renseigné : l'essai ne peut pas commencer."); return; }
+  if (!window.google?.accounts?.oauth2) { log('⚠️ Bibliothèque Google pas chargée (réseau ?)'); return; }
+  client = google.accounts.oauth2.initTokenClient({
+    client_id: CLIENT_ID,
+    scope: SCOPE,
+    callback: (resp) => {
+      const ms = Date.now() - requestStartedAt;
+      if (resp.error) { log(`❌ Réponse Google en erreur : ${resp.error} ${resp.error_description || ''}`); return; }
+      const secs = Number(resp.expires_in) || 0;
+      token = { value: resp.access_token, expiresAt: Date.now() + secs * 1000 };
+      if (!localStorage.getItem(FIRST_KEY)) localStorage.setItem(FIRST_KEY, new Date().toISOString());
+      localStorage.setItem(GRANTED_KEY, '1');
+      log(`✅ Accès obtenu en ${(ms / 1000).toFixed(1)} s, valable ${Math.round(secs / 60)} min (expires_in = ${secs})`);
+      updateStatus();
+      const next = pendingAction; pendingAction = null;
+      if (next) next();
+    },
+    error_callback: (err) => {
+      const ms = Date.now() - requestStartedAt;
+      log(`❌ Fenêtre Google : ${err?.type || 'erreur inconnue'} (après ${(ms / 1000).toFixed(1)} s)${err?.message ? ' — ' + err.message : ''}`);
+    },
+  });
+}
+
+function requestAccess(reason, { prompt } = {}) {
+  if (!client) initClient();
+  if (!client) return;
+  requestStartedAt = Date.now();
+  log(`→ Demande d'accès (${reason})${prompt !== undefined ? `, prompt='${prompt}'` : ''}`);
+  try { client.requestAccessToken(prompt !== undefined ? { prompt } : {}); }
+  catch (e) { log(`❌ requestAccessToken a levé : ${e.message}`); }
+}
+
+// Exécute une action Drive ; sans accès valable, demande l'accès d'abord (dans le même geste).
+function withAccess(action, reason) {
+  if (hasToken()) return action();
+  log(token ? '⏰ Accès expiré' : 'Pas encore d’accès');
+  pendingAction = action;
+  requestAccess(reason, { prompt: '' });
+}
+
+// ─── Drive : dossier caché appDataFolder ───────────────────────────────────
+async function drive(url, opts = {}) {
+  const res = await fetch(url, { ...opts, headers: { ...(opts.headers || {}), Authorization: `Bearer ${token.value}` } });
+  if (res.status === 401) { token = null; updateStatus(); throw new Error('401 : accès refusé ou expiré'); }
+  if (!res.ok) throw new Error(`HTTP ${res.status} ${await res.text().catch(() => '')}`.slice(0, 300));
+  return res;
+}
+async function findFile() {
+  const q = encodeURIComponent(`name='${FILE_NAME}'`);
+  const res = await drive(`https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,name,modifiedTime,size)`);
+  return (await res.json()).files?.[0] || null;
+}
+async function writeFile() {
+  const t0 = Date.now();
+  const existing = await findFile();
+  const previous = existing ? await (await drive(`https://www.googleapis.com/drive/v3/files/${existing.id}?alt=media`)).json().catch(() => ({})) : {};
+  const body = JSON.stringify({ count: (previous.count || 0) + 1, writtenAt: new Date().toISOString(), by: `${device()} · ${modeLabel()}` });
+  if (existing) {
+    await drive(`https://www.googleapis.com/upload/drive/v3/files/${existing.id}?uploadType=media`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body });
+  } else {
+    const boundary = 'essai' + Math.random().toString(36).slice(2);
+    const meta = JSON.stringify({ name: FILE_NAME, parents: ['appDataFolder'] });
+    const multipart = `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`;
+    await drive('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart', { method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipart });
+  }
+  log(`💾 Écrit (${existing ? 'mis à jour' : 'créé'}) en ${Date.now() - t0} ms : ${body}`);
+}
+async function readFile() {
+  const f = await findFile();
+  if (!f) { log('📭 Aucun fichier d’essai dans le Drive'); return; }
+  const data = await (await drive(`https://www.googleapis.com/drive/v3/files/${f.id}?alt=media`)).text();
+  log(`📖 Lu (modifié ${f.modifiedTime}) : ${data}`);
+}
+async function deleteFile() {
+  const f = await findFile();
+  if (!f) { log('📭 Rien à effacer'); return; }
+  await drive(`https://www.googleapis.com/drive/v3/files/${f.id}`, { method: 'DELETE' });
+  log('🗑️ Fichier d’essai effacé du Drive');
+}
+const safe = (fn, label) => async () => { try { await fn(); } catch (e) { log(`❌ ${label} : ${e.message}`); } };
+
+// ─── État affiché ──────────────────────────────────────────────────────────
+function updateStatus() {
+  document.getElementById('mode').textContent = `${device()} · ${modeLabel()}`;
+  const acc = document.getElementById('access');
+  const exp = document.getElementById('expires');
+  if (hasToken()) {
+    acc.innerHTML = '<span class="ok">valable</span>';
+    const min = Math.max(0, Math.round((token.expiresAt - Date.now()) / 60000));
+    exp.textContent = `${stamp(new Date(token.expiresAt))} (dans ${min} min)`;
+  } else {
+    acc.innerHTML = token ? '<span class="ko">expiré</span>' : 'aucun';
+    exp.textContent = '—';
+  }
+  const first = localStorage.getItem(FIRST_KEY);
+  document.getElementById('first').textContent = first ? stamp(new Date(first)) : '—';
+}
+
+// ─── Boutons ───────────────────────────────────────────────────────────────
+document.getElementById('b-connect').onclick = () => requestAccess('bouton Se connecter');
+document.getElementById('b-write').onclick = () => withAccess(safe(writeFile, 'Écriture'), 'bouton Écrire');
+document.getElementById('b-read').onclick = () => withAccess(safe(readFile, 'Lecture'), 'bouton Lire');
+document.getElementById('b-renew').onclick = () => requestAccess('bouton Renouveler', { prompt: '' });
+document.getElementById('b-delete').onclick = () => withAccess(safe(deleteFile, 'Effacement'), 'bouton Effacer');
+document.getElementById('b-revoke').onclick = () => {
+  if (!token) { log('Pas d’accès à retirer (connecte-toi d’abord)'); return; }
+  google.accounts.oauth2.revoke(token.value, () => { token = null; localStorage.removeItem(GRANTED_KEY); log('🔒 Accès retiré (consentement annulé)'); updateStatus(); });
+};
+document.getElementById('b-copy').onclick = async () => {
+  const text = readLog().join('\n');
+  try { await navigator.clipboard.writeText(text); log('📋 Journal copié'); }
+  catch { log('❌ Copie impossible : sélectionne le texte à la main'); }
+};
+document.getElementById('b-clear').onclick = () => { writeLog([]); render(); };
+
+setInterval(updateStatus, 15000);
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') { updateStatus(); log('↩︎ Retour sur la page'); } });
+
+// ─── Démarrage ─────────────────────────────────────────────────────────────
+render();
+updateStatus();
+log(`Ouverture de la page (${device()})`);
+const gis = document.createElement('script');
+gis.src = 'https://accounts.google.com/gsi/client';
+gis.async = true;
+gis.onload = () => {
+  initClient();
+  // Question 4 : renouvellement SANS geste, au démarrage, si un accès a déjà été donné.
+  if (client && localStorage.getItem(GRANTED_KEY)) requestAccess('au démarrage, sans geste', { prompt: '' });
+};
+gis.onerror = () => log('❌ Impossible de charger la bibliothèque Google (réseau ?)');
+document.head.appendChild(gis);
+</script>
+</body>
+</html>
