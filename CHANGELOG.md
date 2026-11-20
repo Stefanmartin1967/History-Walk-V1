@@ -6,6 +6,11 @@
 
 ---
 
+- PAGES LÉGALES (v3.7.561). Chantier « synchro users », préalable à la PR 5 : Google exige des règles de confidentialité et des conditions d'utilisation publiées pour valider la connexion au compte Google. Texte validé par Stefan le 20/11/2026 (droit belge).
+  - `public/confidentialite.html` et `public/conditions.html` (feuille commune `public/legal.css`) : pages statiques autonomes, claires et sombres, sans script (CSP stricte), noindex comme le reste du site jusqu'au lancement.
+  - Hors précache et hors navigateFallback du service worker (vite.config.js) : servies par le réseau, une correction du texte est vue tout de suite.
+  - Mentions légales (legal-modal.js) : nouvelle section « Confidentialité et conditions » avec les deux liens.
+  - La page Confidentialité décrit déjà « Déconnecter » et « Effacer mes données Heripia de mon compte Google », qui arrivent avec les PR 5 et 6.
 - RETROUVER LES FICHES MISES À JOUR (v3.7.560). Suite de la PR 4 « synchro users », maquette écrans 23-27 validée par Stefan le 20/11/2026, après son essai sur téléphone : le message du démarrage ne disait pas QUELLES fiches, et un toast raté ne laissait aucun moyen de les retrouver.
   - Le toast du démarrage (à sa place habituelle, 10 s) porte un bouton : une seule fiche → elle est nommée, « Ouvrir » l'ouvre ; plusieurs → « Voir » ouvre la liste.
   - Tant qu'une fiche n'est pas réglée (« Garder ce texte » ou « Revenir à la version officielle ») : point bleu sur la roue dentée (« Outils » sur PC, « Menu » du dock sur téléphone) et entrée « Fiches mises à jour » avec le nombre (menu Outils PC ; « Mon parcours » sur téléphone). « Plus tard » laisse la fiche dans la liste.

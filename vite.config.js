@@ -41,7 +41,7 @@ export default defineConfig({
         // ce filet, cf. renommage Marabout→Mausolée du 15/08/2026). En les
         // ignorant, ils tombent sur le NetworkFirst 'app-data' (même traitement
         // que .geojson) → frais à chaque boot online, fallback cache hors-ligne.
-        globIgnores: ['**/og-image.png', '**/screenshots/**', '**/destinations.json', '**/circuits/*.json', '**/poi-categories.json', '**/essai-drive/**'],
+        globIgnores: ['**/og-image.png', '**/screenshots/**', '**/destinations.json', '**/circuits/*.json', '**/poi-categories.json', '**/essai-drive/**', '**/confidentialite.html', '**/conditions.html', '**/legal.css'],
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
         // Les .gpx (partage/téléchargement de circuit) ne doivent PAS être happés
         // par le navigateFallback → sinon scanner le QR d'un circuit (qui pointe
@@ -54,7 +54,9 @@ export default defineConfig({
         // lien Google recevrait index.html au lieu de la page du lieu.
         // /essai-drive/ : page d'essai Google Drive (19/11/2026), installable à part ;
         // servie par le réseau, jamais remplacée par l'app.
-        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /^\/lieux\//, /^\/essai-drive\//],
+        // Pages légales (20/11/2026, exigées par Google) : idem, et hors précache
+        // (globIgnores) pour qu'une correction du texte soit vue tout de suite.
+        navigateFallbackDenylist: [/\.gpx(\?.*)?$/i, /^\/lieux\//, /^\/essai-drive\//, /^\/(confidentialite|conditions)\.html/],
         // Script chargé par le service worker avant Workbox : supprime, à
         // l'activation, les caches que plus aucune route n'utilise (ex. l'ancien
         // `map-tiles`, cf. tuiles plus bas). Fichier de public/ → copié à la
