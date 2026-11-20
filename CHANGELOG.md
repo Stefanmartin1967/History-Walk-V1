@@ -6,9 +6,13 @@
 
 ---
 
+- SYNCHRO GOOGLE : DEUX TEXTES CORRIGÉS (v3.7.565). Essai de Stefan (20/11/2026), validé par lui.
+  - Toast d'un texte modifié sur deux appareils : le champ devient le sujet, avec le bon accord (« La note de « Restaurant chez Moktar » a été modifiée sur deux appareils. », « Le nom de « … » a été modifié… ») au lieu de « « Restaurant chez Moktar » a été modifiée ».
+  - Liste « Textes à choisir » : « Note · sur deux appareils » (plus d'accord à faire).
 - SYNCHRO GOOGLE : CRÉATION DU FICHIER RÉPARÉE (v3.7.564). Essai de Stefan (Brave, téléphone, 20/11/2026) : « La synchronisation n'a pas été faite : Google n'a pas répondu comme prévu », 3 modifications en attente.
   - Cause : l'envoi qui CRÉE le fichier d'une destination dans le compte (format multipart, google-account.js writeAppFile) portait de vrais retours à la ligne dans le code ; une ligne vide se glissait après chaque séparateur, les en-têtes des deux parties étaient perdus. La liaison passait (rien à envoyer sur un appareil vide), la première vraie modification échouait.
-  - Correction : séparateurs écrits en séquences d'échappement (`'
+  - Correction : séparateurs écrits en séquences d'échappement (`'
+
 '`), jamais en retours à la ligne du code. Test qui relit l'envoi aussi strictement que Google.
   - L'encadré d'échec donne maintenant le détail de Google (« Détail : HTTP 400 … »), pour pouvoir le rapporter.
 - SYNCHRONISATION AVEC LE COMPTE GOOGLE (v3.7.563). PR 6 du chantier « synchro users », maquette écrans 35-42 validée par Stefan le 20/11/2026 (« premier toucher »).
