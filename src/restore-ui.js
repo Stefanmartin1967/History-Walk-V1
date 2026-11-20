@@ -43,19 +43,26 @@ function namesList(ids, max = 3) {
 /** Écran « avant de restaurer » : résout true si le user confirme. */
 export function confirmRestore(json, mapId, isPlace) {
     const c = describeBackup(json, isPlace);
-    const content = [
-        plural(c.visits, 'visite', 'visites'), plural(c.notes, 'note', 'notes'),
-        plural(c.places, 'lieu créé', 'lieux créés'), plural(c.circuits, 'circuit perso', 'circuits perso'),
-        plural(c.done, 'circuit fait', 'circuits faits'),
-    ].join(' · ');
+    const isPhotos = c.kind === 'photos';
+    const content = isPhotos
+        ? `${plural(c.photos, 'photo', 'photos')} sur ${plural(c.photoPlaces, 'lieu', 'lieux')}`
+        : [
+            plural(c.visits, 'visite', 'visites'), plural(c.notes, 'note', 'notes'),
+            plural(c.places, 'lieu créé', 'lieux créés'), plural(c.circuits, 'circuit perso', 'circuits perso'),
+            plural(c.done, 'circuit fait', 'circuits faits'),
+            c.photos ? plural(c.photos, 'photo', 'photos') : '',
+        ].filter(Boolean).join(' · ');
+    const how = isPhotos
+        ? 'Elles s\'ajoutent à celles de cet appareil : aucune n\'est remplacée, et une photo déjà présente n\'est pas copiée deux fois.'
+        : 'Elle va être <strong>réunie</strong> avec ce qui est sur cet appareil : ce qui manque ici est ajouté ; pour ce qui existe des deux côtés, la version la plus récente est gardée.';
     const when = formatDate(json.date);
     const body = `
         <div class="rs-stack">
             <section class="rs-file">
-                <span class="rs-file-head"><i data-lucide="file"></i><b>Sauvegarde${when ? ` du ${escapeXml(when)}` : ''} · ${escapeXml(getDestinationLabel(mapId) || mapId)}</b></span>
+                <span class="rs-file-head"><i data-lucide="${isPhotos ? 'image' : 'file'}"></i><b>${isPhotos ? 'Sauvegarde de photos' : 'Sauvegarde'}${when ? ` du ${escapeXml(when)}` : ''} · ${escapeXml(getDestinationLabel(mapId) || mapId)}</b></span>
                 <span class="rs-file-content">${escapeXml(content)}</span>
             </section>
-            <p class="rs-text">Elle va être <strong>réunie</strong> avec ce qui est sur cet appareil : ce qui manque ici est ajouté ; pour ce qui existe des deux côtés, la version la plus récente est gardée.</p>
+            <p class="rs-text">${how}</p>
             <p class="rs-safe"><i data-lucide="shield-check"></i><span>Une copie de cet appareil est prise juste avant : vous pourrez annuler la restauration.</span></p>
         </div>`;
     const footer = `
@@ -84,6 +91,7 @@ function openSummary(mapId, last) {
         s.notes ? plural(s.notes, 'note', 'notes') : '',
         s.places?.length ? `${plural(s.places.length, 'lieu créé', 'lieux créés')} (${escapeXml(s.places.slice(0, 3).join(', '))}${s.places.length > 3 ? '…' : ''})` : '',
         s.circuits?.length ? plural(s.circuits.length, 'circuit perso', 'circuits perso') : '',
+        s.photos ? plural(s.photos, 'photo', 'photos') : '',
     ].filter(Boolean);
     const updated = s.updated || [];
     const kept = s.kept || [];
