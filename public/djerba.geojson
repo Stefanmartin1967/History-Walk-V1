@@ -18,8 +18,6 @@
         "Source": "Seabel Rym Beach Djerba, accueil | https://www.seabelhotels.com/fr/seabel-rym-beach/accueil/\nSeabel Rym Beach Djerba, FAQ | https://www.seabelhotels.com/fr/seabel-rym-beach/faq-seabel-rym-beach/\nSéjours à l'hôtel : du 1ᵉʳ au 11 mars 2025, du 2 au 22 novembre 2025, du 7 au 28 mars 2026",
         "verified": true,
         "HW_ID": "HW-01K77WPE67RPHVJVH6A0PC0ZWD",
-        "lat": 33.826540531288295,
-        "lng": 11.046173596441804,
         "description": "Hôtel-club 4 étoiles de la côte nord, au pied du phare de Taguermess.\nLe site de l'hôtel indique 352 chambres réparties dans sept petits bâtiments de style djerbien, au bord d'une plage de sable fin, dans une palmeraie de 11 hectares.\nIl annonce une cuisine internationale et des spécialités locales, trois buffets à thème par semaine (italien, tunisien, pêcheur) et une journée tunisienne hebdomadaire.\nLors de séjours en 2025 et 2026, la journée tunisienne avait lieu le jeudi et une soirée djerbienne le dimanche.",
         "timeH": 0,
         "timeM": 0,
@@ -68,8 +66,6 @@
         "Zone": "Midoun",
         "Source": "Wikipédia, « Phare de Taguermess » | https://fr.wikipedia.org/wiki/Phare_de_Taguermess\nObservation sur place, lors de trois visites : 2 mars 2025, 10 mars 2025 et 3 novembre 2025",
         "HW_ID": "HW-01K77WPE6722XTDVPGCQTPPBXR",
-        "lat": 33.82269956652683,
-        "lng": 11.042709897308695,
         "description": "Phare de la pointe orientale de Djerba, à Ras Taguermess.\nSelon l'article Wikipédia qui lui est consacré, il est mis en service en août 1895 ; c'est une tour tronconique de 49 mètres, peinte en blanc avec trois bandes rouges, présentée comme le plus haut phare de Tunisie. L'article le situe sur un site ouvert au public, sans que le phare se visite.\nSur place, le phare se trouve en zone militaire : il ne peut être ni approché ni photographié.",
         "timeH": 0,
         "timeM": 0,
@@ -118,8 +114,6 @@
         "Zone": "Arkou",
         "Source": "https://fr.wikipedia.org/wiki/Mus%C3%A9e_Lalla_Hadria",
         "HW_ID": "HW-01K77WPE67RMBHZ4JFG7PXTCRT",
-        "lat": 33.81974876092748,
-        "lng": 11.044993404919456,
         "description": "Faisant partie de Djerba Explore, ce musée est composé de quinze salles thématiques et s'étend sur 3000 M². Situé sur la lagune proche, il tient son nom de Lalla Hadria du nom d'une résistante ayant protégé les soldats de l'île. Il abrite une collection de plus de mille pièces réparties en deux collection : les cultures arabo-musulmanes et les arts de Tunisie.",
         "timeH": 0,
         "timeM": 0,
@@ -211,8 +205,6 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 326 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nPanneau d'information de l'ASSIDJE, relevé sur place le 14 novembre 2025",
         "HW_ID": "HW-01K77WPE67YEYJ337ADV7QBX5P",
-        "lat": 33.809407066170884,
-        "lng": 11.022803811461296,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -351,8 +343,6 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 327 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE68SW9XWBFFCRBWXZYM",
-        "lat": 33.79830473262425,
-        "lng": 11.028761487657116,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -435,8 +425,6 @@
         "Zone": "Arkou",
         "Source": "Répertoire J. Fathallah, n° 316 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6805D82JWX44QAVVV9",
-        "lat": 33.793757704808506,
-        "lng": 11.021607244300704,
         "accessPoint": [
           11.0216903,
           33.7936715
@@ -841,8 +829,6 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "lat": 33.84414638476136,
-        "lng": 10.984550312786718,
         "maps_ref": "https://maps.app.goo.gl/8NDk1mrHwEK35YJh9",
         "descriptionPublic": true,
         "osmChecked": true,
@@ -1497,8 +1483,6 @@
           "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799984164.jpg",
           "photos/poi_HW-01K77WPE6A27VC54MEK4XHGV9V_1786799985779.jpg"
         ],
-        "lat": 33.79195986809296,
-        "lng": 10.970237553119661,
         "mapsHasPhoto": true,
         "jalelChecked": true
       }
@@ -1716,8 +1700,6 @@
           "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563648261.jpg",
           "photos/poi_HW-01K77WPE6AS77NE3CRGHPYHJSE_1780563650075.jpg"
         ],
-        "lat": 33.84365238152852,
-        "lng": 10.953460343293337,
         "description": "Mosquée en ruine de Mazraia.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 57 sous le nom de Mrabet Jallouli ou Loulou : mosquée wahbite abandonnée, de datation « ancienne ».\nAppelée Haja Loulou sur OSM.\nSur place, l'édifice est en ruine.",
         "Temps_minutes": 0,
         "Prix_TND": 0,
@@ -1890,8 +1872,6 @@
           10.9844424,
           33.7664539
         ],
-        "lat": 33.766501115888644,
-        "lng": 10.984541764908952,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -2035,8 +2015,6 @@
           "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563655921.jpg",
           "photos/poi_HW-01K77WPE6BE6FFWWHJH6DSSZQ6_1780563658090.jpg"
         ],
-        "lat": 33.84594580893958,
-        "lng": 10.94515085352863,
         "info_gpx": "",
         "description": "Mosquée en ruine de Mazraia.\nUn arrêté du 4 mars 2025 de la ministre des Affaires culturelles la range parmi les monuments historiques protégés.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 53 sous le nom de Mosquée Khouch : mosquée wahbite en ruines, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la nomme aussi Sidi Krouch.\nSur place, l'édifice est en ruine.",
         "Temps_minutes": 0,
@@ -2445,8 +2423,6 @@
         "Zone": "Beni Maaguel",
         "Source": "Répertoire J. Fathallah, n° 229 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01K77WPE6BG5X8YCCG07AEVQY8",
-        "lat": 33.76527363106212,
-        "lng": 10.955706684923967,
         "Sous-type": "À coupoles",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -2609,8 +2585,6 @@
         "Zone": "El Mahboubine",
         "Source": "",
         "HW_ID": "HW-01K77WPE6CVR05TNW29PD4ZT89",
-        "lat": 33.77996445120918,
-        "lng": 10.935070359649803,
         "Sous-type": "Huilerie",
         "État": "Désaffecté",
         "Accès": "",
@@ -2821,8 +2795,6 @@
           10.910154,
           33.8387667
         ],
-        "lat": 33.83890426734857,
-        "lng": 10.910195511239891,
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
@@ -3029,8 +3001,6 @@
         "Zone": "Mazraia",
         "Source": "",
         "HW_ID": "HW-01K77WPE6CT3DF98CMH3E04Y6K",
-        "lat": 33.86929385368915,
-        "lng": 10.913241117082853,
         "Sous-type": "",
         "État": "Vestiges partiels",
         "Accès": "Intérieur visitable",
@@ -3077,8 +3047,6 @@
           10.9052828,
           33.8520114
         ],
-        "lat": 33.851867843494105,
-        "lng": 10.905244947493227,
         "Sous-type": "À coupoles",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
@@ -3268,8 +3236,6 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "lat": 33.76632577573908,
-        "lng": 10.971047793701809,
         "accessPoint": [
           10.9710165,
           33.7665497
@@ -3942,8 +3908,6 @@
           10.8304784,
           33.804779
         ],
-        "lat": 33.8047299200158,
-        "lng": 10.83038410453163,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -4446,8 +4410,6 @@
           10.9256031,
           33.7269471
         ],
-        "lat": 33.726968703311286,
-        "lng": 10.925255573269498,
         "Sous-type": "",
         "État": "",
         "Accès": "",
@@ -4725,8 +4687,6 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true,
-        "lat": 33.862436726885974,
-        "lng": 10.873938202857971,
         "commons_ref": ""
       }
     },
@@ -4877,8 +4837,6 @@
           10.864539,
           33.8354548
         ],
-        "lat": 33.8354060003172,
-        "lng": 10.864357352022925,
         "Sous-type": "À minaret",
         "État": "",
         "Accès": "Extérieur seulement",
@@ -5823,8 +5781,6 @@
         "Zone": "El Groa",
         "Source": "Répertoire J. Fathallah, n° 90 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6H6EYA6VQDR7SPKG7T",
-        "lat": 33.81259762448359,
-        "lng": 10.845753550763336,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -5889,8 +5845,6 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "lat": 33.884576169924706,
-        "lng": 10.856090779389143,
         "osm_ref": "way/360980733",
         "maps_ref": "https://maps.app.goo.gl/cAwL3TBh2ivt2Fwz9",
         "verified": true,
@@ -6365,8 +6319,6 @@
         "mapsChecked": true,
         "mapsHasPhoto": true,
         "jalelChecked": true,
-        "lat": 33.696253255075305,
-        "lng": 10.903175620616295,
         "commons_ref": ""
       }
     },
@@ -6481,8 +6433,6 @@
           10.9145893,
           33.6859226
         ],
-        "lat": 33.68584439152305,
-        "lng": 10.913947876157037,
         "Sous-type": "",
         "État": "Ruine",
         "Accès": "Intérieur visitable",
@@ -6773,8 +6723,6 @@
           10.8845951,
           33.6975569
         ],
-        "lat": 33.69735113689494,
-        "lng": 10.88460266083396,
         "Sous-type": "",
         "État": "Ruine",
         "Accès": "Extérieur seulement",
@@ -6939,8 +6887,6 @@
         "Zone": "El Hachene",
         "Source": "UNESCO, « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », composante 1640-009 | https://whc.unesco.org/fr/list/1640/cartes/\nJournal officiel de la République tunisienne, n° 45 du 22 avril 2022, arrêté du 15 mars 2022 relatif à la protection des monuments historiques et archéologiques, n° 48 | https://lake.jort.tn/journal-officiel/fr/2022/045.pdf\nRépertoire J. Fathallah, n° 63 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Grande mosquée des Banū Yahrāsan » | https://fr.wikipedia.org/wiki/Grande_mosqu%C3%A9e_des_Ban%C5%AB_Yahr%C4%81san",
         "HW_ID": "HW-01K77WPE6KZREFKAR2DA4MTN6Y",
-        "lat": 33.86191783421097,
-        "lng": 10.821201358600382,
         "description": "Grande mosquée de Hachene, à l'est de Mellita.\nElle est l'une des composantes du bien « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », inscrit en 2023 sur la Liste du patrimoine mondial de l'UNESCO. Un arrêté du 15 mars 2022 de la ministre des Affaires culturelles la range parmi les monuments historiques protégés.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 63 sous le nom de Boumessouer Yasja Yahrasni, ou la grande mosquée : mosquée et grande médersa ibadite du 4ᵉ siècle de l'hégire, soit le 10ᵉ siècle.\nSelon l'article Wikipédia qui lui est consacré, fondé sur les travaux de Virginie Prevost (2023) et de Naïma Benkari-Boudidah (2014), la tradition en attribue la fondation à Abu Miswar Yusja al-Yahrasni, figure majeure de l'ibadisme à Djerba, et son fils Fasil l'aurait achevée ; la date reste incertaine, le plus souvent placée dans la première moitié du 10ᵉ siècle. Le complexe couvre près de 4 000 m² : une salle de prière carrée d'environ 15 m de côté, un minaret bas à l'angle nord-est, un vaste portique (riwaq) et, au nord de la cour, les chambres de la médersa. Un cadran solaire de marbre y porte la date de 1205 de l'hégire, soit 1790-1791.",
         "accessPoint": [
           10.8210776,
@@ -6983,8 +6929,6 @@
         "Zone": "Guellala",
         "Source": "Répertoire J. Fathallah, n° 213 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Liste de mosquées de Djerba » | https://fr.wikipedia.org/wiki/Liste_de_mosqu%C3%A9es_de_Djerba",
         "HW_ID": "HW-01KJABRN0HW8QW8YRNXWWWA8WB",
-        "lat": 33.72238028973345,
-        "lng": 10.868149975553354,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -7117,8 +7061,6 @@
           10.8639085,
           33.710186
         ],
-        "lat": 33.71050850467812,
-        "lng": 10.863619407618103,
         "Sous-type": "À minaret",
         "État": "",
         "Accès": "Extérieur seulement",
@@ -7161,8 +7103,6 @@
           10.8634234,
           33.7098322
         ],
-        "lat": 33.71001473442526,
-        "lng": 10.86332666195451,
         "Sous-type": "À minaret",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
@@ -7329,8 +7269,6 @@
           10.8746784,
           33.6944665
         ],
-        "lat": 33.6944287875692,
-        "lng": 10.874508179523637,
         "Sous-type": "",
         "État": "Désaffecté",
         "Accès": "Intérieur visitable",
@@ -7370,8 +7308,6 @@
         "Zone": "Guellala",
         "Source": "UNESCO, « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », composante 1640-025 | https://whc.unesco.org/fr/list/1640/cartes/\nRépertoire J. Fathallah, n° 208 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nWikipédia, « Mosquée Sidi Yati » | https://fr.wikipedia.org/wiki/Mosqu%C3%A9e_Sidi_Yati\n« Sidi Yati, Berdaoui et Louta, les 3 mosquées restaurées à Djerba » (tunisie.co, 15 décembre 2019) | https://tunisie.co/article/12865/decouverte/musees-et-monuments/sidi-yati-541321\nHouda Ben Younes (ASSIDJE), « La restauration des mosquées ibadites : Louta, Bardaoui et Ammi Yathi à l'île de Djerba » (Panorama Solutions, 8 mai 2025) | https://panorama.solutions/en/solution/la-restauration-des-mosquees-ibadites-louta-bardaoui-et-ammi-yathi-lile-de-djerba",
         "HW_ID": "HW-01K77WPE6M06HKCT56J0P2HVZZ",
-        "lat": 33.70679340842852,
-        "lng": 10.86177572607994,
         "description": "Mosquée-sanctuaire de la côte sud-ouest, près d'El Fahmine, à Guellala.\nElle est l'une des composantes du bien « Djerba : témoignage d'un mode d'occupation d'un territoire insulaire », inscrit en 2023 sur la Liste du patrimoine mondial de l'UNESCO.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 208 sous le nom de Sidi Yati : mosquée ibadite wahbite abandonnée, restaurée en 2019, de datation « ancienne ».\nSelon l'article Wikipédia qui lui est consacré, d'après Virginie Prevost et Naima Benkari-Boudidah, ce sanctuaire probablement fondé au 10ᵉ siècle est l'un des principaux lieux de pèlerinage ibadites de l'île : la tradition y place la tombe de Khalaf ibn Ahmad, dit Sidi Yati, chef des nukkarites de Djerba. Autour d'une esplanade, il réunit une salle de prière couverte de quatre coupoles, une qoubba funéraire et des pièces annexes.\nElle fait partie des trois mosquées ibadites (avec Louta et Bardaoui) restaurées par l'Association pour la sauvegarde de l'île de Djerba (ASSIDJE), avec la fondation Swiss Contact et sous la supervision de l'Institut national du patrimoine ; une visite des monuments restaurés a eu lieu le 14 décembre 2019.",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -7575,8 +7511,6 @@
         "Zone": "Mellita",
         "Source": "Répertoire J. Fathallah, n° 67 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
         "HW_ID": "HW-01K77WPE6M14K3331NK215THZS",
-        "lat": 33.86202557545826,
-        "lng": 10.806473154993117,
         "description": "Mosquée de Mellita.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 67 sous le nom de Sidi Taieb : mosquée mausolée malékite.",
         "accessPoint": [
           10.8063801,
@@ -7904,8 +7838,6 @@
         "Zone": "Oued Ezzebib",
         "Source": "Répertoire J. Fathallah, n° 250 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nJournal officiel de la République tunisienne, n° 45 du 22 avril 2022, arrêté du 15 mars 2022 relatif à la protection des monuments historiques et archéologiques, n° 45 | https://lake.jort.tn/journal-officiel/fr/2022/045.pdf",
         "HW_ID": "HW-01K77WPE6NQ35ND0B1DQGT4BQT",
-        "lat": 33.776948697531495,
-        "lng": 10.794902295487537,
         "Sous-type": "À minaret",
         "État": "Désaffecté",
         "Accès": "Extérieur seulement",
@@ -8597,8 +8529,6 @@
           10.7560444,
           33.7209509
         ],
-        "lat": 33.721092902947724,
-        "lng": 10.755966140896282,
         "Sous-type": "À minaret",
         "État": "En activité",
         "Accès": "Extérieur seulement",
@@ -9686,8 +9616,6 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "lat": 33.74640544422446,
-        "lng": 10.920675697047313,
         "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": null,
@@ -10228,8 +10156,6 @@
         "HW_ID": "HW-4KDVBOTPXFYVRIW9IEE46G09VG",
         "description": "Obélisque édifié en 1906 à l'emplacement de la Tour des crânes, également nommée Borj-Er-Rous Celle-ci avait été érigée par Dragut suite à la bataille entre Ottomans et les forces chrétiennes le 11 mai 1560. Elle fût détruite en 1840 sur ordre de Ahmed Ier, bey de Tunis. Les restes humains fûrent enterrés dans le cimetière catholique de Houmt Souk.",
         "info_gpx": "Obélisque édifié en 1906, à l'emplacement de la tour des crânes composée de 6000 crânes et d'ossements selon les récits",
-        "lat": 33.88488004113873,
-        "lng": 10.857553292469067,
         "Sous-type": "",
         "État": "",
         "Accès": "",
@@ -10335,9 +10261,7 @@
         "osmCheckedDate": "2026-09-05",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true,
-        "lat": 33.76172488185075,
-        "lng": 11.006959684785162
+        "jalelChecked": true
       }
     },
     {
@@ -10508,7 +10432,8 @@
         "accessPoint": [
           11.0378186,
           33.7733675
-        ]
+        ],
+        "description": "Petit restaurant de bord de mer"
       }
     },
     {
@@ -11117,8 +11042,6 @@
         "Catégorie": "Mosquée",
         "Zone": "Mezrene",
         "HW_ID": "HW-01KJABRN0XK418GNG8GH5KPT4A",
-        "lat": 33.7812942328873,
-        "lng": 10.76678663492203,
         "description": "Jalel n° 245 — « Mosquée Fguira. Mazrane. Mosquée ibadite wahbite abandonnée au profit d'une nouvelle mosquée adjacente. Ancienne.",
         "accessPoint": [
           10.7669336,
@@ -11200,8 +11123,6 @@
         "Zone": "Erriadh",
         "HW_ID": "HW-01KJABRN0Y687FFD0EF2SYPZ3Q",
         "description": "Mosquée d'Erriadh.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 74 sous le nom de Sidi Mbarek, entre Hachane et Barkouk : mosquée malékite d'origine wahbite, de datation « ancienne ». La liste Wikipédia des mosquées de Djerba la reprend sous le même nom, la donne pour wahbite puis malékite et en activité.",
-        "lat": 33.84303341184757,
-        "lng": 10.84358528258597,
         "Nom du site arabe": "",
         "Sous-type": "À minaret",
         "État": "En activité",
@@ -11380,9 +11301,7 @@
         "osmCheckedDate": "2026-08-22",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": false,
-        "lat": 33.82111692001716,
-        "lng": 10.853577554225923
+        "jalelChecked": false
       }
     },
     {
@@ -11456,8 +11375,6 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "lat": 33.82122850370071,
-        "lng": 10.837669435859802,
         "osm_ref": "node/13453526848",
         "maps_ref": "https://maps.app.goo.gl/gDzJfPAEWBhagdnS9",
         "descriptionPublic": true,
@@ -11626,8 +11543,6 @@
         "Facebook": "",
         "verified": true,
         "introuvableCarte": false,
-        "lat": 33.83428778491142,
-        "lng": 10.826873181401124,
         "osm_ref": "node/13516776102",
         "maps_ref": "https://maps.app.goo.gl/eSMBaYjPGNDrBDi28",
         "descriptionPublic": true,
@@ -11721,8 +11636,6 @@
         "introuvableCarte": false,
         "osm_ref": "way/990353527",
         "maps_ref": "https://maps.app.goo.gl/244Ah1MaW2uovumh7",
-        "lat": 33.81391470584298,
-        "lng": 10.97268506884575,
         "descriptionPublic": true,
         "photos": [
           "photos/poi_HW-01KKS462NFDJ7E80WSWZ9TK9R7_1786799982400.jpg"
@@ -11803,8 +11716,6 @@
         "introuvableCarte": false,
         "osm_ref": "way/1560008114",
         "maps_ref": "",
-        "lat": 33.81366398849076,
-        "lng": 10.973104834556581,
         "descriptionPublic": true,
         "osmChecked": true,
         "osmCheckedDate": "2026-09-26",
@@ -12285,9 +12196,7 @@
           10.775559,
           33.8242747
         ],
-        "commons_ref": "",
-        "lat": 33.82433430901992,
-        "lng": 10.77527060715605
+        "commons_ref": ""
       }
     },
     {
@@ -13388,8 +13297,6 @@
         "mapsChecked": true,
         "mapsHasPhoto": false,
         "jalelChecked": true,
-        "lat": 33.781635132640794,
-        "lng": 10.942887238298052,
         "accessPoint": [
           10.9429948,
           33.7817256
@@ -13682,9 +13589,7 @@
         "osmCheckedDate": "2026-09-20",
         "mapsChecked": true,
         "mapsHasPhoto": false,
-        "jalelChecked": true,
-        "lat": 33.818889734342896,
-        "lng": 10.789266228675842
+        "jalelChecked": true
       }
     },
     {
@@ -14137,8 +14042,6 @@
           10.9607545,
           33.7983216
         ],
-        "lat": 33.79818109535056,
-        "lng": 10.960601708386777,
         "osmChecked": true,
         "osmCheckedDate": null,
         "mapsChecked": true,
@@ -15570,8 +15473,6 @@
         "HW_ID": "HW-01M1M84Q36X58HWRKYYQVAKFEN",
         "maps_ref": "https://maps.app.goo.gl/K44m7zh9NaTTKxZy9",
         "osmCheckedDate": "2026-09-03",
-        "lat": 33.730411604818414,
-        "lng": 10.775576814733704,
         "Zone": "Ajim"
       }
     },
@@ -15608,8 +15509,6 @@
           10.8492179,
           33.8879596
         ],
-        "lat": 33.88721836724584,
-        "lng": 10.84912399699816,
         "Zone": "Bou Melel",
         "Nom du site arabe": "",
         "info_gpx": "",
@@ -16226,9 +16125,7 @@
         "Téléphone": "",
         "Horaires": "",
         "Facebook": "",
-        "osmCheckedDate": null,
-        "lat": 33.81195357237801,
-        "lng": 11.000708804316444
+        "osmCheckedDate": null
       }
     },
     {
@@ -17132,8 +17029,6 @@
           33.8436478
         ],
         "Zone": "Sedghaiane",
-        "lat": 33.84344644441643,
-        "lng": 10.909172794271978,
         "Nom du site arabe": "",
         "Sous-type": "À coupoles",
         "État": "Désaffecté",
@@ -17968,9 +17863,7 @@
         "commons_ref": "",
         "Téléphone": "",
         "Horaires": "",
-        "Facebook": "",
-        "lat": 33.827427336611805,
-        "lng": 10.772427306807923
+        "Facebook": ""
       }
     },
     {
@@ -18346,9 +18239,7 @@
           10.8459893,
           33.8328115
         ],
-        "Zone": "Erriadh",
-        "lat": 33.8327115597041,
-        "lng": 10.846196676114108
+        "Zone": "Erriadh"
       }
     },
     {
