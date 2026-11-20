@@ -14,6 +14,7 @@ import { showToast } from './toast.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { eventBus } from './events.js';
+import { recordCircuitDeletion } from './google-sync.js';
 
 function escapeHtml(s) {
     return String(s ?? '').replace(/[&<>"']/g, c => (
@@ -143,6 +144,7 @@ function refreshCircuitList() {
 async function restoreDeletedCircuit(circuitId) {
     const circuit = (state.myCircuits || []).find(c => String(c.id) === String(circuitId));
     const trashUpdatedAt = await restoreCircuit(circuitId);
+    eventBus.emit('sync:local-change'); // synchro Google : la Corbeille suit
     if (circuit) {
         circuit.isDeleted = false;
         if (trashUpdatedAt) circuit.trashUpdatedAt = trashUpdatedAt;
@@ -154,6 +156,9 @@ async function permanentlyDeleteCircuit(circuitId) {
     const circuit = (state.myCircuits || []).find(c => String(c.id) === String(circuitId));
     try {
         await deleteCircuitById(circuitId);
+        // Synchro Google (PR 7) : les autres appareils le suppriment aussi.
+        await recordCircuitDeletion(state.currentMapId, circuitId);
+        eventBus.emit('sync:local-change');
         const idx = (state.myCircuits || []).findIndex(c => String(c.id) === String(circuitId));
         if (idx >= 0) state.myCircuits.splice(idx, 1);
         showToast(`Circuit "${circuit?.name || 'Sans nom'}" supprimé définitivement.`, 'info');

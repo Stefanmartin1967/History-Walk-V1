@@ -14,6 +14,7 @@
 // Module FEUILLE (state + database) : importable partout sans cycle.
 import { state, setOfficialCircuits, addMyCircuit, updateMyCircuit, removeMyCircuit } from './state.js';
 import { saveCircuit, deleteCircuitById, getAppState, saveAppState, getAllCircuitsForMap } from './database.js';
+import { eventBus } from './events.js';
 
 /**
  * Écrit un circuit en IndexedDB PUIS le pose en mémoire, à sa place unique.
@@ -39,6 +40,9 @@ export async function persistCircuit(circuit) {
 
     await saveCircuit(circuit);
     placeCircuitInState(circuit);
+    // Une vraie modification : la synchro Google des users l'envoie (sans effet
+    // en admin ou sans compte relié, cf. google-sync-ui.js).
+    eventBus.emit('sync:local-change');
     return circuit;
 }
 

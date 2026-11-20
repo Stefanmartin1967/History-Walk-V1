@@ -13,14 +13,20 @@ const h = vi.hoisted(() => ({
 
 vi.mock('../src/state.js', () => ({
     state: { currentMapId: 'other', userData: {}, loadedFeatures: [], customFeatures: [], destinations: { maps: { djerba: {}, other: {} } } },
-    setHiddenPoiIds: vi.fn(), setHiddenCircuitIds: vi.fn(), setHiddenCircuitIdsUpdatedAt: vi.fn(),
+    removeMyCircuit: vi.fn(), setHiddenPoiIds: vi.fn(), setHiddenCircuitIds: vi.fn(), setHiddenCircuitIdsUpdatedAt: vi.fn(),
     setOfficialCircuitsStatus: vi.fn(), setOfficialCircuitsStatusUpdatedAt: vi.fn(),
 }));
 vi.mock('../src/database.js', () => ({
+    saveCircuit: vi.fn(async (c) => {
+        const i = h.device.circuits.findIndex(x => x.id === c.id);
+        if (i > -1) h.device.circuits[i] = JSON.parse(JSON.stringify(c)); else h.device.circuits.push(JSON.parse(JSON.stringify(c)));
+    }),
+    deleteCircuitById: vi.fn(async (id) => { h.device.circuits = h.device.circuits.filter(c => c.id !== id); }),
     replacePoiData: vi.fn(async (mapId, id, data) => { h.device.userData[id] = JSON.parse(JSON.stringify(data)); }),
     saveAppState: vi.fn(async (k, v) => { h.app[k] = v; }),
     getAppState: vi.fn(async (k) => h.app[k]),
 }));
+vi.mock('../src/circuit-store.js', () => ({ placeCircuitInState: vi.fn(), persistCircuit: vi.fn() }));
 vi.mock('../src/restore-apply.js', () => ({
     readDeviceState: vi.fn(async () => JSON.parse(JSON.stringify(h.device))),
 }));
@@ -65,11 +71,10 @@ describe('compte encore vide pour la destination', () => {
         expect(h.writes).toHaveLength(0);
     });
 
-    it('les circuits perso ne partent pas encore (PR 7)', async () => {
-        h.device.userData.A = { notes: 'x', _fieldDates: { notes: 5 } };
-        h.device.circuits = [{ id: 'c1', name: 'Boucle', poiIds: [] }];
+    it('les circuits perso partent aussi (PR 7)', async () => {
+        h.device.circuits = [{ id: 'c1', name: 'Boucle', poiIds: ['A'] }];
         await syncMap('djerba');
-        expect(h.writes[0].content.state.circuits).toEqual([]);
+        expect(h.writes[0].content.state.circuits.map(c => c.id)).toEqual(['c1']);
     });
 });
 
@@ -147,5 +152,64 @@ describe('buildUpload', () => {
         expect(out.places[0].properties.description).toBe('là-bas');
         expect(out.places[0].properties._fieldDates.description).toBe(3000);
         expect(after.places[0].properties.description).toBe('ici'); // l'appareil n'est pas touché
+    });
+});
+
+describe('circuits perso (PR 7)', () => {
+    const circuit = (over = {}) => ({ id: 'c1', name: 'Boucle', poiIds: ['A', 'B'], realTrack: [[1, 1], [2, 2]], updatedAt: 1000, _partDates: { name: 1000, description: 1000, steps: 1000, trace: 1000 }, ...over });
+
+    it('un circuit créé sur l’autre appareil arrive ici', async () => {
+        h.device.userData.X = { notes: 'x', _fieldDates: { notes: 5 } };
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [circuit()] });
+        const r = await syncMap('djerba');
+        expect(h.device.circuits.map(c => c.id)).toEqual(['c1']);
+        expect(r.summary.circuits).toEqual(['Boucle']);
+    });
+
+    it('supprimé définitivement ailleurs : supprimé ici aussi, sans question', async () => {
+        h.device.circuits = [circuit()];
+        h.drive[fileNameFor('djerba')] = remoteFile({}, { deletedCircuits: { c1: 5000 } });
+        await syncMap('djerba');
+        expect(h.device.circuits).toEqual([]);
+        expect(h.writes.at(-1).content.deletedCircuits).toEqual({ c1: 5000 });
+    });
+
+    it('modifié ici après la suppression : gardé dans la Corbeille, annoncé', async () => {
+        h.device.circuits = [circuit({ updatedAt: 9000, _partDates: { name: 9000 } })];
+        h.drive[fileNameFor('djerba')] = remoteFile({}, { deletedCircuits: { c1: 5000 } });
+        const r = await syncMap('djerba');
+        expect(h.device.circuits[0].isDeleted).toBe(true);
+        expect(r.survivors.map(c => c.id)).toEqual(['c1']);
+    });
+
+    it('étapes modifiées des deux côtés : à choisir, le compte garde ses étapes et son tracé', async () => {
+        h.device.circuits = [circuit({ poiIds: ['A', 'B', 'C'], realTrack: [[1, 1], [3, 3]], _partDates: { name: 1000, description: 1000, steps: 2000, trace: 2000 } })];
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [circuit({ poiIds: ['A', 'D'], realTrack: [[1, 1], [4, 4]], _partDates: { name: 1000, description: 1000, steps: 3000, trace: 3000 } })] });
+        const r = await syncMap('djerba');
+        expect(r.conflicts.map(c => c.key)).toEqual(['steps']); // le tracé suit les étapes
+        expect(h.device.circuits[0].poiIds).toEqual(['A', 'B', 'C']);
+        const sent = h.writes.at(-1).content.state.circuits[0];
+        expect(sent.poiIds).toEqual(['A', 'D']);
+        expect(sent.realTrack).toEqual([[1, 1], [4, 4]]);
+    });
+
+    it('nom changé d’un seul côté : passe sans question', async () => {
+        h.device.circuits = [circuit()];
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [circuit({ name: 'Boucle du sud', _partDates: { name: 4000, description: 1000, steps: 1000, trace: 1000 }, _partFrom: { name: 1000 } })] });
+        const r = await syncMap('djerba');
+        expect(r.conflicts).toEqual([]);
+        expect(h.device.circuits[0].name).toBe('Boucle du sud');
+    });
+});
+
+describe('annonce des choix', () => {
+    it('un choix déjà en attente n’est pas réannoncé à la synchronisation suivante', async () => {
+        h.device.userData.G = { description: 'Version PC.', _fieldDates: { description: 2000 } };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { description: 'Version téléphone.', _fieldDates: { description: 3000 } } } });
+        const first = await syncMap('djerba');
+        expect(first.newConflicts).toHaveLength(1);
+        const second = await syncMap('djerba');
+        expect(second.conflicts).toHaveLength(1);
+        expect(second.newConflicts).toHaveLength(0);
     });
 });

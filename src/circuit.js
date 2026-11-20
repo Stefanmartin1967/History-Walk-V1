@@ -107,6 +107,8 @@ export async function setCircuitVisitedState(circuitId, isVisited) {
         // Si on a (aussi ou uniquement) une copie locale (Shadow), on la met à jour aussi pour la cohérence
         if (localCircuit) {
             localCircuit.isCompleted = isVisited;
+            // Date du geste : la synchro fait gagner le plus récent (téléphone ↔ PC).
+            localCircuit.completedUpdatedAt = Date.now();
             await saveCircuit(localCircuit);
         }
 

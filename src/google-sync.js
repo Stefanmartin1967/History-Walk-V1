@@ -4,7 +4,7 @@
 //
 // Un fichier par destination dans l'espace Heripia du compte (dossier caché
 // appDataFolder) : `heripia-<destination>.json` = { v, mapId, savedAt, state,
-// discarded }. `state` a la forme de readDeviceState (restore-apply.js).
+// discarded, deletedCircuits }. `state` a la forme de readDeviceState (restore-apply.js).
 //
 // Une synchronisation = la restauration qui fusionne, avec le compte pour
 // « fichier » (restore-merge.js : le plus récent gagne, un texte écrit des deux
@@ -12,19 +12,24 @@
 //  1. lire l'appareil et le fichier du compte ;
 //  2. réunir ; écrire sur l'appareil ce qui vient du compte (en base et en
 //     mémoire si c'est la destination ouverte) ;
-//  3. renvoyer la réunion dans le compte. Pour un texte encore À CHOISIR, le
+//  3. renvoyer la réunion dans le compte. Pour un morceau encore À CHOISIR, le
 //     compte garde SA version : l'autre appareil ne voit donc pas de conflit,
-//     et quand le user choisit ici, le texte choisi part de cette version
-//     (writeChosenText) — l'autre appareil le reprend sans question.
+//     et quand le user choisit ici, le morceau choisi part de cette version
+//     (writeChosenText, resolveCircuitChoice) — l'autre appareil le reprend sans question.
 //
-// Pas encore synchronisés : les circuits perso (PR 7) et les doublons de lieux
-// (PR 8). Les photos ne suivent jamais (seules leurs références légères).
+// Circuits perso (PR 7, maquette écrans 43-46) : réunis morceau par morceau
+// (circuit-merge.js) ; Corbeille et « fait » suivent ; suppressions définitives
+// gardées pour toujours dans le fichier (`deletedCircuits`). Pas encore : les
+// doublons de lieux (PR 8). Les photos ne suivent jamais (seules leurs références).
 
-import { state, setHiddenPoiIds, setHiddenCircuitIds, setHiddenCircuitIdsUpdatedAt, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt } from './state.js';
-import { replacePoiData, saveAppState, getAppState } from './database.js';
+import { state, removeMyCircuit, setHiddenPoiIds, setHiddenCircuitIds, setHiddenCircuitIdsUpdatedAt, setOfficialCircuitsStatus, setOfficialCircuitsStatusUpdatedAt } from './state.js';
+import { replacePoiData, saveAppState, getAppState, saveCircuit, deleteCircuitById } from './database.js';
+import { placeCircuitInState, persistCircuit } from './circuit-store.js';
 import { readDeviceState } from './restore-apply.js';
 import { mergeBackup } from './restore-merge.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY } from './field-dates.js';
+import { mergeCircuitLists, takePart } from './circuit-merge.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY } from './field-dates.js';
+import { generateHWID } from './utils.js';
 import { listAppFileIds, readAppFile, writeAppFile } from './google-account.js';
 
 const FORMAT = 1;
@@ -32,11 +37,19 @@ const KEEP_DISCARDED_MS = 30 * 24 * 3600 * 1000;
 export const fileNameFor = (mapId) => `heripia-${mapId}.json`;
 const conflictsKey = (mapId) => `syncConflicts_${mapId}`;
 const discardsKey = (mapId) => `syncDiscards_${mapId}`;
+const deletedKey = (mapId) => `deletedCircuits_${mapId}`;
 
-/** État d'une destination tel qu'on le synchronise (sans les circuits perso : PR 7). */
-async function deviceState(mapId) {
-    const here = await readDeviceState(mapId);
-    return { ...here, circuits: [] };
+/** Note une suppression définitive de circuit perso (Corbeille → Supprimer). */
+export async function recordCircuitDeletion(mapId, id, at = Date.now()) {
+    const list = (await getAppState(deletedKey(mapId))) || {};
+    list[String(id)] = at;
+    await saveAppState(deletedKey(mapId), list);
+}
+
+function unionDeletions(a = {}, b = {}) {
+    const out = { ...(a || {}) };
+    for (const [id, at] of Object.entries(b || {})) out[id] = Math.max(out[id] ?? 0, at);
+    return out;
 }
 
 function remoteState(file) {
@@ -44,7 +57,7 @@ function remoteState(file) {
     return {
         userData: s.userData || {},
         places: s.places || [],
-        circuits: [],
+        circuits: s.circuits || [],
         hiddenPoiIds: s.hiddenPoiIds || [],
         circuitsStatus: s.circuitsStatus || {},
         circuitsStatusUpdatedAt: s.circuitsStatusUpdatedAt || {},
@@ -54,6 +67,7 @@ function remoteState(file) {
 }
 
 const hasData = (s) => Object.keys(s.userData || {}).length > 0 || (s.places || []).length > 0
+    || (s.circuits || []).length > 0
     || (s.hiddenPoiIds || []).length > 0 || Object.keys(s.circuitsStatus || {}).length > 0
     || (s.hiddenCircuitIds || []).length > 0;
 
@@ -75,6 +89,15 @@ async function applyToDevice(mapId, result) {
     if (result.placesChanged) {
         await saveAppState(`customPois_${mapId}`, result.places);
         if (current) applyPlacesInMemory(result.places);
+    }
+    for (const circuit of result.circuitsToSave || []) {
+        const c = { ...circuit, mapId: circuit.mapId || mapId };
+        await saveCircuit(c);
+        if (current) placeCircuitInState(c);
+    }
+    for (const id of result.circuitsToDelete || []) {
+        await deleteCircuitById(id);
+        if (current && (state.myCircuits || []).some(c => String(c.id) === String(id))) removeMyCircuit(id);
     }
     await saveAppState(`hiddenPois_${mapId}`, result.hiddenPoiIds);
     await saveAppState(`official_circuits_status_${mapId}`, result.circuitsStatus);
@@ -112,12 +135,19 @@ function applyPlacesInMemory(places) {
 }
 
 /**
- * Ce qui part dans le compte : l'appareil après réunion, sauf pour les textes
+ * Ce qui part dans le compte : l'appareil après réunion, sauf pour les morceaux
  * encore à choisir, où le compte garde sa version (cf. en-tête).
  */
 export function buildUpload(after, remote, conflicts) {
     const out = JSON.parse(JSON.stringify(after));
     for (const c of conflicts) {
+        if (c.kind === 'circuit') {
+            const mine = (out.circuits || []).find(x => String(x.id) === String(c.id));
+            const theirs = (remote.circuits || []).find(x => String(x.id) === String(c.id));
+            if (!mine || !theirs) continue;
+            for (const part of c.key === 'steps' ? ['steps', 'trace'] : [c.key]) takePart(mine, theirs, part);
+            continue;
+        }
         if (c.kind === 'place') {
             const mine = out.places.find(p => p?.properties?.HW_ID === c.id);
             const theirs = remote.places.find(p => p?.properties?.HW_ID === c.id);
@@ -140,15 +170,17 @@ export function buildUpload(after, remote, conflicts) {
 
 /** Ce que le compte a reçu de l'appareil (pour « Envoyé depuis cet appareil »). */
 function sentSummary(remote, here) {
-    const s = mergeBackup(remote, here).summary;
-    return { visits: s.visits, notes: s.notes, places: s.places.length, updated: s.updated.length };
+    const s = mergeBackup({ ...remote, circuits: [] }, { ...here, circuits: [] }).summary;
+    const known = new Set((remote.circuits || []).map(c => String(c.id)));
+    const circuits = (here.circuits || []).filter(c => !known.has(String(c.id))).length;
+    return { visits: s.visits, notes: s.notes, places: s.places.length, updated: s.updated.length, circuits };
 }
 
-// ─── Textes à choisir et versions écartées ─────────────────────────────────
+// ─── À choisir et versions écartées ────────────────────────────────────────
 
 const sameConflict = (a, b) => a.kind === b.kind && a.id === b.id && a.key === b.key;
 
-/** Textes encore à choisir pour une destination. */
+/** Ce qui attend encore un choix pour une destination (textes, morceaux de circuits). */
 export async function getSyncConflicts(mapId) {
     return (await getAppState(conflictsKey(mapId))) || [];
 }
@@ -160,26 +192,63 @@ async function storeConflicts(mapId, fresh) {
     return next;
 }
 
-/** Oublie les textes à choisir de toutes les destinations (Déconnecter, Effacer). */
+/** Oublie ce qui attendait un choix, toutes destinations (Déconnecter, Effacer). */
 export async function clearSyncConflicts() {
     for (const mapId of knownMapIds()) await saveAppState(conflictsKey(mapId), []);
 }
 
 /**
- * Un texte a été choisi : il quitte la liste, et la (ou les) version(s)
+ * Un choix a été fait : il quitte la liste, et la (ou les) version(s)
  * écartée(s) partent au prochain envoi, gardées 30 jours dans le compte.
+ * @param {string|null} finalText texte gardé (textes) ; pour un circuit, `choice` dit le côté
+ * @param {'here'|'file'|'both'} [choice]
  */
-export async function resolveSyncConflict(mapId, conflict, finalText) {
+export async function resolveSyncConflict(mapId, conflict, finalText, choice) {
     const left = (await getSyncConflicts(mapId)).filter(c => !sameConflict(c, conflict));
     await saveAppState(conflictsKey(mapId), left);
     const discards = (await getAppState(discardsKey(mapId))) || [];
+    const isText = typeof conflict.here === 'string' || typeof conflict.file === 'string';
     for (const [side, value] of [['appareil', conflict.here], ['compte', conflict.file]]) {
-        if (typeof value === 'string' && value.trim() && value.trim() !== String(finalText).trim()) {
-            discards.push({ at: Date.now(), kind: conflict.kind, id: conflict.id, key: conflict.key, side, value });
-        }
+        const lost = isText
+            ? typeof value === 'string' && value.trim() !== '' && value.trim() !== String(finalText ?? '').trim()
+            : (choice === 'here' && side === 'compte') || (choice === 'file' && side === 'appareil');
+        if (lost) discards.push({ at: Date.now(), kind: conflict.kind, id: conflict.id, key: conflict.key, side, value });
     }
     await saveAppState(discardsKey(mapId), discards);
     return left;
+}
+
+/**
+ * Choix pour des étapes ou un tracé modifiés des deux côtés (écrans 44-45). Le
+ * morceau gardé est daté maintenant et part de la version du compte : l'autre
+ * appareil le reprend sans question.
+ * @param {'here'|'file'|'both'} choice  « both » : l'autre version devient une copie
+ */
+export async function resolveCircuitChoice(mapId, conflict, choice) {
+    const current = (state.myCircuits || []).find(c => String(c.id) === String(conflict.id));
+    if (!current) return resolveSyncConflict(mapId, conflict, null, choice);
+    const theirs = conflict.fileCircuit;
+    const parts = conflict.key === 'steps' ? ['steps', 'trace'] : [conflict.key];
+    const now = Date.now();
+    const next = JSON.parse(JSON.stringify(current));
+    for (const part of parts) {
+        if (choice === 'file' && theirs) {
+            takePart(next, theirs, part, now, conflict.fileDate);
+        } else {
+            next[PART_DATES_KEY] = { ...(next[PART_DATES_KEY] || {}), [part]: now };
+            next[PART_FROM_KEY] = { ...(next[PART_FROM_KEY] || {}), ...(conflict.fileDate !== undefined ? { [part]: conflict.fileDate } : {}) };
+        }
+    }
+    await persistCircuit(next);
+    if (choice === 'both' && theirs) {
+        const copy = JSON.parse(JSON.stringify(theirs));
+        copy.id = generateHWID();
+        copy.mapId = mapId;
+        copy.name = `${theirs.name} (copie)`;
+        for (const k of ['isDeleted', 'trashUpdatedAt', 'updatedAt', PART_DATES_KEY, PART_FROM_KEY]) delete copy[k];
+        await persistCircuit(copy);
+    }
+    return resolveSyncConflict(mapId, conflict, null, choice);
 }
 
 function mergeDiscarded(remoteList, localList, now = Date.now()) {
@@ -193,19 +262,25 @@ function mergeDiscarded(remoteList, localList, now = Date.now()) {
  * Synchronise une destination. L'accès Google doit être valable (google-account).
  * @param {string} mapId
  * @param {{ files?: Object<string,string> }} [opts] noms → ids déjà listés
- * @returns {Promise<{mapId:string, created:boolean, summary:object|null, sent:object|null, conflicts:Array, changed:boolean}>}
+ * @returns {Promise<{mapId:string, created:boolean, summary:object|null, sent:object|null, conflicts:Array, newConflicts?:Array, changed:boolean, survivors?:Array}>}
  */
 export async function syncMap(mapId, { files } = {}) {
     const ids = files || await listAppFileIds();
     const name = fileNameFor(mapId);
     const fileId = ids[name] || null;
-    const here = await deviceState(mapId);
+    const here = await readDeviceState(mapId);
     const pendingDiscards = (await getAppState(discardsKey(mapId))) || [];
+    const localDeletions = (await getAppState(deletedKey(mapId))) || {};
 
     if (!fileId) {
         // Compte encore vide pour cette destination : l'appareil y est copié.
-        if (!hasData(here)) return { mapId, created: false, summary: null, sent: null, conflicts: [], changed: false };
-        const id = await writeAppFile(null, name, { v: FORMAT, mapId, savedAt: Date.now(), state: here, discarded: mergeDiscarded([], pendingDiscards) });
+        if (!hasData(here) && !Object.keys(localDeletions).length) {
+            return { mapId, created: false, summary: null, sent: null, conflicts: [], changed: false };
+        }
+        const id = await writeAppFile(null, name, {
+            v: FORMAT, mapId, savedAt: Date.now(), state: here,
+            discarded: mergeDiscarded([], pendingDiscards), deletedCircuits: localDeletions,
+        });
         ids[name] = id;
         await saveAppState(discardsKey(mapId), []);
         return { mapId, created: true, summary: null, sent: sentSummary(remoteState({}), here), conflicts: [], changed: false };
@@ -213,19 +288,37 @@ export async function syncMap(mapId, { files } = {}) {
 
     const file = await readAppFile(fileId);
     const remote = remoteState(file);
-    const result = mergeBackup(here, remote);
+    // Fiches, lieux, listes : règles de la restauration. Circuits perso : morceau
+    // par morceau (circuit-merge.js), avec les suppressions des deux côtés.
+    const result = mergeBackup({ ...here, circuits: [] }, { ...remote, circuits: [] });
+    const deletions = unionDeletions(localDeletions, file?.deletedCircuits);
+    const circ = mergeCircuitLists(here.circuits, remote.circuits, deletions);
+    result.circuitsToSave = circ.toSave;
+    result.circuitsToDelete = circ.toDelete;
+    result.summary.circuits = circ.added.map(c => c.name);
     await applyToDevice(mapId, result);
-    const changed = Object.keys(result.userData).length > 0 || result.placesChanged;
+    const changed = Object.keys(result.userData).length > 0 || result.placesChanged
+        || circ.toSave.length > 0 || circ.toDelete.length > 0;
 
-    const after = await deviceState(mapId);
-    const conflicts = result.conflicts.length ? await storeConflicts(mapId, result.conflicts) : await getSyncConflicts(mapId);
+    const fresh = [
+        ...result.conflicts,
+        ...circ.conflicts.map(c => ({ ...c, fileCircuit: remote.circuits.find(x => String(x.id) === String(c.id)) })),
+    ];
+    const after = await readDeviceState(mapId);
+    // Un choix déjà en attente est retrouvé à chaque synchronisation : on ne
+    // l'annonce qu'une fois (sinon un toast à chaque envoi).
+    const before = await getSyncConflicts(mapId);
+    const newConflicts = fresh.filter(f => !before.some(b => sameConflict(b, f)));
+    const conflicts = fresh.length ? await storeConflicts(mapId, fresh) : before;
     const upload = buildUpload(after, remote, conflicts);
     await writeAppFile(fileId, name, {
         v: FORMAT, mapId, savedAt: Date.now(), state: upload,
         discarded: mergeDiscarded(file?.discarded, pendingDiscards),
+        deletedCircuits: deletions,
     });
     await saveAppState(discardsKey(mapId), []);
-    return { mapId, created: false, summary: result.summary, sent: sentSummary(remote, here), conflicts: result.conflicts, changed };
+    await saveAppState(deletedKey(mapId), deletions);
+    return { mapId, created: false, summary: result.summary, sent: sentSummary(remote, here), conflicts: fresh, newConflicts, changed, survivors: circ.survivors };
 }
 
 /** Destinations connues (destinations.json), la destination ouverte en tête. */

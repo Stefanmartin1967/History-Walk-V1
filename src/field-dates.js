@@ -137,7 +137,70 @@ export function stampCreatedPlaces(previous, next, now = Date.now()) {
 
 // Ce qui n'est pas le contenu du circuit : ses propres dates, la Corbeille et
 // le statut « fait » (daté à part, officialCircuitsStatusUpdatedAt).
-const CIRCUIT_VOLATILE = new Set(['updatedAt', 'trashUpdatedAt', 'isDeleted', 'isCompleted']);
+const CIRCUIT_VOLATILE = new Set([
+    'updatedAt', 'trashUpdatedAt', 'isDeleted', 'isCompleted', 'completedUpdatedAt',
+    '_partDates', '_partFrom',
+]);
+
+// Les MORCEAUX d'un circuit perso (synchro Google, PR 7, maquette écrans 43-46
+// validée par Stefan le 20/11/2026) : chacun a sa date, comparé séparément. On
+// ne demande que pour un morceau changé des deux côtés. Le reste du contenu
+// (transport, fichier…) suit le tracé.
+export const CIRCUIT_PARTS = {
+    name: ['name'],
+    description: ['description'],
+    steps: ['poiIds'],
+    trace: null, // tout le reste du contenu
+};
+export const PART_DATES_KEY = '_partDates';
+export const PART_FROM_KEY = '_partFrom';
+
+/** Valeur d'un morceau (texte comparable). */
+export function circuitPart(circuit, part) {
+    if (!circuit) return '';
+    const keys = CIRCUIT_PARTS[part];
+    const out = {};
+    if (keys) {
+        for (const k of keys) out[k] = circuit[k];
+    } else {
+        const named = new Set(Object.values(CIRCUIT_PARTS).flat().filter(Boolean));
+        for (const k of Object.keys(circuit).sort()) {
+            if (!CIRCUIT_VOLATILE.has(k) && !named.has(k) && k !== 'id' && k !== 'mapId') out[k] = circuit[k];
+        }
+    }
+    return JSON.stringify(out);
+}
+
+/** Date d'un morceau ; un circuit d'avant la PR 7 prend sa date d'ensemble. */
+export function circuitPartDate(circuit, part) {
+    return circuit?.[PART_DATES_KEY]?.[part] ?? circuit?.updatedAt;
+}
+
+/**
+ * Dates des morceaux qui changent dans une écriture (même règle que les champs :
+ * date du moment, sauf date apportée par l'écriture ; la date de départ est
+ * retenue dans `_partFrom`).
+ * @returns {{_partDates:object, _partFrom:object}|null}
+ */
+export function circuitPartStamps(existing, next, now = Date.now()) {
+    if (!next) return null;
+    const before = existing?.[PART_DATES_KEY] || {};
+    const beforeFrom = existing?.[PART_FROM_KEY] || {};
+    const given = next[PART_DATES_KEY] || {};
+    const givenFrom = next[PART_FROM_KEY] || {};
+    const dates = { ...before, ...given };
+    const from = { ...beforeFrom, ...givenFrom };
+    let changed = Object.keys(given).some(k => given[k] !== before[k]) || Object.keys(givenFrom).some(k => givenFrom[k] !== beforeFrom[k]);
+    for (const part of Object.keys(CIRCUIT_PARTS)) {
+        if (existing && circuitPart(existing, part) === circuitPart(next, part)) continue;
+        if (given[part] !== undefined && given[part] !== before[part]) continue; // date apportée
+        dates[part] = now;
+        const prev = existing ? circuitPartDate(existing, part) : undefined;
+        if (prev !== undefined) from[part] = prev; else delete from[part];
+        changed = true;
+    }
+    return changed ? { [PART_DATES_KEY]: dates, [PART_FROM_KEY]: from } : null;
+}
 
 function circuitContent(circuit) {
     if (!circuit) return '';

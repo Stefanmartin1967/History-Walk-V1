@@ -71,7 +71,7 @@ function buildSections(subs) {
                 // Textes modifiés sur deux appareils (synchro Google, 20/11/2026,
                 // maquette écran 39) : seulement s'il en reste à choisir.
                 ...(subs.chooseCount > 0
-                    ? [{ id: 'mob-action-sync-conflicts', ico: 'split', label: 'Textes à choisir', sub: 'Modifiés sur deux appareils', variant: 'choose', badge: subs.chooseCount }]
+                    ? [{ id: 'mob-action-sync-conflicts', ico: 'split', label: 'À choisir', sub: 'Modifié sur deux appareils', variant: 'choose', badge: subs.chooseCount }]
                     : []),
             ],
         },

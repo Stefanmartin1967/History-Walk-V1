@@ -15,7 +15,8 @@ import {
 } from './database.js';
 import { state } from './state.js';
 import { eventBus } from './events.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY } from './field-dates.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY } from './field-dates.js';
+import { persistCircuit } from './circuit-store.js';
 import { mergeBackup } from './restore-merge.js';
 import { PHOTOS_KIND, photosOfBackup, countPhotos, addPhotos, removeAddedPhotos } from './photo-backup.js';
 
@@ -179,6 +180,19 @@ export async function undoLastRestore(mapId) {
 export async function writeChosenText(mapId, conflict, finalText) {
     const now = Date.now();
     const from = conflict.fileDate;
+    if (conflict.kind === 'circuit') {
+        // Nom ou description d'un circuit perso (synchro Google, PR 7).
+        const circuit = (state.myCircuits || []).find(c => String(c.id) === String(conflict.id));
+        if (!circuit) return;
+        await persistCircuit({
+            ...circuit,
+            [conflict.key]: finalText,
+            [PART_DATES_KEY]: { ...(circuit[PART_DATES_KEY] || {}), [conflict.key]: now },
+            [PART_FROM_KEY]: { ...(circuit[PART_FROM_KEY] || {}), ...(from !== undefined ? { [conflict.key]: from } : {}) },
+        });
+        eventBus.emit('circuit:list-updated');
+        return;
+    }
     if (conflict.kind === 'place') {
         const feature = (state.customFeatures || []).find(f => f?.properties?.HW_ID === conflict.id);
         if (!feature) return;

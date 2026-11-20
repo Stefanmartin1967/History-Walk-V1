@@ -14,12 +14,12 @@
 // Jamais en mode admin (ses données suivent par GitHub).
 //
 // Un texte modifié sur deux appareils (écrans 39-40) : toast ordinaire avec
-// « Choisir », point ambre sur la roue dentée et entrée « Textes à choisir »
+// « Choisir », point ambre sur la roue dentée et entrée « À choisir »
 // tant qu'il en reste ; en attendant, la version de l'appareil reste affichée.
 
 import { state } from './state.js';
 import { eventBus } from './events.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, calculateDistance } from './utils.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showToast } from './toast.js';
@@ -28,8 +28,10 @@ import { renderSentences, syncSentenceBoxes, applySentenceBox } from './sentence
 import { writeChosenText } from './restore-apply.js';
 import { setAttention } from './attention.js';
 import { getLinkedAccount, hasGoogleAccess, renewGoogleAccess } from './google-account.js';
-import { syncMap, syncAllMaps, getSyncConflicts, resolveSyncConflict } from './google-sync.js';
-import { FIELD_DATES_KEY } from './field-dates.js';
+import { syncMap, syncAllMaps, getSyncConflicts, resolveSyncConflict, resolveCircuitChoice } from './google-sync.js';
+import { openCircuitTrash } from './circuit-trash-ui.js';
+import L from 'leaflet';
+import { FIELD_DATES_KEY, PART_DATES_KEY } from './field-dates.js';
 
 const LAST_KEY = 'hw_google_last_sync';      // date de la dernière synchronisation réussie
 const PENDING_KEY = 'hw_google_pending';     // modifications pas encore envoyées
@@ -54,6 +56,21 @@ const SUBJECTS = {
 export function changedSentence(key, place) {
     const [subject, participle] = SUBJECTS[key] || [`Le champ « ${key} »`, 'modifié'];
     return `${subject} de « ${place} » a été ${participle} sur deux appareils.`;
+}
+
+// Morceaux d'un circuit perso (PR 7, écrans 43-45).
+const CIRCUIT_SUBJECTS = {
+    name: ['Le nom du circuit', 'a été modifié'],
+    description: ['La description du circuit', 'a été modifiée'],
+    steps: ['Les étapes du circuit', 'ont été modifiées'],
+    trace: ['Le tracé du circuit', 'a été modifié'],
+};
+const CIRCUIT_LABELS = { name: 'nom', description: 'description', steps: 'étapes', trace: 'tracé' };
+
+/** « Les étapes du circuit « X » ont été modifiées sur deux appareils. » */
+export function circuitChangedSentence(part, name) {
+    const [subject, verb] = CIRCUIT_SUBJECTS[part] || ['Le circuit', 'a été modifié'];
+    return `${subject} « ${name} » ${verb} sur deux appareils.`;
 }
 
 const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
@@ -105,13 +122,15 @@ export function runSync({ all = false } = {}) {
         try {
             const results = all ? await syncAllMaps() : [await syncMap(state.currentMapId)];
             const mine = results.find(r => r.mapId === state.currentMapId) || results[0];
-            if (mine?.conflicts?.length && autoNewest()) await autoResolve(state.currentMapId, mine.conflicts);
+            if (mine?.newConflicts?.length && autoNewest()) await autoResolve(state.currentMapId, mine.newConflicts);
             write(LAST_KEY, Date.now());
             write(PENDING_KEY, 0);
             write(FAIL_KEY, null);
             if (mine?.changed) refreshApp();
             await refreshSyncIndicators();
-            if (!all && mine?.conflicts?.length && !autoNewest()) announceConflicts(mine.conflicts);
+            if (!all && mine?.newConflicts?.length && !autoNewest()) announceConflicts(mine.newConflicts);
+            const survivors = (all ? results : [mine]).flatMap(r => r?.mapId === state.currentMapId ? (r.survivors || []) : []);
+            if (survivors.length) announceSurvivors(survivors);
             return all ? results : mine;
         } catch (e) {
             console.warn('[google-sync] synchronisation :', e);
@@ -195,12 +214,12 @@ export async function initGoogleSync() {
     document.addEventListener('visibilitychange', onForeground);
 }
 
-// ─── Textes à choisir ───────────────────────────────────────────────────────
+// ─── À choisir (textes et circuits) ─────────────────────────────────────────
 
 /** Nombre de textes à choisir (destination ouverte), pour le menu du téléphone. */
 export function syncConflictCount() { return conflictCount; }
 
-/** Point ambre sur la roue dentée et entrée « Textes à choisir » (PC). */
+/** Point ambre sur la roue dentée et entrée « À choisir » (PC). */
 export async function refreshSyncIndicators() {
     const list = state.isAdmin ? [] : await getSyncConflicts(state.currentMapId);
     conflictCount = list.length;
@@ -210,7 +229,7 @@ export async function refreshSyncIndicators() {
         entry.classList.toggle('is-hidden', conflictCount === 0);
         const badge = entry.querySelector('.tools-menu-badge');
         if (badge) badge.textContent = String(conflictCount);
-        entry.setAttribute('aria-label', `Textes à choisir : ${conflictCount}`);
+        entry.setAttribute('aria-label', `À choisir : ${conflictCount}`);
     }
 }
 
@@ -231,30 +250,45 @@ function placeName(id) {
     return f?.properties?.['Nom du site FR'] || id;
 }
 
+const circuitOf = (id) => (state.myCircuits || []).find(c => String(c.id) === String(id));
+const nameOf = (c) => (c.kind === 'circuit' ? (circuitOf(c.id)?.name || 'Circuit') : placeName(c.id));
+const sentenceOf = (c) => (c.kind === 'circuit' ? circuitChangedSentence(c.key, nameOf(c)) : changedSentence(c.key, nameOf(c)));
+const isTextChoice = (c) => c.kind !== 'circuit' || c.key === 'name' || c.key === 'description';
+
 function announceConflicts(conflicts) {
     if (conflicts.length === 1) {
         const c = conflicts[0];
-        showToast(`${changedSentence(c.key, placeName(c.id))} Choisissez le texte à garder.`, 'warning', 10000,
+        const ask = isTextChoice(c) ? 'Choisissez le texte à garder.' : 'Choisissez la version à garder.';
+        showToast(`${sentenceOf(c)} ${ask}`, 'warning', 10000,
             { label: 'Choisir', onClick: () => openChoose(c) });
         return;
     }
-    showToast(`${conflicts.length} textes ont été modifiés sur deux appareils. Choisissez ceux à garder.`, 'warning', 10000,
+    showToast(`${conflicts.length} éléments ont été modifiés sur deux appareils. Choisissez ceux à garder.`, 'warning', 10000,
         { label: 'Choisir', onClick: () => { void openSyncConflictsList(); } });
 }
 
-/** Fenêtre « Textes à choisir » : un nom → la fenêtre de choix. */
+/** Circuits gardés dans la Corbeille : supprimés ailleurs, modifiés ici après (écran 46). */
+function announceSurvivors(survivors) {
+    for (const c of survivors) {
+        showToast(`Le circuit « ${c.name} » a été supprimé sur un autre appareil. Vous l'aviez modifié ici depuis : il est gardé dans la Corbeille.`, 'warning', 12000,
+            { label: 'Voir', onClick: () => openCircuitTrash() });
+    }
+}
+
+/** Fenêtre « À choisir » (écran 43) : textes et circuits ; un nom → la fenêtre de choix. */
 export async function openSyncConflictsList() {
     const list = await getSyncConflicts(state.currentMapId);
-    if (!list.length) { showToast('Aucun texte à choisir.', 'info'); return; }
+    if (!list.length) { showToast('Plus rien à choisir.', 'info'); return; }
+    const meta = (c) => (c.kind === 'circuit' ? `Circuit · ${CIRCUIT_LABELS[c.key] || c.key}` : labelOf(c.key));
     const body = `<div class="official-list">${list.map((c, i) => `
         <button class="official-list-row" type="button" data-sync-choose="${i}">
             <span class="official-list-text">
-                <span class="official-list-name">${escapeXml(placeName(c.id))}</span>
-                <span class="official-list-meta">${escapeXml(labelOf(c.key))} · sur deux appareils</span>
+                <span class="official-list-name">${escapeXml(nameOf(c))}</span>
+                <span class="official-list-meta">${escapeXml(meta(c))} · sur deux appareils</span>
             </span>
             <i data-lucide="chevron-right"></i>
         </button>`).join('')}</div>`;
-    openHwModal({ size: 'md', icon: 'split', title: 'Textes à choisir', body, footer: false, closeOnBackdrop: true });
+    openHwModal({ size: 'md', icon: 'split', title: 'À choisir', body, footer: false, closeOnBackdrop: true });
     const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
     createIcons({ icons: appIcons, root });
     root.querySelectorAll('[data-sync-choose]').forEach(b => b.addEventListener('click', () => openChoose(list[Number(b.dataset.syncChoose)])));
@@ -268,6 +302,7 @@ function formatWhen(ms) {
 }
 
 function hereDateOf(c) {
+    if (c.kind === 'circuit') return circuitOf(c.id)?.[PART_DATES_KEY]?.[c.key] ?? circuitOf(c.id)?.updatedAt;
     if (c.kind === 'place') {
         const f = (state.customFeatures || []).find(x => x?.properties?.HW_ID === c.id);
         return f?.properties?.[FIELD_DATES_KEY]?.[c.key];
@@ -277,6 +312,8 @@ function hereDateOf(c) {
 
 /** Fenêtre de choix (écran 40), même forme que pour la restauration. */
 function openChoose(conflict, onDone) {
+    if (conflict.kind === 'circuit' && conflict.key === 'steps') return openStepsChoose(conflict, onDone);
+    if (conflict.kind === 'circuit' && conflict.key === 'trace') return openTraceChoose(conflict, onDone);
     const here = String(conflict.here ?? '');
     const theirs = String(conflict.file ?? '');
     const merged = mergeTexts('', here, theirs);
@@ -307,7 +344,8 @@ function openChoose(conflict, onDone) {
     const footer = `
         <button class="btn btn-secondary" type="button" data-sync-later>Plus tard</button>
         <button class="btn btn-primary" type="button" data-sync-keep>Garder ce texte</button>`;
-    openHwModal({ size: 'lg', icon: 'split', title: `${placeName(conflict.id)} · ${labelOf(conflict.key)}`, body, footer, closeOnBackdrop: false });
+    const fieldName = conflict.kind === 'circuit' ? (conflict.key === 'name' ? 'Nom' : 'Description') : labelOf(conflict.key);
+    openHwModal({ size: 'lg', icon: 'split', title: `${nameOf(conflict)} · ${fieldName}`, body, footer, closeOnBackdrop: false });
     const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
     const field = root.querySelector('.cc-note-conflict');
     const ta = root.querySelector('#sync-final');
@@ -347,11 +385,114 @@ async function keepChoice(mapId, conflict, text) {
 async function autoResolve(mapId, conflicts) {
     for (const c of conflicts) {
         const hereAt = hereDateOf(c) || 0;
+        if (!isTextChoice(c)) {
+            await resolveCircuitChoice(mapId, c, (c.fileDate || 0) > hereAt ? 'file' : 'here');
+            continue;
+        }
         const text = (c.fileDate || 0) > hereAt ? String(c.file ?? '') : String(c.here ?? '');
         await writeChosenText(mapId, c, text);
         await resolveSyncConflict(mapId, c, text);
     }
     await syncMap(mapId); // envoie les textes choisis
+}
+
+// ─── Étapes et tracé d'un circuit (écrans 44-45) ───────────────────────────
+
+function trackKm(track) {
+    if (!Array.isArray(track) || track.length < 2) return null;
+    let m = 0;
+    for (let i = 1; i < track.length; i++) m += calculateDistance(track[i - 1][0], track[i - 1][1], track[i][0], track[i][1]);
+    return m;
+}
+const kmLabel = (m) => (m == null ? '' : ` · ${(m / 1000).toFixed(1).replace('.', ',')} km`);
+
+/** Choix « cet appareil / l'autre / les deux » : écrit, retire de la liste, envoie. */
+async function keepCircuitChoice(mapId, conflict, choice) {
+    await resolveCircuitChoice(mapId, conflict, choice);
+    await refreshSyncIndicators();
+    eventBus.emit('circuit:list-updated');
+    write(PENDING_KEY, (Number(read(PENDING_KEY)) || 0) + 1);
+    emitStatus();
+    if (hasGoogleAccess()) void runSync();
+}
+
+function bindCircuitFooter(root, conflict, onDone) {
+    root.querySelector('[data-sync-later]')?.addEventListener('click', () => { closeHwModal(); onDone?.(); });
+    root.querySelectorAll('[data-sync-pick]').forEach(b => b.addEventListener('click', async () => {
+        const auto = root.querySelector('#sync-auto');
+        if (auto) setAutoNewest(auto.checked);
+        await keepCircuitChoice(state.currentMapId, conflict, b.dataset.syncPick);
+        closeHwModal();
+        onDone?.();
+    }));
+}
+
+const autoAskHtml = () => (read(AUTO_ASKED_KEY) !== '1'
+    ? '<label class="sync-auto-ask"><input type="checkbox" id="sync-auto">La prochaine fois, garder automatiquement la version la plus récente</label>' : '');
+
+/**
+ * Étapes modifiées des deux côtés (écran 44) : une version entière, pas étape par
+ * étape ; le tracé suit. Une étape absente de l'autre version est marquée « en
+ * plus » (sans la version de départ, on ne peut pas dire ajoutée ou retirée).
+ */
+function openStepsChoose(conflict, onDone) {
+    const here = conflict.here || [];
+    const theirs = conflict.file || [];
+    const col = (list, other, cls, title, when, track) => `
+        <section class="sync-steps-col">
+            <h3 class="sync-steps-head sync-steps-head--${cls}">${title}${when ? ` · ${escapeXml(when)}` : ''}</h3>
+            <ol class="sync-steps-list">${list.map(id => `
+                <li class="${other.includes(id) ? '' : 'is-extra'}"><span>${escapeXml(placeName(id))}</span>${other.includes(id) ? '' : '<em>en plus</em>'}</li>`).join('')}</ol>
+            <p class="sync-steps-sum">${list.length} étape${list.length > 1 ? 's' : ''}${kmLabel(trackKm(track))}</p>
+        </section>`;
+    const body = `
+        <p class="cc-conflict-intro">Les étapes ont été modifiées sur deux appareils. Choisissez la version à garder ; le tracé suit.</p>
+        <div class="sync-steps">
+            ${col(here, theirs, 'here', 'Sur cet appareil', formatWhen(hereDateOf(conflict)), circuitOf(conflict.id)?.realTrack)}
+            ${col(theirs, here, 'theirs', 'Autre appareil', formatWhen(conflict.fileDate), conflict.fileCircuit?.realTrack)}
+        </div>
+        ${autoAskHtml()}`;
+    const footer = `
+        <button class="btn btn-secondary sync-later" type="button" data-sync-later>Plus tard</button>
+        <button class="btn btn-secondary" type="button" data-sync-pick="both">Garder les deux</button>
+        <button class="btn btn-secondary" type="button" data-sync-pick="file">Garder celle de l'autre appareil</button>
+        <button class="btn btn-primary" type="button" data-sync-pick="here">Garder celle de cet appareil</button>`;
+    openHwModal({ size: 'lg', icon: 'split', title: `${nameOf(conflict)} · Étapes`, body, footer, closeOnBackdrop: false });
+    const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
+    bindCircuitFooter(root, conflict, onDone);
+}
+
+/** Tracé retracé des deux côtés, mêmes étapes (écran 45) : les deux superposés. */
+function openTraceChoose(conflict, onDone) {
+    const here = circuitOf(conflict.id)?.realTrack || conflict.here || [];
+    const theirs = conflict.file || [];
+    const body = `
+        <p class="cc-conflict-intro">Mêmes étapes, mais le chemin a été retracé sur deux appareils. Choisissez celui à garder.</p>
+        <div class="sync-trace-map" id="sync-trace-map"></div>
+        <div class="sync-trace-legend">
+            <span><i class="sync-trace-key sync-trace-key--here"></i><b>Sur cet appareil</b>${hereDateOf(conflict) ? ` · ${escapeXml(formatWhen(hereDateOf(conflict)))}` : ''}${kmLabel(trackKm(here))}</span>
+            <span><i class="sync-trace-key sync-trace-key--theirs"></i><b>Autre appareil</b>${conflict.fileDate ? ` · ${escapeXml(formatWhen(conflict.fileDate))}` : ''}${kmLabel(trackKm(theirs))}</span>
+        </div>
+        ${autoAskHtml()}`;
+    const footer = `
+        <button class="btn btn-secondary sync-later" type="button" data-sync-later>Plus tard</button>
+        <button class="btn btn-secondary" type="button" data-sync-pick="file">Garder celui de l'autre appareil</button>
+        <button class="btn btn-primary" type="button" data-sync-pick="here">Garder celui de cet appareil</button>`;
+    openHwModal({ size: 'lg', icon: 'split', title: `${nameOf(conflict)} · Tracé`, body, footer, closeOnBackdrop: false });
+    const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
+    bindCircuitFooter(root, conflict, onDone);
+    const el = root.querySelector('#sync-trace-map');
+    if (!el || (here.length < 2 && theirs.length < 2)) return;
+    const mini = L.map(el, { zoomControl: true, attributionControl: true });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap', maxZoom: 19, crossOrigin: true,
+    }).addTo(mini);
+    const lines = [];
+    if (here.length >= 2) lines.push(L.polyline(here, { color: '#E0874F', weight: 5, opacity: 0.95 }).addTo(mini));
+    if (theirs.length >= 2) lines.push(L.polyline(theirs, { color: '#4A90D9', weight: 5, opacity: 0.95, dashArray: '10 8' }).addTo(mini));
+    const bounds = L.featureGroup(lines).getBounds();
+    // La fenêtre vient de s'ouvrir : la carte mesure sa place, puis cadre les deux tracés.
+    requestAnimationFrame(() => { mini.invalidateSize(); mini.fitBounds(bounds, { padding: [24, 24] }); });
 }
 
 // ─── Résumé de la première synchronisation (écran 35) ──────────────────────
@@ -365,12 +506,14 @@ function openFirstSummary(r) {
         s.visits ? plural(s.visits, 'visite', 'visites') : '',
         s.notes ? plural(s.notes, 'note', 'notes') : '',
         s.places?.length ? `${plural(s.places.length, 'lieu créé', 'lieux créés')} (${escapeXml(s.places.slice(0, 3).join(', '))}${s.places.length > 3 ? '…' : ''})` : '',
+        s.circuits?.length ? plural(s.circuits.length, 'circuit perso', 'circuits perso') : '',
     ].filter(Boolean);
     const sentList = [
         sent.visits ? plural(sent.visits, 'visite', 'visites') : '',
         sent.notes ? plural(sent.notes, 'note', 'notes') : '',
         sent.places ? plural(sent.places, 'lieu créé', 'lieux créés') : '',
         sent.updated ? plural(sent.updated, 'fiche modifiée', 'fiches modifiées') : '',
+        sent.circuits ? plural(sent.circuits, 'circuit perso', 'circuits perso') : '',
     ].filter(Boolean);
     const updated = s.updated || [];
     const names = updated.slice(0, 3).map(placeName).join(', ') + (updated.length > 3 ? '…' : '');
@@ -388,10 +531,10 @@ function openFirstSummary(r) {
             ${!added.length && !sentList.length && !updated.length && !conflicts.length ? '<p class="rs-text">Rien de nouveau : cet appareil et votre compte avaient déjà les mêmes données.</p>' : ''}
             ${conflicts.length ? `
             <section class="rs-conflicts">
-                <span class="rs-conflicts-head"><i data-lucide="alert-triangle"></i><span><b>${plural(conflicts.length, 'texte modifié', 'textes modifiés')} des deux côtés</b><span>En attendant votre choix, la version de cet appareil est gardée.</span></span></span>
+                <span class="rs-conflicts-head"><i data-lucide="alert-triangle"></i><span><b>${plural(conflicts.length, 'élément modifié', 'éléments modifiés')} des deux côtés</b><span>En attendant votre choix, la version de cet appareil est gardée.</span></span></span>
                 ${conflicts.map((c, i) => `
                 <div class="rs-conflict">
-                    <span><b>${escapeXml(placeName(c.id))}</b> · ${escapeXml(labelOf(c.key))}</span>
+                    <span><b>${escapeXml(nameOf(c))}</b> · ${escapeXml(c.kind === 'circuit' ? `Circuit · ${CIRCUIT_LABELS[c.key] || c.key}` : labelOf(c.key))}</span>
                     <button class="btn btn-primary" type="button" data-sync-first-choose="${i}">Choisir</button>
                 </div>`).join('')}
             </section>` : ''}
