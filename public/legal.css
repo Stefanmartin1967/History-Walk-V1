@@ -1,0 +1,98 @@
+/* Pages légales (confidentialite.html, conditions.html) — 20/11/2026.
+   Pages statiques autonomes : ne chargent pas l'app. Couleurs reprises de
+   style/tokens.css (sable, encre chaude, terre cuite). */
+
+@font-face {
+  font-family: 'Spectral';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('fonts/spectral/spectral-latin-700-normal.woff2') format('woff2');
+}
+
+:root {
+  --bg: #FBF4E8;
+  --surface: #FFFDF8;
+  --ink: #1A1611;
+  --ink-soft: #574E3F;
+  --line: #E6DBC8;
+  --brand: #B04A2C;
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1C1914;
+    --surface: #25211B;
+    --ink: #ECE3D4;
+    --ink-soft: #B8AD9A;
+    --line: #3A342B;
+    --brand: #E08A6B;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font: 16px/1.6 system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+.legal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 20px 16px 0;
+}
+.legal-header img { width: 40px; height: 40px; border-radius: 10px; }
+.legal-header a {
+  color: var(--ink);
+  text-decoration: none;
+  font-family: 'Spectral', Georgia, serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
+main {
+  max-width: 760px;
+  margin: 16px auto 32px;
+  padding: 24px 16px 32px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+}
+@media (min-width: 600px) { main { padding: 32px 40px 40px; } }
+
+h1, h2 { font-family: 'Spectral', Georgia, serif; font-weight: 700; line-height: 1.25; }
+h1 { font-size: 1.8rem; margin: 0 0 4px; }
+h2 { font-size: 1.25rem; margin: 32px 0 8px; }
+h3 { font-size: 1rem; margin: 20px 0 6px; }
+
+.legal-date { color: var(--ink-soft); font-size: 0.9rem; margin: 0 0 20px; }
+.legal-summary {
+  border-left: 3px solid var(--brand);
+  padding: 4px 0 4px 14px;
+  font-weight: 600;
+}
+
+p, ul { margin: 0 0 12px; }
+ul { padding-left: 22px; }
+li { margin-bottom: 6px; }
+
+a { color: var(--brand); }
+code { font-size: 0.9em; }
+
+.legal-footer {
+  max-width: 760px;
+  margin: 0 auto 32px;
+  padding: 0 16px;
+  color: var(--ink-soft);
+  font-size: 0.9rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}

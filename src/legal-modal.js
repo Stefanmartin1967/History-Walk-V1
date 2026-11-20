@@ -36,6 +36,11 @@ export function showLegalNoticeModal() {
             (vue satellite et plan), soumis aux conditions d'utilisation de Google.
             Le contenu Google reste la propriété exclusive de Google et de ses fournisseurs.</p>
 
+        <h3>Confidentialité et conditions</h3>
+        <p>Heripia ne collecte aucune donnée personnelle. Le détail est dans les
+            <a href="confidentialite.html" target="_blank" rel="noopener">Règles de confidentialité</a>
+            et les <a href="conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a>.</p>
+
         <h3>Contact</h3>
         <p>Pour toute question juridique, demande de licence ou signalement,
             contactez :<br>
