@@ -26,6 +26,7 @@ import {
 import { exportPhotosBackup } from './photo-backup.js';
 import { getLastRestore } from './restore-apply.js';
 import { runUndo } from './restore-ui.js';
+import { googleSectionHtml, bindGoogleSection } from './google-link-ui.js';
 
 function formatRelativeDate(date) {
     if (!date) return null;
@@ -91,12 +92,12 @@ async function renderBody(bodyEl) {
 
     bodyEl.innerHTML = `
 <div class="me-stack">
+${googleSectionHtml()}
 
   <section class="me-block me-block-hero" aria-labelledby="lbl-save">
     <div class="me-block-head">
-      <h3 class="me-block-title me-block-title-lg" id="lbl-save">Sauvegarder</h3>
+      <h3 class="me-block-title me-block-title-lg" id="lbl-save">Garder une copie dans un fichier</h3>
     </div>
-    <p class="me-block-desc">Garder une copie dans un fichier.</p>
 
     <div class="me-choice">
       <button class="me-choice-card is-action" id="sm-btn-data" type="button">
@@ -145,6 +146,7 @@ async function renderBody(bodyEl) {
 
     createIcons({ icons: appIcons, root: bodyEl });
     attachListeners(bodyEl);
+    bindGoogleSection(bodyEl);
 }
 
 function attachListeners(bodyEl) {
@@ -174,7 +176,7 @@ export function openSaveModal() {
         size: 'lg',
         icon: 'luggage',
         title: 'Sauvegarder',
-        subheader: 'Sauvegardez vos données pour les retrouver plus tard ou les transférer.',
+        subheader: 'Retrouvez vos données sur tous vos appareils, et gardez-en une copie.',
         body: '<div id="sm-body-mount"></div>',
         footer: false,
         closeOnBackdrop: true,
