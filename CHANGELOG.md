@@ -6,6 +6,11 @@
 
 ---
 
+- SYNCHRO GOOGLE : CRÉATION DU FICHIER RÉPARÉE (v3.7.564). Essai de Stefan (Brave, téléphone, 20/11/2026) : « La synchronisation n'a pas été faite : Google n'a pas répondu comme prévu », 3 modifications en attente.
+  - Cause : l'envoi qui CRÉE le fichier d'une destination dans le compte (format multipart, google-account.js writeAppFile) portait de vrais retours à la ligne dans le code ; une ligne vide se glissait après chaque séparateur, les en-têtes des deux parties étaient perdus. La liaison passait (rien à envoyer sur un appareil vide), la première vraie modification échouait.
+  - Correction : séparateurs écrits en séquences d'échappement (`'
+'`), jamais en retours à la ligne du code. Test qui relit l'envoi aussi strictement que Google.
+  - L'encadré d'échec donne maintenant le détail de Google (« Détail : HTTP 400 … »), pour pouvoir le rapporter.
 - SYNCHRONISATION AVEC LE COMPTE GOOGLE (v3.7.563). PR 6 du chantier « synchro users », maquette écrans 35-42 validée par Stefan le 20/11/2026 (« premier toucher »).
   - google-sync.js (moteur) : un fichier par destination dans l'espace Heripia du compte (`heripia-<destination>.json`). Une synchronisation = la restauration qui fusionne avec le compte pour « fichier » (restore-merge.js), écrite sur l'appareil (en base et en mémoire), puis renvoyée. Un texte encore à choisir garde côté compte la version du compte : l'autre appareil ne voit pas de conflit et reprend ensuite le texte choisi sans question. Versions écartées gardées 30 jours dans le compte. Pas encore : circuits perso (PR 7), doublons de lieux (PR 8).
   - google-sync-ui.js (quand) : accès valable → chaque modification part 5 s après, et retour dans l'appli → réception ; accès absent → au premier toucher dans l'appli, la fenêtre Google s'ouvre un instant (adresse en indice), puis réception et envoi ; pas d'Internet → rien ; fenêtre bloquée ou fermée → pas de nouvel essai avant une heure. Jamais en mode admin.

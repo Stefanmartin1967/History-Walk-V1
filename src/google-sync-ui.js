@@ -50,17 +50,19 @@ let running = null;          // synchronisation en cours (promesse)
 let changeTimer = null;
 let conflictCount = 0;       // destination ouverte, pour le menu du téléphone
 let bound = false;
+let lastError = '';       // détail du dernier échec, montré dans l'encadré
 
 const active = () => !state.isAdmin && !!getLinkedAccount();
 
 // ─── État affiché dans l'écran Sauvegarder ─────────────────────────────────
 
-/** @returns {{ syncing:boolean, lastAt:number|null, pending:number }} */
+/** @returns {{ syncing:boolean, lastAt:number|null, pending:number, error:string }} */
 export function getSyncStatus() {
     return {
         syncing: !!running,
         lastAt: Number(read(LAST_KEY)) || null,
         pending: Number(read(PENDING_KEY)) || 0,
+        error: lastError,
     };
 }
 
@@ -85,6 +87,7 @@ function emitStatus() { eventBus.emit('google:sync-status', getSyncStatus()); }
 export function runSync({ all = false } = {}) {
     if (running) return running.then(() => runSync({ all }));
     running = (async () => {
+        lastError = '';
         emitStatus();
         try {
             const results = all ? await syncAllMaps() : [await syncMap(state.currentMapId)];
@@ -99,6 +102,7 @@ export function runSync({ all = false } = {}) {
             return all ? results : mine;
         } catch (e) {
             console.warn('[google-sync] synchronisation :', e);
+            lastError = e?.detail || e?.message || String(e);
             return null;
         } finally {
             running = null;

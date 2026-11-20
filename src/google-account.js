@@ -40,6 +40,7 @@ export class GoogleLinkError extends Error {
     constructor(kind, detail = '') {
         super(`${kind}${detail ? ` : ${detail}` : ''}`);
         this.kind = kind;
+        this.detail = detail;
     }
 }
 
@@ -173,7 +174,12 @@ async function drive(path, opts = {}) {
     }
     if (res.status === 401) token = null;
     if (!res.ok && !(opts.method === 'DELETE' && res.status === 404)) {
-        throw new GoogleLinkError('error', `HTTP ${res.status}`);
+        // Le détail de Google (code et premiers mots) suit l'erreur : il s'affiche
+        // dans l'encadré, pour pouvoir le rapporter.
+        const text = await res.text().catch(() => '');
+        let reason = '';
+        try { reason = JSON.parse(text)?.error?.message || ''; } catch { reason = text; }
+        throw new GoogleLinkError('error', `HTTP ${res.status}${reason ? ` ${String(reason).slice(0, 120)}` : ''}`);
     }
     return res;
 }
@@ -237,23 +243,14 @@ export async function writeAppFile(id, name, data) {
     }
     const boundary = `heripia${Math.random().toString(36).slice(2)}`;
     const meta = JSON.stringify({ name, parents: ['appDataFolder'] });
-    const multipart = `--${boundary}
-
-Content-Type: application/json; charset=UTF-8
-
-
-
-${meta}
-
---${boundary}
-
-Content-Type: application/json
-
-
-
-${body}
-
---${boundary}--`;
+    // Séparateur du format multipart : écrit en séquences d'échappement, jamais
+    // en vrais retours à la ligne dans le code (Git les convertirait).
+    const CRLF = '\r\n';
+    const multipart = [
+        `--${boundary}`, 'Content-Type: application/json; charset=UTF-8', '', meta,
+        `--${boundary}`, 'Content-Type: application/json', '', body,
+        `--${boundary}--`,
+    ].join(CRLF);
     const res = await drive(`${UPLOAD}/files?uploadType=multipart&fields=id`, {
         method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipart,
     });
