@@ -42,6 +42,19 @@ const FOREGROUND_MIN_MS = 30000;
 
 const LABELS = { description: 'Description', notes: 'Note', 'Description courte': 'Description courte', 'Nom du site FR': 'Nom' };
 const labelOf = (key) => LABELS[key] || key;
+// Pour une phrase : « La note de… », « Le nom de… » (le toast nommait le lieu
+// au féminin, « fiche » sous-entendue : faux pour « Restaurant chez Moktar »).
+const SUBJECTS = {
+    description: ['La description', 'modifiée'],
+    notes: ['La note', 'modifiée'],
+    'Description courte': ['La description courte', 'modifiée'],
+    'Nom du site FR': ['Le nom', 'modifié'],
+};
+/** « La note de « X » a été modifiée », « Le nom de « X » a été modifié ». */
+export function changedSentence(key, place) {
+    const [subject, participle] = SUBJECTS[key] || [`Le champ « ${key} »`, 'modifié'];
+    return `${subject} de « ${place} » a été ${participle} sur deux appareils.`;
+}
 
 const read = (k) => { try { return localStorage.getItem(k); } catch { return null; } };
 const write = (k, v) => { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, String(v)); } catch { /* rien */ } };
@@ -221,7 +234,7 @@ function placeName(id) {
 function announceConflicts(conflicts) {
     if (conflicts.length === 1) {
         const c = conflicts[0];
-        showToast(`« ${placeName(c.id)} » a été modifiée sur deux appareils. Choisissez le texte à garder.`, 'warning', 10000,
+        showToast(`${changedSentence(c.key, placeName(c.id))} Choisissez le texte à garder.`, 'warning', 10000,
             { label: 'Choisir', onClick: () => openChoose(c) });
         return;
     }
@@ -237,7 +250,7 @@ export async function openSyncConflictsList() {
         <button class="official-list-row" type="button" data-sync-choose="${i}">
             <span class="official-list-text">
                 <span class="official-list-name">${escapeXml(placeName(c.id))}</span>
-                <span class="official-list-meta">${escapeXml(labelOf(c.key))} · modifié sur deux appareils</span>
+                <span class="official-list-meta">${escapeXml(labelOf(c.key))} · sur deux appareils</span>
             </span>
             <i data-lucide="chevron-right"></i>
         </button>`).join('')}</div>`;
