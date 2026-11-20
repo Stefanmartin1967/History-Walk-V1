@@ -21,6 +21,7 @@
 // résumé. L'écriture et l'écran sont ailleurs (fileManager.js, restore-ui.js).
 
 import { FIELD_DATES_KEY, FIELD_FROM_KEY, isDatedKey, sameValue, placeFields, POSITION } from './field-dates.js';
+import { OFFICIAL_BASE_KEY } from './overlay-base.js';
 import { newer, mergeHiddenCircuits } from './sync-stamps.js';
 import { mergeVisited, mergeCircuitDone } from './visited-state.js';
 
@@ -111,6 +112,14 @@ export function mergePoiData(here = {}, file = {}) {
     if (merged.tookFile.length) {
         out[FIELD_DATES_KEY] = merged.dates;
         out[FIELD_FROM_KEY] = merged.from;
+        // La valeur officielle notée suit le champ repris du fichier (sinon le
+        // champ garderait celle de la version d'ici, ou n'en aurait pas).
+        const bases = { ...(here[OFFICIAL_BASE_KEY] || {}) };
+        for (const key of merged.tookFile) {
+            if (file[key] !== undefined && file[OFFICIAL_BASE_KEY]?.[key] !== undefined) bases[key] = file[OFFICIAL_BASE_KEY][key];
+            else delete bases[key];
+        }
+        if (Object.keys(bases).length) out[OFFICIAL_BASE_KEY] = bases; else delete out[OFFICIAL_BASE_KEY];
         if (!here.notes && file.notes && merged.tookFile.includes('notes')) res.addedNote = true;
     }
 

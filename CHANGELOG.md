@@ -6,6 +6,13 @@
 
 ---
 
+- FICHE OFFICIELLE MISE À JOUR DEPUIS VOTRE MODIFICATION (v3.7.559). PR 4 du chantier « synchro users », maquette écrans 20-22 validée par Stefan le 20/11/2026.
+  - Avant : un user qui modifiait un champ d'une fiche officielle voyait sa version pour toujours (l'overlay prime) et n'apprenait jamais que la fiche avait été corrigée depuis.
+  - À la première modification d'un champ, la valeur officielle du moment est notée (`_officialBase`, overlay-base.js ; posée à l'écriture unique de database.js). Côté user seulement, jamais pour un lieu créé, jamais publiée (PERSONAL_KEYS). La position n'est pas suivie.
+  - Au démarrage : une modification devenue identique à l'officiel est retirée sans rien dire ; les fiches mises à jour depuis sont annoncées une fois (« N fiches officielles ont été mises à jour depuis vos modifications. »).
+  - Dans la fiche (PC et téléphone) : bandeau « La fiche officielle a été mise à jour depuis votre modification » + « Voir » : version officielle (nouvelle) / votre version, une case par phrase, ce qui sera affiché ; « Revenir à la version officielle », « Plus tard », « Garder ce texte ». Un champ simple se choisit entre deux cartes.
+  - La restauration fait suivre la valeur notée avec le champ repris du fichier. Admin inchangé (conflits à la publication).
+
 - SAUVEGARDES « DONNÉES » ET « PHOTOS » (v3.7.558). PR 3 du chantier « synchro users », idée de Stefan validée sur la maquette Sauvegarder (écran 14).
   - Légère / Complète remplacées par deux sauvegardes : « Sauvegarder mes données » (visites, notes, lieux, circuits ; Web Share sur téléphone) et « Sauvegarder mes photos » (les photos seules, leur propre fichier `Heripia_<dest>_photos_<date>.json`, avec l'id de chaque photo). Le fichier de données reste petit et se restaure sans risque sur un téléphone modeste.
   - Restaurer un fichier « Photos » (ou une ancienne sauvegarde complète) AJOUTE les photos qui manquent : avant, `savePoiPhotos` remplaçait toutes les photos du lieu, et celles ajoutées depuis sur l'appareil disparaissaient. Pas de doublon (même id ou même contenu). « Annuler la restauration » retire exactement les photos ajoutées (photo-backup.js).

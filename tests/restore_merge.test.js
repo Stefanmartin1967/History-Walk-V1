@@ -28,6 +28,13 @@ describe('decideField', () => {
 });
 
 describe('mergePoiData (une fiche)', () => {
+    it('champ repris du fichier : sa valeur officielle notée le suit (20/11/2026)', () => {
+        const r = mergePoiData(
+            { description: 'Ici', [D]: { description: 10 }, _officialBase: { description: 'Officiel ancien' } },
+            { description: 'Là-bas', [D]: { description: 20 }, [F]: { description: 10 }, _officialBase: { description: 'Officiel' } });
+        expect(r.data.description).toBe('Là-bas');
+        expect(r.data._officialBase).toEqual({ description: 'Officiel' });
+    });
     it('note ajoutée sur le téléphone, absente du PC : ajoutée', () => {
         const r = mergePoiData({}, { notes: 'Panneau n° 5', [D]: { notes: 10 } });
         expect(r.data.notes).toBe('Panneau n° 5');

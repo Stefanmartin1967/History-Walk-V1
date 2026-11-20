@@ -28,6 +28,7 @@ vi.mock('../src/database.js', () => ({
     removePoiDataKeys: vi.fn(async () => 0),
     setPoiDataWriteHook: vi.fn((fn) => { h.hook = fn; }),
     setStampListener: vi.fn(),
+    setOfficialBaseHook: vi.fn(),
 }));
 
 import { state } from '../src/state.js';

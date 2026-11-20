@@ -26,6 +26,7 @@ import { isDestinationPublished, applyMovedPosition } from './utils.js';
 import { installOverlayBaseHook } from './overlay-base-hook.js';
 import { initNoteSync } from './note-sync.js';
 import { showRestoreSummaryIfPending } from './restore-ui.js';
+import { checkOfficialUpdatesAtBoot } from './official-update-ui.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -721,5 +722,7 @@ export async function loadAndInitializeMap() {
     initNoteSync();
     // Restauration qui vient d'avoir lieu (19/11/2026) : son résumé, ses textes à choisir.
     void showRestoreSummaryIfPending();
+    // Fiches officielles mises à jour depuis une modification du user (20/11/2026).
+    void checkOfficialUpdatesAtBoot().catch(e => console.warn('[official-updates] passe du démarrage :', e));
     initGistReconnectSync();
 }
