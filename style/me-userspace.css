@@ -557,3 +557,65 @@
    un choix à cocher — même carte, sans radio. */
 .me-choice-card.is-action { font: inherit; color: inherit; text-align: left; cursor: pointer; }
 .me-choice-card.is-action:hover { border-color: var(--cta-bg); }
+
+/* ============================================================
+   Partie « Synchroniser avec mon compte Google » (synchro users, PR 5,
+   maquette écrans 28-34 validée le 20/11/2026) — google-link-ui.js
+   ============================================================ */
+.gl-section {
+    padding: 14px 16px;
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    border: 1px solid var(--line);
+}
+.gl-section--on {
+    background: var(--ok-soft);
+    border-color: color-mix(in oklab, var(--ok-fg) 45%, var(--line));
+}
+/* Le titre de la partie est long : il passe à la ligne (téléphone). */
+.gl-section .me-block-title { white-space: normal; }
+.gl-linked {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 14px; color: var(--ink);
+}
+.gl-linked i[data-lucide] { width: 20px; height: 20px; color: var(--ok-fg); flex-shrink: 0; }
+.gl-email { overflow-wrap: anywhere; }
+.gl-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.gl-actions .me-btn { min-height: 44px; padding: 0 16px; font-size: 13.5px; }
+.gl-link-danger {
+    min-height: 44px; padding: 0 4px;
+    border: 0; background: transparent;
+    color: var(--danger-fg);
+    font: inherit; font-size: 13px;
+    text-decoration: underline;
+    text-align: left;
+    cursor: pointer;
+}
+.gl-link-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+.gl-link-danger:focus-visible { outline: none; box-shadow: var(--focus-ring); border-radius: var(--radius-md); }
+.gl-flash {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius-md);
+    font-size: 13px; line-height: 1.5;
+}
+.gl-flash i[data-lucide] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 1px; }
+.gl-flash--warn { background: var(--warn-soft); color: var(--ink); border: 1px solid color-mix(in oklab, var(--warn-fg) 45%, var(--line)); }
+.gl-flash--warn i[data-lucide] { color: var(--warn-fg); }
+.gl-flash--ok { background: var(--ok-soft); color: var(--ink); border: 1px solid color-mix(in oklab, var(--ok-fg) 40%, var(--line)); }
+.gl-flash--ok i[data-lucide] { color: var(--ok-fg); }
+.gl-spin { animation: gl-spin 0.9s linear infinite; }
+@keyframes gl-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) { .gl-spin { animation: none; } }
+.gl-confirm-warn {
+    padding: 8px 10px;
+    border-radius: var(--radius-md);
+    background: var(--warn-soft);
+    color: var(--ink);
+}
+
+@media (max-width: 767px) {
+    .gl-section--on .gl-actions { flex-direction: column; align-items: stretch; gap: 6px; }
+    .gl-section--on .gl-actions .me-btn { width: 100%; min-height: 46px; font-size: 15px; }
+    .gl-section:not(.gl-section--on) .gl-actions .me-btn { width: 100%; min-height: 46px; font-size: 15px; }
+}

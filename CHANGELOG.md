@@ -6,6 +6,12 @@
 
 ---
 
+- RELIER À SON COMPTE GOOGLE (v3.7.562). PR 5 du chantier « synchro users », maquette écrans 28-34 validée par Stefan le 20/11/2026. Rien n'est encore envoyé : la synchronisation elle-même est la PR 6.
+  - Écran Sauvegarder : nouvelle partie « Synchroniser avec mon compte Google » en tête. Non relié : texte + « Relier à mon compte Google » (pendant la fenêtre Google : « Connexion à Google… » et une ligne d'aide). Relié : coche verte, adresse du compte, « Déconnecter », lien rouge « Effacer mes données Heripia de mon compte Google ». Un échec s'affiche dans un encadré orange (fenêtre fermée, accord refusé, fenêtre bloquée, pas d'Internet), pas dans un toast. La partie fichier s'appelle « Garder une copie dans un fichier ».
+  - google-account.js : bibliothèque Google (GIS) chargée à l'ouverture de l'écran pour que la fenêtre s'ouvre dans le clic ; accès `drive.appdata` d'une heure gardé en mémoire seulement ; adresse lue par Drive `about` (aucun accès en plus) et retenue sur l'appareil (`hw_google_account`, une pour toutes les destinations), passée en `login_hint` au renouvellement.
+  - Déconnecter : l'appareil oublie l'adresse et l'accès, SANS révoquer l'accord Google (il vaut pour le compte entier : les autres appareils resteraient à reconnecter). Effacer : supprime tous les fichiers de l'espace Heripia, puis révoque l'accord.
+  - Politique de sécurité (index.html) : bibliothèque et fenêtre Google, API Drive et révocation autorisées.
+  - Page d'essai /essai-drive/ (19/11) retirée : remplacée par la vraie liaison.
 - PAGES LÉGALES (v3.7.561). Chantier « synchro users », préalable à la PR 5 : Google exige des règles de confidentialité et des conditions d'utilisation publiées pour valider la connexion au compte Google. Texte validé par Stefan le 20/11/2026 (droit belge).
   - `public/confidentialite.html` et `public/conditions.html` (feuille commune `public/legal.css`) : pages statiques autonomes, claires et sombres, sans script (CSP stricte), noindex comme le reste du site jusqu'au lancement.
   - Hors précache et hors navigateFallback du service worker (vite.config.js) : servies par le réseau, une correction du texte est vue tout de suite.
