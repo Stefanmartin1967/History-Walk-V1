@@ -1272,6 +1272,35 @@ html[data-theme="nuit"] .cc-hero {
 /* Fiche officielle mise à jour depuis la modification du user (20/11/2026, écran 21). */
 .cc-official-update { display: flex; flex-direction: column; gap: 12px; }
 .hw-modal-footer .cc-official-revert { margin-right: auto; }
+/* Liste « Fiches mises à jour » (écrans 24 et 26). */
+.official-list { display: flex; flex-direction: column; }
+.official-list .cc-conflict-intro { margin-bottom: 6px; }
+.official-list-row {
+    display: flex; align-items: center; gap: 12px; width: 100%;
+    padding: 13px 4px; border: 0; border-bottom: 1px solid var(--line); background: none;
+    font: inherit; text-align: left; color: var(--ink); cursor: pointer;
+}
+.official-list-row:last-child { border-bottom: 0; }
+.official-list-row:hover .official-list-name { color: var(--brand); }
+.official-list-row svg { width: 18px; height: 18px; color: var(--ink-soft); flex-shrink: 0; }
+.official-list-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.official-list-name { font-size: 15px; }
+.official-list-meta { font-size: 12px; color: var(--ink-soft); }
+/* Point bleu « il reste une fiche à revoir » sur la roue dentée (écrans 23 et 25). */
+#btn-tools-menu, .mobile-nav-btn[data-view="actions"] { position: relative; }
+#btn-tools-menu.has-attention::after,
+.mobile-nav-btn[data-view="actions"].has-attention::after {
+    content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%;
+    background: var(--info-fg); border: 2px solid var(--surface);
+}
+#btn-tools-menu.has-attention::after { top: -3px; right: -3px; }
+.mobile-nav-btn[data-view="actions"].has-attention::after { top: 2px; left: calc(50% + 6px); }
+.tools-menu-item--attention { background: var(--info-soft); }
+.tools-menu-badge {
+    margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box;
+    border-radius: 10px; background: var(--info-fg); color: var(--surface);
+    font-size: 11.5px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+}
 .cc-conflict-actions .cc-diff-btn { padding: 9px 14px; font-size: 13px; }
 
 @media (max-width: 767px) {
@@ -1298,6 +1327,12 @@ html[data-theme="nuit"] .cc-hero {
     :is(.cc-note-conflict, .cc-official-update) .cc-conflict-text,
     :is(.cc-note-conflict, .cc-official-update) .cc-conflict-final { padding: 10px; }
     .hw-modal-footer .cc-conflict-actions-note { display: none; }
+    /* « Revenir à la version officielle » était coupé (capture de Stefan,
+       20/11/2026) : sa propre ligne, pleine largeur ; les deux autres dessous. */
+    .hw-modal-footer:has(.cc-official-revert) { flex-wrap: wrap; }
+    .hw-modal-footer .cc-official-revert { flex: 1 1 100%; margin-right: 0; }
+    .hw-modal-footer:has(.cc-official-revert) .btn:not(.cc-official-revert) { flex: 1 1 0; }
+    .official-list-close { flex: 1 1 100%; min-height: 46px; }
 }
 
 /* ============================================================

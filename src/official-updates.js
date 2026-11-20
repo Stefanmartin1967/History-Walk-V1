@@ -37,6 +37,20 @@ export function officialUpdatesOf(poiId) {
     return feature ? findOfficialUpdates(state.userData?.[poiId], feature.properties).updates : [];
 }
 
+/**
+ * Toutes les fiches à revoir de la destination (menu « Fiches mises à jour »,
+ * point sur la roue dentée, 20/11/2026, maquette écrans 23-27).
+ * @returns {Array<{poiId: string, keys: string[]}>}
+ */
+export function listOfficialUpdates() {
+    const out = [];
+    for (const poiId of Object.keys(state.userData || {})) {
+        const updates = officialUpdatesOf(poiId);
+        if (updates.length) out.push({ poiId, keys: updates.map(u => u.key) });
+    }
+    return out;
+}
+
 /** Bandeau de la fiche (templates.js). Téléphone : bouton sous le texte. */
 export function officialBannerHtml(poiId, mobile) {
     if (!officialUpdatesOf(poiId).length) return '';

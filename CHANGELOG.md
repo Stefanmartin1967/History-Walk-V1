@@ -6,6 +6,12 @@
 
 ---
 
+- RETROUVER LES FICHES MISES À JOUR (v3.7.560). Suite de la PR 4 « synchro users », maquette écrans 23-27 validée par Stefan le 20/11/2026, après son essai sur téléphone : le message du démarrage ne disait pas QUELLES fiches, et un toast raté ne laissait aucun moyen de les retrouver.
+  - Le toast du démarrage (à sa place habituelle, 10 s) porte un bouton : une seule fiche → elle est nommée, « Ouvrir » l'ouvre ; plusieurs → « Voir » ouvre la liste.
+  - Tant qu'une fiche n'est pas réglée (« Garder ce texte » ou « Revenir à la version officielle ») : point bleu sur la roue dentée (« Outils » sur PC, « Menu » du dock sur téléphone) et entrée « Fiches mises à jour » avec le nombre (menu Outils PC ; « Mon parcours » sur téléphone). « Plus tard » laisse la fiche dans la liste.
+  - Fenêtre « Fiches mises à jour » : nom, zone, catégorie et champ changé ; un nom ouvre la fiche (official-update-ui.js).
+  - Téléphone : « Revenir à la version officielle » était coupé dans la fenêtre Voir ; il passe sur sa propre ligne.
+
 - FICHE OFFICIELLE MISE À JOUR DEPUIS VOTRE MODIFICATION (v3.7.559). PR 4 du chantier « synchro users », maquette écrans 20-22 validée par Stefan le 20/11/2026.
   - Avant : un user qui modifiait un champ d'une fiche officielle voyait sa version pour toujours (l'overlay prime) et n'apprenait jamais que la fiche avait été corrigée depuis.
   - À la première modification d'un champ, la valeur officielle du moment est notée (`_officialBase`, overlay-base.js ; posée à l'écriture unique de database.js). Côté user seulement, jamais pour un lieu créé, jamais publiée (PERSONAL_KEYS). La position n'est pas suivie.
