@@ -26,7 +26,9 @@
 const CLIENT_ID = '618075568540-dbd6ein7nsbmgu3ieadcf9jjmgmcdke4.apps.googleusercontent.com';
 const SCOPE = 'https://www.googleapis.com/auth/drive.appdata';
 const GIS_SRC = 'https://accounts.google.com/gsi/client';
-const DRIVE = 'https://www.googleapis.com/drive/v3';
+const API = 'https://www.googleapis.com';
+const DRIVE = '/drive/v3';
+const UPLOAD = '/upload/drive/v3';
 export const ACCOUNT_KEY = 'hw_google_account';
 
 /**
@@ -143,16 +145,18 @@ function requestAccess({ hint } = {}) {
     if (hasValidToken()) return Promise.resolve(token.value);
     if (globalThis.navigator?.onLine === false) return Promise.reject(new GoogleLinkError('offline'));
     if (!gisLoaded()) return Promise.reject(new GoogleLinkError('offline', 'bibliothèque Google absente'));
-    // Une demande précédente restée sans réponse est abandonnée.
-    settle(p => p.reject(new GoogleLinkError('closed', 'remplacée')));
-    return new Promise((resolve, reject) => {
-        pending = { resolve, reject };
-        try {
-            getClient().requestAccessToken(hint ? { login_hint: hint } : {});
-        } catch (e) {
-            settle(p => p.reject(new GoogleLinkError('error', e?.message)));
-        }
-    });
+    // Une demande déjà en cours (deux clics proches : premier toucher et bouton)
+    // est partagée : une seule fenêtre Google.
+    if (pending) return pending.promise;
+    let resolveFn, rejectFn;
+    const promise = new Promise((resolve, reject) => { resolveFn = resolve; rejectFn = reject; });
+    pending = { resolve: resolveFn, reject: rejectFn, promise };
+    try {
+        getClient().requestAccessToken(hint ? { login_hint: hint } : {});
+    } catch (e) {
+        settle(p => p.reject(new GoogleLinkError('error', e?.message)));
+    }
+    return promise;
 }
 
 // ─── Espace Heripia dans Google Drive ───────────────────────────────────────
@@ -160,7 +164,7 @@ function requestAccess({ hint } = {}) {
 async function drive(path, opts = {}) {
     let res;
     try {
-        res = await fetch(`${DRIVE}${path}`, {
+        res = await fetch(`${API}${path}`, {
             ...opts,
             headers: { ...(opts.headers || {}), Authorization: `Bearer ${token.value}` },
         });
@@ -179,11 +183,81 @@ async function listAppFiles() {
     let pageToken = '';
     do {
         const q = `spaces=appDataFolder&fields=nextPageToken,files(id)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
-        const data = await (await drive(`/files?${q}`)).json();
+        const data = await (await drive(`${DRIVE}/files?${q}`)).json();
         for (const f of data.files || []) ids.push(f.id);
         pageToken = data.nextPageToken || '';
     } while (pageToken);
     return ids;
+}
+
+// ─── Fichiers de la synchronisation (google-sync.js) ───────────────────────
+
+/** Un accès valable est-il en mémoire (pas besoin de la fenêtre Google) ? */
+export function hasGoogleAccess() {
+    return hasValidToken();
+}
+
+/**
+ * Renouvelle l'accès du compte relié. ⚠ Dans un geste du user seulement (la
+ * fenêtre Google s'ouvre un instant et se referme seule).
+ */
+export function renewGoogleAccess() {
+    return requestAccess({ hint: getLinkedAccount()?.email });
+}
+
+/** Fichiers de l'espace Heripia : { nom: id }. */
+export async function listAppFileIds() {
+    const out = {};
+    let pageToken = '';
+    do {
+        const q = `spaces=appDataFolder&fields=nextPageToken,files(id,name)&pageSize=1000${pageToken ? `&pageToken=${encodeURIComponent(pageToken)}` : ''}`;
+        const data = await (await drive(`${DRIVE}/files?${q}`)).json();
+        for (const f of data.files || []) if (f?.name && !(f.name in out)) out[f.name] = f.id;
+        pageToken = data.nextPageToken || '';
+    } while (pageToken);
+    return out;
+}
+
+/** Contenu JSON d'un fichier de l'espace Heripia. */
+export async function readAppFile(id) {
+    return (await drive(`${DRIVE}/files/${encodeURIComponent(id)}?alt=media`)).json();
+}
+
+/**
+ * Écrit un fichier JSON dans l'espace Heripia : le remplace si `id` est donné,
+ * sinon le crée. @returns {Promise<string>} son id
+ */
+export async function writeAppFile(id, name, data) {
+    const body = JSON.stringify(data);
+    if (id) {
+        await drive(`${UPLOAD}/files/${encodeURIComponent(id)}?uploadType=media`, {
+            method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body,
+        });
+        return id;
+    }
+    const boundary = `heripia${Math.random().toString(36).slice(2)}`;
+    const meta = JSON.stringify({ name, parents: ['appDataFolder'] });
+    const multipart = `--${boundary}
+
+Content-Type: application/json; charset=UTF-8
+
+
+
+${meta}
+
+--${boundary}
+
+Content-Type: application/json
+
+
+
+${body}
+
+--${boundary}--`;
+    const res = await drive(`${UPLOAD}/files?uploadType=multipart&fields=id`, {
+        method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipart,
+    });
+    return (await res.json()).id;
 }
 
 // ─── Actions de l'écran Sauvegarder ─────────────────────────────────────────
@@ -195,7 +269,7 @@ async function listAppFiles() {
  */
 export async function linkGoogleAccount() {
     await requestAccess();
-    const about = await (await drive('/about?fields=user(emailAddress)')).json();
+    const about = await (await drive(`${DRIVE}/about?fields=user(emailAddress)`)).json();
     const email = about?.user?.emailAddress;
     if (!email) throw new GoogleLinkError('error', 'adresse absente');
     rememberAccount(email);
@@ -218,7 +292,7 @@ export async function eraseGoogleData() {
     await requestAccess({ hint });
     const ids = await listAppFiles();
     for (const id of ids) {
-        await drive(`/files/${encodeURIComponent(id)}`, { method: 'DELETE' });
+        await drive(`${DRIVE}/files/${encodeURIComponent(id)}`, { method: 'DELETE' });
     }
     const value = token?.value;
     await new Promise((resolve) => {

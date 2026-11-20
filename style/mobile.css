@@ -1088,6 +1088,11 @@ html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 
 .menu-item.attention { background: var(--info-soft); }
 .menu-item.attention .menu-item-icon { color: var(--info-fg); }
 .menu-item.attention .menu-item-sub { color: var(--info-fg); }
+/* Textes modifiés sur deux appareils (synchro Google, 20/11/2026, écran 39). */
+.menu-item.choose { background: var(--warn-soft); }
+.menu-item.choose .menu-item-icon { color: var(--warn-fg); }
+.menu-item.choose .menu-item-sub { color: var(--warn-fg); }
+.menu-item.choose .menu-item-badge { background: var(--warn-fg); color: var(--ink); }
 .menu-item-badge {
     flex-shrink: 0; min-width: 22px; height: 22px; padding: 0 7px; box-sizing: border-box;
     border-radius: 11px; background: var(--info-fg); color: var(--surface);

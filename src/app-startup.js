@@ -27,6 +27,7 @@ import { installOverlayBaseHook } from './overlay-base-hook.js';
 import { initNoteSync } from './note-sync.js';
 import { showRestoreSummaryIfPending } from './restore-ui.js';
 import { checkOfficialUpdatesAtBoot } from './official-update-ui.js';
+import { initGoogleSync } from './google-sync-ui.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -724,5 +725,7 @@ export async function loadAndInitializeMap() {
     void showRestoreSummaryIfPending();
     // Fiches officielles mises à jour depuis une modification du user (20/11/2026).
     void checkOfficialUpdatesAtBoot().catch(e => console.warn('[official-updates] passe du démarrage :', e));
+    // Synchro Google des users (PR 6) : premier toucher, modifications, retour.
+    void initGoogleSync().catch(e => console.warn('[google-sync] démarrage :', e));
     initGistReconnectSync();
 }

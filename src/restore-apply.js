@@ -11,8 +11,11 @@
 
 import {
     getAllPoiDataForMap, getAppState, saveAppState, getAllCircuitsForMap, saveCircuit,
-    deleteCircuitById, replacePoiData, putPoiDataExact,
+    deleteCircuitById, replacePoiData, putPoiDataExact, savePoiData,
 } from './database.js';
+import { state } from './state.js';
+import { eventBus } from './events.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY } from './field-dates.js';
 import { mergeBackup } from './restore-merge.js';
 import { PHOTOS_KIND, photosOfBackup, countPhotos, addPhotos, removeAddedPhotos } from './photo-backup.js';
 
@@ -165,4 +168,33 @@ export async function undoLastRestore(mapId) {
     }
     await saveAppState(lastKey(mapId), null);
     return true;
+}
+
+/**
+ * Écrit le texte choisi pour un conflit (restauration ou synchronisation).
+ * Il est daté maintenant et part de la version de l'autre côté (`fileDate`) :
+ * la même réunion ne reposera pas la question, et l'autre appareil le reprend
+ * sans question (il en descend).
+ */
+export async function writeChosenText(mapId, conflict, finalText) {
+    const now = Date.now();
+    const from = conflict.fileDate;
+    if (conflict.kind === 'place') {
+        const feature = (state.customFeatures || []).find(f => f?.properties?.HW_ID === conflict.id);
+        if (!feature) return;
+        const p = feature.properties;
+        p[conflict.key] = finalText;
+        p[FIELD_DATES_KEY] = { ...(p[FIELD_DATES_KEY] || {}), [conflict.key]: now };
+        p[FIELD_FROM_KEY] = { ...(p[FIELD_FROM_KEY] || {}), ...(from !== undefined ? { [conflict.key]: from } : {}) };
+        await saveAppState(`customPois_${mapId}`, state.customFeatures);
+    } else {
+        if (!state.userData[conflict.id]) state.userData[conflict.id] = {};
+        state.userData[conflict.id][conflict.key] = finalText;
+        await savePoiData(mapId, conflict.id, {
+            [conflict.key]: finalText,
+            [FIELD_DATES_KEY]: { [conflict.key]: now },
+            [FIELD_FROM_KEY]: from !== undefined ? { [conflict.key]: from } : {},
+        });
+    }
+    eventBus.emit('userdata:synced', { poiIds: [conflict.id] });
 }

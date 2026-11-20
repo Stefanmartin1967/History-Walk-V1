@@ -18,6 +18,7 @@ import { OFFICIAL_BASE_KEY, findOfficialUpdates, pruneOfficialBases, sameValue }
 import { officialUpdatesOf, listOfficialUpdates, featureOf, applies } from './official-updates.js';
 import { showToast } from './toast.js';
 import { eventBus } from './events.js';
+import { setAttention } from './attention.js';
 
 const LABELS = { description: 'Description', 'Nom du site FR': 'Nom', info_gpx: 'Info GPX', Horaires: 'Horaires', Source: 'Source' };
 const labelOf = (key) => LABELS[key] || key;
@@ -111,8 +112,7 @@ const plural = (n) => `${n} fiche${n > 1 ? 's' : ''} à revoir`;
  */
 export function refreshOfficialIndicators() {
     const n = listOfficialUpdates().length;
-    document.getElementById('btn-tools-menu')?.classList.toggle('has-attention', n > 0);
-    document.querySelector('.mobile-nav-btn[data-view="actions"]')?.classList.toggle('has-attention', n > 0);
+    setAttention('official', n > 0);
     const entry = document.getElementById('btn-official-updates');
     if (entry) {
         entry.classList.toggle('is-hidden', n === 0);
