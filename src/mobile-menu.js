@@ -23,6 +23,8 @@ import { getCurrentPatrimonialLang, setPatrimonialLang } from './patrimonial-nam
 import { eventBus } from './events.js';
 import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFooter } from './mobile-state.js';
 import { isShownToUser } from './poi-visibility.js';
+import { listOfficialUpdates } from './official-updates.js';
+import { openOfficialUpdatesList } from './official-update-ui.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
 // Compteurs réels lus de state pour donner du contexte à chaque action.
@@ -48,6 +50,7 @@ function computeSubtitles() {
         bmc: 'Offrir un café sur Buy Me a Coffee',
         cc: 'Tableau de bord opérations',
         destSwitch: `Active : ${activeDestName}`,
+        officialCount: listOfficialUpdates().length,
     };
 }
 
@@ -58,6 +61,11 @@ function buildSections(subs) {
             label: 'Mon parcours',
             items: [
                 { id: 'mob-action-stats', ico: 'trophy', label: 'Mon Carnet de Voyage', sub: subs.carnet },
+                // Fiches officielles mises à jour depuis une modification du user
+                // (20/11/2026, maquette écran 25) : seulement s'il en reste à revoir.
+                ...(subs.officialCount > 0
+                    ? [{ id: 'mob-action-official-updates', ico: 'refresh-cw', label: 'Fiches mises à jour', sub: `${subs.officialCount} fiche${subs.officialCount > 1 ? 's' : ''} à revoir`, variant: 'attention', badge: subs.officialCount }]
+                    : []),
             ],
         },
         {
@@ -141,6 +149,7 @@ export function renderMobileMenu() {
             const variantCls = it.variant === 'danger' ? ' danger'
                             : it.variant === 'love' ? ' love'
                             : it.variant === 'brand-emph' ? ' brand-emph'
+                            : it.variant === 'attention' ? ' attention'
                             : '';
             // L'icône trail : cœur plein pour love (BMC), chevron pour le reste.
             const trailIcon = it.variant === 'love' ? 'heart' : 'chevron-right';
@@ -151,6 +160,7 @@ export function renderMobileMenu() {
                         <div class="menu-item-label">${escapeHtml(it.label)}</div>
                         ${it.sub ? `<div class="menu-item-sub">${escapeHtml(it.sub)}</div>` : ''}
                     </span>
+                    ${it.badge ? `<span class="menu-item-badge">${it.badge}</span>` : ''}
                     <span class="menu-item-trail"><i data-lucide="${trailIcon}"></i></span>
                 </button>
             `;
@@ -170,6 +180,7 @@ export function renderMobileMenu() {
     // ─── Event listeners ─────────────────────────────────────────────────────
     document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
     document.getElementById('mob-action-backup')?.addEventListener('click', () => openSaveModal());
+    document.getElementById('mob-action-official-updates')?.addEventListener('click', () => openOfficialUpdatesList());
     document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());
     document.getElementById('mob-action-reset')?.addEventListener('click', async () => {
         if (await showConfirm(

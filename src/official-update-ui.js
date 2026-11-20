@@ -6,7 +6,8 @@
 // affiché modifiable ; un champ simple se choisit entre deux cartes.
 // Styles : cc-conflict-* et cc-official-update (admin-cc.css).
 
-import { escapeXml } from './utils.js';
+import { escapeXml, getDerivedZone } from './utils.js';
+import { getPatrimonialName } from './data.js';
 import { openHwModal, closeHwModal } from './modal.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { mergeTexts } from './text-merge.js';
@@ -14,7 +15,7 @@ import { renderSentences, syncSentenceBoxes, applySentenceBox } from './sentence
 import { state } from './state.js';
 import { savePoiData, removePoiDataKeys } from './database.js';
 import { OFFICIAL_BASE_KEY, findOfficialUpdates, pruneOfficialBases, sameValue } from './overlay-base.js';
-import { officialUpdatesOf, featureOf, applies } from './official-updates.js';
+import { officialUpdatesOf, listOfficialUpdates, featureOf, applies } from './official-updates.js';
 import { showToast } from './toast.js';
 import { eventBus } from './events.js';
 
@@ -71,11 +72,97 @@ export async function checkOfficialUpdatesAtBoot() {
         if (isNew) fresh++;
     }
     writeSeen(mapId, nextSeen);
-    if (fresh > 0) {
-        showToast(fresh === 1
-            ? 'Une fiche officielle a été mise à jour depuis vos modifications.'
-            : `${fresh} fiches officielles ont été mises à jour depuis vos modifications.`, 'info', 6000);
+    bindToolsMenuEntry();
+    refreshOfficialIndicators();
+    if (fresh > 0) announce(fresh);
+}
+
+// Toast ordinaire (à sa place habituelle), avec un bouton : une seule fiche →
+// « Ouvrir » la fiche ; plusieurs → « Voir » la liste. Un toast se rate : le
+// point sur la roue dentée et l'entrée du menu restent tant qu'une fiche n'est
+// pas réglée (maquette écran 23, Stefan 20/11/2026).
+function announce(fresh) {
+    const all = listOfficialUpdates();
+    if (all.length === 1) {
+        const f = featureOf(all[0].poiId);
+        const name = f ? getPatrimonialName(f) : '';
+        showToast(`La fiche « ${name} » a été mise à jour depuis votre modification.`, 'info', 10000,
+            { label: 'Ouvrir', onClick: () => openFiche(all[0].poiId) });
+        return;
     }
+    showToast(fresh === 1
+        ? 'Une fiche officielle a été mise à jour depuis vos modifications.'
+        : `${fresh} fiches officielles ont été mises à jour depuis vos modifications.`, 'info', 10000,
+        { label: 'Voir', onClick: () => openOfficialUpdatesList() });
+}
+
+function openFiche(poiId) {
+    const index = (state.loadedFeatures || []).findIndex(f => f === featureOf(poiId));
+    if (index > -1) eventBus.emit('poi:open-details', { featureId: index });
+}
+
+const plural = (n) => `${n} fiche${n > 1 ? 's' : ''} à revoir`;
+
+/**
+ * Point bleu sur la roue dentée (PC : « Outils » ; téléphone : « Menu » du dock)
+ * et entrée « Fiches mises à jour » du menu Outils PC, tant qu'il reste une
+ * fiche à revoir. Le menu du téléphone se construit à chaque ouverture
+ * (mobile-menu.js lit listOfficialUpdates).
+ */
+export function refreshOfficialIndicators() {
+    const n = listOfficialUpdates().length;
+    document.getElementById('btn-tools-menu')?.classList.toggle('has-attention', n > 0);
+    document.querySelector('.mobile-nav-btn[data-view="actions"]')?.classList.toggle('has-attention', n > 0);
+    const entry = document.getElementById('btn-official-updates');
+    if (entry) {
+        entry.classList.toggle('is-hidden', n === 0);
+        const badge = entry.querySelector('.tools-menu-badge');
+        if (badge) badge.textContent = String(n);
+        entry.setAttribute('aria-label', `Fiches mises à jour : ${plural(n)}`);
+    }
+}
+
+let _entryBound = false;
+function bindToolsMenuEntry() {
+    if (_entryBound) return;
+    const entry = document.getElementById('btn-official-updates');
+    if (!entry) return;
+    _entryBound = true;
+    entry.addEventListener('click', () => {
+        document.getElementById('tools-menu-content')?.classList.remove('active');
+        openOfficialUpdatesList();
+    });
+}
+
+/** Fenêtre « Fiches mises à jour » (écrans 24 et 26) : un nom → la fiche. */
+export function openOfficialUpdatesList() {
+    const all = listOfficialUpdates();
+    if (!all.length) { showToast('Aucune fiche à revoir.', 'info'); return; }
+    const rows = all.map(({ poiId, keys }) => {
+        const f = featureOf(poiId);
+        const meta = [getDerivedZone(f), f?.properties?.['Catégorie'], keys.map(labelOf).join(', ')].filter(Boolean).join(' · ');
+        return `<button type="button" class="official-list-row" data-poi="${escapeXml(poiId)}">
+                <span class="official-list-text"><span class="official-list-name">${escapeXml(f ? getPatrimonialName(f) : poiId)}</span><span class="official-list-meta">${escapeXml(meta)}</span></span>
+                <i data-lucide="chevron-right"></i>
+            </button>`;
+    }).join('');
+    const body = `
+        <div class="official-list">
+            <p class="cc-conflict-intro">La fiche officielle a changé depuis votre modification. Ouvrez une fiche pour choisir ce que vous gardez.</p>
+            ${rows}
+        </div>`;
+    const footer = `<button class="btn btn-secondary official-list-close" type="button" data-official-list-close>Fermer</button>`;
+    openHwModal({ size: 'md', icon: 'refresh-cw', title: 'Fiches mises à jour', body, footer });
+
+    const overlay = document.querySelector('.hw-modal-overlay:last-of-type') || document;
+    const root = overlay.querySelector('.official-list');
+    if (!root) return;
+    createIcons({ icons: appIcons, root });
+    root.querySelectorAll('.official-list-row').forEach(btn => btn.addEventListener('click', () => {
+        closeHwModal();
+        openFiche(btn.dataset.poi);
+    }));
+    overlay.querySelector('[data-official-list-close]')?.addEventListener('click', () => closeHwModal());
 }
 
 /** « Revenir à la version officielle » : les champs quittent l'overlay. */
@@ -83,6 +170,7 @@ export async function revertToOfficial(poiId, keys) {
     try {
         await dropFields(poiId, keys);
         eventBus.emit('userdata:synced', { poiIds: [poiId] });
+        refreshOfficialIndicators();
     } catch (e) {
         console.error('[official-updates] retour à l\'officiel :', e);
         showToast('Erreur : la version officielle n\'a pas pu être reprise.', 'error');
@@ -117,6 +205,7 @@ export async function keepOfficialChoice(poiId, finals) {
             await savePoiData(state.currentMapId, poiId, ud);
         }
         eventBus.emit('userdata:synced', { poiIds: [poiId] });
+        refreshOfficialIndicators();
     } catch (e) {
         console.error('[official-updates] enregistrement :', e);
         showToast('Erreur lors de l\'enregistrement.', 'error');

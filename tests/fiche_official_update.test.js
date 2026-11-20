@@ -14,6 +14,7 @@ vi.mock('../src/access-point.js', () => ({ getAccessPointStatus: vi.fn(() => nul
 import { buildDetailsPanelHtml } from '../src/templates.js';
 import { isMobileView } from '../src/mobile-state.js';
 import { state } from '../src/state.js';
+import { listOfficialUpdates } from '../src/official-updates.js';
 
 const feature = (userData) => ({
     type: 'Feature',
@@ -47,5 +48,14 @@ describe('bandeau « fiche officielle mise à jour »', () => {
     it('admin : jamais de bandeau', () => {
         state.isAdmin = true;
         expect(fiche(modified)).not.toContain('poi-official-update');
+    });
+});
+
+describe('liste des fiches à revoir (menu « Fiches mises à jour »)', () => {
+    it('ne garde que les fiches dont l’officiel a changé depuis la modification', () => {
+        fiche(modified);
+        expect(listOfficialUpdates()).toEqual([{ poiId: 'HW-F', keys: ['description'] }]);
+        fiche({ description: 'Ma version.', _officialBase: { description: 'Texte officiel corrigé.' } });
+        expect(listOfficialUpdates()).toEqual([]);
     });
 });

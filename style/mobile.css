@@ -1084,6 +1084,15 @@
 html[data-theme="nuit"] .menu-item.love .menu-item-icon { background: rgba(219, 39, 119, 0.18); }
 .menu-item.brand-emph .menu-item-icon { background: var(--brand); color: #fff; }
 .menu-item.brand-emph .menu-item-label { color: var(--brand-2, var(--brand)); }
+/* Fiches officielles mises à jour (20/11/2026, maquette écran 25). */
+.menu-item.attention { background: var(--info-soft); }
+.menu-item.attention .menu-item-icon { color: var(--info-fg); }
+.menu-item.attention .menu-item-sub { color: var(--info-fg); }
+.menu-item-badge {
+    flex-shrink: 0; min-width: 22px; height: 22px; padding: 0 7px; box-sizing: border-box;
+    border-radius: 11px; background: var(--info-fg); color: var(--surface);
+    font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center;
+}
 
 .menu-version {
     text-align: center;
