@@ -15,6 +15,7 @@ import { getPoiPhotos, getPendingAdminPhotos } from './database.js';
 import { getWorkPhotosById, getKeptWorkPhotosById, loadWorkPhotoBlob } from './work-photos.js';
 import { noteEdited, syncNote } from './note-sync.js';
 import { openNoteConflict } from './note-conflict-ui.js';
+import { openOfficialUpdate } from './official-update-ui.js';
 import { getStoredToken } from './github-sync.js';
 import { startAccessPointPlacement } from './access-point-editor.js';
 import { configureHelp, attachHelp } from './help-popover.js';
@@ -393,6 +394,12 @@ function setupNoteEditToggle(poiId) {
     document.getElementById('poi-note-resolve')?.addEventListener('click', () => {
         const f = state.loadedFeatures.find(x => getPoiId(x) === poiId);
         openNoteConflict(poiId, f ? getPatrimonialName(f) : '');
+    });
+    // Bandeau « La fiche officielle a été mise à jour depuis votre modification »
+    // → fenêtre Voir (official-update-ui.js, 20/11/2026).
+    document.getElementById('poi-official-see')?.addEventListener('click', () => {
+        const f = state.loadedFeatures.find(x => getPoiId(x) === poiId);
+        openOfficialUpdate(poiId, f ? getPatrimonialName(f) : '');
     });
     const view = document.getElementById('poi-note-view');
     const editEl = document.getElementById('poi-note-edit');

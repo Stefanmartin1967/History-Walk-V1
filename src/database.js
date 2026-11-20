@@ -1,7 +1,7 @@
 // database.js
 const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
-import { BASE_KEY, pruneStamps } from './overlay-base.js';
+import { BASE_KEY, pruneStamps, OFFICIAL_BASE_KEY, pruneOfficialBases } from './overlay-base.js';
 import { syncStampsFor } from './sync-stamps.js';
 import { FIELD_DATES_KEY, FIELD_FROM_KEY, fieldStamps, stampsAfterRemoval, stampCreatedPlaces, circuitUpdatedAt } from './field-dates.js';
 
@@ -12,6 +12,10 @@ import { FIELD_DATES_KEY, FIELD_FROM_KEY, fieldStamps, stampsAfterRemoval, stamp
 // installOverlayBaseHook (overlay-base-hook.js) ; sans lui (tests), rien n'est noté.
 let _writeHook = null;
 export function setPoiDataWriteHook(fn) { _writeHook = typeof fn === 'function' ? fn : null; }
+// Valeur officielle d'un champ à sa première modification par un user
+// (overlay-base.js, « fiche officielle mise à jour depuis votre modification »).
+let _officialBaseHook = null;
+export function setOfficialBaseHook(fn) { _officialBaseHook = typeof fn === 'function' ? fn : null; }
 
 // Dates de changement, posées ici pour la même raison (une écriture = un seul
 // endroit) : champs synchronisés par le Gist (18/11/2026, sync-stamps.js) et,
@@ -36,6 +40,12 @@ function withStamps(mapId, poiId, existing, data) {
     if (stamps) {
         data = { ...data, ...stamps };
         notifyStamps(mapId, poiId, stamps);
+    }
+    if (_officialBaseHook) {
+        let bases = null;
+        try { bases = _officialBaseHook(mapId, poiId, existing, data); }
+        catch (e) { console.warn('[database] valeur officielle non notée :', e); }
+        if (bases) data = { ...data, [OFFICIAL_BASE_KEY]: { ...(existing?.[OFFICIAL_BASE_KEY] || {}), ...(data[OFFICIAL_BASE_KEY] || {}), ...bases } };
     }
     if (!_writeHook) return data;
     let extra = null;
@@ -510,9 +520,11 @@ export async function removePoiDataKeys(mapId, poiId, keys) {
             if (!existing) return;
             const next = { ...existing };
             if (next[BASE_KEY]) next[BASE_KEY] = { ...next[BASE_KEY] };
+            if (next[OFFICIAL_BASE_KEY]) next[OFFICIAL_BASE_KEY] = { ...next[OFFICIAL_BASE_KEY] };
             const removed = (keys || []).filter(k => k in next);
             removed.forEach(k => { delete next[k]; });
             pruneStamps(next); // plus d'estampille pour un champ retiré
+            pruneOfficialBases(next); // ni de valeur officielle notée
             // Retirer un champ (retour à la valeur officielle) est un changement
             // daté : une fusion saura qu'il est plus récent qu'une version qui
             // le portait encore.

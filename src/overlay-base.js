@@ -155,3 +155,76 @@ export function findConflicts({ userData, online, onlineSha, baseOf }) {
     }
     return out;
 }
+
+// ─── Fiche officielle mise à jour depuis la modification d'un user ──────────
+// (20/11/2026, PR 4 du chantier « synchro users », maquette écrans 20-22.)
+//
+// Un user modifie la description officielle ; plus tard, Stefan la corrige et
+// publie. Sans rien de plus, le user voit SA version à jamais (son overlay
+// prime) et n'apprend pas qu'il existe mieux. Côté user, pas de SHA de la carte
+// (chargée sans GitHub) : on note donc la VALEUR officielle du champ au moment
+// où il entre dans l'overlay (`_officialBase[champ]`, null = champ absent).
+// Au démarrage et à l'affichage de la fiche :
+//   - valeur du user = officielle actuelle → la modification ne sert plus : retirée ;
+//   - officielle actuelle ≠ valeur notée  → « mise à jour depuis votre modification » ;
+//   - sinon rien.
+// La position n'est pas suivie (le déplacement réécrit la géométrie avant
+// l'écriture : la valeur de départ n'est plus lisible).
+
+/** Clé de l'overlay : { champ: valeur officielle au moment de la modification }. */
+export const OFFICIAL_BASE_KEY = '_officialBase';
+
+const POSITION_KEYS = new Set(['lat', 'lng']);
+
+/**
+ * Valeurs officielles à noter quand un enregistrement est écrit : les champs
+ * suivis qui ENTRENT dans l'overlay et n'ont pas encore la leur.
+ * @param {object|null} existing enregistrement en base avant écriture
+ * @param {object} data valeurs écrites
+ * @param {object|null} officialProps properties de la fiche officielle chargée
+ * @returns {object|null} { champ: valeur } ou null
+ */
+export function newOfficialBases(existing, data, officialProps) {
+    if (!data || !officialProps) return null;
+    const known = { ...(existing?.[OFFICIAL_BASE_KEY] || {}), ...(data[OFFICIAL_BASE_KEY] || {}) };
+    const out = {};
+    for (const key of Object.keys(data)) {
+        if (!isTrackedKey(key) || POSITION_KEYS.has(key) || key in known) continue;
+        if (existing && existing[key] !== undefined) continue;
+        if (data[key] === undefined) continue;
+        out[key] = officialProps[key] === undefined ? null : officialProps[key];
+    }
+    return Object.keys(out).length > 0 ? out : null;
+}
+
+/** Retire les valeurs notées des champs qui ne sont plus dans l'overlay (en place). */
+export function pruneOfficialBases(overlay) {
+    const bases = overlay?.[OFFICIAL_BASE_KEY];
+    if (!bases) return overlay;
+    for (const key of Object.keys(bases)) {
+        if (overlay[key] === undefined) delete bases[key];
+    }
+    if (Object.keys(bases).length === 0) delete overlay[OFFICIAL_BASE_KEY];
+    return overlay;
+}
+
+/**
+ * Champs d'une fiche dont l'officiel a changé depuis la modification du user.
+ * @returns {{updates: Array<{key, kind, base, official, local}>, obsolete: string[]}}
+ *          `obsolete` : champs que le user a modifiés comme l'officiel actuel (à retirer)
+ */
+export function findOfficialUpdates(userData, officialProps) {
+    const res = { updates: [], obsolete: [] };
+    const bases = userData?.[OFFICIAL_BASE_KEY];
+    if (!bases || !officialProps) return res;
+    for (const [key, base] of Object.entries(bases)) {
+        const local = userData[key];
+        if (local === undefined) continue;
+        const official = officialProps[key];
+        if (sameValue(local, official)) res.obsolete.push(key);
+        else if (!sameValue(base, official)) {
+            res.updates.push({ key, kind: kindOf(key, official, local, base), base: base ?? '', official: official ?? '', local });
+        }
+    }
+    return res;
+}

@@ -28,7 +28,7 @@ export const FIELD_FROM_KEY = '_fieldFrom';
 // Clés techniques : jamais datées (ce ne sont pas des choix du user, ou elles
 // ont déjà leur propre date — visité, Incontournable, photos de travail).
 const META = new Set([
-    FIELD_DATES_KEY, '_fieldFrom', '_baseSha', '_candidateOrig', '_pending', 'noteSync', 'userData',
+    FIELD_DATES_KEY, '_fieldFrom', '_baseSha', '_officialBase', '_candidateOrig', '_pending', 'noteSync', 'userData',
     'mapId', 'poiId', 'HW_ID', 'vu', 'accessPointStatus',
     'vuUpdatedAt', 'incontournableUpdatedAt', 'workPhotosUpdatedAt',
 ]);

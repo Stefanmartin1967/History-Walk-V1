@@ -1,7 +1,7 @@
 // templates.js
 import { getPatrimonialName } from './data.js';
 import { getCurrentPatrimonialLang } from './patrimonial-names.js';
-import { escapeXml, getDerivedZone, linkifyText, formatPhone, telHref, commonsCategoryUrl } from './utils.js';
+import { escapeXml, getPoiId, getDerivedZone, linkifyText, formatPhone, telHref, commonsCategoryUrl } from './utils.js';
 import { state, getActiveDestinationCountry } from './state.js';
 import { getActiveDestinationCurrency } from './countries.js';
 import { isMobileView } from './mobile-state.js';
@@ -9,6 +9,7 @@ import { getAccessPointStatus } from './access-point.js';
 import { parseSources } from './source-format.mjs';
 import { renderDescriptionHtml } from './description-format.mjs';
 import { isDescriptionVisible } from './description-visibility.js';
+import { officialBannerHtml } from './official-updates.js';
 
 export const ICONS = {
     mosque: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H4v-7a8 8 0 0 1 16 0z"/><path d="M12 5V2"/><circle cx="12" cy="8" r="2"/></svg>`,
@@ -421,14 +422,18 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
     // phrase « Aucune description » laissait entendre un manque (décision de
     // Stefan, note de test 18, 03/10/2026). On écrit une description par
     // « Modifier », pas depuis cette section.
+    // Fiche officielle mise à jour depuis la modification du user (20/11/2026,
+    // maquette écrans 20 et 22) : bandeau en tête de la description, ou à sa
+    // place quand elle n'est pas affichée.
+    const officialBanner = officialBannerHtml(getPoiId(feature), mobile);
     const descSection = descVisible ? `
         <section class="poi-section description-section">
             <h3 class="poi-section-title">
                 <span class="ttl-text">Description</span>
                 <button class="ttl-action speak-btn" title="Lire à voix haute" aria-label="Lire à voix haute"><i data-lucide="volume-2"></i></button>
-            </h3>
+            </h3>${officialBanner}
             <div class="poi-desc">${renderDescriptionHtml(longDesc, escapeXml, 'noopener noreferrer')}</div>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}
-        </section>` : '';
+        </section>` : (officialBanner ? `<section class="poi-section">${officialBanner}</section>` : '');
 
     // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit.
     // Si in circuit, deux chevrons cliquables encadrent le compteur pour naviguer
