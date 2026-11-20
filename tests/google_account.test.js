@@ -160,3 +160,36 @@ describe('politique de sécurité de la page', () => {
         ]));
     });
 });
+
+describe('fichiers de l’espace Heripia', () => {
+    // Lecture stricte du format multipart (comme Google) : chaque partie commence
+    // par CRLF, puis ses en-têtes, une ligne vide, le contenu.
+    function parseStrict(body, contentType) {
+        const boundary = contentType.match(/boundary=(.+)$/)[1];
+        return body.split(`--${boundary}`).slice(1, -1).map(part => {
+            expect(part.startsWith('\r\n')).toBe(true);
+            const end = part.indexOf('\r\n\r\n', 2);
+            expect(end).toBeGreaterThan(0);
+            expect(part.slice(2, end)).toMatch(/^Content-Type: application\/json/);
+            return part.slice(end + 4).replace(/\r\n$/, '');
+        });
+    }
+
+    it('création : métadonnées et contenu lisibles, rangé dans l’espace caché (20/11 : une ligne vide en trop cassait l’envoi)', async () => {
+        await linkGoogleAccount();
+        let sent;
+        globalThis.fetch = vi.fn(async (url, opts) => { sent = opts; return new Response(JSON.stringify({ id: 'nouveau' })); });
+        const { writeAppFile } = await import('../src/google-account.js');
+        expect(await writeAppFile(null, 'heripia-djerba.json', { a: 1 })).toBe('nouveau');
+        const [meta, body] = parseStrict(sent.body, sent.headers['Content-Type']);
+        expect(JSON.parse(meta)).toEqual({ name: 'heripia-djerba.json', parents: ['appDataFolder'] });
+        expect(JSON.parse(body)).toEqual({ a: 1 });
+    });
+
+    it('un refus de Google garde son code et son message (montrés dans l’encadré)', async () => {
+        await linkGoogleAccount();
+        globalThis.fetch = vi.fn(async () => new Response(JSON.stringify({ error: { message: 'Malformed multipart body.' } }), { status: 400 }));
+        const { writeAppFile } = await import('../src/google-account.js');
+        await expect(writeAppFile(null, 'x.json', {})).rejects.toMatchObject({ kind: 'error', detail: 'HTTP 400 Malformed multipart body.' });
+    });
+});

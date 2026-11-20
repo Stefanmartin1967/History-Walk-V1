@@ -61,6 +61,11 @@ let busy = false;     // liaison ou effacement en cours
 let flash = null;     // { tone: 'warn' | 'ok', text }
 let currentBody = null;
 
+/** Ajoute le détail technique du dernier échec (« Détail : HTTP 400 … »), à rapporter. */
+function withDetail(text, detail = getSyncStatus().error) {
+    return detail ? `${text} Détail : ${detail}` : text;
+}
+
 function flashHtml() {
     if (!flash) return '';
     const icon = flash.tone === 'ok' ? 'check-circle' : 'alert-triangle';
@@ -176,7 +181,7 @@ async function onLink(bodyEl) {
     // Première fois sur cet appareil : on réunit l'appareil et le compte (écran 35).
     const res = await firstSyncAfterLink();
     busy = false;
-    if (!res.ok) flash = { tone: 'warn', text: SYNC_FAIL.error };
+    if (!res.ok) flash = { tone: 'warn', text: withDetail(SYNC_FAIL.error) };
     else if (res.created) flash = { tone: 'ok', text: FIRST_COPY_DONE };
     rerender(bodyEl);
 }
@@ -188,9 +193,9 @@ async function onSync(bodyEl) {
     rerender(bodyEl);
     try {
         const r = await work;
-        if (r === null) flash = { tone: 'warn', text: SYNC_FAIL.error };
+        if (r === null) flash = { tone: 'warn', text: withDetail(SYNC_FAIL.error) };
     } catch (e) {
-        flash = { tone: 'warn', text: SYNC_FAIL[e?.kind] || SYNC_FAIL.error };
+        flash = { tone: 'warn', text: e?.kind && e.kind !== 'error' ? SYNC_FAIL[e.kind] : withDetail(SYNC_FAIL.error, e?.detail) };
     }
     rerender(bodyEl);
 }
