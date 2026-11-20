@@ -11,9 +11,10 @@
 
 import {
     getAllPoiDataForMap, getAppState, saveAppState, getAllCircuitsForMap, saveCircuit,
-    deleteCircuitById, replacePoiData, putPoiDataExact, savePoiPhotos, base64ToBlob,
+    deleteCircuitById, replacePoiData, putPoiDataExact,
 } from './database.js';
 import { mergeBackup } from './restore-merge.js';
+import { PHOTOS_KIND, photosOfBackup, countPhotos, addPhotos, removeAddedPhotos } from './photo-backup.js';
 
 const lastKey = (mapId) => `lastRestore_${mapId}`;
 
@@ -65,8 +66,13 @@ export function readFileState(json, isPlace) {
 
 /** Ce que contient un fichier, pour l'écran « avant de restaurer ». */
 export function describeBackup(json, isPlace) {
+    const photos = photosOfBackup(json);
+    if (json?.kind === PHOTOS_KIND) {
+        return { kind: PHOTOS_KIND, photos: countPhotos(photos), photoPlaces: Object.keys(photos).length };
+    }
     const ud = Object.values(json.userData || {});
     return {
+        photos: countPhotos(photos),
         visits: ud.filter(d => d?.vuManual === true || d?.vu === true || (Array.isArray(d?.visitedByCircuits) && d.visitedByCircuits.length)).length,
         notes: ud.filter(d => typeof d?.notes === 'string' && d.notes.trim()).length,
         places: (json.baseGeoJSON?.features || []).filter(isPlace).length,
@@ -80,6 +86,14 @@ export function describeBackup(json, isPlace) {
  * @returns {Promise<{summary:object, conflicts:Array}>}
  */
 export async function applyRestore(mapId, json, isPlace) {
+    // Fichier « Photos » : seulement des photos, ajoutées sans rien remplacer.
+    if (json?.kind === PHOTOS_KIND) {
+        const photos = await addPhotos(mapId, photosOfBackup(json));
+        const summary = { visits: 0, notes: 0, places: [], circuits: [], updated: [], kept: [], keptCircuits: 0, photos: photos.count };
+        await saveAppState(lastKey(mapId), { at: Date.now(), fileDate: json.date || null, summary, conflicts: [], showSummary: true, undo: { photos: photos.added } });
+        return { summary, conflicts: [] };
+    }
+
     const here = await readDeviceState(mapId);
     const result = mergeBackup(here, readFileState(json, isPlace));
 
@@ -104,11 +118,11 @@ export async function applyRestore(mapId, json, isPlace) {
     await saveAppState('hiddenCircuitIds', result.hiddenCircuitIds);
     await saveAppState('hiddenCircuitIdsUpdatedAt', result.hiddenCircuitIdsUpdatedAt);
 
-    // Photos d'une sauvegarde complète : ajoutées à celles de l'appareil.
-    for (const [id, data] of Object.entries(json.userData || {})) {
-        const b64 = (Array.isArray(data?.photos) ? data.photos : []).filter(p => typeof p === 'string' && p.startsWith('data:'));
-        if (b64.length) await savePoiPhotos(mapId, id, b64.map((p, i) => ({ id: `restored_${id}_${i}_${Date.now()}`, blob: base64ToBlob(p) })));
-    }
+    // Photos d'une ancienne sauvegarde complète : AJOUTÉES à celles de l'appareil
+    // (avant le 20/11/2026, savePoiPhotos remplaçait toutes les photos du lieu).
+    const photos = await addPhotos(mapId, photosOfBackup(json));
+    undo.photos = photos.added;
+    result.summary.photos = photos.count;
 
     await saveAppState(lastKey(mapId), {
         at: Date.now(),
@@ -134,17 +148,21 @@ export async function undoLastRestore(mapId) {
     const last = await getLastRestore(mapId);
     if (!last?.undo) return false;
     const u = last.undo;
+    await removeAddedPhotos(mapId, u.photos);
     for (const [id, before] of Object.entries(u.userData || {})) await putPoiDataExact(mapId, id, before);
     if (u.places) await saveAppState(`customPois_${mapId}`, u.places);
     for (const { id, before } of u.circuits || []) {
         if (before) await saveCircuit(before);
         else await deleteCircuitById(id);
     }
-    await saveAppState(`hiddenPois_${mapId}`, u.hiddenPoiIds || []);
-    await saveAppState(`official_circuits_status_${mapId}`, u.circuitsStatus || {});
-    await saveAppState(`official_circuits_status_updated_${mapId}`, u.circuitsStatusUpdatedAt || {});
-    await saveAppState('hiddenCircuitIds', u.hiddenCircuitIds || []);
-    await saveAppState('hiddenCircuitIdsUpdatedAt', u.hiddenCircuitIdsUpdatedAt || {});
+    // Restauration de photos seules : les listes n'ont pas été touchées.
+    if (u.hiddenPoiIds !== undefined) {
+        await saveAppState(`hiddenPois_${mapId}`, u.hiddenPoiIds || []);
+        await saveAppState(`official_circuits_status_${mapId}`, u.circuitsStatus || {});
+        await saveAppState(`official_circuits_status_updated_${mapId}`, u.circuitsStatusUpdatedAt || {});
+        await saveAppState('hiddenCircuitIds', u.hiddenCircuitIds || []);
+        await saveAppState('hiddenCircuitIdsUpdatedAt', u.hiddenCircuitIdsUpdatedAt || {});
+    }
     await saveAppState(lastKey(mapId), null);
     return true;
 }

@@ -58,6 +58,7 @@ vi.mock('../src/database.js', () => ({
     saveCircuit: vi.fn(),
     getAllPoiPhotosForMap: vi.fn(async () => []),
     savePoiPhotos: vi.fn(async () => {}),
+    getPoiPhotos: vi.fn(async () => []),
     blobToBase64: vi.fn(async () => 'data:image/jpeg;base64,MOCKDATA'),
     base64ToBlob: vi.fn((b64) => new Blob([b64], { type: 'image/jpeg' }))
 }));
@@ -78,7 +79,8 @@ vi.mock('../src/events.js', () => ({
 }));
 
 vi.mock('../src/utils.js', () => ({
-    downloadFile: vi.fn()
+    downloadFile: vi.fn(),
+    sha256OfFile: vi.fn(async () => null),
 }));
 
 vi.mock('../src/modal.js', () => ({
@@ -266,7 +268,7 @@ describe('isValidBackup', () => {
 describe('prepareExportData', () => {
     it('retourne le format "Carton avec étiquette" attendu (backupVersion, mapId, baseGeoJSON, etc.)', async () => {
         state.currentMapId = 'djerba';
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(data.backupVersion).toBe('3.0');
         expect(data.mapId).toBe('djerba');
         expect(data.baseGeoJSON.type).toBe('FeatureCollection');
@@ -276,7 +278,7 @@ describe('prepareExportData', () => {
 
     it('utilise "djerba" comme mapId par défaut si state.currentMapId absent', async () => {
         state.currentMapId = null;
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(data.mapId).toBe('djerba');
     });
 
@@ -287,7 +289,7 @@ describe('prepareExportData', () => {
         ];
         state.userData = { 'HW-PC-p1': { vu: true, photos: ['photo1.jpg', 'photo2.jpg'] } };
 
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         const feat = data.baseGeoJSON.features[0];
         expect(feat.properties.userData.vu).toBe(true);
         expect(feat.properties.userData.photos).toBeUndefined();
@@ -296,65 +298,36 @@ describe('prepareExportData', () => {
     it('conserve les photos « légères » (URLs) dans userData racine, jamais dans le geojson', async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = [
-            { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
+            { type: 'Feature', properties: { HW_ID: 'HW-PC-p1' }, geometry: null }
         ];
-        state.userData = { p1: { vu: true, photos: ['photo1.jpg'] } };
+        state.userData = { 'HW-PC-p1': { vu: true, photos: ['photo1.jpg', 'data:image/jpeg;base64,X'] } };
 
-        const data = await prepareExportData(true);
+        const data = await prepareExportData();
         // Plus de duplication des photos dans le geojson
         expect(data.baseGeoJSON.features[0].properties.userData.photos).toBeUndefined();
-        // Les références légères (non base64) sont conservées dans le bloc racine
-        expect(data.userData.p1.photos).toEqual(['photo1.jpg']);
-        expect(data.userData.p1.vu).toBe(true);
+        // Les références légères (non base64) sont conservées dans le bloc racine, jamais de base64
+        expect(data.userData['HW-PC-p1'].photos).toEqual(['photo1.jpg']);
+        expect(data.userData['HW-PC-p1'].vu).toBe(true);
     });
 
-    it('encode les photos Blob (store poiPhotos) en base64 dans userData racine en mode FULL', async () => {
-        state.currentMapId = 'djerba';
-        state.loadedFeatures = [
-            { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
-        ];
-        state.userData = { p1: { vu: true } };
-        getAllPoiPhotosForMap.mockResolvedValueOnce([
-            { mapId: 'djerba', poiId: 'p1', photos: [{ id: 'a', blob: new Blob(['x']) }] }
-        ]);
-
-        const data = await prepareExportData(true);
-        expect(getAllPoiPhotosForMap).toHaveBeenCalledWith('djerba');
-        expect(data.userData.p1.photos).toEqual(['data:image/jpeg;base64,MOCKDATA']);
-        // Jamais dupliqué dans le geojson
-        expect(data.baseGeoJSON.features[0].properties.userData.photos).toBeUndefined();
-    });
-
-    it('n\'encode aucune photo Blob en mode LITE (includePhotos = false)', async () => {
+    it('n\'encode jamais de photo Blob : elles ont leur fichier « Photos »', async () => {
         state.currentMapId = 'djerba';
         state.userData = { p1: { vu: true } };
 
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(getAllPoiPhotosForMap).not.toHaveBeenCalled();
         expect(data.userData.p1.photos).toBeUndefined();
-    });
-
-    it('inclut un POI qui a des photos Blob mais aucune note (FULL)', async () => {
-        state.currentMapId = 'djerba';
-        state.loadedFeatures = [];
-        state.userData = {}; // aucune note
-        getAllPoiPhotosForMap.mockResolvedValueOnce([
-            { mapId: 'djerba', poiId: 'p9', photos: [{ id: 'b', blob: new Blob(['y']) }] }
-        ]);
-
-        const data = await prepareExportData(true);
-        expect(data.userData.p9.photos).toEqual(['data:image/jpeg;base64,MOCKDATA']);
     });
 
     it('fusionne les userData dans properties.userData de chaque feature', async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = [
-            { type: 'Feature', properties: { HW_ID: 'p1', name: 'A' }, geometry: null },
-            { type: 'Feature', properties: { HW_ID: 'p2', name: 'B' }, geometry: null }
+            { type: 'Feature', properties: { HW_ID: 'HW-PC-1', name: 'A' }, geometry: null },
+            { type: 'Feature', properties: { HW_ID: 'HW-PC-2', name: 'B' }, geometry: null }
         ];
-        state.userData = { p1: { vu: true }, p2: { vu: false } };
+        state.userData = { 'HW-PC-1': { vu: true }, 'HW-PC-2': { vu: false } };
 
-        const data = await prepareExportData(true);
+        const data = await prepareExportData();
         expect(data.baseGeoJSON.features[0].properties.userData).toEqual({ vu: true });
         expect(data.baseGeoJSON.features[1].properties.userData).toEqual({ vu: false });
         expect(data.baseGeoJSON.features[0].properties.name).toBe('A');
@@ -365,7 +338,7 @@ describe('prepareExportData', () => {
 describe('saveUserData', () => {
     it('affiche un toast d\'erreur et abandonne si aucune carte chargée', async () => {
         state.currentMapId = null;
-        await saveUserData(false);
+        await saveUserData();
         expect(showToast).toHaveBeenCalledWith('Aucune carte chargée.', 'error');
     });
 
@@ -381,27 +354,12 @@ describe('saveUserData', () => {
         URL.createObjectURL = vi.fn(() => 'blob:mock');
         URL.revokeObjectURL = vi.fn();
 
-        await saveUserData(false);
+        await saveUserData();
 
         // Pas d'erreur toast
         expect(showToast).not.toHaveBeenCalledWith('Aucune carte chargée.', 'error');
 
         URL.createObjectURL = originalCreateObjectURL;
-    });
-
-    it('préserve les photos en mode FULL (forceFullMode = true)', async () => {
-        state.currentMapId = 'djerba';
-        state.loadedFeatures = [
-            { type: 'Feature', properties: { HW_ID: 'p1' }, geometry: null }
-        ];
-        state.userData = { p1: { photos: ['a.jpg'] } };
-
-        URL.createObjectURL = vi.fn(() => 'blob:mock');
-        URL.revokeObjectURL = vi.fn();
-
-        // saveUserData appelle downloadJSON → on ne peut pas inspecter le payload,
-        // mais on peut vérifier l'absence d'erreur et que le pipeline tourne.
-        await expect(saveUserData(true)).resolves.toBeUndefined();
     });
 
     it('inclut state.appVersion dans le payload (via mode FULL ou LITE)', async () => {
@@ -412,7 +370,7 @@ describe('saveUserData', () => {
         URL.revokeObjectURL = vi.fn();
 
         // Le test indirect : pas de crash, et appVersion est utilisée dans le filename ou payload
-        await expect(saveUserData(false)).resolves.toBeUndefined();
+        await expect(saveUserData()).resolves.toBeUndefined();
     });
 
     it('utilise un fallback "3.0" pour appVersion si state.appVersion absent', async () => {
@@ -422,7 +380,7 @@ describe('saveUserData', () => {
         URL.createObjectURL = vi.fn(() => 'blob:mock');
         URL.revokeObjectURL = vi.fn();
 
-        await expect(saveUserData(false)).resolves.toBeUndefined();
+        await expect(saveUserData()).resolves.toBeUndefined();
     });
 });
 
@@ -473,7 +431,7 @@ describe('sauvegarde d\'un brouillon local (Option A)', () => {
         state.destinations = { activeMapId: 'djerba', maps: {
             venise: { name: 'Venise', custom: true, status: 'draft', bounds: [[1, 2], [3, 4]] }
         } };
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(data.draftDestination).toMatchObject({ name: 'Venise', custom: true });
         expect(getDraftZones).toHaveBeenCalledWith('venise');
         expect(data.draftZones.features).toHaveLength(1);
@@ -484,7 +442,7 @@ describe('sauvegarde d\'un brouillon local (Option A)', () => {
         state.destinations = { activeMapId: 'djerba', maps: {
             djerba: { name: 'Djerba', status: 'published' }
         } };
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(data.draftDestination).toBeUndefined();
         expect(data.draftZones).toBeUndefined();
         expect(getDraftZones).not.toHaveBeenCalled();
@@ -507,7 +465,7 @@ describe("sauvegarde légère : carte réduite aux lieux créés par l'utilisate
         state.currentMapId = 'djerba';
         state.loadedFeatures = features();
         state.userData = { 'HW-01OFFICIEL000000000000001': { vu: true } };
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(ids(data)).toEqual(['HW-PC-1', 'auto_7']);
         // les notes sur les fiches officielles restent dans le bloc racine
         expect(data.userData['HW-01OFFICIEL000000000000001']).toEqual({ vu: true });
@@ -517,30 +475,23 @@ describe("sauvegarde légère : carte réduite aux lieux créés par l'utilisate
     it('légère sans aucun lieu créé : carte vide mais toujours valide', async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = [features()[0]];
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(data.baseGeoJSON).toEqual({ type: 'FeatureCollection', features: [] });
         expect(isValidBackup(data)).toBe(true);
-    });
-
-    it('complète : toute la carte, inchangé', async () => {
-        state.currentMapId = 'djerba';
-        state.loadedFeatures = features();
-        const data = await prepareExportData(true);
-        expect(ids(data)).toHaveLength(3);
     });
 
     it("légère d'un brouillon local : toute la carte (elle n'existe nulle part ailleurs)", async () => {
         state.currentMapId = 'venise';
         state.destinations = { activeMapId: 'venise', maps: { venise: { name: 'Venise', custom: true } } };
         state.loadedFeatures = features();
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         expect(ids(data)).toHaveLength(3);
     });
 
     it("aller-retour : les lieux créés d'une légère sont restaurés", async () => {
         state.currentMapId = 'djerba';
         state.loadedFeatures = features();
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         await restoreBackup(JSON.parse(JSON.stringify(data)));
         const call = saveAppState.mock.calls.find((c) => c[0] === 'customPois_djerba');
         expect(call[1].map((f) => f.properties.HW_ID)).toEqual(['HW-PC-1', 'auto_7']);
@@ -673,17 +624,17 @@ describe('restoreBackup — circuits', () => {
 describe('backupFileName', () => {
     const when = new Date(2026, 10, 9, 7, 5); // 9 novembre 2026, 07h05 (heure locale)
 
-    it('légère : Heripia_<destination>_legere_<date>.txt', () => {
-        expect(backupFileName('djerba', false, when)).toBe('Heripia_djerba_legere_2026-11-09_07h05.txt');
+    it('données : Heripia_<destination>_donnees_<date>.txt', () => {
+        expect(backupFileName('djerba', 'donnees', when)).toBe('Heripia_djerba_donnees_2026-11-09_07h05.txt');
     });
 
-    it('complète : Heripia_<destination>_complete_<date>.json', () => {
-        expect(backupFileName('charleroi', true, when)).toBe('Heripia_charleroi_complete_2026-11-09_07h05.json');
+    it('photos : Heripia_<destination>_photos_<date>.json', () => {
+        expect(backupFileName('charleroi', 'photos', when)).toBe('Heripia_charleroi_photos_2026-11-09_07h05.json');
     });
 
     it('identifiant de destination absent ou exotique : nom de fichier sûr', () => {
-        expect(backupFileName(null, false, when)).toBe('Heripia_destination_legere_2026-11-09_07h05.txt');
-        expect(backupFileName('mon brouillon/1', false, when)).toBe('Heripia_mon-brouillon-1_legere_2026-11-09_07h05.txt');
+        expect(backupFileName(null, 'donnees', when)).toBe('Heripia_destination_donnees_2026-11-09_07h05.txt');
+        expect(backupFileName('mon brouillon/1', 'donnees', when)).toBe('Heripia_mon-brouillon-1_donnees_2026-11-09_07h05.txt');
     });
 });
 

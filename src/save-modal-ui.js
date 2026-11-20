@@ -3,10 +3,13 @@
 // du menu mobile (#mob-action-backup). Utilise le shell V2 partagé openHwModal,
 // avec les classes de contenu .me-* qui survivent dans me-userspace.css.
 //
-// Choix Légère/Complète :
-//   - Légère  → Web Share natif sur mobile (transport/partage), download sur PC.
-//   - Complète → toujours téléchargement classique (sauvegarde locale d'archive)
-//     — pas de Web Share, cf. justification dans [[project_backup_lite_vs_complete_rationale]].
+// Deux sauvegardes (20/11/2026, Données / Photos remplacent Légère / Complète,
+// maquette « synchro users » écran 14 validée par Stefan) :
+//   - Données → visites, notes, lieux, circuits : petit fichier, Web Share natif
+//     sur mobile (transport/partage), téléchargement sur PC ;
+//   - Photos  → les photos seulement, dans leur propre fichier (lourd) :
+//     téléchargement local (photo-backup.js). Séparées, elles ne font plus
+//     planter la restauration des données sur un téléphone modeste.
 
 import { state } from './state.js';
 import { isMobileView } from './mobile-state.js';
@@ -16,14 +19,13 @@ import { getBackupStatusForUI, resetBackupCounter } from './backup-auto-local.js
 import { getAllPoiPhotosForMap } from './database.js';
 import {
     exportDataForMobilePC,
-    exportFullBackupPC,
     handleRestoreFile,
     saveUserData,
+    backupFileName,
 } from './fileManager.js';
+import { exportPhotosBackup } from './photo-backup.js';
 import { getLastRestore } from './restore-apply.js';
 import { runUndo } from './restore-ui.js';
-
-let _backupChoice = 'light'; // 'light' | 'complete' — persisté entre re-renders
 
 function formatRelativeDate(date) {
     if (!date) return null;
@@ -48,27 +50,20 @@ async function estimatePhotoWeight(mapId) {
         for (const e of entries) {
             for (const p of (e.photos || [])) bytes += (p.blob?.size || 0);
         }
-        return Math.round(bytes * 1.37); // inflation base64
+        return Math.round(bytes * 1.37); // inflation base64 dans le fichier
     } catch {
         return 0;
     }
 }
 
 /**
- * Sauvegarde manuelle. Complète = toujours téléchargement local (jamais
- * Web Share). Légère = Web Share sur mobile, download sur PC.
+ * « Sauvegarder mes données » : Web Share sur mobile, téléchargement sur PC.
  * Reset le compteur d'auto-backup à la fin (l'user vient de produire un
  * backup à jour → évite la redondance).
  */
-async function exportUserData(mode) {
-    const includePhotos = (mode === 'complete');
-    if (includePhotos) {
-        await exportFullBackupPC();
-    } else if (isMobileView()) {
-        await saveUserData(false);
-    } else {
-        await exportDataForMobilePC();
-    }
+async function exportData() {
+    if (isMobileView()) await saveUserData();
+    else await exportDataForMobilePC();
     try {
         await resetBackupCounter();
     } catch (err) {
@@ -83,7 +78,6 @@ function getOverlayRoot() {
 async function renderBody(bodyEl) {
     const status = await getBackupStatusForUI();
     const lastLbl = status.lastDate ? formatRelativeDate(status.lastDate) : null;
-    const sel = _backupChoice;
 
     const photoWeight = formatSize(await estimatePhotoWeight(state.currentMapId));
     // Dernière restauration annulable (19/11/2026, restauration qui fusionne).
@@ -93,15 +87,7 @@ async function renderBody(bodyEl) {
         : null;
     // Si la modale a été fermée pendant l'await → on abandonne silencieusement.
     if (!bodyEl.isConnected) return;
-    const completeNote = photoWeight ? ` · ${photoWeight} de photos` : '';
-
-    // Libellé adaptatif du bouton d'action (cohérent avec PR2) :
-    // - Légère sur mobile  → Web Share natif (« Enregistrer · Partager »)
-    // - Légère sur PC      → téléchargement classique (« Télécharger »)
-    // - Complète partout   → téléchargement classique (« Télécharger »)
-    const shareOnMobile = (sel === 'light' && isMobileView());
-    const btnIcon = shareOnMobile ? 'share-2' : 'download';
-    const btnLabel = shareOnMobile ? 'Enregistrer · Partager' : 'Télécharger';
+    const photosNote = photoWeight ? `Vos photos seulement · ${photoWeight}` : 'Vos photos seulement';
 
     bodyEl.innerHTML = `
 <div class="me-stack">
@@ -110,30 +96,18 @@ async function renderBody(bodyEl) {
     <div class="me-block-head">
       <h3 class="me-block-title me-block-title-lg" id="lbl-save">Sauvegarder</h3>
     </div>
-    <p class="me-block-desc">
-      Exportez vos données dans un fichier portable. Choisissez ce que vous voulez inclure.
-    </p>
+    <p class="me-block-desc">Garder une copie dans un fichier.</p>
 
-    <div class="me-choice" role="radiogroup" aria-labelledby="lbl-save">
-      <label class="me-choice-card ${sel === 'light' ? 'is-selected' : ''}" data-choice="light">
-        <input type="radio" name="sm-backup-mode" value="light" ${sel === 'light' ? 'checked' : ''}>
-        <span class="me-choice-radio" aria-hidden="true"></span>
-        <span class="me-choice-name"><i data-lucide="feather"></i> Légère</span>
-        <span class="me-choice-desc">Vos notes, lieux visités et circuits.</span>
-        <span class="me-choice-size"><em>sans photos</em></span>
-      </label>
-      <label class="me-choice-card ${sel === 'complete' ? 'is-selected' : ''}" data-choice="complete">
-        <input type="radio" name="sm-backup-mode" value="complete" ${sel === 'complete' ? 'checked' : ''}>
-        <span class="me-choice-radio" aria-hidden="true"></span>
-        <span class="me-choice-name"><i data-lucide="archive"></i> Complète</span>
-        <span class="me-choice-desc">Tout, <strong>+ vos photos</strong>.</span>
-        <span class="me-choice-size"><em>avec photos${completeNote}</em></span>
-      </label>
+    <div class="me-choice">
+      <button class="me-choice-card is-action" id="sm-btn-data" type="button">
+        <span class="me-choice-name"><i data-lucide="${isMobileView() ? 'share-2' : 'download'}"></i> Sauvegarder mes données</span>
+        <span class="me-choice-desc">Visites, notes, lieux, circuits.</span>
+      </button>
+      <button class="me-choice-card is-action" id="sm-btn-photos" type="button">
+        <span class="me-choice-name"><i data-lucide="image"></i> Sauvegarder mes photos</span>
+        <span class="me-choice-desc">${photosNote}</span>
+      </button>
     </div>
-
-    <button class="me-btn primary block" id="sm-btn-backup" type="button">
-      <i data-lucide="${btnIcon}"></i> ${btnLabel}
-    </button>
   </section>
 
   <section class="me-block" aria-labelledby="lbl-restore">
@@ -174,16 +148,9 @@ async function renderBody(bodyEl) {
 }
 
 function attachListeners(bodyEl) {
-    bodyEl.querySelectorAll('.me-choice-card').forEach(card => {
-        card.addEventListener('click', (e) => {
-            e.preventDefault();
-            _backupChoice = card.dataset.choice;
-            renderBody(bodyEl);
-        });
-    });
-
-    bodyEl.querySelector('#sm-btn-backup')?.addEventListener('click', () => {
-        exportUserData(_backupChoice);
+    bodyEl.querySelector('#sm-btn-data')?.addEventListener('click', () => { exportData(); });
+    bodyEl.querySelector('#sm-btn-photos')?.addEventListener('click', () => {
+        exportPhotosBackup((mapId) => backupFileName(mapId, 'photos'));
     });
 
     bodyEl.querySelector('#sm-btn-restore')?.addEventListener('click', () => {

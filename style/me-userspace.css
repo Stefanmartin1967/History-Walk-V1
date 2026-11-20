@@ -552,3 +552,8 @@
 .pd-item.is-picked .pd-check { opacity: 1; }
 .pd-item.is-clash { opacity: 0.55; cursor: not-allowed; }
 .pd-item.is-clash:hover { border-color: var(--line); }
+
+/* Sauvegarder (20/11/2026) : Données / Photos sont deux boutons d'action, pas
+   un choix à cocher — même carte, sans radio. */
+.me-choice-card.is-action { font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.me-choice-card.is-action:hover { border-color: var(--cta-bg); }

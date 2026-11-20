@@ -6,6 +6,11 @@
 
 ---
 
+- SAUVEGARDES « DONNÉES » ET « PHOTOS » (v3.7.558). PR 3 du chantier « synchro users », idée de Stefan validée sur la maquette Sauvegarder (écran 14).
+  - Légère / Complète remplacées par deux sauvegardes : « Sauvegarder mes données » (visites, notes, lieux, circuits ; Web Share sur téléphone) et « Sauvegarder mes photos » (les photos seules, leur propre fichier `Heripia_<dest>_photos_<date>.json`, avec l'id de chaque photo). Le fichier de données reste petit et se restaure sans risque sur un téléphone modeste.
+  - Restaurer un fichier « Photos » (ou une ancienne sauvegarde complète) AJOUTE les photos qui manquent : avant, `savePoiPhotos` remplaçait toutes les photos du lieu, et celles ajoutées depuis sur l'appareil disparaissaient. Pas de doublon (même id ou même contenu). « Annuler la restauration » retire exactement les photos ajoutées (photo-backup.js).
+  - Mode « complet » retiré du code (`exportFullBackupPC`, `collectPhotosAsBase64`). Les anciens fichiers légers et complets restent restaurables.
+
 - RESTAURATION : REDÉMARRE SUR LA DESTINATION DU FICHIER (v3.7.557). Constaté par Stefan le 19/11/2026 : un fichier de Charleroi restauré depuis Djerba rechargeait Djerba, et le résumé restait caché (il ne s'affiche que sur sa destination). Le démarrage lit `?map=` puis `hw_active_dest`, plus `lastMapId` : la restauration bascule maintenant par `switchActiveDestination`, comme le sélecteur. Au passage, un texte ne diffère plus par ses espaces de début / fin ni ses fins de ligne (une note du téléphone finie par une espace passait pour « mise à jour »).
 
 - RESTAURATION QUI RÉUNIT (v3.7.556). PR 2 du chantier « synchro users », maquette écrans 17-19 validée par Stefan le 19/11/2026.

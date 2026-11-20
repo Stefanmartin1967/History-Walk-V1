@@ -25,7 +25,7 @@ import {
     File, FilePlus, FileDown, FileText, FileEdit, FolderDown, FolderOpen,
     Download, DownloadCloud, Upload, UploadCloud, CloudUpload,
     Database, HardDrive, Save, Copy, Send, Trash, Trash2,
-    Archive, // sauvegarde Complète (save-modal-ui) + carte Maintenance du CC (admin-maintenance)
+    Archive, // carte Maintenance du CC (admin-maintenance)
     GitMerge, // fusion d'un candidat Scout dans le lieu qu'il double (poi-duplicate.js)
 
     // Carte & circuit

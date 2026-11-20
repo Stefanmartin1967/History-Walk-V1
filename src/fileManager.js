@@ -4,7 +4,7 @@ import { getPoiId, displayGeoJSON } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
-import { saveAppState, getAllPoiPhotosForMap, blobToBase64 } from './database.js';
+import { saveAppState } from './database.js';
 import { applyRestore } from './restore-apply.js';
 import { confirmRestore } from './restore-ui.js';
 import { switchActiveDestination } from './destination-switch.js';
@@ -46,7 +46,7 @@ export function handleFileLoad(event) {
                 }
             } 
             // Cas 2 : Backup
-            else if (isValidBackup(json) && (json.baseGeoJSON || json.userData)) {
+            else if (isValidBackup(json) && (json.baseGeoJSON || json.userData || json.kind === 'photos')) {
                 await restoreBackup(json);
             }
             else {
@@ -94,43 +94,40 @@ export function isUserCreatedFeature(f) {
 
 /**
  * Lieux à embarquer dans `baseGeoJSON`.
- *  - Légère sur une destination publiée : seulement les lieux créés par
- *    l'utilisateur. La restauration ne relit rien d'autre de ce bloc (les fiches
- *    officielles sont rechargées depuis le site) ; mesuré le 11/11/2026, la carte
- *    entière pesait 775 Ko sur 839 dans la sauvegarde d'un visiteur.
+ *  - Destination publiée : seulement les lieux créés par l'utilisateur. La
+ *    restauration ne relit rien d'autre de ce bloc (les fiches officielles sont
+ *    rechargées depuis le site) ; mesuré le 11/11/2026, la carte entière pesait
+ *    775 Ko sur 839 dans la sauvegarde d'un visiteur.
  *  - Brouillon local : tout, sa carte n'existe nulle part ailleurs.
- *  - Complète : tout, inchangé.
  */
-function featuresForBackup(mapId, includePhotos) {
+function featuresForBackup(mapId) {
     const all = state.loadedFeatures || [];
-    if (includePhotos || state.destinations?.maps?.[mapId]?.custom) return all;
+    if (state.destinations?.maps?.[mapId]?.custom) return all;
     return all.filter(isUserCreatedFeature);
 }
 
 /**
- * Nom d'un fichier de sauvegarde : `Heripia_<destination>_<legere|complete>_<date>`.
- * Une seule règle pour le PC et le téléphone (11/11/2026). Avant : trois noms à
- * l'ancienne marque (`HistoryWalk_Backup_Mobile_…`, `…_LITE_Mobile_…`,
- * `HistoryWalk_FULL_PC_…`), « Mobile » sur un fichier fait au PC, la destination
- * présente une fois sur trois. La restauration ne lit pas le nom : les anciens
- * fichiers restent restaurables.
+ * Nom d'un fichier de sauvegarde : `Heripia_<destination>_<donnees|photos>_<date>`.
+ * Une seule règle pour le PC et le téléphone (11/11/2026). 20/11/2026 : Données /
+ * Photos remplacent Légère / Complète. La restauration ne lit pas le nom : les
+ * anciens fichiers (`legere`, `complete`, `HistoryWalk_…`) restent restaurables.
  * @param {string} mapId
- * @param {boolean} includePhotos true = complète (.json), false = légère (.txt)
+ * @param {'donnees'|'photos'} [kind] données (.txt, passe par mail et messageries) ou photos (.json)
  * @param {Date} [now]
  */
-export function backupFileName(mapId, includePhotos, now = new Date()) {
+export function backupFileName(mapId, kind = 'donnees', now = new Date()) {
     const p2 = (n) => String(n).padStart(2, '0');
     const stamp = `${now.getFullYear()}-${p2(now.getMonth() + 1)}-${p2(now.getDate())}_${p2(now.getHours())}h${p2(now.getMinutes())}`;
     const dest = String(mapId || 'destination').replace(/[^a-z0-9-]+/gi, '-');
-    return `Heripia_${dest}_${includePhotos ? 'complete' : 'legere'}_${stamp}.${includePhotos ? 'json' : 'txt'}`;
+    const photos = kind === 'photos';
+    return `Heripia_${dest}_${photos ? 'photos' : 'donnees'}_${stamp}.${photos ? 'json' : 'txt'}`;
 }
 
-export async function saveUserData(forceFullMode = false) {
+/** Sauvegarde « Données » (téléphone : Web Share). Les photos ont leur propre fichier (photo-backup.js). */
+export async function saveUserData() {
     if (!state.currentMapId) return showToast("Aucune carte chargée.", "error");
 
-    const includePhotos = forceFullMode;
     const mapId = state.currentMapId;
-    const photosByPoi = includePhotos ? await collectPhotosAsBase64(mapId) : {};
 
     const exportData = cleanDataForExport({
         backupVersion: state.appVersion || "3.0",
@@ -138,7 +135,7 @@ export async function saveUserData(forceFullMode = false) {
         mapId,
         baseGeoJSON: {
             type: "FeatureCollection",
-            features: featuresForBackup(mapId, includePhotos).map(f => {
+            features: featuresForBackup(mapId).map(f => {
                 const featureClone = JSON.parse(JSON.stringify(f));
                 const poiId = getPoiId(f);
                 if (state.userData[poiId]) {
@@ -151,7 +148,7 @@ export async function saveUserData(forceFullMode = false) {
                 return featureClone;
             })
         },
-        userData: buildRootUserData(includePhotos, photosByPoi),
+        userData: buildRootUserData(),
         myCircuits: state.myCircuits,
         hiddenPoiIds: state.hiddenPoiIds,
         officialCircuitsStatus: state.officialCircuitsStatus || {},
@@ -164,7 +161,7 @@ export async function saveUserData(forceFullMode = false) {
     });
     await attachLocalDraft(exportData, mapId);
 
-    downloadJSON(exportData, backupFileName(mapId, includePhotos));
+    downloadJSON(exportData, backupFileName(mapId, 'donnees'));
 }
 
 async function downloadJSON(data, filename) {
@@ -231,6 +228,12 @@ export function isValidBackup(json) {
     // mapId (string non vide)
     if (typeof json.mapId !== 'string' || json.mapId.trim() === '') {
         console.warn("[Validation] ID de carte invalide ou manquant.");
+        return false;
+    }
+
+    // Fichier « Photos » (20/11/2026) : { [lieu]: [{ id, data }] }
+    if (json.kind === 'photos' && (typeof json.photos !== 'object' || json.photos === null || Array.isArray(json.photos))) {
+        console.warn("[Validation] Fichier de photos invalide.");
         return false;
     }
 
@@ -428,59 +431,30 @@ export function cleanDataForExport(obj) {
 }
 
 /**
- * Récupère toutes les photos perso (Blobs du store poiPhotos) d'une carte et
- * les encode en base64 pour la sérialisation JSON. Le runtime conserve les Blobs
- * (compacts) ; seul le fichier d'échange porte du base64 (un JSON ne peut pas
- * transporter un Blob binaire).
- * @returns {Promise<Object<string, string[]>>} map { poiId: [dataURL, ...] }
+ * Construit le bloc `userData` racine du backup. Garde les références de photos
+ * « légères » (URLs/chemins admin) ; les photos perso (Blobs) partent dans le
+ * fichier « Photos » (photo-backup.js), jamais ici.
  */
-async function collectPhotosAsBase64(mapId) {
-    const entries = await getAllPoiPhotosForMap(mapId);
-    const result = {};
-    for (const entry of entries) {
-        if (entry?.poiId && Array.isArray(entry.photos) && entry.photos.length > 0) {
-            result[entry.poiId] = await Promise.all(
-                entry.photos.map(p => blobToBase64(p.blob))
-            );
-        }
-    }
-    return result;
-}
-
-/**
- * Construit le bloc `userData` racine du backup. Repart des photos « légères »
- * déjà présentes dans userData (URLs/chemins admin, conservés) et ajoute les
- * photos perso encodées en base64 uniquement quand includePhotos est vrai.
- * Itère sur l'union userData ∪ photosByPoi pour ne pas oublier un POI qui a des
- * photos mais aucune note.
- */
-function buildRootUserData(includePhotos, photosByPoi) {
+function buildRootUserData() {
     const out = {};
-    const poiIds = new Set([
-        ...Object.keys(state.userData || {}),
-        ...(includePhotos ? Object.keys(photosByPoi) : [])
-    ]);
-    for (const poiId of poiIds) {
-        const data = (state.userData && state.userData[poiId]) || {};
+    for (const poiId of Object.keys(state.userData || {})) {
+        const data = state.userData[poiId] || {};
         const clean = { ...data };
         const lightPhotos = (Array.isArray(data.photos) ? data.photos : [])
             .filter(p => typeof p === 'string' && !p.startsWith('data:'));
-        const base64Photos = includePhotos ? (photosByPoi[poiId] || []) : [];
-        const merged = [...lightPhotos, ...base64Photos];
-        if (merged.length > 0) clean.photos = merged;
+        if (lightPhotos.length > 0) clean.photos = lightPhotos;
         else delete clean.photos;
         out[poiId] = clean;
     }
     return out;
 }
 
-export async function prepareExportData(includePhotos = false) {
+export async function prepareExportData() {
     const mapId = getActiveMapId();
-    const photosByPoi = includePhotos ? await collectPhotosAsBase64(mapId) : {};
 
     const geojson = {
         type: 'FeatureCollection',
-        features: featuresForBackup(mapId, includePhotos).map(f => {
+        features: featuresForBackup(mapId).map(f => {
             const poiId = getPoiId(f);
             const finalUserData = { ...(state.userData[poiId] || {}) };
             // Les photos vivent dans le bloc userData racine (seul relu à l'import) ;
@@ -498,7 +472,7 @@ export async function prepareExportData(includePhotos = false) {
         mapId,
         date: new Date().toISOString(),
         baseGeoJSON: geojson,
-        userData: buildRootUserData(includePhotos, photosByPoi),
+        userData: buildRootUserData(),
         myCircuits: state.myCircuits || [],
         hiddenPoiIds: state.hiddenPoiIds || [],
         officialCircuitsStatus: state.officialCircuitsStatus || {},
@@ -516,26 +490,23 @@ export async function prepareExportData(includePhotos = false) {
 }
 
 /**
- * BOUTON : Sauvegarde Mobile / Lite (Sans photos)
+ * BOUTON : Sauvegarde « Données » au PC (téléchargement).
  */
 export async function exportDataForMobilePC() {
     try {
-        const data = await prepareExportData(false);
+        const data = await prepareExportData();
         const jsonString = JSON.stringify(data, null, 2);
         
         // .txt + text/plain : passe mieux par mail et messageries qu'un .json.
-        downloadFile(backupFileName(data.mapId, false), jsonString, 'text/plain');
+        downloadFile(backupFileName(data.mapId, 'donnees'), jsonString, 'text/plain');
 
-        showToast("Sauvegarde légère téléchargée", "success");
+        showToast("Sauvegarde de vos données téléchargée", "success");
     } catch (err) {
-        console.error("Erreur Export Lite:", err);
-        showToast("Erreur lors de l'export léger", "error");
+        console.error("Erreur export données :", err);
+        showToast("Erreur lors de la sauvegarde des données", "error");
     }
 }
 
-/**
- * BOUTON : Sauvegarde Full PC (Avec photos)
- */
 export function setupFileListeners() {
     if (DOM.restoreLoader) {
         DOM.restoreLoader.removeEventListener('change', handleRestoreFile);
@@ -558,7 +529,7 @@ export function setupFileListeners() {
             if (!isMobileView()) {
                 exportDataForMobilePC();
             } else {
-                saveUserData(false);
+                saveUserData();
             }
         });
     }
@@ -569,15 +540,3 @@ export function setupFileListeners() {
     if (DOM.gpxImporter) DOM.gpxImporter.addEventListener('change', handleGpxFileImport);
 }
 
-export async function exportFullBackupPC() {
-    try {
-        const data = await prepareExportData(true);
-        const jsonString = JSON.stringify(data, null, 2);
-        
-        downloadFile(backupFileName(data.mapId, true), jsonString, 'application/json');
-        showToast("Sauvegarde complète téléchargée", "success");
-    } catch (err) {
-        console.error("Erreur Export Full:", err);
-        showToast("Erreur lors de l'export complet", "error");
-    }
-}
