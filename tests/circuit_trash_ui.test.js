@@ -9,6 +9,7 @@ const emit = vi.fn();
 vi.mock('../src/events.js', () => ({ eventBus: { emit, on: vi.fn() } }));
 vi.mock('../src/database.js', () => ({ restoreCircuit: vi.fn(async () => {}), deleteCircuitById: vi.fn(async () => {}) }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
+vi.mock('../src/google-sync.js', () => ({ recordCircuitDeletion: vi.fn(async () => {}) }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
 // Shell de modale minimal : injecte le corps dans un overlay actif.
 vi.mock('../src/modal.js', () => ({

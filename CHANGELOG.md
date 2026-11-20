@@ -6,6 +6,12 @@
 
 ---
 
+- SYNCHRO GOOGLE : LES CIRCUITS PERSO (v3.7.566). PR 7 du chantier « synchro users », maquette écrans 43-46 validée par Stefan le 20/11/2026.
+  - Dates par morceau (field-dates.js `_partDates` / `_partFrom`, posées par saveCircuit) : nom, description, étapes, tracé (le tracé = le reste du contenu). Un circuit d'avant prend sa date d'ensemble. « Fait » d'un circuit perso daté (`completedUpdatedAt`).
+  - circuit-merge.js (pur) : chaque morceau selon la règle des champs (la version qui descend de l'autre gagne ; écrit des deux côtés → à choisir) ; le tracé suit les étapes (une seule question) ; Corbeille et « fait » : le plus récent ; suppressions définitives (`deletedCircuits`, gardées pour toujours dans le compte) : supprimé partout, sauf modifié après la suppression → gardé dans la Corbeille et annoncé.
+  - Écrans : entrée et liste « À choisir » (textes et circuits) ; nom ou description → fenêtre à cases par phrase ; étapes → les deux listes, une version entière, « Garder les deux » fait une copie « (copie) » ; tracé → les deux chemins superposés sur une petite carte, avec leur distance ; toast du circuit gardé dans la Corbeille, avec « Voir ».
+  - Un choix déjà en attente n'est plus réannoncé à chaque synchronisation (un seul toast).
+  - Signal de modification : persistCircuit, Corbeille (mettre, restaurer, supprimer définitivement).
 - SYNCHRO GOOGLE : DEUX TEXTES CORRIGÉS (v3.7.565). Essai de Stefan (20/11/2026), validé par lui.
   - Toast d'un texte modifié sur deux appareils : le champ devient le sujet, avec le bon accord (« La note de « Restaurant chez Moktar » a été modifiée sur deux appareils. », « Le nom de « … » a été modifié… ») au lieu de « « Restaurant chez Moktar » a été modifiée ».
   - Liste « Textes à choisir » : « Note · sur deux appareils » (plus d'accord à faire).

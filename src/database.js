@@ -3,7 +3,7 @@ const DB_NAME = 'HistoryWalkDB';
 import { showAlert } from './modal.js';
 import { BASE_KEY, pruneStamps, OFFICIAL_BASE_KEY, pruneOfficialBases } from './overlay-base.js';
 import { syncStampsFor } from './sync-stamps.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY, fieldStamps, stampsAfterRemoval, stampCreatedPlaces, circuitUpdatedAt } from './field-dates.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, fieldStamps, stampsAfterRemoval, stampCreatedPlaces, circuitUpdatedAt, circuitPartStamps } from './field-dates.js';
 
 // ─── Estampille de la version de départ (18/11/2026, conflits à la publication) ──
 // Toutes les écritures de fiche passent par savePoiData / batchSavePoiData : c'est
@@ -611,6 +611,10 @@ export async function saveCircuit(circuitData) {
         getRequest.onsuccess = () => {
             const updatedAt = circuitUpdatedAt(getRequest.result || null, circuitData);
             if (updatedAt !== undefined) circuitData.updatedAt = updatedAt;
+            // Date de chaque morceau (nom, description, étapes, tracé) : la
+            // synchro Google ne demande que pour un morceau changé des deux côtés.
+            const parts = circuitPartStamps(getRequest.result || null, circuitData);
+            if (parts) Object.assign(circuitData, parts);
             const request = store.put(circuitData);
             request.onsuccess = () => resolve();
             request.onerror = (event) => reject(event.target.error);

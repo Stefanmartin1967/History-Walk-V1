@@ -152,6 +152,8 @@ export async function performCircuitDeletion(id) {
 
         // [USER] Compte la suppression de circuit pour l'auto-backup local.
         void recordModification();
+        // Synchro Google des users : la Corbeille suit sur les autres appareils.
+        eventBus.emit('sync:local-change');
 
         // 3. Si c'était le circuit actif, on nettoie l'affichage
         if (state.activeCircuitId === id) {
