@@ -25,6 +25,7 @@ import { getCurrentView, isMobileView, setMobileHeaderSlot, clearMobileViewFoote
 import { isShownToUser } from './poi-visibility.js';
 import { listOfficialUpdates } from './official-updates.js';
 import { openOfficialUpdatesList } from './official-update-ui.js';
+import { syncConflictCount, openSyncConflictsList } from './google-sync-ui.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
 // Compteurs réels lus de state pour donner du contexte à chaque action.
@@ -51,6 +52,7 @@ function computeSubtitles() {
         cc: 'Tableau de bord opérations',
         destSwitch: `Active : ${activeDestName}`,
         officialCount: listOfficialUpdates().length,
+        chooseCount: syncConflictCount(),
     };
 }
 
@@ -65,6 +67,11 @@ function buildSections(subs) {
                 // (20/11/2026, maquette écran 25) : seulement s'il en reste à revoir.
                 ...(subs.officialCount > 0
                     ? [{ id: 'mob-action-official-updates', ico: 'refresh-cw', label: 'Fiches mises à jour', sub: `${subs.officialCount} fiche${subs.officialCount > 1 ? 's' : ''} à revoir`, variant: 'attention', badge: subs.officialCount }]
+                    : []),
+                // Textes modifiés sur deux appareils (synchro Google, 20/11/2026,
+                // maquette écran 39) : seulement s'il en reste à choisir.
+                ...(subs.chooseCount > 0
+                    ? [{ id: 'mob-action-sync-conflicts', ico: 'split', label: 'Textes à choisir', sub: 'Modifiés sur deux appareils', variant: 'choose', badge: subs.chooseCount }]
                     : []),
             ],
         },
@@ -150,6 +157,7 @@ export function renderMobileMenu() {
                             : it.variant === 'love' ? ' love'
                             : it.variant === 'brand-emph' ? ' brand-emph'
                             : it.variant === 'attention' ? ' attention'
+                            : it.variant === 'choose' ? ' choose'
                             : '';
             // L'icône trail : cœur plein pour love (BMC), chevron pour le reste.
             const trailIcon = it.variant === 'love' ? 'heart' : 'chevron-right';
@@ -181,6 +189,7 @@ export function renderMobileMenu() {
     document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
     document.getElementById('mob-action-backup')?.addEventListener('click', () => openSaveModal());
     document.getElementById('mob-action-official-updates')?.addEventListener('click', () => openOfficialUpdatesList());
+    document.getElementById('mob-action-sync-conflicts')?.addEventListener('click', () => openSyncConflictsList());
     document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());
     document.getElementById('mob-action-reset')?.addEventListener('click', async () => {
         if (await showConfirm(

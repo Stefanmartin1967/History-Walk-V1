@@ -676,6 +676,9 @@ async function pushNow() {
  * Push différé (debounced) — appelé après chaque modification utilisateur.
  */
 export function schedulePush() {
+    // Synchro Google des users (google-sync-ui.js) : même signal « le user vient
+    // de modifier quelque chose ». Sans effet en admin ou sans compte relié.
+    eventBus.emit('sync:local-change');
     // En attente dès maintenant : fermée dans les 3 s, l'appli la refera au
     // prochain démarrage.
     if (getStoredToken()) setPending(state.currentMapId, true);

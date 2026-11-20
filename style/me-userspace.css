@@ -580,6 +580,31 @@
 }
 .gl-linked i[data-lucide] { width: 20px; height: 20px; color: var(--ok-fg); flex-shrink: 0; }
 .gl-email { overflow-wrap: anywhere; }
+/* Synchronisation (PR 6, écrans 36-37 et 41-42) */
+.gl-linked { align-items: flex-start; }
+.gl-linked-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.gl-status { font-size: 12.5px; color: var(--ink-soft); }
+.gl-pending {
+    display: flex; flex-direction: column; gap: 8px;
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    background: var(--warn-soft);
+    border: 1px solid color-mix(in oklab, var(--warn-fg) 45%, var(--line));
+}
+.gl-pending p { margin: 0; font-size: 13px; line-height: 1.5; color: var(--ink); }
+.gl-pending-head { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink); }
+.gl-pending-head i[data-lucide] { width: 18px; height: 18px; color: var(--warn-fg); }
+.gl-pending .gl-btn-big { width: 100%; min-height: 46px; font-size: 14.5px; }
+.gl-pending .gl-pending-hint { font-size: 12.5px; color: var(--ink-soft); }
+.gl-auto { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 12.5px; color: var(--ink-soft); }
+.gl-auto select {
+    min-height: 36px; padding: 0 8px;
+    border-radius: var(--radius-md); border: 1px solid var(--line);
+    background: var(--surface); color: var(--ink); font: inherit; font-size: 13px;
+}
+/* Fenêtre de choix (écran 40) : la case n'apparaît qu'à la toute première fois. */
+.sync-auto-ask { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13.5px; color: var(--ink); }
+.sync-auto-ask input { width: 18px; height: 18px; margin: 0; accent-color: var(--cta-bg); }
 .gl-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .gl-actions .me-btn { min-height: 44px; padding: 0 16px; font-size: 13.5px; }
 .gl-link-danger {
@@ -615,6 +640,9 @@
 }
 
 @media (max-width: 767px) {
+    /* « Relié » sur sa ligne, l'adresse dessous (écran 41, essai du 20/11). */
+    .gl-linked-main .gl-sep { display: none; }
+    .gl-linked-main .gl-email { display: block; }
     .gl-section--on .gl-actions { flex-direction: column; align-items: stretch; gap: 6px; }
     .gl-section--on .gl-actions .me-btn { width: 100%; min-height: 46px; font-size: 15px; }
     .gl-section:not(.gl-section--on) .gl-actions .me-btn { width: 100%; min-height: 46px; font-size: 15px; }

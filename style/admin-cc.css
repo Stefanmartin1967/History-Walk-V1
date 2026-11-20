@@ -1295,6 +1295,11 @@ html[data-theme="nuit"] .cc-hero {
 }
 #btn-tools-menu.has-attention::after { top: -3px; right: -3px; }
 .mobile-nav-btn[data-view="actions"].has-attention::after { top: 2px; left: calc(50% + 6px); }
+/* Ambre : un texte modifié sur deux appareils attend un choix (synchro, écran 39). */
+#btn-tools-menu.has-attention--choose::after,
+.mobile-nav-btn[data-view="actions"].has-attention--choose::after { background: var(--warn-fg); }
+.tools-menu-item--choose { background: var(--warn-soft); }
+.tools-menu-item--choose .tools-menu-badge { background: var(--warn-fg); color: var(--ink); }
 .tools-menu-item--attention { background: var(--info-soft); }
 .tools-menu-badge {
     margin-left: auto; min-width: 20px; height: 20px; padding: 0 6px; box-sizing: border-box;

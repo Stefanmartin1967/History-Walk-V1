@@ -11,10 +11,8 @@ import { escapeXml } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { mergeTexts } from './text-merge.js';
 import { renderSentences, syncSentenceBoxes, applySentenceBox } from './sentence-picker.js';
-import { savePoiData, saveAppState, getAllPoiDataForMap } from './database.js';
-import { describeBackup, getLastRestore, saveLastRestore, undoLastRestore } from './restore-apply.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY } from './field-dates.js';
-import { eventBus } from './events.js';
+import { getAllPoiDataForMap } from './database.js';
+import { describeBackup, getLastRestore, saveLastRestore, undoLastRestore, writeChosenText } from './restore-apply.js';
 import { showToast } from './toast.js';
 
 const FIELD_LABELS = { description: 'Description', notes: 'Note', 'Description courte': 'Description courte', 'Nom du site FR': 'Nom' };
@@ -212,37 +210,19 @@ function openChoose(mapId, last, conflict) {
 }
 
 /**
- * Écrit la version finale. Elle est datée maintenant et part de la version du
- * fichier : restaurer à nouveau ce fichier ne reposera pas la question.
- * Le choix fait partie de la restauration : la copie de sécurité reçoit l'état
- * d'avant de ce qu'il touche, pour qu'« Annuler la restauration » le défasse aussi.
+ * Écrit la version finale (writeChosenText, restore-apply.js). Le choix fait
+ * partie de la restauration : la copie de sécurité reçoit l'état d'avant de ce
+ * qu'il touche, pour qu'« Annuler la restauration » le défasse aussi.
  * @returns {Promise<object>} `last` avec sa copie de sécurité complétée
  */
 export async function keepFinal(mapId, conflict, finalText, last = {}) {
-    const now = Date.now();
-    const from = conflict.fileDate;
     const undo = { ...(last.undo || {}), userData: { ...(last.undo?.userData || {}) } };
     if (conflict.kind === 'place') {
-        const feature = (state.customFeatures || []).find(f => f?.properties?.HW_ID === conflict.id);
-        if (!feature) return last;
+        if (!(state.customFeatures || []).some(f => f?.properties?.HW_ID === conflict.id)) return last;
         if (!undo.places) undo.places = JSON.parse(JSON.stringify(state.customFeatures || []));
-        const p = feature.properties;
-        p[conflict.key] = finalText;
-        p[FIELD_DATES_KEY] = { ...(p[FIELD_DATES_KEY] || {}), [conflict.key]: now };
-        p[FIELD_FROM_KEY] = { ...(p[FIELD_FROM_KEY] || {}), ...(from !== undefined ? { [conflict.key]: from } : {}) };
-        await saveAppState(`customPois_${mapId}`, state.customFeatures);
-    } else {
-        if (!(conflict.id in undo.userData)) {
-            undo.userData[conflict.id] = (await getAllPoiDataForMap(mapId))[conflict.id] ?? null;
-        }
-        if (!state.userData[conflict.id]) state.userData[conflict.id] = {};
-        state.userData[conflict.id][conflict.key] = finalText;
-        await savePoiData(mapId, conflict.id, {
-            [conflict.key]: finalText,
-            [FIELD_DATES_KEY]: { [conflict.key]: now },
-            [FIELD_FROM_KEY]: from !== undefined ? { [conflict.key]: from } : {},
-        });
+    } else if (!(conflict.id in undo.userData)) {
+        undo.userData[conflict.id] = (await getAllPoiDataForMap(mapId))[conflict.id] ?? null;
     }
-    eventBus.emit('userdata:synced', { poiIds: [conflict.id] });
+    await writeChosenText(mapId, conflict, finalText);
     return { ...last, undo };
 }

@@ -12,7 +12,11 @@ vi.mock('../src/database.js', () => ({
     saveAppState: vi.fn(async () => {}),
     getAllPoiDataForMap: vi.fn(async () => h.stored),
 }));
-vi.mock('../src/restore-apply.js', () => ({ describeBackup: vi.fn(), getLastRestore: vi.fn(), saveLastRestore: vi.fn(), undoLastRestore: vi.fn() }));
+vi.mock('../src/restore-apply.js', async () => ({
+    describeBackup: vi.fn(), getLastRestore: vi.fn(), saveLastRestore: vi.fn(), undoLastRestore: vi.fn(),
+    // L'écriture du texte choisi est la vraie (partagée avec la synchronisation).
+    writeChosenText: (await vi.importActual('../src/restore-apply.js')).writeChosenText,
+}));
 vi.mock('../src/events.js', () => ({ eventBus: { emit: vi.fn() } }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
