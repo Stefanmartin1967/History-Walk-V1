@@ -6,6 +6,9 @@
 
 ---
 
+- DEUX DE VOS LIEUX AU MÊME ENDROIT (v3.7.570). Suite de la PR 8 « synchro users », écran 50 validé par Stefan le 22/11/2026.
+  - La synchro dit quels lieux créés sont arrivés d'un autre appareil (`arrivedPlaces`) ; ils sont retenus (`placesArrived_<destination>`). Si l'un de vos lieux est à moins de 50 m de l'un d'eux (le nom n'est pas regardé) : ligne dans « À choisir », point ambre.
+  - « Même lieu ? » : « Créé sur cet appareil » / « Créé sur un autre appareil », avec catégorie, heure et ce qui est attaché. « Les réunir » : le plus ancien est gardé (son identifiant) ; pour chaque champ, la version la plus récente ; notes bout à bout ; visite, Incontournable, photos et circuits rattachés au lieu gardé ; l'autre est retiré partout (`deletedPlaces`). « Garder les deux » est retenu pour la paire, dans les deux sens.
 - LIEUX AU MÊME ENDROIT (v3.7.569). PR 8 du chantier « synchro users », maquette écrans 47-49 et 51 validée par Stefan le 22/11/2026 (l'écran 50, deux de vos lieux créés sur deux appareils, viendra dans une PR à part).
   - Avant de créer un lieu (place-twins-ui.js askNearbyBeforeCreate) : si un lieu existe à moins de 50 m, « Il y a déjà un lieu tout près » — Ouvrir ce lieu / Non, créer un nouveau lieu. Une question, jamais un refus. Clic droit sur la carte et recherche (PC), « Nouveau lieu » du dock et du suivi (téléphone). L'import de photos montrait déjà les lieux proches (« Rattacher à un lieu »).
   - Lieu officiel publié au même endroit qu'un de vos lieux (place-twins.js, sans base) : bandeau dans la fiche de votre lieu, ligne dans « À choisir » (point ambre). « Même lieu ? » : « C'est le même lieu » → visite, note, Incontournable, photos et circuits perso passent sur la fiche officielle, votre lieu est retiré ; si votre description diffère, fenêtre à cases par phrase (texte officiel au départ). « Pas le même lieu » est retenu pour la paire.

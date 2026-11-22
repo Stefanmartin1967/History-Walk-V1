@@ -65,6 +65,12 @@ function placeTouched(p) {
     return dates.length ? Math.max(...dates) : 0;
 }
 
+/** Lieux créés présents après la réunion mais pas avant : arrivés du compte. */
+export function arrivedPlaceIds(before, after) {
+    const had = new Set((before || []).map(p => p?.properties?.HW_ID));
+    return (after || []).map(p => p?.properties?.HW_ID).filter(id => id && !had.has(id));
+}
+
 /** Retire les lieux supprimés quelque part (sauf modifiés après la suppression). */
 export function dropDeletedPlaces(places, deletions) {
     return (places || []).filter(p => {
@@ -431,6 +437,8 @@ export async function syncMap(mapId, { files, email = getLinkedAccount()?.email 
     return {
         mapId, created: false, summary: result.summary, sent: sentSummary(remote, here, upload), conflicts: fresh, newConflicts, changed,
         survivors: circ.survivors, circuitsChanged: [...circ.toSave.map(c => String(c.id)), ...circ.toDelete.map(String)],
+        // Lieux créés sur un autre appareil, arrivés ici (PR 8, écran 50 : « Même lieu ? »).
+        arrivedPlaces: arrivedPlaceIds(here.places, result.places),
     };
 }
 

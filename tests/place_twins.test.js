@@ -20,8 +20,8 @@ vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/lucide-icons.js', () => ({ createIcons: vi.fn(), appIcons: {} }));
 
 import { state } from '../src/state.js';
-import { nearbyPlaces, officialTwinOf, listOfficialTwins, setTwinAnswers, twinKey, twinBannerHtml } from '../src/place-twins.js';
-import { mergeIntoOfficial } from '../src/place-twins-ui.js';
+import { nearbyPlaces, officialTwinOf, listOfficialTwins, setTwinAnswers, twinKey, twinBannerHtml, setArrivedPlaces, listPersoTwins, pairKey } from '../src/place-twins.js';
+import { mergeIntoOfficial, mergePersoPlaces } from '../src/place-twins-ui.js';
 
 // ~0,00009° de latitude ≈ 10 m.
 const feat = (id, lat, lng, props = {}) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [lng, lat] }, properties: { HW_ID: id, 'Nom du site FR': id, ...props } });
@@ -39,6 +39,7 @@ beforeEach(() => {
     state.isAdmin = false;
     state.currentMapId = 'djerba';
     setTwinAnswers({});
+    setArrivedPlaces([]);
 });
 
 describe('nearbyPlaces (avant de créer, écran 47)', () => {
@@ -93,5 +94,44 @@ describe('« C’est le même lieu » (écran 49)', () => {
     it('la description choisie s’affiche sur la fiche officielle', async () => {
         await mergeIntoOfficial(officialTwinOf('MINE'), 'Texte officiel. Ma phrase.');
         expect(h.saved.find(s => s.id === 'OFF').data.description).toBe('Texte officiel. Ma phrase.');
+    });
+});
+
+describe('deux de vos lieux au même endroit (écran 50)', () => {
+    const addPerso = (id, lat, props) => {
+        const f = feat(id, lat, 10.95, props);
+        state.loadedFeatures.push(f); state.customFeatures.push(f);
+        return f;
+    };
+
+    it('une paire seulement si l’un des deux est arrivé d’un autre appareil', () => {
+        addPerso('A1', 33.85000, { _fieldDates: { 'Nom du site FR': 1000 } });
+        addPerso('B1', 33.85005, { _fieldDates: { 'Nom du site FR': 2000 } });
+        expect(listPersoTwins()).toEqual([]);
+        setArrivedPlaces(['B1']);
+        const pairs = listPersoTwins();
+        expect(pairs.map(p => `${p.localId}+${p.arrivedId}`)).toEqual(['A1+B1']);
+    });
+    it('« Garder les deux » est retenu (dans les deux sens)', () => {
+        addPerso('A1', 33.85000, {}); addPerso('B1', 33.85005, {});
+        setArrivedPlaces(['B1']);
+        setTwinAnswers({ [pairKey('B1', 'A1')]: 'different' });
+        expect(listPersoTwins()).toEqual([]);
+    });
+    it('les réunir : le plus ancien gardé, champ le plus récent, notes bout à bout, l’autre retiré partout', async () => {
+        const a = addPerso('A1', 33.85000, { 'Catégorie': 'Potale', created_at: '2026-11-12T10:20:00Z', _fieldDates: { 'Nom du site FR': 1000, 'Catégorie': 1000 } });
+        const b = addPerso('B1', 33.85005, { 'Nom du site FR': 'Chapelle Saint-Roch', 'Catégorie': 'Chapelle', created_at: '2026-11-12T10:24:00Z', _fieldDates: { 'Nom du site FR': 3000, 'Catégorie': 500 } });
+        state.userData.A1 = { vuManual: true, vu: true };
+        state.userData.B1 = { notes: 'Note de l’autre appareil' };
+        h.photos.B1 = [{ id: 'pb' }];
+        state.myCircuits = [{ id: 'c2', name: 'Boucle', poiIds: ['X', 'B1'] }];
+        await mergePersoPlaces(a, b);
+        expect(a.properties['Nom du site FR']).toBe('Chapelle Saint-Roch'); // plus récent (3000)
+        expect(a.properties['Catégorie']).toBe('Potale');                   // le sien plus récent (1000 > 500)
+        expect(h.saved.find(x => x.id === 'A1').data.notes).toBe('Note de l’autre appareil');
+        expect(h.photos.A1.map(p => p.id)).toEqual(['pb']);
+        expect(h.circuits[0].poiIds).toEqual(['X', 'A1']);
+        expect(h.removed).toEqual(['B1']);
+        expect(h.deleted).toEqual(['B1']);
     });
 });

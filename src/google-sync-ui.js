@@ -30,7 +30,8 @@ import { setAttention } from './attention.js';
 import { getLinkedAccount, hasGoogleAccess, renewGoogleAccess } from './google-account.js';
 import { syncMap, syncAllMaps, getSyncConflicts, resolveSyncConflict, resolveCircuitChoice } from './google-sync.js';
 import { openCircuitTrash } from './circuit-trash-ui.js';
-import { listOfficialTwins } from './place-twins.js';
+import { listOfficialTwins, listPersoTwins } from './place-twins.js';
+import { addArrivedPlaces } from './place-twins-ui.js';
 import L from 'leaflet';
 import { FIELD_DATES_KEY, PART_DATES_KEY } from './field-dates.js';
 
@@ -128,6 +129,8 @@ export function runSync({ all = false } = {}) {
             write(PENDING_KEY, 0);
             write(FAIL_KEY, null);
             if (mine?.changed) refreshApp();
+            // Lieux créés arrivés d'un autre appareil : « Même lieu ? » si l'un des vôtres est tout près.
+            for (const r of (all ? results : [mine])) if (r?.arrivedPlaces?.length) await addArrivedPlaces(r.mapId, r.arrivedPlaces);
             // Le circuit ouvert a changé : redessiné (circuit.js).
             if (mine?.circuitsChanged?.length) eventBus.emit('sync:circuits-changed', { ids: mine.circuitsChanged });
             await refreshSyncIndicators();
@@ -230,7 +233,7 @@ export function syncConflictCount() { return conflictCount; }
 /** Point ambre sur la roue dentée et entrée « À choisir » (PC). */
 export async function refreshSyncIndicators() {
     const list = state.isAdmin ? [] : await getSyncConflicts(state.currentMapId);
-    conflictCount = list.length + listOfficialTwins().length;
+    conflictCount = list.length + listOfficialTwins().length + listPersoTwins().length;
     setAttention('sync', conflictCount > 0, 'choose');
     const entry = document.getElementById('btn-sync-conflicts');
     if (entry) {
@@ -287,7 +290,8 @@ function announceSurvivors(survivors) {
 export async function openSyncConflictsList() {
     const list = await getSyncConflicts(state.currentMapId);
     const twins = listOfficialTwins();
-    if (!list.length && !twins.length) { showToast('Plus rien à choisir.', 'info'); return; }
+    const pairs = listPersoTwins();
+    if (!list.length && !twins.length && !pairs.length) { showToast('Plus rien à choisir.', 'info'); return; }
     const meta = (c) => (c.kind === 'circuit' ? `Circuit · ${CIRCUIT_LABELS[c.key] || c.key}` : labelOf(c.key));
     const body = `<div class="official-list">${list.map((c, i) => `
         <button class="official-list-row" type="button" data-sync-choose="${i}">
@@ -303,12 +307,20 @@ export async function openSyncConflictsList() {
                 <span class="official-list-meta">Votre lieu · même endroit qu'un lieu officiel</span>
             </span>
             <i data-lucide="chevron-right"></i>
+        </button>`).join('')}${pairs.map(p => `
+        <button class="official-list-row" type="button" data-pair-a="${escapeXml(p.localId)}" data-pair-b="${escapeXml(p.arrivedId)}">
+            <span class="official-list-text">
+                <span class="official-list-name">${escapeXml(p.local.properties?.['Nom du site FR'] || 'Votre lieu')}</span>
+                <span class="official-list-meta">Deux de vos lieux au même endroit</span>
+            </span>
+            <i data-lucide="chevron-right"></i>
         </button>`).join('')}</div>`;
     openHwModal({ size: 'md', icon: 'split', title: 'À choisir', body, footer: false, closeOnBackdrop: true });
     const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
     createIcons({ icons: appIcons, root });
     root.querySelectorAll('[data-sync-choose]').forEach(b => b.addEventListener('click', () => openChoose(list[Number(b.dataset.syncChoose)])));
     root.querySelectorAll('[data-twin-row]').forEach(b => b.addEventListener('click', () => eventBus.emit('twin:open', { id: b.dataset.twinRow })));
+    root.querySelectorAll('[data-pair-a]').forEach(b => b.addEventListener('click', () => eventBus.emit('twin:open-pair', { a: b.dataset.pairA, b: b.dataset.pairB })));
 }
 
 function formatWhen(ms) {

@@ -15,11 +15,17 @@ import { getPoiId, calculateDistance, isCandidate, escapeXml } from './utils.js'
 
 export const TWIN_RADIUS_M = 50;
 
-let answers = {}; // « custom|officiel » → 'different'
+let answers = {}; // « custom|officiel » ou « lieu|lieu » → 'different'
+let arrived = new Set(); // lieux créés arrivés d'un autre appareil par la synchro
 
 /** Réponses retenues (chargées par place-twins-ui.js au démarrage). */
 export function setTwinAnswers(next) { answers = next && typeof next === 'object' ? next : {}; }
 export const twinKey = (customId, officialId) => `${customId}|${officialId}`;
+/** Clé d'une paire de vos lieux : la même dans les deux sens. */
+export const pairKey = (a, b) => [a, b].sort().join('|');
+
+/** Lieux arrivés d'un autre appareil (chargés par place-twins-ui.js). */
+export function setArrivedPlaces(ids) { arrived = new Set(ids || []); }
 
 const latLngOf = (f) => {
     const c = f?.geometry?.coordinates;
@@ -66,6 +72,30 @@ export function officialTwinOf(customId) {
 export function listOfficialTwins() {
     if (state.isAdmin) return [];
     return (state.customFeatures || []).map(f => officialTwinOf(getPoiId(f))).filter(Boolean);
+}
+
+/**
+ * Deux de vos lieux créés sur deux appareils, à moins de 50 m l'un de l'autre
+ * (écran 50) : l'un est arrivé par la synchro. Le nom n'est pas regardé.
+ * @returns {Array<{arrivedId:string, localId:string, arrived:object, local:object, dist:number}>}
+ */
+export function listPersoTwins() {
+    if (state.isAdmin || !arrived.size) return [];
+    const seen = new Set();
+    const out = [];
+    for (const id of arrived) {
+        const f = (state.customFeatures || []).find(x => getPoiId(x) === id);
+        const p = latLngOf(f);
+        if (!f || !p) continue;
+        for (const n of nearbyPlaces(p.lat, p.lng, { excludeId: id, max: 5 })) {
+            if (!isCustom(n.id)) continue;
+            const key = pairKey(id, n.id);
+            if (seen.has(key) || answers[key] === 'different') continue;
+            seen.add(key);
+            out.push({ arrivedId: id, localId: n.id, arrived: f, local: n.feature, dist: n.dist });
+        }
+    }
+    return out;
 }
 
 /** Bandeau de la fiche d'un de vos lieux (écran 48). */
