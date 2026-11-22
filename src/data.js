@@ -17,6 +17,7 @@ import {
 } from './database.js';
 import { migrateLegacyUserData } from './legacy-user-data.js';
 import { schedulePush } from './gist-sync.js';
+import { recordPlaceDeletion } from './google-sync.js';
 import { showToast } from './toast.js';
 import { noteCandidatePosition, ORIG_KEY } from './candidate-edits.js';
 import { forgetNote } from './note-sync.js';
@@ -932,6 +933,11 @@ export async function deletePoi(poiId, { tombstone = true } = {}) {
         if (idx !== -1) {
             state.customFeatures.splice(idx, 1);
             await saveAppState(`customPois_${state.currentMapId}`, state.customFeatures);
+            // Synchro Google des users : supprimé aussi sur les autres appareils.
+            if (!state.isAdmin) {
+                await recordPlaceDeletion(state.currentMapId, poiId);
+                eventBus.emit('sync:local-change');
+            }
         }
     }
 

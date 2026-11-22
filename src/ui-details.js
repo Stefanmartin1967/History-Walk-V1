@@ -397,6 +397,11 @@ function setupNoteEditToggle(poiId) {
     });
     // Bandeau « La fiche officielle a été mise à jour depuis votre modification »
     // → fenêtre Voir (official-update-ui.js, 20/11/2026).
+    // Bandeau « Un lieu officiel a été publié au même endroit » → « Même lieu ? »
+    // (place-twins-ui.js, 22/11/2026).
+    document.getElementById('poi-twin-see')?.addEventListener('click', () => {
+        eventBus.emit('twin:open', { id: poiId });
+    });
     document.getElementById('poi-official-see')?.addEventListener('click', () => {
         const f = state.loadedFeatures.find(x => getPoiId(x) === poiId);
         openOfficialUpdate(poiId, f ? getPatrimonialName(f) : '');

@@ -30,6 +30,7 @@ import { setAttention } from './attention.js';
 import { getLinkedAccount, hasGoogleAccess, renewGoogleAccess } from './google-account.js';
 import { syncMap, syncAllMaps, getSyncConflicts, resolveSyncConflict, resolveCircuitChoice } from './google-sync.js';
 import { openCircuitTrash } from './circuit-trash-ui.js';
+import { listOfficialTwins } from './place-twins.js';
 import L from 'leaflet';
 import { FIELD_DATES_KEY, PART_DATES_KEY } from './field-dates.js';
 
@@ -205,8 +206,13 @@ function onForeground() {
 }
 
 /** Au démarrage (utilisateur relié, hors admin). */
+let choicesBound = false;
+
 export async function initGoogleSync() {
     bindToolsMenuEntry();
+    // Lieux au même endroit (PR 8) : la liste « À choisir » les montre aussi,
+    // relié à Google ou pas.
+    if (!choicesBound) { choicesBound = true; eventBus.on('choices:changed', () => { void refreshSyncIndicators(); }); }
     if (state.isAdmin) return;
     await refreshSyncIndicators();
     if (bound) return;
@@ -224,7 +230,7 @@ export function syncConflictCount() { return conflictCount; }
 /** Point ambre sur la roue dentée et entrée « À choisir » (PC). */
 export async function refreshSyncIndicators() {
     const list = state.isAdmin ? [] : await getSyncConflicts(state.currentMapId);
-    conflictCount = list.length;
+    conflictCount = list.length + listOfficialTwins().length;
     setAttention('sync', conflictCount > 0, 'choose');
     const entry = document.getElementById('btn-sync-conflicts');
     if (entry) {
@@ -280,7 +286,8 @@ function announceSurvivors(survivors) {
 /** Fenêtre « À choisir » (écran 43) : textes et circuits ; un nom → la fenêtre de choix. */
 export async function openSyncConflictsList() {
     const list = await getSyncConflicts(state.currentMapId);
-    if (!list.length) { showToast('Plus rien à choisir.', 'info'); return; }
+    const twins = listOfficialTwins();
+    if (!list.length && !twins.length) { showToast('Plus rien à choisir.', 'info'); return; }
     const meta = (c) => (c.kind === 'circuit' ? `Circuit · ${CIRCUIT_LABELS[c.key] || c.key}` : labelOf(c.key));
     const body = `<div class="official-list">${list.map((c, i) => `
         <button class="official-list-row" type="button" data-sync-choose="${i}">
@@ -289,11 +296,19 @@ export async function openSyncConflictsList() {
                 <span class="official-list-meta">${escapeXml(meta(c))} · sur deux appareils</span>
             </span>
             <i data-lucide="chevron-right"></i>
+        </button>`).join('')}${twins.map(t => `
+        <button class="official-list-row" type="button" data-twin-row="${escapeXml(t.customId)}">
+            <span class="official-list-text">
+                <span class="official-list-name">${escapeXml(t.custom.properties?.['Nom du site FR'] || 'Votre lieu')}</span>
+                <span class="official-list-meta">Votre lieu · même endroit qu'un lieu officiel</span>
+            </span>
+            <i data-lucide="chevron-right"></i>
         </button>`).join('')}</div>`;
     openHwModal({ size: 'md', icon: 'split', title: 'À choisir', body, footer: false, closeOnBackdrop: true });
     const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
     createIcons({ icons: appIcons, root });
     root.querySelectorAll('[data-sync-choose]').forEach(b => b.addEventListener('click', () => openChoose(list[Number(b.dataset.syncChoose)])));
+    root.querySelectorAll('[data-twin-row]').forEach(b => b.addEventListener('click', () => eventBus.emit('twin:open', { id: b.dataset.twinRow })));
 }
 
 function formatWhen(ms) {

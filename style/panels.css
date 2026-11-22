@@ -3319,3 +3319,18 @@ body.admin-mode #circuit-panel[data-mode="consult"][data-flag="verified"] #btn-d
 .poi-official-update--stack .poi-official-update-btn {
     flex: 1 1 100%; min-height: 44px; font-size: 14px;
 }
+
+/* Bandeau « Un lieu officiel a été publié au même endroit » (PR 8, écran 48). */
+.poi-twin {
+    display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+    border-radius: var(--radius-md); background: var(--warn-soft);
+    border: 1px solid color-mix(in oklab, var(--warn-fg) 45%, var(--line));
+}
+.poi-twin-text { flex: 1; display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; line-height: 1.5; color: var(--ink); }
+.poi-twin-text i[data-lucide] { width: 18px; height: 18px; color: var(--warn-fg); flex-shrink: 0; margin-top: 1px; }
+.poi-twin-see {
+    flex-shrink: 0; min-height: 40px; padding: 0 16px; border: 0; border-radius: var(--radius-md);
+    background: var(--cta-bg); color: var(--cta-fg); font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer;
+}
+.poi-twin--stack { flex-direction: column; align-items: stretch; }
+.poi-twin--stack .poi-twin-see { width: 100%; min-height: 44px; }

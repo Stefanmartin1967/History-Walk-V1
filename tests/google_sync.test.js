@@ -323,3 +323,28 @@ describe('circuits modifiés par la synchro (22/11)', () => {
         expect(r.circuitsChanged).toEqual(['c1']);
     });
 });
+
+describe('lieux créés supprimés (PR 8)', () => {
+    const place = (id, date) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [1, 2] }, properties: { HW_ID: id, 'Nom du site FR': id, _fieldDates: { 'Nom du site FR': date } } });
+
+    it('supprimé ailleurs : retiré ici, et la suppression reste dans le compte', async () => {
+        h.device.places = [place('P1', 1000)];
+        h.drive[fileNameFor('djerba')] = remoteFile({}, { deletedPlaces: { P1: 5000 } });
+        await syncMap('djerba');
+        expect(h.app.customPois_djerba).toEqual([]);
+        expect(h.writes.at(-1).content.deletedPlaces).toEqual({ P1: 5000 });
+    });
+    it('supprimé ici : ne revient pas depuis le compte', async () => {
+        h.app.deletedPlaces_djerba = { P1: 5000 };
+        h.device.userData.X = { notes: 'x', _fieldDates: { notes: 5 } };
+        h.drive[fileNameFor('djerba')] = remoteFile({ places: [place('P1', 1000)] });
+        await syncMap('djerba');
+        expect(h.writes.at(-1).content.state.places).toEqual([]);
+    });
+    it('modifié après la suppression : il reste', async () => {
+        h.device.places = [place('P1', 9000)];
+        h.drive[fileNameFor('djerba')] = remoteFile({}, { deletedPlaces: { P1: 5000 } });
+        await syncMap('djerba');
+        expect(h.writes.at(-1).content.state.places.map(p => p.properties.HW_ID)).toEqual(['P1']);
+    });
+});

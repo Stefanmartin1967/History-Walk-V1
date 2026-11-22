@@ -9,6 +9,7 @@ import { saveAppState, savePoiData, getPoiPhotos, savePoiPhotos, getPendingAdmin
 import { compressImage, generatePhotoId, PUBLISH_COMPRESSION, USER_COMPRESSION } from './photo-service.js';
 import { closeAllDropdowns } from './ui-utils.js';
 import { closeDetailsPanel, openDetailsPanel } from './ui-details.js';
+import { askNearbyBeforeCreate } from './place-twins-ui.js';
 import { getExifLocation, resizeImage, sha256OfFile, openCoordsOnMap } from './utils.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { clusterPhotos } from './photo-clustering.js';
@@ -348,15 +349,15 @@ export function createDraftMarker(lat, lng, mapInstance, photos = []) {
 
     const validateBtn = popupContent.querySelector('#btn-validate-desktop-poi');
     
-    validateBtn.addEventListener('click', () => {
+    validateBtn.addEventListener('click', async () => {
         const finalLatLng = desktopDraftMarker.getLatLng();
-        // REMPLACEMENT PAR LA RICH EDITOR
-        RichEditor.openForCreate(finalLatLng.lat, finalLatLng.lng, photos);
-        
         if (mapInstance && desktopDraftMarker) {
             mapInstance.removeLayer(desktopDraftMarker);
         }
         desktopDraftMarker = null;
+        // Un lieu existe déjà tout près ? On demande avant de créer (écran 47).
+        if (await askNearbyBeforeCreate(finalLatLng.lat, finalLatLng.lng) !== 'create') return;
+        RichEditor.openForCreate(finalLatLng.lat, finalLatLng.lng, photos);
     });
 
     // Les <i data-lucide> du popup doivent être convertis en SVG avant que

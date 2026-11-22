@@ -6,6 +6,10 @@
 
 ---
 
+- LIEUX AU MÊME ENDROIT (v3.7.569). PR 8 du chantier « synchro users », maquette écrans 47-49 et 51 validée par Stefan le 22/11/2026 (l'écran 50, deux de vos lieux créés sur deux appareils, viendra dans une PR à part).
+  - Avant de créer un lieu (place-twins-ui.js askNearbyBeforeCreate) : si un lieu existe à moins de 50 m, « Il y a déjà un lieu tout près » — Ouvrir ce lieu / Non, créer un nouveau lieu. Une question, jamais un refus. Clic droit sur la carte et recherche (PC), « Nouveau lieu » du dock et du suivi (téléphone). L'import de photos montrait déjà les lieux proches (« Rattacher à un lieu »).
+  - Lieu officiel publié au même endroit qu'un de vos lieux (place-twins.js, sans base) : bandeau dans la fiche de votre lieu, ligne dans « À choisir » (point ambre). « Même lieu ? » : « C'est le même lieu » → visite, note, Incontournable, photos et circuits perso passent sur la fiche officielle, votre lieu est retiré ; si votre description diffère, fenêtre à cases par phrase (texte officiel au départ). « Pas le même lieu » est retenu pour la paire.
+  - Suppressions de lieux créés suivies par la synchro (`deletedPlaces`, gardées pour toujours dans le compte, comme les circuits) : avant, un lieu supprimé revenait depuis le compte.
 - SYNCHRO ET CIRCUITS : CINQ CORRECTIONS DES ESSAIS (v3.7.568). Trouvées par Stefan pendant les essais réels du 22/11/2026 (Edge + Chrome privé).
   - BRouter de ce PC : cherché en mode admin seulement (`resolveEngine({ local })`). Chez un user, sonder `localhost:17777` faisait demander par Chrome et Edge « heripia.com souhaite accéder à d'autres applications et services sur cet appareil ». La mention « BRouter de ce PC indisponible » n'apparaît plus chez eux non plus.
   - « Ce circuit est enregistré sur cet appareil seulement… » : masqué pour un user relié à son compte Google (ses circuits suivent).

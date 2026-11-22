@@ -1361,3 +1361,32 @@ html[data-theme="nuit"] .cc-hero {
     margin: 0 0 var(--space-sm); font-size: 12.5px; line-height: 1.45; color: var(--ink-soft);
 }
 .cc-pending-info svg { width: 15px; height: 15px; flex-shrink: 0; margin-top: 1px; }
+
+/* Lieux au même endroit (PR 8, maquette écrans 47-51) — place-twins-ui.js */
+.twin-intro { margin: 0 0 10px; font-size: 13.5px; color: var(--ink-soft); }
+.twin-near-list { display: flex; flex-direction: column; gap: 8px; }
+.twin-near-row {
+    display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+    border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface);
+}
+.twin-near-row > i[data-lucide] { width: 18px; height: 18px; color: var(--warn-fg); flex-shrink: 0; }
+.twin-near-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.twin-near-text b { font-size: 14.5px; color: var(--ink); }
+.twin-near-text span { font-size: 12.5px; color: var(--ink-soft); }
+.twin-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.twin-card {
+    display: flex; flex-direction: column; gap: 6px; padding: 12px 14px;
+    border-radius: var(--radius-md); border: 1px solid var(--line); background: var(--surface);
+}
+.twin-card h3 { margin: 0; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; }
+.twin-card--official h3 { color: var(--info-fg); }
+.twin-card--mine h3 { color: var(--warn-fg); }
+.twin-card-name { font-size: 15px; color: var(--ink); }
+.twin-card-line { display: flex; align-items: center; gap: 8px; font-size: 13.5px; color: var(--ink); }
+.twin-card-line i[data-lucide] { width: 14px; height: 14px; color: var(--ok-fg); }
+.twin-explain { margin: 12px 0 0; font-size: 13.5px; line-height: 1.55; color: var(--ink); }
+@media (max-width: 767px) {
+    .twin-cards { grid-template-columns: 1fr; }
+    .twin-near-row { flex-wrap: wrap; }
+    .twin-near-row .btn { width: 100%; }
+}
