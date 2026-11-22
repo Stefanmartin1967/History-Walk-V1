@@ -164,9 +164,16 @@ export function forgetEngine() { engineCache = null; }
  * BRouter de ce PC s'il répond, sinon brouter.de. Toute réponse HTTP compte
  * (le point sondé est hors carte, BRouter répond par une erreur) : seul un
  * serveur muet, absent ou bloqué (CSP, navigateur) fait retomber sur brouter.de.
+ *
+ * `local: false` (les users, 22/11/2026) : brouter.de directement, sans sonder.
+ * Sonder `localhost` fait poser par Chrome et Edge la question « heripia.com
+ * souhaite accéder à d'autres applications et services sur cet appareil », pour
+ * un outil qui n'existe que sur le PC de l'auteur (essai de Stefan sur Edge).
+ * @param {{local?: boolean}} [opts]
  * @returns {Promise<{key: 'local'|'brouter.de', base: string, label: string}>}
  */
-export async function resolveEngine() {
+export async function resolveEngine({ local = true } = {}) {
+    if (!local) return ENGINES.public;
     if (engineCache && Date.now() - engineCache.at < ENGINE_TTL_MS) return engineCache.engine;
     let engine = ENGINES.public;
     try {

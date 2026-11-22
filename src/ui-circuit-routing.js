@@ -23,7 +23,7 @@ import { routeCircuit, routeChangedSegments, normalizeRouting, resolveEngine, en
 import { refreshFailOverlay, clearFailOverlay } from './route-fail-overlay.js';
 import { revertDraggedFlags, resyncFlags } from './circuit-flags.js';
 import { openRouteCompare, isComparing, cancelRouteCompare } from './circuit-compare.js';
-import { referenceLayers, importReferenceGpx, removeReferenceLayer, removePreviousTraceLayer, toggleReferenceLayerVisible, hasReferenceLayer, isReferenceVisible, showTraceAsReference } from './circuit-reference-layer.js';
+import { referenceLayers, importReferenceGpx, removeReferenceLayer, removePreviousTraceLayer, removePreviousTraceUnlessFor, toggleReferenceLayerVisible, hasReferenceLayer, isReferenceVisible, showTraceAsReference } from './circuit-reference-layer.js';
 import { saveAndExportCircuit } from './circuit-actions.js';
 import { renderCircuitPanel, currentPoiKey } from './circuit.js';
 import { updatePolylines } from './map.js';
@@ -40,6 +40,7 @@ import { circuitWaypointsFor, savedToBySeg, storedWaypoints, draftToSaved } from
 import { wayTypesView, retryWayTypes } from './circuit-way-types.js';
 import { WAY_CATEGORIES, formatKm, wayTypesStatus } from './way-types.js';
 import { openSaveModal } from './save-modal-ui.js';
+import { getLinkedAccount } from './google-account.js';
 
 // Aide « ? » inline du bloc tracé : le patron rend l'icône via createIcons
 // (idempotent — déjà configuré par ui-circuit-list / ui-photo-batch).
@@ -289,10 +290,13 @@ function variantLineHtml() {
 // sur cet appareil. Constat du 10/11/2026 (parcours visiteur) : rien ne le disait,
 // et le téléphone n'affichait pas le circuit créé sur PC. Le trajet « Sauvegarder »
 // (légère) puis « Restaurer » sur le téléphone a été rejoué et fonctionne. Pas pour
-// un circuit officiel : il est publié, tous les appareils l'ont.
+// un circuit officiel : il est publié, tous les appareils l'ont. Ni pour un user
+// relié à son compte Google (22/11/2026) : ses circuits suivent tout seuls,
+// la phrase serait fausse.
 function phoneHintHtml() {
     const c = activeCircuit();
     if (!c || c.isOfficial) return '';
+    if (!state.isAdmin && getLinkedAccount()) return '';
     return `
         <p class="trace-phone">
             <i data-lucide="smartphone"></i>
@@ -397,6 +401,8 @@ async function runTrace({ keepUnchanged = false } = {}) {
         showToast('Ajoutez au moins 2 lieux pour tracer un itinéraire.', 'warning');
         return;
     }
+    // Le « Tracé précédent » d'un autre circuit ne doit pas guider celui-ci.
+    removePreviousTraceUnlessFor(state.activeCircuitId);
     const ctx = traceContext();
     if (!keepUnchanged) { startCompare(ctx); return; }
     tracing = true;
@@ -406,7 +412,7 @@ async function runTrace({ keepUnchanged = false } = {}) {
         // Variante du circuit (Direct si aucune n'est mémorisée) et moteur :
         // BRouter de ce PC s'il répond, sinon brouter.de.
         const routing = normalizeRouting(ctx.prevCircuit?.routing);
-        const engine = await resolveEngine();
+        const engine = await resolveEngine({ local: state.isAdmin });
         const opts = { routing, base: engine.base, waypointsBySeg: ctx.waypoints.bySeg };
         const prev = previousRoute(ctx.prevTrack);
         const result = prev
@@ -498,7 +504,7 @@ async function applyTraceResult({ prevCircuit, prevTrack, undo, waypoints: ctxWa
     });
     // Point 5 : montre l'ancien tracé en calque de référence (avant/après),
     // sauf si un calque importé est déjà chargé (garde-fou dans la fonction).
-    if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent');
+    if (prevTrack) showTraceAsReference(prevTrack, 'Tracé précédent', state.activeCircuitId);
     // Base de péremption posée APRÈS la sauvegarde : sur un 1er tracé,
     // saveAndExportCircuit crée le circuit et appelle setActiveCircuitId(), qui
     // remet routeBasisKey à null (state.js:212). La poser AVANT la rendait

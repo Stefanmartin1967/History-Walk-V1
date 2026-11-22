@@ -301,3 +301,25 @@ describe('un choix fait ici, repris par l’autre appareil sans question (point 
         expect(h.device.userData.G.notes).toBe('A et B');
     });
 });
+
+describe('résumé : circuits envoyés (22/11)', () => {
+    it('un tracé modifié ici et envoyé compte dans « Envoyé depuis cet appareil »', async () => {
+        const c = (track, date) => ({ id: 'c1', name: 'Boucle', poiIds: ['A'], realTrack: track, updatedAt: date, _partDates: { name: 1000, description: 1000, steps: 1000, trace: date } });
+        h.device.circuits = [c([[1, 1], [9, 9]], 5000)];
+        h.app.syncBase_djerba = { email: 'x', circuits: { c1: { name: 1000, description: 1000, steps: 1000, trace: 1000 } }, poi: {}, places: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [c([[1, 1], [2, 2]], 1000)] });
+        const r = await syncMap('djerba');
+        expect(r.sent.circuits).toBe(1);
+    });
+});
+
+describe('circuits modifiés par la synchro (22/11)', () => {
+    it('la synchro dit quels circuits elle a modifiés (le circuit ouvert est redessiné)', async () => {
+        const c = (track, date) => ({ id: 'c1', name: 'Boucle', poiIds: ['A'], realTrack: track, updatedAt: date, _partDates: { name: 1000, description: 1000, steps: 1000, trace: date } });
+        h.device.circuits = [c([[1, 1], [2, 2]], 1000)];
+        h.app.syncBase_djerba = { email: 'x', circuits: { c1: { name: 1000, description: 1000, steps: 1000, trace: 1000 } }, poi: {}, places: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [c([[1, 1], [8, 8]], 6000)] });
+        const r = await syncMap('djerba');
+        expect(r.circuitsChanged).toEqual(['c1']);
+    });
+});

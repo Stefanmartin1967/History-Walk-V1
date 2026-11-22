@@ -110,12 +110,30 @@ export function importReferenceGpx(onDone) {
 // geste manuel export GPX → import (point 5). Un seul « Tracé précédent » à la
 // fois : il remplace le précédent (re-tracés successifs → toujours l'avant-
 // dernier) et ne touche jamais aux calques importés. Renvoie true si posé.
-export function showTraceAsReference(latlngs, name) {
+// Il appartient au circuit retracé (`circuitId`) : ouvrir ou commencer un AUTRE
+// circuit le retire (removePreviousTraceUnlessFor), sinon le panneau Itinéraire
+// comparait le nouveau tracé à un chemin sans rapport (essai de Stefan, 22/11/2026).
+export function showTraceAsReference(latlngs, name, circuitId = null) {
     if (!Array.isArray(latlngs) || latlngs.length < 2) return false;
     const others = referenceLayers().filter(l => !l.autoPrevious);
     state.referenceLayers = others;
     if (others.length >= MAX_REFERENCE_LAYERS) { setLayers(others); return false; }
-    return !!addLayer({ name: name || 'Tracé précédent', latlngs: latlngs.slice(), autoPrevious: true });
+    return !!addLayer({
+        name: name || 'Tracé précédent', latlngs: latlngs.slice(), autoPrevious: true,
+        circuitId: circuitId == null ? null : String(circuitId),
+    });
+}
+
+/**
+ * Retire le « Tracé précédent » s'il appartient à un autre circuit que celui-ci
+ * (null : un circuit pas encore enregistré → retiré). Les calques importés restent.
+ */
+export function removePreviousTraceUnlessFor(circuitId) {
+    const id = circuitId == null ? null : String(circuitId);
+    const layers = referenceLayers();
+    if (layers.some(l => l.autoPrevious && (id === null || l.circuitId !== id))) {
+        setLayers(layers.filter(l => !l.autoPrevious || (id !== null && l.circuitId === id)));
+    }
 }
 
 /** Retire le « Tracé précédent » posé automatiquement, s'il y en a un. */

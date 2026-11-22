@@ -6,6 +6,12 @@
 
 ---
 
+- SYNCHRO ET CIRCUITS : CINQ CORRECTIONS DES ESSAIS (v3.7.568). Trouvées par Stefan pendant les essais réels du 22/11/2026 (Edge + Chrome privé).
+  - BRouter de ce PC : cherché en mode admin seulement (`resolveEngine({ local })`). Chez un user, sonder `localhost:17777` faisait demander par Chrome et Edge « heripia.com souhaite accéder à d'autres applications et services sur cet appareil ». La mention « BRouter de ce PC indisponible » n'apparaît plus chez eux non plus.
+  - « Ce circuit est enregistré sur cet appareil seulement… » : masqué pour un user relié à son compte Google (ses circuits suivent).
+  - Calque « Tracé précédent » rattaché à son circuit : retiré en ouvrant ou en traçant un autre circuit (il guidait à tort le panneau Itinéraire, « Suit Tracé précédent à 0 % ») ; les GPX importés restent.
+  - Résumé de la synchro : un circuit modifié et envoyé compte dans « Envoyé depuis cet appareil » (il affichait « Rien de nouveau »).
+  - Circuit ouvert modifié par la synchro : rechargé (il gardait l'ancien tracé à l'écran) ; pas pendant le panneau Itinéraire ; pendant le suivi, un message prévient sans couper la marche.
 - SYNCHRO GOOGLE : LE DERNIER POINT COMMUN (v3.7.567). Essai de Stefan (22/11/2026, Edge + Chrome privé, deux appareils déconnectés) : un tracé modifié des deux côtés, plusieurs fois, ne posait aucune question — chacun gardait le sien, puis l'un aurait écrasé l'autre.
   - Cause : « la version qui descend de l'autre gagne » comparait des heures. Après plusieurs modifications sans voir l'autre appareil, le point de départ d'une modification est la modification précédente du même appareil, plus récente que celle de l'autre : le moteur croyait l'avoir vue. Même règle pour les notes et textes de fiche.
   - Correction : après chaque échange, l'appareil retient la date de chaque champ / morceau de circuit tel qu'il est dans le compte (`syncBase_<destination>`, lié à l'adresse du compte). À la synchro suivante : seul l'appareil a changé → il part ; seul le compte → il arrive ; les deux → à choisir. Les heures ne décident plus (restore-merge.js decideField, circuit-merge.js, google-sync.js).
