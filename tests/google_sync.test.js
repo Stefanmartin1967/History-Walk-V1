@@ -348,3 +348,13 @@ describe('lieux créés supprimés (PR 8)', () => {
         expect(h.writes.at(-1).content.state.places.map(p => p.properties.HW_ID)).toEqual(['P1']);
     });
 });
+
+describe('lieux arrivés d’un autre appareil (écran 50)', () => {
+    it('la synchro dit quels lieux créés viennent d’arriver', async () => {
+        const place = (id) => ({ type: 'Feature', geometry: { type: 'Point', coordinates: [1, 2] }, properties: { HW_ID: id, 'Nom du site FR': id, _fieldDates: { 'Nom du site FR': 1000 } } });
+        h.device.places = [place('ICI')];
+        h.drive[fileNameFor('djerba')] = remoteFile({ places: [place('ICI'), place('VENU')] });
+        const r = await syncMap('djerba');
+        expect(r.arrivedPlaces).toEqual(['VENU']);
+    });
+});
