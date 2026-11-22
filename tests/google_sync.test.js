@@ -31,6 +31,7 @@ vi.mock('../src/restore-apply.js', () => ({
     readDeviceState: vi.fn(async () => JSON.parse(JSON.stringify(h.device))),
 }));
 vi.mock('../src/google-account.js', () => ({
+    getLinkedAccount: vi.fn(() => ({ email: 'x' })),
     listAppFileIds: vi.fn(async () => Object.fromEntries(Object.entries(h.drive).map(([n, f]) => [n, f.id]))),
     readAppFile: vi.fn(async (id) => JSON.parse(JSON.stringify(Object.values(h.drive).find(f => f.id === id).content))),
     writeAppFile: vi.fn(async (id, name, content) => {
@@ -211,5 +212,92 @@ describe('annonce des choix', () => {
         const second = await syncMap('djerba');
         expect(second.conflicts).toHaveLength(1);
         expect(second.newConflicts).toHaveLength(0);
+    });
+});
+
+describe('dernier point commun (22/11 : essai de Stefan, tracé perdu sans question)', () => {
+    // Deux appareils déconnectés modifient chacun le tracé PLUSIEURS fois. Le
+    // point de départ de la dernière modification est la modification
+    // précédente du même appareil, plus récente que celle de l'autre qu'il n'a
+    // jamais vue : l'ancienne règle « descend » (comparaison d'heures) gardait
+    // chaque version sans rien demander, puis l'une écrasait l'autre.
+    const base = (over = {}) => ({ id: 'c1', name: 'Boucle', poiIds: ['A', 'B'], realTrack: [[1, 1], [2, 2]], updatedAt: 1000, _partDates: { name: 1000, description: 1000, steps: 1000, trace: 1000 }, ...over });
+
+    it('tracé modifié des deux côtés depuis le dernier échange : à choisir', async () => {
+        // Appareil A : a synchronisé la version 1000, puis retracé deux fois (3000, puis 5000 partie de 3000).
+        h.device.circuits = [base({ realTrack: [[1, 1], [9, 9]], _partDates: { name: 1000, description: 1000, steps: 1000, trace: 5000 }, _partFrom: { trace: 3000 } })];
+        h.app.syncBase_djerba = { email: 'x', circuits: { c1: { name: 1000, description: 1000, steps: 1000, trace: 1000 } }, poi: {}, places: {} };
+        // Compte : l'appareil B a retracé une fois (2000, partie de 1000).
+        h.drive[fileNameFor('djerba')] = remoteFile({ circuits: [base({ realTrack: [[1, 1], [7, 7]], _partDates: { name: 1000, description: 1000, steps: 1000, trace: 2000 }, _partFrom: { trace: 1000 } })] });
+        const r = await syncMap('djerba', { email: 'x' });
+        expect(r.conflicts.map(c => c.key)).toEqual(['trace']);
+        expect(h.device.circuits[0].realTrack).toEqual([[1, 1], [9, 9]]);
+    });
+
+    it('note modifiée deux fois ici, une fois ailleurs : à choisir aussi', async () => {
+        h.device.userData.G = { notes: 'ici v2', _fieldDates: { notes: 5000 }, _fieldFrom: { notes: 3000 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'ailleurs', _fieldDates: { notes: 2000 }, _fieldFrom: { notes: 1000 } } } });
+        const r = await syncMap('djerba', { email: 'x' });
+        expect(r.conflicts.map(c => c.key)).toEqual(['notes']);
+    });
+
+    it('seul le compte a changé depuis le dernier échange : il arrive, sans question', async () => {
+        h.device.userData.G = { notes: 'commun', _fieldDates: { notes: 1000 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'nouveau', _fieldDates: { notes: 900 } } } }); // heure plus ancienne : l'heure ne compte plus
+        const r = await syncMap('djerba', { email: 'x' });
+        expect(r.conflicts).toEqual([]);
+        expect(h.device.userData.G.notes).toBe('nouveau');
+    });
+
+    it('seul cet appareil a changé : il part, sans question', async () => {
+        h.device.userData.G = { notes: 'mien', _fieldDates: { notes: 4000 }, _fieldFrom: { notes: 3500 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'commun', _fieldDates: { notes: 1000 } } } });
+        const r = await syncMap('djerba', { email: 'x' });
+        expect(r.conflicts).toEqual([]);
+        expect(h.writes.at(-1).content.state.userData.G.notes).toBe('mien');
+    });
+
+    it('le point commun est retenu après la synchronisation (texte à choisir : celui du compte)', async () => {
+        h.device.userData.G = { notes: 'ici', _fieldDates: { notes: 5000 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'ailleurs', _fieldDates: { notes: 2000 } } } });
+        await syncMap('djerba', { email: 'x' });
+        expect(h.app.syncBase_djerba.poi.G.notes).toBe(2000);
+        expect(h.app.syncBase_djerba.email).toBe('x');
+    });
+
+    it('point commun d’un autre compte : ignoré (règle d’avant)', async () => {
+        h.device.userData.G = { notes: 'commun', _fieldDates: { notes: 1000 } };
+        h.app.syncBase_djerba = { email: 'autre@x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'nouveau', _fieldDates: { notes: 900 } } } });
+        await syncMap('djerba', { email: 'x' });
+        expect(h.device.userData.G.notes).toBe('commun'); // sans point commun : ici plus récent
+    });
+});
+
+describe('un choix fait ici, repris par l’autre appareil sans question (point commun)', () => {
+    it('A choisit ; B, resté sur sa version, reçoit le texte choisi', async () => {
+        // A : conflit sur une note (ici « A », compte « B » écrit par l'appareil B).
+        h.device.userData.G = { notes: 'A', _fieldDates: { notes: 3000 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 1000 } }, places: {}, circuits: {} };
+        h.drive[fileNameFor('djerba')] = remoteFile({ userData: { G: { notes: 'B', _fieldDates: { notes: 2000 } } } });
+        const first = await syncMap('djerba');
+        expect(first.conflicts).toHaveLength(1);
+        // A choisit « A et B » : daté maintenant, parti de la version du compte.
+        await resolveSyncConflict('djerba', first.conflicts[0], 'A et B');
+        h.device.userData.G = { notes: 'A et B', _fieldDates: { notes: 9000 }, _fieldFrom: { notes: 2000 } };
+        await syncMap('djerba');
+        expect(h.drive[fileNameFor('djerba')].content.state.userData.G.notes).toBe('A et B');
+
+        // B : point commun = sa propre version (2000), qu'il n'a pas changée.
+        h.device.userData.G = { notes: 'B', _fieldDates: { notes: 2000 } };
+        h.app.syncBase_djerba = { email: 'x', poi: { G: { notes: 2000 } }, places: {}, circuits: {} };
+        h.app.syncConflicts_djerba = [];
+        const onB = await syncMap('djerba');
+        expect(onB.conflicts).toEqual([]);
+        expect(h.device.userData.G.notes).toBe('A et B');
     });
 });

@@ -34,12 +34,31 @@ const SPECIAL_KEYS = new Set([
 
 /**
  * Qui gagne entre la version d'ici et celle du fichier, pour un champ ?
+ *
+ * Avec le DERNIER POINT COMMUN (`base`, synchro Google, 22/11/2026) : la date
+ * de la version que l'appareil et le compte partageaient au dernier échange
+ * (null : le champ était absent). On regarde qui a changé depuis — l'appareil,
+ * le compte, ou les deux (à choisir). Les heures ne comptent plus.
+ *
+ * Sans point commun (restauration d'un fichier, première liaison) : la règle
+ * des heures — la version qui descend de l'autre gagne (`from`). ⚠ Elle se
+ * trompe quand un appareil a modifié PLUSIEURS fois sans voir l'autre (son
+ * point de départ est sa propre modification précédente, plus récente) : c'est
+ * pourquoi la synchro retient le point commun (essai de Stefan, 22/11/2026).
  * @param {{value:*, date?:number, from?:number}} here
  * @param {{value:*, date?:number, from?:number}} file
+ * @param {number|null} [base] date au dernier échange ; undefined = inconnue
  * @returns {'same'|'here'|'file'|'both'} `both` : écrits chacun de son côté
  */
-export function decideField(here, file) {
+export function decideField(here, file, base) {
     if (sameValue(here.value, file.value)) return 'same';
+    if (base !== undefined) {
+        const hereChanged = (here.date ?? null) !== base;
+        const fileChanged = (file.date ?? null) !== base;
+        if (hereChanged && fileChanged) return 'both';
+        if (hereChanged) return 'here';
+        return 'file';
+    }
     const hd = here.date, fd = file.date;
     if (hd === undefined) return 'file';       // ici jamais daté : fichier (y compris aucune date)
     if (fd === undefined) return 'here';       // le fichier n'a rien de daté : ici a changé depuis
@@ -59,7 +78,16 @@ function isText(key, a, b) {
  * d'un lieu créé ramenées par placeFields).
  * @returns {{next:object, dates:object, from:object, tookFile:string[], keptHere:string[], conflicts:Array}}
  */
-function mergeDated(here, file, keys) {
+/**
+ * Point commun d'un champ, pour un objet connu au dernier échange : sa date,
+ * ou null s'il était absent. undefined si l'objet n'était pas connu.
+ */
+function baseOf(bases, key) {
+    if (!bases) return undefined;
+    return key in bases ? bases[key] : null;
+}
+
+function mergeDated(here, file, keys, { bases, pending } = {}) {
     const hDates = here[FIELD_DATES_KEY] || {}, hFrom = here[FIELD_FROM_KEY] || {};
     const fDates = file[FIELD_DATES_KEY] || {}, fFrom = file[FIELD_FROM_KEY] || {};
     const next = {};
@@ -73,8 +101,11 @@ function mergeDated(here, file, keys) {
         // n'existait pas encore, ou n'a jamais été touché là-bas) — on garde ici.
         // Un RETRAIT fait là-bas, lui, est daté (field-dates.js).
         if (f.value === undefined && f.date === undefined) { next[key] = h.value; continue; }
-        let verdict = decideField(h, f);
-        if (verdict === 'both' && !isText(key, h.value, f.value)) verdict = f.date > h.date ? 'file' : 'here';
+        let verdict = decideField(h, f, baseOf(bases, key));
+        // Un texte encore à choisir le reste tant qu'il diffère (sinon le point
+        // commun, celui du compte, le ferait passer pour « changé ici seulement »).
+        if (pending?.has(key) && verdict !== 'same') verdict = 'both';
+        if (verdict === 'both' && !isText(key, h.value, f.value)) verdict = (f.date ?? 0) > (h.date ?? 0) ? 'file' : 'here';
         if (verdict === 'file') {
             next[key] = f.value;
             if (f.date !== undefined) dates[key] = f.date; else delete dates[key];
@@ -99,9 +130,9 @@ function datedKeys(a, b, filter = isDatedKey) {
  * @returns {{data:object|null, tookFile:string[], keptHere:string[], conflicts:Array, addedVisit:boolean, addedNote:boolean}}
  *          `data` : l'overlay à enregistrer (null si rien ne change ici)
  */
-export function mergePoiData(here = {}, file = {}) {
+export function mergePoiData(here = {}, file = {}, opts = {}) {
     const res = { data: null, tookFile: [], keptHere: [], conflicts: [], addedVisit: false, addedNote: false };
-    const merged = mergeDated(here, file, datedKeys(here, file));
+    const merged = mergeDated(here, file, datedKeys(here, file), opts);
     const out = { ...here };
     let changed = false;
     res.tookFile.push(...merged.tookFile);
@@ -166,7 +197,7 @@ export function mergePoiData(here = {}, file = {}) {
 }
 
 /** Fusion des lieux créés : réunion par identifiant, champ par champ pour un lieu des deux côtés. */
-export function mergePlaces(herePlaces = [], filePlaces = []) {
+export function mergePlaces(herePlaces = [], filePlaces = [], { bases, pending } = {}) {
     const byId = new Map(herePlaces.map(f => [f?.properties?.HW_ID, f]));
     const result = herePlaces.map(f => f);
     const added = [], updated = [], kept = [], conflicts = [];
@@ -180,7 +211,10 @@ export function mergePlaces(herePlaces = [], filePlaces = []) {
 
         const hFields = { ...placeFields(here), [FIELD_DATES_KEY]: here.properties[FIELD_DATES_KEY], [FIELD_FROM_KEY]: here.properties[FIELD_FROM_KEY] };
         const fFields = { ...placeFields(clean), [FIELD_DATES_KEY]: clean.properties[FIELD_DATES_KEY], [FIELD_FROM_KEY]: clean.properties[FIELD_FROM_KEY] };
-        const merged = mergeDated(hFields, fFields, datedKeys(hFields, fFields));
+        const merged = mergeDated(hFields, fFields, datedKeys(hFields, fFields), {
+            bases: bases ? bases[id] : undefined,
+            pending: pending ? new Set([...pending].filter(p => p.startsWith(`${id}|`)).map(p => p.slice(id.length + 1))) : undefined,
+        });
         if (merged.tookFile.length) {
             const next = JSON.parse(JSON.stringify(here));
             for (const key of merged.tookFile) {
@@ -197,6 +231,12 @@ export function mergePlaces(herePlaces = [], filePlaces = []) {
         merged.conflicts.forEach(c => conflicts.push({ ...c, id }));
     }
     return { places: result, added, updated, kept, conflicts };
+}
+
+/** Clés en attente d'un choix pour un objet (« kind|id|clé »). */
+function keysPending(pending, kind, id) {
+    const prefix = `${kind}|${id}|`;
+    return new Set([...pending].filter(p => p.startsWith(prefix)).map(p => p.slice(prefix.length)));
 }
 
 const isValidCircuit = (c) => c && typeof c.id === 'string' && typeof c.name === 'string' && Array.isArray(c.poiIds) && !c.isOfficial;
@@ -229,9 +269,11 @@ export function mergeCircuits(hereCircuits = [], fileCircuits = []) {
  * Fusion complète d'une sauvegarde avec l'appareil.
  * @param {object} here  { userData, places, circuits, hiddenPoiIds, circuitsStatus, circuitsStatusUpdatedAt, hiddenCircuitIds, hiddenCircuitIdsUpdatedAt }
  * @param {object} file  même forme, lue dans le fichier
+ * @param {{base?:{poi:object, places:object}, pending?:Set<string>}} [opts] synchro :
+ *        dernier point commun et choix en attente (« kind|id|clé »)
  * @returns {object} ce qu'il faut écrire + `summary` + `conflicts`
  */
-export function mergeBackup(here, file) {
+export function mergeBackup(here, file, { base, pending } = {}) {
     const userData = {};
     const summary = { visits: 0, notes: 0, places: [], circuits: [], updated: [], kept: [], keptCircuits: 0 };
     const conflicts = [];
@@ -241,7 +283,10 @@ export function mergeBackup(here, file) {
         const h = here.userData?.[id];
         const f = file.userData?.[id];
         if (!f) continue;
-        const r = mergePoiData(h || {}, f);
+        const r = mergePoiData(h || {}, f, {
+            bases: base ? base.poi?.[id] : undefined,
+            pending: pending ? keysPending(pending, 'poi', id) : undefined,
+        });
         if (r.data) userData[id] = r.data;
         if (r.addedVisit) summary.visits++;
         if (r.addedNote) summary.notes++;
@@ -250,7 +295,10 @@ export function mergeBackup(here, file) {
         r.conflicts.forEach(c => conflicts.push({ ...c, kind: 'poi', id }));
     }
 
-    const places = mergePlaces(here.places || [], file.places || []);
+    const places = mergePlaces(here.places || [], file.places || [], {
+        bases: base ? (base.places || {}) : undefined,
+        pending: pending ? new Set([...pending].filter(p => p.startsWith('place|')).map(p => p.slice(6))) : undefined,
+    });
     summary.places = places.added.map(f => f.properties?.['Nom du site FR'] || f.properties?.HW_ID);
     places.updated.forEach(f => summary.updated.push(f.properties.HW_ID));
     places.kept.forEach(f => summary.kept.push(f.properties.HW_ID));

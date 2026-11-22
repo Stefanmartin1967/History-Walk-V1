@@ -6,6 +6,11 @@
 
 ---
 
+- SYNCHRO GOOGLE : LE DERNIER POINT COMMUN (v3.7.567). Essai de Stefan (22/11/2026, Edge + Chrome privé, deux appareils déconnectés) : un tracé modifié des deux côtés, plusieurs fois, ne posait aucune question — chacun gardait le sien, puis l'un aurait écrasé l'autre.
+  - Cause : « la version qui descend de l'autre gagne » comparait des heures. Après plusieurs modifications sans voir l'autre appareil, le point de départ d'une modification est la modification précédente du même appareil, plus récente que celle de l'autre : le moteur croyait l'avoir vue. Même règle pour les notes et textes de fiche.
+  - Correction : après chaque échange, l'appareil retient la date de chaque champ / morceau de circuit tel qu'il est dans le compte (`syncBase_<destination>`, lié à l'adresse du compte). À la synchro suivante : seul l'appareil a changé → il part ; seul le compte → il arrive ; les deux → à choisir. Les heures ne décident plus (restore-merge.js decideField, circuit-merge.js, google-sync.js).
+  - Un choix encore en attente le reste tant que les deux versions diffèrent. « Effacer mes données » oublie le point commun ; « Déconnecter » le garde (même compte au retour).
+  - Sans point commun (restauration d'un fichier, toute première liaison) : l'ancienne règle, inchangée.
 - SYNCHRO GOOGLE : LES CIRCUITS PERSO (v3.7.566). PR 7 du chantier « synchro users », maquette écrans 43-46 validée par Stefan le 20/11/2026.
   - Dates par morceau (field-dates.js `_partDates` / `_partFrom`, posées par saveCircuit) : nom, description, étapes, tracé (le tracé = le reste du contenu). Un circuit d'avant prend sa date d'ensemble. « Fait » d'un circuit perso daté (`completedUpdatedAt`).
   - circuit-merge.js (pur) : chaque morceau selon la règle des champs (la version qui descend de l'autre gagne ; écrit des deux côtés → à choisir) ; le tracé suit les étapes (une seule question) ; Corbeille et « fait » : le plus récent ; suppressions définitives (`deletedCircuits`, gardées pour toujours dans le compte) : supprimé partout, sauf modifié après la suppression → gardé dans la Corbeille et annoncé.

@@ -28,7 +28,7 @@ import {
     autoNewest,
     setAutoNewest,
 } from './google-sync-ui.js';
-import { clearSyncConflicts } from './google-sync.js';
+import { clearSyncConflicts, clearSyncBases } from './google-sync.js';
 
 const INTRO = "Vos visites, notes et circuits suivent sur tous vos appareils reliés au même compte Google. Ils y sont rangés à part, sans toucher à vos fichiers, et Heripia ne les reçoit jamais. Les photos ne suivent pas : pour elles, gardez une copie dans un fichier ci-dessous.";
 
@@ -246,6 +246,7 @@ async function onErase(bodyEl) {
     try {
         await work;
         await forgetSyncState();
+        await clearSyncBases(); // le compte ne contient plus rien
         flash = { tone: 'ok', text: ERASE_DONE };
     } catch (e) {
         console.warn('[google-link] effacement', e);
