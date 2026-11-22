@@ -46,6 +46,32 @@ const conflictsKey = (mapId) => `syncConflicts_${mapId}`;
 const discardsKey = (mapId) => `syncDiscards_${mapId}`;
 const deletedKey = (mapId) => `deletedCircuits_${mapId}`;
 const baseKey = (mapId) => `syncBase_${mapId}`;
+const deletedPlacesKey = (mapId) => `deletedPlaces_${mapId}`;
+
+/**
+ * Note la suppression d'un lieu créé (PR 8, 22/11/2026). Sans elle, la réunion
+ * appareil + compte le faisait revenir depuis le compte. Gardée pour toujours
+ * dans le fichier (`deletedPlaces`), comme les circuits.
+ */
+export async function recordPlaceDeletion(mapId, id, at = Date.now()) {
+    const list = (await getAppState(deletedPlacesKey(mapId))) || {};
+    list[String(id)] = at;
+    await saveAppState(deletedPlacesKey(mapId), list);
+}
+
+/** Dernière date à laquelle un lieu créé a été modifié. */
+function placeTouched(p) {
+    const dates = Object.values(p?.properties?.[FIELD_DATES_KEY] || {}).filter(n => typeof n === 'number');
+    return dates.length ? Math.max(...dates) : 0;
+}
+
+/** Retire les lieux supprimés quelque part (sauf modifiés après la suppression). */
+export function dropDeletedPlaces(places, deletions) {
+    return (places || []).filter(p => {
+        const at = deletions?.[p?.properties?.HW_ID];
+        return at === undefined || placeTouched(p) > at;
+    });
+}
 
 /** Dates d'un objet daté (overlay de fiche, properties de lieu) : champ → date, ou null. */
 function datesOf(obj) {
@@ -182,7 +208,19 @@ function applyPlacesInMemory(places) {
             state.loadedFeatures.push(feature);
         }
     }
-    state.customFeatures = places.map(p => (state.loadedFeatures || []).find(f => f?.properties?.HW_ID === p?.properties?.HW_ID) || p);
+    // Lieux supprimés ailleurs : retirés de la carte (sauf un lieu « en attente »,
+    // créé ici et pas encore enregistré).
+    const kept = new Set(places.map(p => p?.properties?.HW_ID));
+    const gone = (state.customFeatures || []).filter(f => !f?.properties?._pending && !kept.has(f?.properties?.HW_ID));
+    if (gone.length) {
+        const goneIds = new Set(gone.map(f => f.properties.HW_ID));
+        state.loadedFeatures = (state.loadedFeatures || []).filter(f => !goneIds.has(f?.properties?.HW_ID));
+    }
+    const pendingHere = (state.customFeatures || []).filter(f => f?.properties?._pending && !kept.has(f?.properties?.HW_ID));
+    state.customFeatures = [
+        ...places.map(p => (state.loadedFeatures || []).find(f => f?.properties?.HW_ID === p?.properties?.HW_ID) || p),
+        ...pendingHere,
+    ];
 }
 
 /**
@@ -328,15 +366,16 @@ export async function syncMap(mapId, { files, email = getLinkedAccount()?.email 
     const here = await readDeviceState(mapId);
     const pendingDiscards = (await getAppState(discardsKey(mapId))) || [];
     const localDeletions = (await getAppState(deletedKey(mapId))) || {};
+    const localPlaceDeletions = (await getAppState(deletedPlacesKey(mapId))) || {};
 
     if (!fileId) {
         // Compte encore vide pour cette destination : l'appareil y est copié.
-        if (!hasData(here) && !Object.keys(localDeletions).length) {
+        if (!hasData(here) && !Object.keys(localDeletions).length && !Object.keys(localPlaceDeletions).length) {
             return { mapId, created: false, summary: null, sent: null, conflicts: [], changed: false };
         }
         const id = await writeAppFile(null, name, {
             v: FORMAT, mapId, savedAt: Date.now(), state: here,
-            discarded: mergeDiscarded([], pendingDiscards), deletedCircuits: localDeletions,
+            discarded: mergeDiscarded([], pendingDiscards), deletedCircuits: localDeletions, deletedPlaces: localPlaceDeletions,
         });
         ids[name] = id;
         await saveAppState(discardsKey(mapId), []);
@@ -355,6 +394,10 @@ export async function syncMap(mapId, { files, email = getLinkedAccount()?.email 
     const result = mergeBackup({ ...here, circuits: [] }, { ...remote, circuits: [] },
         base ? { base, pending: pending.data } : { pending: pending.data });
     const deletions = unionDeletions(localDeletions, file?.deletedCircuits);
+    // Lieux créés supprimés quelque part : retirés de la réunion.
+    const placeDeletions = unionDeletions(localPlaceDeletions, file?.deletedPlaces);
+    const keptPlaces = dropDeletedPlaces(result.places, placeDeletions);
+    if (keptPlaces.length !== result.places.length) { result.places = keptPlaces; result.placesChanged = true; }
     const circ = mergeCircuitLists(here.circuits, remote.circuits, deletions, Date.now(),
         { base: base ? (base.circuits || {}) : undefined, pending: pending.circuits });
     result.circuitsToSave = circ.toSave;
@@ -379,9 +422,11 @@ export async function syncMap(mapId, { files, email = getLinkedAccount()?.email 
         v: FORMAT, mapId, savedAt: Date.now(), state: upload,
         discarded: mergeDiscarded(file?.discarded, pendingDiscards),
         deletedCircuits: deletions,
+        deletedPlaces: placeDeletions,
     });
     await saveAppState(discardsKey(mapId), []);
     await saveAppState(deletedKey(mapId), deletions);
+    await saveAppState(deletedPlacesKey(mapId), placeDeletions);
     await saveAppState(baseKey(mapId), baseFromState(upload, email));
     return {
         mapId, created: false, summary: result.summary, sent: sentSummary(remote, here, upload), conflicts: fresh, newConflicts, changed,

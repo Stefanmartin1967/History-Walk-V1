@@ -52,6 +52,7 @@ import { showToast } from './toast.js';
 import { getActiveCircuit } from './circuit-lookup.js';
 import { arrowPositions, metersPerPixel } from './follow-arrows.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
+import { askNearbyBeforeCreate } from './place-twins-ui.js';
 import { createWalkTracker, formatDistance as formatWalkDistance } from './walk-progress.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
@@ -524,6 +525,10 @@ function exitToFiche(poiId) {
 async function addPlaceDuringFollow() {
     const position = await showNewPlaceModal();
     if (!position) return;
+    // Un lieu existe déjà tout près ? On demande avant de créer (écran 47).
+    // « Ouvrir ce lieu » ouvre sa fiche, comme le bouton « Fiche → » du suivi.
+    const answer = await askNearbyBeforeCreate(position.latitude, position.longitude);
+    if (answer !== 'create') return;
     const index = createPlaceAt(position);
     // Suivi quitté pendant la fenêtre (Back Android) → création classique.
     if (!_active) { openDetailsPanel(index); return; }

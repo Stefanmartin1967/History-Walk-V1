@@ -2,6 +2,7 @@
 import L from 'leaflet';
 import { DOM } from './ui-dom.js';
 import { openDetailsPanel } from './ui-details.js';
+import { askNearbyBeforeCreate } from './place-twins-ui.js';
 import { state, setGhostMarker } from './state.js';
 import { getPatrimonialName, getPoiId } from './data.js'; // On réutilise les outils robustes de data.js
 import { map, clearMarkerHighlights } from './map.js';
@@ -156,13 +157,15 @@ export function setupSmartSearch() {
                     // « je ne peux valider que si je déplace le marqueur ». La position est
                     // lue au clic (toujours fraîche, post-drag éventuel).
                     popupContent.querySelector('#btn-create-poi-ghost')?.addEventListener('click', async () => {
-                        const { RichEditor } = await import('./richEditor.js');
                         const { lat: cLat, lng: cLng } = marker.getLatLng();
-                        RichEditor.openForCreate(cLat, cLng);
                         if (state.ghostMarker) {
                             state.ghostMarker.remove();
                             setGhostMarker(null);
                         }
+                        // Un lieu existe déjà tout près ? On demande avant de créer (écran 47).
+                        if (await askNearbyBeforeCreate(cLat, cLng) !== 'create') return;
+                        const { RichEditor } = await import('./richEditor.js');
+                        RichEditor.openForCreate(cLat, cLng);
                     });
 
                     // Convertit les <i data-lucide> en SVG avant binding (sinon

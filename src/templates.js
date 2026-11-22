@@ -10,6 +10,7 @@ import { parseSources } from './source-format.mjs';
 import { renderDescriptionHtml } from './description-format.mjs';
 import { isDescriptionVisible } from './description-visibility.js';
 import { officialBannerHtml } from './official-updates.js';
+import { twinBannerHtml } from './place-twins.js';
 
 export const ICONS = {
     mosque: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 20H4v-7a8 8 0 0 1 16 0z"/><path d="M12 5V2"/><circle cx="12" cy="8" r="2"/></svg>`,
@@ -434,6 +435,10 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
             </h3>${officialBanner}
             <div class="poi-desc">${renderDescriptionHtml(longDesc, escapeXml, 'noopener noreferrer')}</div>${renderSource(allProps)}${(!isDescPublic && state.isAdmin) ? `<p class="poi-source-link">Brouillon — non publié</p>` : ''}
         </section>` : (officialBanner ? `<section class="poi-section">${officialBanner}</section>` : '');
+    // Lieu officiel publié au même endroit qu'un de vos lieux (22/11/2026,
+    // maquette écran 48) : bandeau en tête, avant la description.
+    const twinBanner = twinBannerHtml(getPoiId(feature), mobile);
+    const twinSection = twinBanner ? `<section class="poi-section">${twinBanner}</section>` : '';
 
     // Compteur position dans le circuit (3 / 12) — affiché en eyebrow si in circuit.
     // Si in circuit, deux chevrons cliquables encadrent le compteur pour naviguer
@@ -495,7 +500,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
                         <h2 class="cartel-title" id="panel-title-fr"${titleIsAr ? ' dir="rtl"' : ''}>${escapeXml(poiName)}</h2>
                         ${statusHtml}
                     </div>
-                    ${descSection}
+                    ${twinSection}${descSection}
                     ${gpxSection}
                     ${practicalSection}
                     ${suiviSection}
@@ -531,7 +536,7 @@ export function buildDetailsPanelHtml(feature, circuitIndex) {
         body: `
             <div class="poi-body" data-poi-id="${dataPoiId}">
                 ${heroHtml}
-                ${descSection}
+                ${twinSection}${descSection}
                 ${gpxSection}
                 ${practicalSection}
                 ${suiviSection}

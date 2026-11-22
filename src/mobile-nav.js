@@ -26,6 +26,7 @@ import { renderMobileCircuitsList } from './mobile-circuits.js';
 import { renderMobileMenu } from './mobile-menu.js';
 import { isFollowActive, followBack, getResumeFollow, resumeFollow, startAroundMe } from './mobile-follow.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
+import { askNearbyBeforeCreate } from './place-twins-ui.js';
 
 // ─── Bouton Retour Android (pattern proactif) ────────────────────────────────
 // Chaque navigation descendante (clic sur circuit, ouverture POI, bouton
@@ -280,6 +281,10 @@ async function handleAddPoiClick() {
         switchMobileView('circuits');
         return;
     }
+    // Un lieu existe déjà tout près ? On demande avant de créer (écran 47).
+    const answer = await askNearbyBeforeCreate(position.latitude, position.longitude);
+    if (answer === 'opened') return;
+    if (answer !== 'create') { switchMobileView('circuits'); return; }
     openDetailsPanel(createPlaceAt(position));
 }
 

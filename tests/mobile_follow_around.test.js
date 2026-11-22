@@ -98,6 +98,8 @@ vi.mock('../src/poi-visibility.js', () => ({ isShownToUser: h.shown }));
 vi.mock('../src/mobile-state.js', () => ({ pushMobileLevel: h.pushMobileLevel }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/circuit-lookup.js', () => ({ getActiveCircuit: () => null }));
+// Pas de lieu tout près dans ce test : la question n'apparaît pas (place-twins-ui.js).
+vi.mock('../src/place-twins-ui.js', () => ({ askNearbyBeforeCreate: vi.fn(async () => 'create') }));
 vi.mock('../src/mobile-new-place.js', () => ({
     showNewPlaceModal: h.showNewPlaceModal,
     createPlaceAt: h.createPlaceAt,
