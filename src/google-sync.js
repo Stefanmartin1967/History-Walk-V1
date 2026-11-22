@@ -17,6 +17,13 @@
 //     et quand le user choisit ici, le morceau choisi part de cette version
 //     (writeChosenText, resolveCircuitChoice) — l'autre appareil le reprend sans question.
 //
+// DERNIER POINT COMMUN (22/11/2026, essai de Stefan : un tracé modifié des deux
+// côtés, appareils déconnectés, était perdu sans question) : après chaque
+// échange, l'appareil retient la date de chaque champ / morceau tel qu'il est
+// dans le compte (`syncBase_<destination>`, lié à l'adresse du compte). À la
+// synchro suivante, on regarde qui a changé depuis : l'appareil, le compte, ou
+// les deux (à choisir) — cf. decideField. Les heures ne décident plus.
+//
 // Circuits perso (PR 7, maquette écrans 43-46) : réunis morceau par morceau
 // (circuit-merge.js) ; Corbeille et « fait » suivent ; suppressions définitives
 // gardées pour toujours dans le fichier (`deletedCircuits`). Pas encore : les
@@ -28,9 +35,9 @@ import { placeCircuitInState, persistCircuit } from './circuit-store.js';
 import { readDeviceState } from './restore-apply.js';
 import { mergeBackup } from './restore-merge.js';
 import { mergeCircuitLists, takePart } from './circuit-merge.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY } from './field-dates.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY, CIRCUIT_PARTS, circuitPartDate, isDatedKey } from './field-dates.js';
 import { generateHWID } from './utils.js';
-import { listAppFileIds, readAppFile, writeAppFile } from './google-account.js';
+import { listAppFileIds, readAppFile, writeAppFile, getLinkedAccount } from './google-account.js';
 
 const FORMAT = 1;
 const KEEP_DISCARDED_MS = 30 * 24 * 3600 * 1000;
@@ -38,6 +45,50 @@ export const fileNameFor = (mapId) => `heripia-${mapId}.json`;
 const conflictsKey = (mapId) => `syncConflicts_${mapId}`;
 const discardsKey = (mapId) => `syncDiscards_${mapId}`;
 const deletedKey = (mapId) => `deletedCircuits_${mapId}`;
+const baseKey = (mapId) => `syncBase_${mapId}`;
+
+/** Dates d'un objet daté (overlay de fiche, properties de lieu) : champ → date, ou null. */
+function datesOf(obj) {
+    const dates = obj?.[FIELD_DATES_KEY] || {};
+    const out = { ...dates };
+    for (const k of Object.keys(obj || {})) {
+        if (isDatedKey(k) && !(k in out)) out[k] = null;
+    }
+    return out;
+}
+
+/**
+ * Le point commun après un échange : la date de chaque champ / morceau tel qu'il
+ * est dans le compte (ce qui vient d'y être écrit).
+ */
+export function baseFromState(s, email) {
+    const poi = {};
+    for (const [id, data] of Object.entries(s.userData || {})) poi[id] = datesOf(data);
+    const places = {};
+    for (const p of s.places || []) if (p?.properties?.HW_ID) places[p.properties.HW_ID] = datesOf(p.properties);
+    const circuits = {};
+    for (const c of s.circuits || []) {
+        if (!c?.id) continue;
+        circuits[String(c.id)] = Object.fromEntries(Object.keys(CIRCUIT_PARTS).map(part => [part, circuitPartDate(c, part) ?? null]));
+    }
+    return { email, poi, places, circuits };
+}
+
+/** Choix en attente, sous la forme attendue par la fusion. */
+function pendingSets(conflicts) {
+    const data = new Set();
+    const circuits = new Set();
+    for (const c of conflicts) {
+        if (c.kind === 'circuit') circuits.add(`${c.id}|${c.key}`);
+        else data.add(`${c.kind}|${c.id}|${c.key}`);
+    }
+    return { data, circuits };
+}
+
+/** Oublie le point commun (Effacer : le compte ne contient plus rien). */
+export async function clearSyncBases() {
+    for (const mapId of knownMapIds()) await saveAppState(baseKey(mapId), null);
+}
 
 /** Note une suppression définitive de circuit perso (Corbeille → Supprimer). */
 export async function recordCircuitDeletion(mapId, id, at = Date.now()) {
@@ -261,10 +312,10 @@ function mergeDiscarded(remoteList, localList, now = Date.now()) {
 /**
  * Synchronise une destination. L'accès Google doit être valable (google-account).
  * @param {string} mapId
- * @param {{ files?: Object<string,string> }} [opts] noms → ids déjà listés
+ * @param {{ files?: Object<string,string>, email?: string }} [opts] noms → ids déjà listés ; compte relié
  * @returns {Promise<{mapId:string, created:boolean, summary:object|null, sent:object|null, conflicts:Array, newConflicts?:Array, changed:boolean, survivors?:Array}>}
  */
-export async function syncMap(mapId, { files } = {}) {
+export async function syncMap(mapId, { files, email = getLinkedAccount()?.email } = {}) {
     const ids = files || await listAppFileIds();
     const name = fileNameFor(mapId);
     const fileId = ids[name] || null;
@@ -283,16 +334,23 @@ export async function syncMap(mapId, { files } = {}) {
         });
         ids[name] = id;
         await saveAppState(discardsKey(mapId), []);
+        await saveAppState(baseKey(mapId), baseFromState(here, email));
         return { mapId, created: true, summary: null, sent: sentSummary(remoteState({}), here), conflicts: [], changed: false };
     }
 
     const file = await readAppFile(fileId);
     const remote = remoteState(file);
+    // Point commun du dernier échange, s'il vaut pour ce compte.
+    const stored = await getAppState(baseKey(mapId));
+    const base = stored && stored.email === email ? stored : null;
+    const pending = pendingSets(await getSyncConflicts(mapId));
     // Fiches, lieux, listes : règles de la restauration. Circuits perso : morceau
     // par morceau (circuit-merge.js), avec les suppressions des deux côtés.
-    const result = mergeBackup({ ...here, circuits: [] }, { ...remote, circuits: [] });
+    const result = mergeBackup({ ...here, circuits: [] }, { ...remote, circuits: [] },
+        base ? { base, pending: pending.data } : { pending: pending.data });
     const deletions = unionDeletions(localDeletions, file?.deletedCircuits);
-    const circ = mergeCircuitLists(here.circuits, remote.circuits, deletions);
+    const circ = mergeCircuitLists(here.circuits, remote.circuits, deletions, Date.now(),
+        { base: base ? (base.circuits || {}) : undefined, pending: pending.circuits });
     result.circuitsToSave = circ.toSave;
     result.circuitsToDelete = circ.toDelete;
     result.summary.circuits = circ.added.map(c => c.name);
@@ -318,6 +376,7 @@ export async function syncMap(mapId, { files } = {}) {
     });
     await saveAppState(discardsKey(mapId), []);
     await saveAppState(deletedKey(mapId), deletions);
+    await saveAppState(baseKey(mapId), baseFromState(upload, email));
     return { mapId, created: false, summary: result.summary, sent: sentSummary(remote, here), conflicts: fresh, newConflicts, changed, survivors: circ.survivors };
 }
 

@@ -71,14 +71,16 @@ function shown(circuit, part) {
  * Fusion d'UN circuit présent des deux côtés.
  * @returns {{next:object|null, tookFile:string[], conflicts:Array}} `next` : à enregistrer (null si rien ne change)
  */
-export function mergeCircuitPair(here, file) {
+export function mergeCircuitPair(here, file, { base, pending } = {}) {
     const next = JSON.parse(JSON.stringify(here));
     const tookFile = [];
     let conflicts = [];
     for (const part of PARTS) {
         const h = { value: circuitPart(here, part), date: circuitPartDate(here, part), from: here[PART_FROM_KEY]?.[part] };
         const f = { value: circuitPart(file, part), date: circuitPartDate(file, part), from: file[PART_FROM_KEY]?.[part] };
-        const verdict = decideField(h, f);
+        // Dernier point commun (synchro) : cf. decideField.
+        let verdict = decideField(h, f, base ? (part in base ? base[part] : null) : undefined);
+        if ((pending?.has(part) || (part === 'trace' && pending?.has('steps'))) && verdict !== 'same') verdict = 'both';
         if (verdict === 'file') { takePart(next, file, part); tookFile.push(part); }
         if (verdict === 'both') conflicts.push({ key: part, here: shown(here, part), file: shown(file, part), fileDate: f.date });
     }
@@ -105,9 +107,11 @@ export function mergeCircuitPair(here, file) {
  * @param {Array} fileList circuits du compte
  * @param {Object<string,number>} deletions suppressions définitives connues (id → date), des deux côtés
  * @param {number} [now]
+ * @param {{base?:Object<string,object>, pending?:Set<string>}} [opts] synchro : point commun par
+ *        circuit (morceau → date) et morceaux en attente (« id|morceau »)
  * @returns {{toSave:Array, toDelete:string[], added:Array, updated:Array, survivors:Array, conflicts:Array}}
  */
-export function mergeCircuitLists(hereList = [], fileList = [], deletions = {}, now = Date.now()) {
+export function mergeCircuitLists(hereList = [], fileList = [], deletions = {}, now = Date.now(), { base, pending } = {}) {
     const here = new Map((hereList || []).filter(isPerso).map(c => [String(c.id), c]));
     const file = new Map((fileList || []).filter(isPerso).map(c => [String(c.id), c]));
     const out = { toSave: [], toDelete: [], added: [], updated: [], survivors: [], conflicts: [] };
@@ -130,7 +134,10 @@ export function mergeCircuitLists(hereList = [], fileList = [], deletions = {}, 
         }
         if (!h) { out.toSave.push(JSON.parse(JSON.stringify(f))); out.added.push(f); continue; }
         if (!f) continue;
-        const r = mergeCircuitPair(h, f);
+        const r = mergeCircuitPair(h, f, {
+            base: base ? base[id] : undefined,
+            pending: pending ? new Set([...pending].filter(p => p.startsWith(`${id}|`)).map(p => p.slice(id.length + 1))) : undefined,
+        });
         if (r.next) { out.toSave.push(r.next); out.updated.push(r.next); }
         r.conflicts.forEach(c => out.conflicts.push({ ...c, kind: 'circuit', id }));
     }
