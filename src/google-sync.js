@@ -35,7 +35,7 @@ import { placeCircuitInState, persistCircuit } from './circuit-store.js';
 import { readDeviceState } from './restore-apply.js';
 import { mergeBackup } from './restore-merge.js';
 import { mergeCircuitLists, takePart } from './circuit-merge.js';
-import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY, CIRCUIT_PARTS, circuitPartDate, isDatedKey } from './field-dates.js';
+import { FIELD_DATES_KEY, FIELD_FROM_KEY, PART_DATES_KEY, PART_FROM_KEY, CIRCUIT_PARTS, circuitPart, circuitPartDate, isDatedKey } from './field-dates.js';
 import { generateHWID } from './utils.js';
 import { listAppFileIds, readAppFile, writeAppFile, getLinkedAccount } from './google-account.js';
 
@@ -220,10 +220,16 @@ export function buildUpload(after, remote, conflicts) {
 }
 
 /** Ce que le compte a reçu de l'appareil (pour « Envoyé depuis cet appareil »). */
-function sentSummary(remote, here) {
+function sentSummary(remote, here, upload = here) {
     const s = mergeBackup({ ...remote, circuits: [] }, { ...here, circuits: [] }).summary;
-    const known = new Set((remote.circuits || []).map(c => String(c.id)));
-    const circuits = (here.circuits || []).filter(c => !known.has(String(c.id))).length;
+    // Circuits envoyés : nouveaux pour le compte, ou dont un morceau change dans
+    // ce qui part (22/11 : un tracé envoyé affichait « Rien de nouveau »).
+    const theirs = new Map((remote.circuits || []).map(c => [String(c.id), c]));
+    const parts = Object.keys(CIRCUIT_PARTS);
+    const circuits = (upload.circuits || []).filter(c => {
+        const r = theirs.get(String(c.id));
+        return !r || parts.some(p => circuitPart(c, p) !== circuitPart(r, p));
+    }).length;
     return { visits: s.visits, notes: s.notes, places: s.places.length, updated: s.updated.length, circuits };
 }
 
@@ -377,7 +383,10 @@ export async function syncMap(mapId, { files, email = getLinkedAccount()?.email 
     await saveAppState(discardsKey(mapId), []);
     await saveAppState(deletedKey(mapId), deletions);
     await saveAppState(baseKey(mapId), baseFromState(upload, email));
-    return { mapId, created: false, summary: result.summary, sent: sentSummary(remote, here), conflicts: fresh, newConflicts, changed, survivors: circ.survivors };
+    return {
+        mapId, created: false, summary: result.summary, sent: sentSummary(remote, here, upload), conflicts: fresh, newConflicts, changed,
+        survivors: circ.survivors, circuitsChanged: [...circ.toSave.map(c => String(c.id)), ...circ.toDelete.map(String)],
+    };
 }
 
 /** Destinations connues (destinations.json), la destination ouverte en tête. */

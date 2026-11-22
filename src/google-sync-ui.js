@@ -127,6 +127,8 @@ export function runSync({ all = false } = {}) {
             write(PENDING_KEY, 0);
             write(FAIL_KEY, null);
             if (mine?.changed) refreshApp();
+            // Le circuit ouvert a changé : redessiné (circuit.js).
+            if (mine?.circuitsChanged?.length) eventBus.emit('sync:circuits-changed', { ids: mine.circuitsChanged });
             await refreshSyncIndicators();
             if (!all && mine?.newConflicts?.length && !autoNewest()) announceConflicts(mine.newConflicts);
             const survivors = (all ? results : [mine]).flatMap(r => r?.mapId === state.currentMapId ? (r.survivors || []) : []);

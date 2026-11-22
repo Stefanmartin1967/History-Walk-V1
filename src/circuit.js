@@ -27,6 +27,7 @@ import { getActiveCircuit, findCircuitById, getAllCircuits } from './circuit-loo
 import { takenCircuitNames, uniqueAutoCircuitName } from './circuit-name.js';
 import { autoCircuitBaseName } from './gpx-steps.js';
 import { persistCircuit } from './circuit-store.js';
+import { removePreviousTraceUnlessFor } from './circuit-reference-layer.js';
 import { stripCircuitSignature } from './circuit-description.js';
 import { rememberPublishedTrack } from './track-fingerprint.js';
 import { stampVisited } from './visited-state.js';
@@ -744,8 +745,28 @@ export function navigatePoiDetails(direction) {
     }
 }
 
+/**
+ * Après une synchro qui a modifié le circuit OUVERT (22/11/2026, essai de Stefan :
+ * Edge gardait l'ancien tracé à l'écran jusqu'à rouvrir le circuit) : il est
+ * rechargé. Pas pendant le panneau Itinéraire (l'auteur est en train de tracer).
+ * Pendant le suivi sur téléphone : on prévient, sans couper la marche.
+ * @param {Array<string>} ids circuits modifiés par la synchro
+ */
+export async function refreshActiveCircuitAfterSync(ids = []) {
+    const id = state.activeCircuitId;
+    if (!id || !ids.map(String).includes(String(id))) return;
+    if (state.routePanelOpen) return;
+    if (document.body.classList.contains('follow-active')) {
+        showToast("Ce circuit a été modifié sur un autre appareil. Il sera à jour la prochaine fois que vous l'ouvrirez.", 'info', 8000);
+        return;
+    }
+    await loadCircuitById(id);
+}
+
 export function initCircuitListeners() {
     eventBus.on('poi:navigate', (direction) => navigatePoiDetails(direction));
+    // Synchro Google : le circuit ouvert a été modifié sur un autre appareil.
+    eventBus.on('sync:circuits-changed', ({ ids } = {}) => { void refreshActiveCircuitAfterSync(ids); });
     // initCircuitPageEvents() est appelé directement depuis main.js avec un
     // import statique — pas de cycle car ui-circuit-page-events.js → circuit.js
     // est désormais le seul sens (circuit.js → ui-circuit-page-events.js retiré).
@@ -974,6 +995,8 @@ export async function loadCircuitById(id) {
 
     // 2. Mise à jour de l'état
     setActiveCircuitId(id);
+    // Le « Tracé précédent » d'un autre circuit n'a rien à faire ici.
+    removePreviousTraceUnlessFor(id);
     setCurrentCircuit(
         circuitToLoad.poiIds
             .map(poiId => state.loadedFeatures.find(f => getPoiId(f) === poiId))

@@ -18,7 +18,7 @@ import { state } from '../src/state.js';
 import { drawReferenceLayers } from '../src/map.js';
 import {
     showTraceAsReference, hasReferenceLayer, referenceLayers, removeReferenceLayer,
-    removePreviousTraceLayer, toggleReferenceLayerVisible, isReferenceVisible, MAX_REFERENCE_LAYERS,
+    removePreviousTraceLayer, removePreviousTraceUnlessFor, toggleReferenceLayerVisible, isReferenceVisible, MAX_REFERENCE_LAYERS,
 } from '../src/circuit-reference-layer.js';
 
 const TRACK = [[33.8, 10.1], [33.85, 10.15], [33.9, 10.2]];
@@ -94,5 +94,26 @@ describe('circuit-reference-layer — plusieurs calques', () => {
         showTraceAsReference(TRACK, 'Tracé précédent');
         removePreviousTraceLayer();
         expect(referenceLayers().map(l => l.id)).toEqual(['imp-a', 'imp-b']);
+    });
+});
+
+describe('« Tracé précédent » rattaché à son circuit (22/11/2026)', () => {
+    beforeEach(() => { state.referenceLayers = []; vi.clearAllMocks(); });
+
+    it('ouvrir ou tracer un AUTRE circuit le retire ; les calques importés restent', () => {
+        state.referenceLayers = [imported('Wikiloc', 2)];
+        showTraceAsReference(TRACK, 'Tracé précédent', 'c1');
+        removePreviousTraceUnlessFor('c2');
+        expect(referenceLayers().map(l => l.name)).toEqual(['Wikiloc']);
+    });
+    it('revenir au même circuit le garde', () => {
+        showTraceAsReference(TRACK, 'Tracé précédent', 'c1');
+        removePreviousTraceUnlessFor('c1');
+        expect(referenceLayers()).toHaveLength(1);
+    });
+    it('nouveau circuit pas encore enregistré : retiré', () => {
+        showTraceAsReference(TRACK, 'Tracé précédent', 'c1');
+        removePreviousTraceUnlessFor(null);
+        expect(referenceLayers()).toHaveLength(0);
     });
 });

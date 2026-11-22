@@ -93,6 +93,13 @@ describe('resolveEngine', () => {
         expect(globalThis.fetch.mock.calls[0][0].startsWith(LOCAL_BROUTER_URL)).toBe(true);
     });
 
+    it('users (local: false) : brouter.de sans sonder le PC (pas de question du navigateur)', async () => {
+        globalThis.fetch = vi.fn().mockResolvedValue({ ok: true });
+        const e = await resolveEngine({ local: false });
+        expect(e.key).toBe('brouter.de');
+        expect(globalThis.fetch).not.toHaveBeenCalled();
+    });
+
     it('le PC ne répond pas : brouter.de', async () => {
         globalThis.fetch = vi.fn().mockRejectedValue(new TypeError('Failed to fetch'));
         const e = await resolveEngine();

@@ -150,7 +150,7 @@ export async function openRouteCompare({ features, initial, waypointsBySeg = {},
     map.on('click', onMapClick);
     syncAddMode();
     drawMarkers();
-    cv.engine = await resolveEngine();
+    cv.engine = await resolveEngine({ local: state.isAdmin });
     if (!cv) return; // annulé pendant la sonde
     renderEngine();
     VARIANTS.forEach(v => compute(v));
@@ -591,7 +591,7 @@ function statsOf(result) {
 // ce PC relancé ou arrêté), les deux variantes sont recalculées sur le nouveau.
 async function retry(variant) {
     const session = cv;
-    const engine = await resolveEngine();
+    const engine = await resolveEngine({ local: state.isAdmin });
     if (cv !== session) return;
     if (engine.key !== session.engine.key) {
         session.engine = engine;
@@ -878,7 +878,9 @@ function renderEngine() {
     const p = cv.panel.querySelector('.cv-engine');
     p.innerHTML = cv.engine.key === 'local'
         ? '<i data-lucide="monitor"></i><span>Calculé par <b>BRouter de ce PC</b></span>'
-        : '<i data-lucide="globe"></i><span>Calculé par <b>brouter.de</b> · BRouter de ce PC indisponible</span>';
+        // « BRouter de ce PC indisponible » : seulement pour l'admin, le seul à
+        // pouvoir en avoir un (les users ne le cherchent pas, cf. resolveEngine).
+        : `<i data-lucide="globe"></i><span>Calculé par <b>brouter.de</b>${state.isAdmin ? ' · BRouter de ce PC indisponible' : ''}</span>`;
     createIcons({ icons: appIcons, root: p });
     syncAdjust(); // la note « plus lent avec brouter.de » dépend du moteur
 }
