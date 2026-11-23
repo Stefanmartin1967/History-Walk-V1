@@ -1390,3 +1390,21 @@ html[data-theme="nuit"] .cc-hero {
     .twin-near-row { flex-wrap: wrap; }
     .twin-near-row .btn { width: 100%; }
 }
+
+/* Premier rappel « Enregistré sur cet appareil » (synchro users, écrans 52 et 54). */
+.sr-text { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--ink); }
+.hw-modal-footer.sr-footer { flex-direction: column; align-items: stretch; gap: 6px; }
+.sr-actions { display: flex; justify-content: flex-end; gap: 10px; flex-wrap: wrap; }
+.sr-refuse {
+    align-self: flex-end; min-height: 40px; padding: 0 2px; border: 0; background: transparent;
+    color: var(--ink-soft); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer;
+}
+@media (max-width: 767px) {
+    .sr-actions { flex-direction: column-reverse; }
+    .sr-actions .btn { width: 100%; min-height: 46px; }
+    .sr-refuse { align-self: center; font-size: 14px; }
+}
+
+/* Indication sous « Sauvegarder » (rappels synchro, écran 53). */
+.tools-menu-text { display: inline-flex; flex-direction: column; gap: 1px; text-align: left; }
+.tools-menu-sub { font-size: 11.5px; color: var(--warn-fg); font-weight: 500; }

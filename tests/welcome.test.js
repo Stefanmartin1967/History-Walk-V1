@@ -40,17 +40,17 @@ describe('showWelcomeAgain — affichage', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-describe('showWelcomeAgain — les 4 cartes', () => {
-    it('affiche 4 cartes', () => {
+describe('showWelcomeAgain — les 5 cartes', () => {
+    it('affiche 5 cartes (5e : Sauvegarder et synchroniser, écran 13 validé le 19/11/2026)', () => {
         showWelcomeAgain();
-        expect(document.querySelectorAll('.welcome-card')).toHaveLength(4);
+        expect(document.querySelectorAll('.welcome-card')).toHaveLength(5);
     });
 
     it('cartes ont les data-choice attendus dans cet ordre', () => {
         showWelcomeAgain();
         const choices = Array.from(document.querySelectorAll('.welcome-card'))
             .map(c => c.dataset.choice);
-        expect(choices).toEqual(['legend', 'new-place', 'create', 'photos']);
+        expect(choices).toEqual(['legend', 'new-place', 'create', 'photos', 'save']);
     });
 
     it('textes validés par Stefan le 11/10/2026 (titres + sous-titres)', () => {
@@ -62,6 +62,7 @@ describe('showWelcomeAgain — les 4 cartes', () => {
             "Créer un nouveau lieu — J'ajoute un lieu qui manque, je peux le signaler",
             "Créer mon propre circuit — Je m'aventure, je trace mon parcours",
             "Associer mes photos aux lieux — Je personnalise, j'ajoute mes photos à mes visites",
+            "Sauvegarder et synchroniser — Mes visites, notes et circuits, sur tous mes appareils",
         ]);
     });
 

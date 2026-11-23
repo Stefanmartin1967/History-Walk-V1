@@ -255,7 +255,10 @@
                         <i data-lucide="image-up"></i> Importer des photos
                     </button>
                     <button class="tools-menu-item" id="btn-tools-backup">
-                        <i data-lucide="hard-drive"></i> Sauvegarder
+                        <i data-lucide="hard-drive"></i>
+                        <!-- Combien de modifications ne sont que sur cet appareil (rappels
+                             synchro, écran 53 ; sync-reminders.js refreshBackupHint). -->
+                        <span class="tools-menu-text">Sauvegarder<span class="tools-menu-sub is-hidden" id="tools-backup-hint"></span></span>
                     </button>
                     <button class="tools-menu-item" id="btn-sync-scan">
                         <i data-lucide="scan-line"></i> Scanner (Synchro/Circuit)

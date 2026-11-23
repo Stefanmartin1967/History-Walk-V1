@@ -678,3 +678,11 @@
     .sync-steps { grid-template-columns: 1fr; }
     .sync-trace-map { height: 240px; }
 }
+
+/* Écran Sauvegarder relié (écran 15) : liens « … aussi … » sous les cartes. */
+.me-choice--single { grid-template-columns: 1fr; }
+.sm-text-link {
+    align-self: flex-start; min-height: 40px; padding: 0 2px; border: 0; background: transparent;
+    color: var(--ink-soft); font: inherit; font-size: 13px; text-decoration: underline; cursor: pointer;
+}
+.sm-text-link:hover { color: var(--ink); }

@@ -26,6 +26,8 @@ import { isShownToUser } from './poi-visibility.js';
 import { listOfficialUpdates } from './official-updates.js';
 import { openOfficialUpdatesList } from './official-update-ui.js';
 import { syncConflictCount, openSyncConflictsList } from './google-sync-ui.js';
+import { backupMenuHint } from './sync-reminders.js';
+import { peekBackupState } from './backup-auto-local.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
 // Compteurs réels lus de state pour donner du contexte à chaque action.
@@ -43,7 +45,7 @@ function computeSubtitles() {
     const plural = (n, s, p) => `${n} ${n === 1 || n === 0 ? s : p}`;
     return {
         carnet: `${plural(visitedPois, 'lieu visité', 'lieux visités')} · ${plural(completedCircuits, 'circuit fait', 'circuits faits')}`,
-        backup: 'Mes données ou mes photos',
+        backup: backupMenuHint(peekBackupState()) || 'Mes données ou mes photos',
         scan: 'QR code partagé par un autre voyageur',
         reset: 'Supprime carnet & circuits hors-ligne',
         theme: `Actuel : ${currentThemeLabel}`,

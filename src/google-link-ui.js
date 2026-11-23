@@ -29,6 +29,7 @@ import {
     setAutoNewest,
 } from './google-sync-ui.js';
 import { clearSyncConflicts, clearSyncBases } from './google-sync.js';
+import { getSyncChoice, setSyncChoice, setLinker } from './sync-reminders.js';
 
 const INTRO = "Vos visites, notes et circuits suivent sur tous vos appareils reliés au même compte Google. Ils y sont rangés à part, sans toucher à vos fichiers, et Heripia ne les reçoit jamais. Les photos ne suivent pas : pour elles, gardez une copie dans un fichier ci-dessous.";
 
@@ -139,13 +140,18 @@ function sectionHtml() {
     const linkBtn = busy
         ? `<button class="me-btn primary" id="gl-btn-link" type="button" disabled aria-busy="true"><i data-lucide="loader-circle" class="gl-spin"></i> Connexion à Google…</button>`
         : `<button class="me-btn primary" id="gl-btn-link" type="button">Relier à mon compte Google</button>`;
+    // « Sauvegarde en fichier » (écran 14) : refuser Google, garder la copie de
+    // secours automatique. Une fois choisi, une phrase le rappelle à la place.
+    const fileChoice = getSyncChoice() === 'file';
+    const fileBtn = busy || fileChoice ? '' : '<button class="me-btn secondary" id="gl-btn-file" type="button">Sauvegarde en fichier</button>';
     return `
   <section class="me-block gl-section" aria-labelledby="lbl-google">
     <h3 class="me-block-title me-block-title-lg" id="lbl-google">Synchroniser avec mon compte Google</h3>
     <p class="me-block-desc">${INTRO}</p>
     ${busy ? `<p class="me-block-desc gl-hint">Une fenêtre Google s'est ouverte : choisissez votre compte, puis acceptez.</p>` : ''}
     ${flashHtml()}
-    <div class="gl-actions">${linkBtn}</div>
+    ${fileChoice && !busy ? '<p class="me-block-desc gl-hint">Vous faites vos sauvegardes en fichier : une copie de secours est téléchargée régulièrement.</p>' : ''}
+    <div class="gl-actions">${linkBtn}${fileBtn}</div>
   </section>`;
 }
 
@@ -184,6 +190,7 @@ async function onLink(bodyEl) {
     if (!res.ok) flash = { tone: 'warn', text: withDetail(SYNC_FAIL.error) };
     else if (res.created) flash = { tone: 'ok', text: FIRST_COPY_DONE };
     rerender(bodyEl);
+    eventBus.emit('google:link-changed');
 }
 
 async function onSync(bodyEl) {
@@ -222,6 +229,7 @@ async function onDisconnect(bodyEl) {
     await forgetSyncState();
     flash = null;
     rerender(bodyEl);
+    eventBus.emit('google:link-changed');
 }
 
 async function onErase(bodyEl) {
@@ -254,6 +262,7 @@ async function onErase(bodyEl) {
     }
     busy = false;
     rerender(bodyEl);
+    eventBus.emit('google:link-changed');
 }
 
 function bind(bodyEl) {
@@ -262,6 +271,10 @@ function bind(bodyEl) {
     bodyEl.querySelector('#gl-btn-disconnect')?.addEventListener('click', () => onDisconnect(bodyEl));
     bodyEl.querySelector('#gl-btn-erase')?.addEventListener('click', () => onErase(bodyEl));
     bodyEl.querySelector('#gl-auto-select')?.addEventListener('change', (e) => setAutoNewest(e.target.value === 'newest'));
+    bodyEl.querySelector('#gl-btn-file')?.addEventListener('click', () => {
+        setSyncChoice('file');
+        eventBus.emit('google:link-changed');
+    });
 }
 
 function onStatus() {
@@ -283,3 +296,20 @@ export function bindGoogleSection(bodyEl) {
     currentBody = bodyEl;
     eventBus.on('google:sync-status', onStatus);
 }
+
+/**
+ * « Relier à mon compte Google » depuis un rappel (sync-reminders.js) : ouvre
+ * Sauvegarder et lance la liaison, dans le même geste (la fenêtre Google doit
+ * s'ouvrir dans un clic).
+ */
+async function linkFromReminder() {
+    const { openSaveModal } = await import('./save-modal-ui.js');
+    openSaveModal();
+    for (let i = 0; i < 40; i++) {
+        const btn = document.getElementById('gl-btn-link');
+        if (btn && !btn.disabled) { btn.click(); return; }
+        if (getLinkedAccount()) return;
+        await new Promise(r => setTimeout(r, 50));
+    }
+}
+setLinker(linkFromReminder);

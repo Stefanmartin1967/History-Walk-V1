@@ -435,7 +435,7 @@ export async function saveAndExportCircuit(realTrack = null, { stayInCreation = 
         // 04/06/2026) : l'export GPX est désormais une action explicite.
         showToast(`Circuit "${circuitToSave.name}" sauvegardé !`, 'success');
         // [USER] Compte la création/modif du circuit pour l'auto-backup local.
-        void recordModification();
+        void recordModification({ kind: 'circuit', name: circuitToSave.name });
     } catch (error) {
         console.error("Erreur lors de la sauvegarde du circuit :", error);
         showToast("Erreur lors de la sauvegarde du circuit.", 'error');

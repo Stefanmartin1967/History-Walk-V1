@@ -634,6 +634,19 @@ const FILTER_AFFECTING_KEYS = new Set([
     // calculé à la volée par computePlanifieCounter().
 ]);
 
+/**
+ * Ce que le user vient de faire, pour le premier rappel « Enregistré sur cet
+ * appareil » (sync-reminders.js, écran 52) : « Votre visite de… », etc.
+ */
+function modificationDetail(poiId, key, value) {
+    const feature = state.loadedFeatures.find(f => getPoiId(f) === poiId);
+    const name = feature ? getPoiName(feature) : '';
+    if (key === 'vu' && value === true) return { kind: 'visit', name };
+    if (key === 'notes') return { kind: 'note', name };
+    if ((state.customFeatures || []).some(f => getPoiId(f) === poiId)) return { kind: 'place', name };
+    return { name };
+}
+
 export async function updatePoiData(poiId, key, value) {
     // Initialisation si vide
     if (!state.userData[poiId]) state.userData[poiId] = {};
@@ -683,7 +696,7 @@ export async function updatePoiData(poiId, key, value) {
     }
 
     // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
-    void recordModification();
+    void recordModification(modificationDetail(poiId, key, value));
 }
 
 // --- AJOUT D'UN LIEU (Fonction Post-it) ---
@@ -837,7 +850,7 @@ export async function addPoiFeature(feature, { draft = true } = {}) {
     }
 
     // [USER] Compte la modif pour l'auto-backup local. No-op côté admin.
-    void recordModification();
+    void recordModification({ kind: 'place', name: feature.properties?.['Nom du site FR'] });
 }
 
 // --- MISE À JOUR DE LA POSITION (GEOMETRY) ---

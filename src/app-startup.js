@@ -29,6 +29,7 @@ import { showRestoreSummaryIfPending } from './restore-ui.js';
 import { checkOfficialUpdatesAtBoot } from './official-update-ui.js';
 import { initGoogleSync } from './google-sync-ui.js';
 import { initPlaceTwins } from './place-twins-ui.js';
+import { initBackupHint } from './backup-auto-local.js';
 import { keepValidFeatures, keepValidCircuitEntries, takeInvalidDataReport, invalidDataMessage } from './data-guard.js';
 
 // (setSaveButtonsState supprimée 10/05/2026, PR cleanup post-#514. Les boutons
@@ -728,6 +729,7 @@ export async function loadAndInitializeMap() {
     void checkOfficialUpdatesAtBoot().catch(e => console.warn('[official-updates] passe du démarrage :', e));
     // Synchro Google des users (PR 6) : premier toucher, modifications, retour.
     // Puis les lieux au même endroit (PR 8) : réponses chargées, « À choisir » à jour.
+    void initBackupHint().catch(() => {});
     void initGoogleSync()
         .then(() => initPlaceTwins())
         .catch(e => console.warn('[google-sync] démarrage :', e));

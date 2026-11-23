@@ -63,6 +63,11 @@ export function setupWelcomeActions() {
                 openGuideAfterWelcome(GUIDE_IMPORT, () => clickIfPresent('#btn-import-photos'));
                 break;
 
+            case 'save':
+                // Écran Sauvegarder : la liaison Google et les fichiers (écran 13).
+                setTimeout(() => { void import('./save-modal-ui.js').then(m => m.openSaveModal()); }, WELCOME_FADEOUT_MS);
+                break;
+
             default:
                 // Choix inconnu : on ne fait rien (l'app reste sur l'onglet par défaut)
                 break;

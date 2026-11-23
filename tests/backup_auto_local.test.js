@@ -40,6 +40,18 @@ vi.mock('../src/toast.js', () => ({
     showToast: (...args) => h.showToastSpy(...args),
 }));
 
+// Synchro users (PR 9, 23/11/2026) : la copie automatique ne vaut que pour qui a
+// choisi les sauvegardes en fichier. Ces tests sont dans ce cas ; les rappels
+// (pas encore choisi) et le compte relié sont testés plus bas.
+const sync = vi.hoisted(() => ({ choice: 'file', first: vi.fn(() => false), remind: vi.fn(() => false) }));
+vi.mock('../src/sync-reminders.js', () => ({
+    getSyncChoice: () => sync.choice,
+    maybeFirstReminder: (...a) => sync.first(...a),
+    maybeReminder: (...a) => sync.remind(...a),
+    resetReminders: vi.fn(),
+    refreshBackupHint: vi.fn(),
+}));
+
 vi.mock('../src/fileManager.js', () => ({
     saveUserData: (force) => h.saveUserDataSpy(force),
 }));
@@ -182,7 +194,7 @@ describe('checkAndTriggerAutoBackup', () => {
         await checkAndTriggerAutoBackup();
         expect(h.showToastSpy).toHaveBeenCalled();
         const [msg, level] = h.showToastSpy.mock.calls[0];
-        expect(msg).toContain('Backup auto téléchargé');
+        expect(msg).toContain('Copie de secours téléchargée');
         expect(msg).toContain('15 modifications'); // motif inclus
         expect(level).toBe('info');
     });
@@ -278,5 +290,29 @@ describe('getBackupStatusForUI', () => {
         expect(s.count).toBe(7);
         expect(s.lastDate).toBeInstanceOf(Date);
         expect(s.daysSince).toBe(2);
+    });
+});
+
+describe('synchro users : rappels au lieu des téléchargements (PR 9)', () => {
+    beforeEach(() => { sync.choice = null; sync.first.mockClear(); sync.remind.mockClear(); });
+
+    it('pas encore choisi : la 1re modification appelle le premier rappel, aucun téléchargement', async () => {
+        const mod = await import('../src/backup-auto-local.js');
+        await mod.recordModification({ kind: 'visit', name: 'Fadhloun' });
+        expect(sync.first).toHaveBeenCalledWith({ kind: 'visit', name: 'Fadhloun' });
+        expect(h.saveUserDataSpy).not.toHaveBeenCalled();
+    });
+    it('pas encore choisi : premier rappel déjà vu → rappel suivant (selon les seuils)', async () => {
+        const mod = await import('../src/backup-auto-local.js');
+        await mod.recordModification();
+        expect(sync.remind).toHaveBeenCalled();
+    });
+    it('relié à Google : ni rappel ni téléchargement', async () => {
+        sync.choice = 'google';
+        const mod = await import('../src/backup-auto-local.js');
+        for (let i = 0; i < 12; i++) await mod.recordModification();
+        expect(sync.first).not.toHaveBeenCalled();
+        expect(sync.remind).not.toHaveBeenCalled();
+        expect(h.saveUserDataSpy).not.toHaveBeenCalled();
     });
 });
