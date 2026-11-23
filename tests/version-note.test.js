@@ -2,115 +2,116 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// version-note.js n'a qu'une dépendance : hwAlert. On la mocke pour piloter
-// la résolution (l'écriture localStorage n'a lieu qu'à la FERMETURE) et pour
-// inspecter le contenu passé à la modale.
-const hwAlert = vi.fn(() => Promise.resolve());
-vi.mock('../src/modal.js', () => ({ hwAlert: (...args) => hwAlert(...args) }));
+// « Avant de continuer » (version-note.js). Depuis le 23/11/2026 (PR 9 « synchro
+// users », écrans 11-12 validés le 19/11) : paragraphe « Vos données restent sur
+// cet appareil » et boutons « Plus tard » / « Relier à mon compte Google » ; en
+// admin, le bouton « J'ai compris » d'avant (pas de proposition Google).
+
+const h = vi.hoisted(() => ({ resolve: null, opened: [], state: { isAdmin: false } }));
+vi.mock('../src/modal.js', () => ({
+    openHwModal: vi.fn((opts) => { h.opened.push(opts); return new Promise(r => { h.resolve = r; }); }),
+    closeHwModal: vi.fn((v) => h.resolve?.(v)),
+}));
+vi.mock('../src/state.js', () => ({ state: h.state }));
+const linkNow = vi.fn();
+vi.mock('../src/sync-reminders.js', () => ({ linkNow: () => linkNow() }));
 
 const NOTE_KEY = 'hw_version_note_seen';
-
 let showVersionNoteIfNeeded;
 
 beforeEach(async () => {
     localStorage.clear();
-    hwAlert.mockClear();
-    hwAlert.mockImplementation(() => Promise.resolve());
+    h.opened = []; h.resolve = null; h.state.isAdmin = false;
+    linkNow.mockClear();
+    document.body.innerHTML = '';
     ({ showVersionNoteIfNeeded } = await import('../src/version-note.js'));
 });
 
-describe('showVersionNoteIfNeeded — gate de version', () => {
-    it('affiche la note quand aucune version n\'a été vue', () => {
-        showVersionNoteIfNeeded();
-        expect(hwAlert).toHaveBeenCalledTimes(1);
-    });
+const flush = async () => { for (let i = 0; i < 5; i++) await Promise.resolve(); };
 
-    it('n\'affiche rien si la version courante a déjà été vue', () => {
+describe('showVersionNoteIfNeeded — gate de version', () => {
+    it('affiche la note quand aucune version n’a été vue', () => {
+        showVersionNoteIfNeeded();
+        expect(h.opened).toHaveLength(1);
+    });
+    it('n’affiche rien si la version courante a déjà été vue', () => {
+        localStorage.setItem(NOTE_KEY, '2');
+        showVersionNoteIfNeeded();
+        expect(h.opened).toHaveLength(0);
+    });
+    it('réaffiche si la version vue est antérieure (1 → 2 : le paragraphe sur les données)', () => {
         localStorage.setItem(NOTE_KEY, '1');
         showVersionNoteIfNeeded();
-        expect(hwAlert).not.toHaveBeenCalled();
+        expect(h.opened).toHaveLength(1);
     });
-
-    it('réaffiche si la version vue est antérieure à la version courante', () => {
-        localStorage.setItem(NOTE_KEY, '0');
-        showVersionNoteIfNeeded();
-        expect(hwAlert).toHaveBeenCalledTimes(1);
-    });
-
-    it('une valeur illisible en localStorage ne bloque pas l\'affichage', () => {
+    it('une valeur illisible en localStorage ne bloque pas l’affichage', () => {
         localStorage.setItem(NOTE_KEY, 'nimportequoi');
         showVersionNoteIfNeeded();
-        expect(hwAlert).toHaveBeenCalledTimes(1);
+        expect(h.opened).toHaveLength(1);
     });
 });
 
-describe('showVersionNoteIfNeeded — persistance', () => {
-    it('mémorise la version vue APRÈS fermeture de la modale', async () => {
+describe('showVersionNoteIfNeeded — persistance et boutons', () => {
+    it('mémorise la version vue APRÈS fermeture', async () => {
         showVersionNoteIfNeeded();
-        // Rien n'est écrit tant que l'utilisateur n'a pas fermé.
         expect(localStorage.getItem(NOTE_KEY)).toBeNull();
-        await Promise.resolve();
-        await Promise.resolve();
-        expect(localStorage.getItem(NOTE_KEY)).toBe('1');
+        h.resolve();
+        await flush();
+        expect(localStorage.getItem(NOTE_KEY)).toBe('2');
     });
-
-    it('ne réaffiche plus après une fermeture', async () => {
+    it('« Relier à mon compte Google » lance la liaison', async () => {
         showVersionNoteIfNeeded();
-        await Promise.resolve();
-        await Promise.resolve();
-        hwAlert.mockClear();
+        h.resolve('link');
+        await vi.waitFor(() => expect(linkNow).toHaveBeenCalled());
+    });
+    it('boutons « Plus tard » et « Relier à mon compte Google » (user)', () => {
         showVersionNoteIfNeeded();
-        expect(hwAlert).not.toHaveBeenCalled();
+        expect(h.opened[0].footer).toContain('Plus tard');
+        expect(h.opened[0].footer).toContain('Relier à mon compte Google');
+    });
+    it('admin : « J’ai compris », sans proposition Google ni paragraphe sur les données', () => {
+        h.state.isAdmin = true;
+        showVersionNoteIfNeeded();
+        expect(h.opened[0].footer).toContain("J'ai compris");
+        expect(h.opened[0].body).not.toContain('Vos données restent sur cet appareil');
     });
 });
 
 describe('showVersionNoteIfNeeded — contenu', () => {
-    it('titre « Avant de continuer » et bouton « J\'ai compris »', () => {
-        showVersionNoteIfNeeded();
-        const opts = hwAlert.mock.calls[0][0];
-        expect(opts.title).toBe('Avant de continuer');
-        expect(opts.label).toBe("J'ai compris");
-    });
+    const body = () => { showVersionNoteIfNeeded(); return h.opened[0].body; };
 
-    it('annonce la phase d\'amélioration et les deux réserves sur les données', () => {
+    it('titre « Avant de continuer »', () => {
         showVersionNoteIfNeeded();
-        const { body } = hwAlert.mock.calls[0][0];
-        expect(body).toContain('phase d\'amélioration');
-        expect(body).toContain('Google Maps');
-        expect(body).toContain('OpenStreetMap');
-        expect(body).toContain('imprécis');
+        expect(h.opened[0].title).toBe('Avant de continuer');
     });
-
-    it('dit la vérité sur les sources (note de test 1, texte validé par Stefan le 11/10/2026)', () => {
-        showVersionNoteIfNeeded();
-        const { body } = hwAlert.mock.calls[0][0];
-        // Mesuré le 11/10 : 17 lieux visibles sur 433 (tous des commerces) n'ont
-        // ni OSM ni Maps — « chaque LIEU » était faux, « chaque SITE PATRIMONIAL » est vrai.
-        expect(body).toContain('Chaque site patrimonial');
-        expect(body).not.toContain('Chaque lieu a été vérifié');
-        expect(body).toContain('Wikipédia');
+    it('annonce la phase d’amélioration et les deux réserves sur les données', () => {
+        const b = body();
+        expect(b).toContain('phase d\'amélioration');
+        expect(b).toContain('Google Maps');
+        expect(b).toContain('OpenStreetMap');
+        expect(b).toContain('imprécis');
     });
-
-    it('« Pour commencer » (note de test 13, texte validé le 11/10/2026)', () => {
-        showVersionNoteIfNeeded();
-        const { body } = hwAlert.mock.calls[0][0];
-        expect(body).toMatch(/<strong>Pour commencer :<\/strong> ouvrez un circuit, ou cherchez un lieu\s+par son nom\./);
+    it('dit la vérité sur les sources (texte validé le 11/10/2026)', () => {
+        const b = body();
+        expect(b).toContain('Chaque site patrimonial');
+        expect(b).not.toContain('Chaque lieu a été vérifié');
+        expect(b).toContain('Wikipédia');
     });
-
-    it('ne cite pas la boussole (remarque de Stefan, 11/10/2026)', () => {
-        // Icône sans libellé, invisible derrière la note, PC seulement : la citer
-        // envoyait le visiteur chercher quelque chose qu'il ne voit pas.
-        showVersionNoteIfNeeded();
-        const { body } = hwAlert.mock.calls[0][0];
-        expect(body).not.toMatch(/boussole/i);
+    it('« Vos données restent sur cet appareil » AVANT « Pour commencer » (écrans 11-12)', () => {
+        const b = body();
+        expect(b).toContain('<strong>Vos données restent sur cet appareil.</strong>');
+        expect(b).toContain('Heripia ne les reçoit jamais');
+        expect(b).toContain('Sauvegarder mes photos');
+        expect(b).not.toContain('sauvegarde complète'); // plus de « complète » depuis la PR 3
+        expect(b.indexOf('Vos données restent')).toBeLessThan(b.indexOf('Pour commencer'));
     });
-
-    it('nomme les deux services qu\'on peut ouvrir depuis la fiche — pas Wikipédia (remarque de Stefan, 11/10/2026)', () => {
-        showVersionNoteIfNeeded();
-        const { body } = hwAlert.mock.calls[0][0];
-        // « sur ces services », placé juste après Wikipédia, laissait croire
-        // qu'on pouvait aussi y ouvrir le lieu : la fiche n'a que Maps et OSM.
-        expect(body).not.toContain('ces services');
-        expect(body).toMatch(/l'ouvrir\s+directement sur Google Maps ou OpenStreetMap/);
+    it('« Pour commencer » (texte validé le 11/10/2026)', () => {
+        expect(body()).toMatch(/<strong>Pour commencer :<\/strong> ouvrez un circuit, ou cherchez un lieu\s+par son nom\./);
+    });
+    it('ne cite pas la boussole, ni « ces services »', () => {
+        const b = body();
+        expect(b).not.toMatch(/boussole/i);
+        expect(b).not.toContain('ces services');
+        expect(b).toMatch(/l'ouvrir\s+directement sur Google Maps ou OpenStreetMap/);
     });
 });

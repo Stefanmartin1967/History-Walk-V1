@@ -10,13 +10,14 @@
 // visiteurs (nouvelle réserve sur les données, nouvelle fonctionnalité
 // notable...).
 
-import { hwAlert } from './modal.js';
+import { openHwModal, closeHwModal } from './modal.js';
+import { state } from './state.js';
 
 const NOTE_KEY = 'hw_version_note_seen';
 
 // Contenu courant de la note. Incrémenter NOTE_VERSION à chaque mise à jour
 // qui doit redéclencher l'affichage.
-const NOTE_VERSION = 1;
+const NOTE_VERSION = 2; // 2 : « Vos données restent sur cet appareil » (synchro users, PR 9, 23/11/2026)
 
 const NOTE_TITLE = 'Avant de continuer';
 
@@ -32,6 +33,17 @@ const NOTE_BODY = `
     <p><strong>Pour commencer :</strong> ouvrez un circuit, ou cherchez un lieu
     par son nom.</p>
 `;
+
+// Écrans 11-12 (textes validés par Stefan le 19/11/2026), avant « Pour commencer ».
+// « sauvegarde complète » est devenu « Sauvegarder mes photos » (PR 3, Données / Photos).
+const SYNC_PARAGRAPH = `
+    <p><strong>Vos données restent sur cet appareil.</strong> Vos visites, notes et
+    circuits sont enregistrés ici, sans compte Heripia. Pour les retrouver sur votre
+    téléphone et votre PC, et ne pas les perdre si vous changez d'appareil, reliez
+    Heripia à votre compte Google : elles y sont rangées à part, sans toucher à vos
+    fichiers, et Heripia ne les reçoit jamais. Les photos ne suivent pas : pour les
+    garder, sauvegardez-les dans un fichier (Sauvegarder → Sauvegarder mes photos).</p>
+`;
 // « Pour commencer » (note de test 13, textes validés par Stefan le
 // 11/10/2026) : une phrase dans cette note plutôt qu'un 2e écran au démarrage
 // (décision du 09/08/2026). Elle ne cite pas le bouton de l'écran « Que
@@ -46,11 +58,21 @@ function getSeenVersion() {
 export function showVersionNoteIfNeeded() {
     if (getSeenVersion() >= NOTE_VERSION) return;
 
-    hwAlert({
-        title: NOTE_TITLE,
-        body: NOTE_BODY,
-        label: "J'ai compris",
-    }).then(() => {
+    // Admin : pas de proposition Google (ses données suivent par GitHub).
+    const offerGoogle = !state.isAdmin;
+    const body = offerGoogle
+        ? NOTE_BODY.replace('<p><strong>Pour commencer', `${SYNC_PARAGRAPH}<p><strong>Pour commencer`)
+        : NOTE_BODY;
+    const footer = offerGoogle
+        ? `<button class="btn btn-secondary" type="button" data-note-later>Plus tard</button>
+           <button class="btn btn-primary" type="button" data-note-link>Relier à mon compte Google</button>`
+        : `<button class="btn btn-primary" type="button" data-note-ok>J'ai compris</button>`;
+    openHwModal({ size: 'md', title: NOTE_TITLE, body, footer }).then((v) => {
         localStorage.setItem(NOTE_KEY, String(NOTE_VERSION));
+        if (v === 'link') void import('./sync-reminders.js').then(m => m.linkNow());
     });
+    const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
+    root.querySelector('[data-note-later]')?.addEventListener('click', () => closeHwModal());
+    root.querySelector('[data-note-ok]')?.addEventListener('click', () => closeHwModal());
+    root.querySelector('[data-note-link]')?.addEventListener('click', () => closeHwModal('link'));
 }

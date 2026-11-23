@@ -11,10 +11,17 @@
 // sauvegarde — il aura toujours un backup récent dans son dossier Téléchargements.
 //
 // Désactivé en mode admin (l'admin gère ses propres backups via le CC).
+//
+// Depuis la PR 9 « synchro users » (23/11/2026, décisions du 19/11) : le
+// téléchargement automatique ne vaut plus que pour qui a choisi les sauvegardes
+// en fichier (« Non merci, je ferai des sauvegardes moi-même »). Qui n'a pas
+// encore choisi reçoit à la place les RAPPELS (sync-reminders.js), aux mêmes
+// seuils ; un appareil relié à Google n'a plus rien (la synchro garde tout).
 
 import { state } from './state.js';
 import { getAppState, saveAppState } from './database.js';
 import { showToast } from './toast.js';
+import { getSyncChoice, maybeFirstReminder, maybeReminder, resetReminders, refreshBackupHint } from './sync-reminders.js';
 
 const STATE_KEY = 'backup_auto_local_state';
 const MODIFS_THRESHOLD = 10;
@@ -57,12 +64,21 @@ async function persistBackupState(newState) {
  *
  * Déclenche un auto-backup quand le seuil est atteint.
  */
-export async function recordModification() {
+export async function recordModification(detail) {
     if (state.isAdmin) return; // L'admin a son propre flow CC
 
     const s = await getBackupState();
     s.count = (s.count || 0) + 1;
     await persistBackupState(s);
+    refreshBackupHint(s);
+
+    const choice = getSyncChoice();
+    if (choice === 'google') return; // relié : la synchro garde tout
+    if (choice === null) {
+        // Pas encore choisi : un rappel au lieu d'un téléchargement (écrans 52-54).
+        if (!maybeFirstReminder(detail)) maybeReminder(s);
+        return;
+    }
 
     // Vérifie sans bloquer la modif en cours (pas d'await sur le trigger).
     // On garde la référence (pour un flush déterministe en test), sans l'awaiter.
@@ -75,6 +91,7 @@ export async function recordModification() {
  */
 export async function checkAndTriggerAutoBackup() {
     if (state.isAdmin) return false;
+    if (getSyncChoice() !== 'file') return false; // seulement pour qui a choisi les fichiers
     if (_backupInProgress) return false;
     // Verrou pris AVANT le premier await : posé après la lecture de l'état, il
     // laissait passer tous les appels lancés en même temps (ils avaient déjà
@@ -98,9 +115,10 @@ export async function checkAndTriggerAutoBackup() {
         await saveUserData(false); // mode LITE (pas les photos blobs)
 
         await persistBackupState({ count: 0, lastTimestamp: now });
+        resetReminders();
 
         const reason = reachedModifs ? `${s.count} modifications` : `${Math.floor(elapsedDays)} jours`;
-        showToast(`Backup auto téléchargé (${reason}). Pense à le ranger en sûr.`, 'info', 6000);
+        showToast(`Copie de secours téléchargée (${reason}). Rangez-la en lieu sûr.`, 'info', 6000);
         return true;
     } catch (err) {
         console.error('[backup-auto-local] auto-backup failed:', err);
@@ -137,6 +155,18 @@ export async function forceBackup() {
  */
 export async function resetBackupCounter() {
     await persistBackupState({ count: 0, lastTimestamp: Date.now() });
+    resetReminders(); // sauvegarde faite : les rappels repartent aussi de zéro
+    refreshBackupHint(_cache);
+}
+
+/** Dernier état connu (sans lecture en base), pour le menu du téléphone. */
+export function peekBackupState() {
+    return _cache;
+}
+
+/** Au démarrage : l'indication sous « Sauvegarder » (menu Outils PC). */
+export async function initBackupHint() {
+    refreshBackupHint(await getBackupState());
 }
 
 /**

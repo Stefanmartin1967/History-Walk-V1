@@ -75,6 +75,17 @@ const SVG_PHONE_PHOTO = `
 
 // Le livre ouvert (ex-carte « Voir les circuits ») reprend l'icône du bouton
 // Légende de la carte : le visiteur retrouve le même symbole.
+// « Sauvegarder et synchroniser » : deux appareils reliés (synchro users, écran 13).
+const SVG_DEVICES = `
+<svg viewBox="0 0 220 160" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="110" cy="80" r="72" fill="var(--brand)" opacity="0.08"/>
+    <rect x="44" y="50" width="72" height="50" rx="4" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>
+    <line x1="36" y1="106" x2="124" y2="106" stroke="var(--brand)" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="140" y="56" width="34" height="56" rx="5" fill="var(--surface)" stroke="var(--brand)" stroke-width="2"/>
+    <path d="M122 66 C130 58 140 58 148 64" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+    <path d="M144 120 C136 128 124 128 116 122" fill="none" stroke="var(--brand)" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+</svg>`;
+
 const CARDS = [
     {
         id: 'legend',
@@ -99,6 +110,12 @@ const CARDS = [
         svg: SVG_PHONE_PHOTO,
         title: 'Associer mes photos aux lieux',
         subtitle: 'Je personnalise, j\'ajoute mes photos à mes visites'
+    },
+    {
+        id: 'save',
+        svg: SVG_DEVICES,
+        title: 'Sauvegarder et synchroniser',
+        subtitle: 'Mes visites, notes et circuits, sur tous mes appareils'
     }
 ];
 

@@ -6,6 +6,11 @@
 
 ---
 
+- ACCUEIL ET RAPPELS DE LA SYNCHRO (v3.7.571). PR 9, dernière du chantier « synchro users » : écrans 11-16 (validés le 19/11) et 52-54 (validés le 23/11/2026).
+  - « Avant de continuer » (NOTE_VERSION 2) : paragraphe « Vos données restent sur cet appareil » avant « Pour commencer », boutons « Plus tard » / « Relier à mon compte Google ». « sauvegarde complète » devient « Sauvegarder mes photos » (Données / Photos depuis la PR 3). En admin : inchangé (« J'ai compris »).
+  - « Que voulez-vous faire ? » : 5e carte « Sauvegarder et synchroniser » → écran Sauvegarder.
+  - sync-reminders.js : le choix du user (relié, « sauvegardes en fichier », pas encore choisi). Pas encore choisi → premier rappel (fenêtre, une fois, à la 1re vraie modification : « Votre visite de … est enregistrée ici, sur cet appareil seulement ») puis rappels (toast avec « Relier à mon compte Google », tous les 10 modifications ou 3 jours depuis la dernière sauvegarde) et indication sous « Sauvegarder » (menu Outils PC, menu du téléphone). Ces rappels REMPLACENT la copie de secours automatique, qui reste pour qui a choisi « Non merci, je ferai des sauvegardes moi-même » (ou « Sauvegarde en fichier ») ; relié : plus rien.
+  - Écran Sauvegarder : « Sauvegarde en fichier » à côté de « Relier » ; relié → « Sauvegarder mes photos » + « Sauvegarder aussi mes données dans un fichier », « Restaurer mes photos » + « Restaurer aussi un fichier de données » ; ligne du bas selon le choix. L'écran se redessine quand la liaison change.
 - DEUX DE VOS LIEUX AU MÊME ENDROIT (v3.7.570). Suite de la PR 8 « synchro users », écran 50 validé par Stefan le 22/11/2026.
   - La synchro dit quels lieux créés sont arrivés d'un autre appareil (`arrivedPlaces`) ; ils sont retenus (`placesArrived_<destination>`). Si l'un de vos lieux est à moins de 50 m de l'un d'eux (le nom n'est pas regardé) : ligne dans « À choisir », point ambre.
   - « Même lieu ? » : « Créé sur cet appareil » / « Créé sur un autre appareil », avec catégorie, heure et ce qui est attaché. « Les réunir » : le plus ancien est gardé (son identifiant) ; pour chaque champ, la version la plus récente ; notes bout à bout ; visite, Incontournable, photos et circuits rattachés au lieu gardé ; l'autre est retiré partout (`deletedPlaces`). « Garder les deux » est retenu pour la paire, dans les deux sens.
