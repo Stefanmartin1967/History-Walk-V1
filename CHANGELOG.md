@@ -6,6 +6,10 @@
 
 ---
 
+- INSTALLER SUR IPHONE (v3.7.573). Audit avant publication du 23/11/2026, maquette écrans 55-56 validée par Stefan.
+  - Sur iPhone et iPad, le bandeau « Installer Heripia » n'apparaissait jamais (Safari ne permet pas l'installation par bouton), alors que Safari efface les données d'un site non ouvert pendant 7 jours.
+  - Le bandeau s'affiche maintenant aussi sur iPhone / iPad non installé, avec « Comment ? » : une fenêtre donne la raison et les 3 gestes (Partager, « Sur l'écran d'accueil », « Ajouter »). Compte Google relié : la phrase d'Android.
+  - Autre navigateur que Safari sur iPhone : le geste 1 ne dit pas « en bas de l'écran ».
 - AUDIT AVANT PUBLICATION, 1RE PASSE (v3.7.572). Trous trouvés le 23/11/2026, corrections validées par Stefan.
   - Règles de confidentialité : il manquait overpass-api.de (OpenStreetMap), qui reçoit la zone du tracé quand un user trace un circuit (types de voie). Ajouté, date mise à jour (23 novembre 2026).
   - Aide : trois passages disaient « restent sur cet appareil, sauvegardez via Outils > Sauvegarder » sans parler du compte Google ; ils citent maintenant les deux.

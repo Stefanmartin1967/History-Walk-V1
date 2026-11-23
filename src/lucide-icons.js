@@ -70,7 +70,7 @@ import {
     Flag,
 
     // Onglet Circuit V2 (refonte avril 2026 — consultation + création)
-    Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
+    Crosshair, GripVertical, Eraser, ExternalLink, Share2, Share, SquarePlus, BookmarkX,
 
     // Catégorisation au batch (modale import photo, 01/06/2026)
     Tags,
@@ -130,7 +130,7 @@ export const appIcons = {
 
     SlidersHorizontal, MoreVertical, BadgeCheck, Scale,
 
-    Crosshair, GripVertical, Eraser, ExternalLink, Share2, BookmarkX,
+    Crosshair, GripVertical, Eraser, ExternalLink, Share2, Share, SquarePlus, BookmarkX,
 
     Flag,
 
