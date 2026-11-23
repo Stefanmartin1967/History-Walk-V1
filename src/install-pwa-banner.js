@@ -81,24 +81,35 @@ const chip = (icon, label) => `<span class="ios-install-chip">${icon ? `<i data-
 
 export function iosInstallSteps(safari = true) {
     const share = chip('share', 'Partager');
+    // Essai sur iPhone du 23/11/2026 : dans Safari récent, Partager est dans le
+    // menu ≡ à gauche de l'adresse ; « Sur l'écran d'accueil » est sous « En voir plus ».
     const step1 = safari
-        ? `Touchez ${share}, en bas de l'écran. S'il n'y est pas, touchez d'abord ${chip('', '···')}.`
+        ? `Touchez ${share}, en bas de l'écran. S'il n'y est pas, touchez d'abord ${chip('', '≡')} ou ${chip('', '···')}, à côté de l'adresse.`
         : `Touchez ${share}, dans la barre d'adresse ou dans le menu ${chip('', '···')}.`;
     return [
         step1,
-        `Choisissez ${chip('square-plus', "Sur l'écran d'accueil")} (faites défiler la liste si besoin).`,
+        `Choisissez ${chip('square-plus', "Sur l'écran d'accueil")} (s'il n'y est pas, touchez d'abord « En voir plus »).`,
         "Touchez « Ajouter ». Ouvrez ensuite Heripia depuis sa nouvelle icône.",
     ];
 }
 
+// Chrome sur iPhone (essai du 23/11/2026) : « Safari efface… après 7 jours » n'y
+// est pas vérifié ; phrase sans cette précision.
+export function iosInstallWhy(safari = true) {
+    return safari
+        ? "Sur iPhone, Safari efface ce qu'un site a enregistré quand vous ne l'ouvrez pas pendant 7 jours. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau."
+        : "Sur iPhone, ce qu'un site enregistre dans le navigateur peut être effacé. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau.";
+}
+
 export function openIosInstallHelp() {
-    const steps = iosInstallSteps(isIOSSafari())
+    const safari = isIOSSafari();
+    const steps = iosInstallSteps(safari)
         .map((s, i) => `<li><span class="ios-install-num">${i + 1}</span><span>${s}</span></li>`).join('');
     return openHwModal({
         size: 'sm',
         icon: 'download',
         title: "Installer Heripia sur l'iPhone",
-        body: `<p class="ios-install-why">Sur iPhone, Safari efface ce qu'un site a enregistré quand vous ne l'ouvrez pas pendant 7 jours. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau.</p>
+        body: `<p class="ios-install-why">${iosInstallWhy(safari)}</p>
             <ol class="ios-install-steps">${steps}</ol>`,
         footer: `<button class="btn btn-primary ios-install-ok" data-hw-modal-action="close">J'ai compris</button>`,
     });
