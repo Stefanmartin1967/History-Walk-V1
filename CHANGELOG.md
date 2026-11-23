@@ -6,6 +6,9 @@
 
 ---
 
+- INSTALLER SUR ANDROID, APRÈS ESSAI SUR S25 (v3.7.575). Essai réel de Stefan le 23/11/2026.
+  - Brave et Samsung Internet ont leur menu ⋮ EN BAS ; Brave dit « Installer et créer un raccourci », Samsung « Ajouter la page à » > « Installer en tant qu'application Web ». La fenêtre Android ne cite plus de place ni de libellé exacts : « menu ⋮, en haut ou en bas » ; « l'option qui commence par « Installer » » ; le chemin Samsung en toutes lettres.
+  - Déjà installée depuis ce navigateur mais ouverte dans un onglet : le navigateur le dit (getInstalledRelatedApps, `related_applications` du manifest) → ni bandeau ni entrée de menu. Un autre navigateur (ou la navigation privée) ne le sait pas.
 - « INSTALLER HERIPIA » DANS LE MENU (v3.7.574). Maquette écrans 57-60 validée par Stefan le 23/11/2026 : pour qui a fermé le bandeau.
   - Menu Outils PC (section Voyage) et menu téléphone (Outils, après Sauvegarder) : entrée visible tant que Heripia n'est pas installée ; absente sur Firefox PC (qui ne sait pas installer).
   - Navigateur prêt → sa fenêtre d'installation ; iPhone → les 3 gestes ; Android → « menu ⋮ ou ≡, Installer l'application / Ajouter à l'écran d'accueil » ; PC → icône au bout de la barre d'adresse ou « Installer » dans le menu ; Safari Mac → Fichier > Ajouter au Dock.
