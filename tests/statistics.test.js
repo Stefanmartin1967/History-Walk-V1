@@ -196,6 +196,8 @@ describe('Statistics System', () => {
         state.officialCircuits = [{ id: 'c1', poiIds: ['p0', 'p1', 'p3'] }];
         state.officialCircuitsStatus = { c1: true };
         state.hiddenPoiIds = ['p3'];
+        // « Fait » a coché « vu » sur ses lieux, dont p3, supprimé depuis.
+        state.userData = { p0: { vu: true }, p1: { vu: true }, p3: { vu: true } };
 
         const stats = calculateStats();
 
@@ -244,7 +246,7 @@ describe('Statistics System', () => {
         expect(stats.poiPercent).toBe(50);
     });
 
-    it('should count POIs from completed circuits as visited even if not marked vu', () => {
+    it('un lieu ajouté à un circuit après l’avoir marqué « fait » ne compte pas comme visité', () => {
         // Setup 10 POIs
         state.loadedFeatures = Array.from({ length: 10 }, (_, i) => ({
             properties: { HW_ID: `p${i}` }
@@ -256,14 +258,13 @@ describe('Statistics System', () => {
         ];
         state.officialCircuitsStatus = { 'c1': true };
 
-        // No individual 'vu' status set in userData
-        state.userData = {};
+        // « Fait » a coché p0 et p1 ; p2 a été ajouté au circuit ensuite.
+        state.userData = { p0: { vu: true }, p1: { vu: true } };
 
         const stats = calculateStats();
 
-        // Should count p0, p1, p2 as visited because c1 is completed
-        expect(stats.visitedPois).toBe(3);
-        expect(stats.poiPercent).toBe(30);
+        expect(stats.visitedPois).toBe(2);
+        expect(stats.poiPercent).toBe(20);
     });
 
     // ------------------------------------------------------------------
@@ -393,7 +394,7 @@ describe('Statistics System', () => {
             expect(stats.totalOfficialCircuitsAvailable).toBe(1);
         });
 
-        it('exclut un circuit caché des POIs visités via "Fait"', () => {
+        it('un circuit caché ne retire pas les lieux visités (seul « vu » compte)', () => {
             state.loadedFeatures = [
                 { properties: { HW_ID: 'p1' } },
                 { properties: { HW_ID: 'p2' } },
@@ -406,11 +407,11 @@ describe('Statistics System', () => {
             // Les 2 sont "Fait", mais c2 est caché
             state.officialCircuitsStatus = { c1: true, c2: true };
             state.hiddenCircuitIds = ['c2'];
+            state.userData = { p1: { vu: true }, p2: { vu: true } };
 
             const stats = calculateStats();
 
-            // Seul p1 (via c1) doit être compté comme visité
-            expect(stats.visitedPois).toBe(1);
+            expect(stats.visitedPois).toBe(2);
             expect(stats.totalPois).toBe(3);
         });
 
