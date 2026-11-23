@@ -6,6 +6,7 @@
 
 ---
 
+- IPHONE : BARRE D'ÉTAT OPAQUE (v3.7.576). Essai sur iPhone du 23/11/2026 (app installée depuis Safari) : le titre du haut passait sous l'heure et une bande vide restait sous le dock. `apple-mobile-web-app-status-bar-style` passe de `black-translucent` à `default` : l'iPhone garde sa bande pour l'heure, l'app commence en dessous et descend jusqu'en bas. Choix validé par Stefan (« dommage de perdre cette place en bas »). Pas vérifié sur iPhone.
 - INSTALLER SUR ANDROID, APRÈS ESSAI SUR S25 (v3.7.575). Essai réel de Stefan le 23/11/2026.
   - Brave et Samsung Internet ont leur menu ⋮ EN BAS ; Brave dit « Installer et créer un raccourci », Samsung « Ajouter la page à » > « Installer en tant qu'application Web ». La fenêtre Android ne cite plus de place ni de libellé exacts : « menu ⋮, en haut ou en bas » ; « l'option qui commence par « Installer » » ; le chemin Samsung en toutes lettres.
   - iPhone (essai du 23/11 sur un iPhone, Safari et Chrome) : dans Safari récent, Partager est dans le menu ≡ à gauche de l'adresse → geste 1 « S'il n'y est pas, touchez d'abord ≡ ou ···, à côté de l'adresse » ; « Sur l'écran d'accueil » est sous « En voir plus » → geste 2 le dit. Chrome sur iPhone : la phrase ne parle plus de Safari ni des 7 jours (non vérifié dans Chrome).
