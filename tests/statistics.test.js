@@ -9,6 +9,7 @@ vi.mock('../src/utils.js', () => ({
     // Lus par la vraie règle « lieu montré » (poi-visibility.js).
     getPoiId: (f) => f.properties.HW_ID,
     getPoiProp: (f, k) => f.properties.userData?.[k] ?? f.properties[k],
+    isCandidate: (f) => !!f.properties.candidate,
 }));
 
 // We need to mock state in a way we can manipulate it
@@ -225,6 +226,22 @@ describe('Statistics System', () => {
         ];
 
         expect(calculateStats().totalPois).toBe(2);
+    });
+
+    it('admin : les captures Scout à curer ne comptent pas (ni total, ni visités)', () => {
+        state.loadedFeatures = [
+            { properties: { HW_ID: 'p0' } },
+            { properties: { HW_ID: 'p1' } },
+            { properties: { HW_ID: 'c0', candidate: true } },
+        ];
+        state.userData['p0'] = { vu: true };
+        state.userData['c0'] = { vu: true };
+
+        const stats = calculateStats();
+
+        expect(stats.totalPois).toBe(2);
+        expect(stats.visitedPois).toBe(1);
+        expect(stats.poiPercent).toBe(50);
     });
 
     it('should count POIs from completed circuits as visited even if not marked vu', () => {
