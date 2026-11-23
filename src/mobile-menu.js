@@ -27,6 +27,7 @@ import { listOfficialUpdates } from './official-updates.js';
 import { openOfficialUpdatesList } from './official-update-ui.js';
 import { syncConflictCount, openSyncConflictsList } from './google-sync-ui.js';
 import { backupMenuHint } from './sync-reminders.js';
+import { installEntryVisible, installEntrySub, startInstallFromMenu } from './install-pwa-banner.js';
 import { peekBackupState } from './backup-auto-local.js';
 
 // ─── Sous-titres dynamiques ──────────────────────────────────────────────────
@@ -82,6 +83,10 @@ function buildSections(subs) {
             items: [
                 { id: 'mob-action-scan', ico: 'scan-line', label: 'Scanner un circuit', sub: subs.scan },
                 { id: 'mob-action-backup', ico: 'hard-drive', label: 'Sauvegarder', sub: subs.backup },
+                // Installer Heripia (23/11/2026, maquette écran 59)
+                ...(installEntryVisible()
+                    ? [{ id: 'mob-action-install', ico: 'download', label: 'Installer Heripia', sub: installEntrySub(true) }]
+                    : []),
                 { id: 'mob-action-reset', ico: 'trash-2', label: 'Vider les données locales', sub: subs.reset, variant: 'danger' },
             ],
         },
@@ -190,6 +195,7 @@ export function renderMobileMenu() {
     // ─── Event listeners ─────────────────────────────────────────────────────
     document.getElementById('mob-action-stats')?.addEventListener('click', () => showStatisticsModal());
     document.getElementById('mob-action-backup')?.addEventListener('click', () => openSaveModal());
+    document.getElementById('mob-action-install')?.addEventListener('click', () => startInstallFromMenu());
     document.getElementById('mob-action-official-updates')?.addEventListener('click', () => openOfficialUpdatesList());
     document.getElementById('mob-action-sync-conflicts')?.addEventListener('click', () => openSyncConflictsList());
     document.getElementById('mob-action-scan')?.addEventListener('click', () => startGenericScanner());

@@ -16,9 +16,15 @@
 // (audit du 23/11/2026, maquette écrans 55-56 validée par Stefan) : Safari
 // efface les données d'un site non ouvert pendant 7 jours, sauf une fois
 // installé sur l'écran d'accueil.
+//
+// Entrée « Installer Heripia » des menus Outils PC et téléphone (maquette
+// écrans 57-60 validée par Stefan le 23/11/2026) : visible tant que Heripia
+// n'est pas installée. Navigateur prêt → sa fenêtre d'installation ; iPhone →
+// les 3 gestes ; sinon → où chercher dans le menu du navigateur.
 
 import { openHwModal } from './modal.js';
 import { getLinkedAccount } from './google-account.js';
+import { closeAllDropdowns } from './ui-utils.js';
 
 const DISMISS_KEY = 'hw_install_banner_dismissed_until';
 const DISMISS_COOLDOWN_DAYS = 7;
@@ -28,9 +34,8 @@ let bannerEl = null;
 
 function isStandalone() {
     // PWA déjà installée et lancée en mode standalone
-    return window.matchMedia('(display-mode: standalone)').matches
-        || window.matchMedia('(display-mode: window-controls-overlay)').matches
-        || window.matchMedia('(display-mode: minimal-ui)').matches
+    const mode = (m) => window.matchMedia?.(`(display-mode: ${m})`)?.matches === true;
+    return mode('standalone') || mode('window-controls-overlay') || mode('minimal-ui')
         // iOS Safari historique
         || window.navigator.standalone === true;
 }
@@ -40,6 +45,22 @@ export function isIOS(nav = window.navigator) {
     const ua = nav.userAgent || '';
     if (/iPhone|iPad|iPod/.test(ua)) return true;
     return nav.platform === 'MacIntel' && (nav.maxTouchPoints || 0) > 1;
+}
+
+// Firefox sur PC ne sait pas installer une app web (Firefox Android, si).
+export function isDesktopFirefox(nav = window.navigator) {
+    const ua = nav.userAgent || '';
+    return /Firefox\//.test(ua) && !/Android|Mobile|Tablet/.test(ua);
+}
+
+// Safari sur Mac (pas iPad) : « Fichier > Ajouter au Dock ».
+function isMacSafari(nav = window.navigator) {
+    const ua = nav.userAgent || '';
+    return /Macintosh/.test(ua) && /Safari\//.test(ua) && !/Chrome|Chromium|Edg\/|OPR\//.test(ua) && !isIOS(nav);
+}
+
+function isAndroid(nav = window.navigator) {
+    return /Android/.test(nav.userAgent || '');
 }
 
 // Safari, ou un autre navigateur iPhone (Chrome, Edge, Firefox… : CriOS, EdgiOS, FxiOS).
@@ -81,6 +102,60 @@ export function openIosInstallHelp() {
             <ol class="ios-install-steps">${steps}</ol>`,
         footer: `<button class="btn btn-primary ios-install-ok" data-hw-modal-action="close">J'ai compris</button>`,
     });
+}
+
+// ─── Entrée « Installer Heripia » des menus ─────────────────────────────────
+export function installEntryVisible() {
+    if (isStandalone()) return false;
+    if (deferredPrompt || isIOS()) return true;
+    return !isDesktopFirefox();
+}
+
+export function installEntrySub(mobile) {
+    if (isIOS()) return iosBannerSentence();
+    return mobile ? SENTENCE_DEFAULT : 'Accès rapide, usage hors-ligne';
+}
+
+const MONITOR_DL = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="3" width="20" height="14" rx="2"></rect><path d="M8 21h8M12 17v4"></path><path d="M12 7v6M9 10l3 3 3-3"></path></svg>';
+
+// Où chercher quand le navigateur n'ouvre pas sa fenêtre (écrans 58 et 60).
+export function installHelpContent(kind) {
+    if (kind === 'android') {
+        const steps = [
+            `Ouvrez le menu du navigateur : ${chip('', '⋮')} en haut à droite, ou ${chip('', '≡')} en bas.`,
+            "Touchez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
+            'Confirmez. Ouvrez ensuite Heripia depuis sa nouvelle icône.',
+        ].map((s, i) => `<li><span class="ios-install-num">${i + 1}</span><span>${s}</span></li>`).join('');
+        return `<p class="ios-install-why">Installée, Heripia s'ouvre depuis son icône, en plein écran, et marche même sans réseau.</p>
+            <ol class="ios-install-steps">${steps}</ol>`;
+    }
+    const where = kind === 'mac-safari'
+        ? 'Dans Safari, ouvrez le menu « Fichier », puis « Ajouter au Dock ».'
+        : `Cliquez sur <span class="ios-install-chip">${MONITOR_DL}</span> au bout de la barre d'adresse. S'il n'y est pas, ouvrez le menu du navigateur (${chip('', '⋮')} ou ${chip('', '···')}) et cherchez « Installer ».`;
+    return `<p class="ios-install-why">Installée, Heripia s'ouvre dans sa propre fenêtre, depuis le menu Démarrer ou la barre des tâches, et marche même sans réseau.</p>
+        <p class="ios-install-why">${where}</p>`;
+}
+
+function openInstallHelp(kind) {
+    return openHwModal({
+        size: 'sm',
+        icon: 'download',
+        title: 'Installer Heripia',
+        body: installHelpContent(kind),
+        footer: `<button class="btn btn-primary ios-install-ok" data-hw-modal-action="close">J'ai compris</button>`,
+    });
+}
+
+// Clic sur l'entrée du menu.
+export function startInstallFromMenu() {
+    if (deferredPrompt) return triggerInstall();
+    if (isIOS()) return openIosInstallHelp();
+    if (isAndroid()) return openInstallHelp('android');
+    return openInstallHelp(isMacSafari() ? 'mac-safari' : 'desktop');
+}
+
+function refreshInstallEntry() {
+    document.getElementById('btn-install-app')?.classList.toggle('is-hidden', !installEntryVisible());
 }
 
 function isDismissedRecently() {
@@ -148,15 +223,25 @@ window.addEventListener('beforeinstallprompt', (e) => {
     console.log('[install-banner] beforeinstallprompt captured', e);
     // Si l'UI est déjà initialisée (banner element trouvé), on l'affiche tout de suite.
     if (bannerEl) showBanner();
+    refreshInstallEntry();
 });
 
 window.addEventListener('appinstalled', () => {
     deferredPrompt = null;
     console.log('[install-banner] app installed');
     hideBanner();
+    document.getElementById('btn-install-app')?.classList.add('is-hidden');
 });
 
 export function initInstallBanner() {
+    const entry = document.getElementById('btn-install-app');
+    if (entry) {
+        const sub = entry.querySelector('.tools-menu-sub');
+        if (sub) sub.textContent = installEntrySub(false);
+        entry.addEventListener('click', () => { closeAllDropdowns(); startInstallFromMenu(); });
+        refreshInstallEntry();
+    }
+
     bannerEl = document.getElementById('install-banner');
     if (!bannerEl) return;
 

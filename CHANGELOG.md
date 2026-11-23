@@ -6,6 +6,10 @@
 
 ---
 
+- « INSTALLER HERIPIA » DANS LE MENU (v3.7.574). Maquette écrans 57-60 validée par Stefan le 23/11/2026 : pour qui a fermé le bandeau.
+  - Menu Outils PC (section Voyage) et menu téléphone (Outils, après Sauvegarder) : entrée visible tant que Heripia n'est pas installée ; absente sur Firefox PC (qui ne sait pas installer).
+  - Navigateur prêt → sa fenêtre d'installation ; iPhone → les 3 gestes ; Android → « menu ⋮ ou ≡, Installer l'application / Ajouter à l'écran d'accueil » ; PC → icône au bout de la barre d'adresse ou « Installer » dans le menu ; Safari Mac → Fichier > Ajouter au Dock.
+  - `isStandalone` ne plante plus sans `matchMedia`.
 - INSTALLER SUR IPHONE (v3.7.573). Audit avant publication du 23/11/2026, maquette écrans 55-56 validée par Stefan.
   - Sur iPhone et iPad, le bandeau « Installer Heripia » n'apparaissait jamais (Safari ne permet pas l'installation par bouton), alors que Safari efface les données d'un site non ouvert pendant 7 jours.
   - Le bandeau s'affiche maintenant aussi sur iPhone / iPad non installé, avec « Comment ? » : une fenêtre donne la raison et les 3 gestes (Partager, « Sur l'écran d'accueil », « Ajouter »). Compte Google relié : la phrase d'Android.
