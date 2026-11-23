@@ -181,3 +181,10 @@ body.explorer-card-print-body .explorer-card {
     size: A4;
     margin: 0;
 }
+
+/* Téléphone : la modale est plus étroite que la carte (340 px) → la carte
+   débordait à droite, coupée, avec une barre de défilement (signalé par
+   Stefan le 23/11/2026 sur S25). Elle prend la largeur disponible. */
+@media (max-width: 480px) {
+    .hw-modal-body .explorer-card { width: 100%; max-width: 340px; }
+}
