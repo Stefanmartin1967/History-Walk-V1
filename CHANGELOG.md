@@ -6,6 +6,7 @@
 
 ---
 
+- CARNET DE VOYAGE SUR TÉLÉPHONE (v3.7.577). Signalé par Stefan le 23/11/2026 (S25) : la carte (340 px fixes) débordait de la fenêtre, coupée à droite (« 160. », « 86 », « 367 lieux à déco »), avec une barre de défilement. Sous 480 px, la carte prend la largeur disponible (max 340 px). Impression inchangée.
 - IPHONE : BARRE D'ÉTAT OPAQUE (v3.7.576). Essai sur iPhone du 23/11/2026 (app installée depuis Safari) : le titre du haut passait sous l'heure et une bande vide restait sous le dock. `apple-mobile-web-app-status-bar-style` passe de `black-translucent` à `default` : l'iPhone garde sa bande pour l'heure, l'app commence en dessous et descend jusqu'en bas. Choix validé par Stefan (« dommage de perdre cette place en bas »). Pas vérifié sur iPhone.
 - INSTALLER SUR ANDROID, APRÈS ESSAI SUR S25 (v3.7.575). Essai réel de Stefan le 23/11/2026.
   - Brave et Samsung Internet ont leur menu ⋮ EN BAS ; Brave dit « Installer et créer un raccourci », Samsung « Ajouter la page à » > « Installer en tant qu'application Web ». La fenêtre Android ne cite plus de place ni de libellé exacts : « menu ⋮, en haut ou en bas » ; « l'option qui commence par « Installer » » ; le chemin Samsung en toutes lettres.
