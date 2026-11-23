@@ -577,6 +577,14 @@ export function getActiveFilters() {
  * repasse à SON défaut. Puis applyFilters → data:filtered, qui rafraîchit la
  * carte, la bande, le compteur de la barre du haut et ce panneau s'il est ouvert.
  */
+// Centre de Contrôle, « N lieux à vérifier » (23/11/2026) : la carte n'affiche
+// que les captures Scout (filtre « Lieux à curer : seulement »).
+export function showOnlyCandidates() {
+    setActiveFilters({ ...state.activeFilters, candidate: 'only' });
+    applyFilters();
+    refreshAllMeta();
+}
+
 export function removeActiveFilter(id) {
     const f = state.activeFilters || {};
     let patch = null;

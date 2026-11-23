@@ -1,15 +1,14 @@
 import { state, setIsAdmin } from './state.js';
 import { eventBus } from './events.js';
-import { downloadFile, getPoiId } from './utils.js';
+import { getPoiId } from './utils.js';
 import { showToast } from './toast.js';
 import { closeAllDropdowns } from './ui-utils.js';
-import { showAlert, showConfirm, openHwModal, hwPrompt } from './modal.js';
+import { showAlert, showConfirm, openHwModal } from './modal.js';
 import { ANIMAL_RANKS, MATERIAL_RANKS, GLOBAL_RANKS } from './statistics.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { uploadFileToGitHub, getStoredToken } from './github-sync.js';
 import { GITHUB_OWNER, GITHUB_REPO, RAW_BASE, GITHUB_PATHS } from './config.js';
 import { initAdminControlCenter, openControlCenter, addToDraft } from './admin-control-center.js';
-import { generateMasterGeoJSONData } from './admin-geojson.js';
 
 // ─── Authentification admin ──────────────────────────────────────────────────
 // Hash SHA-256 du mot de passe admin. La valeur claire n'est PAS dans le
@@ -288,36 +287,6 @@ function setupAdminListeners() {
             const el = document.getElementById(id);
             if (el) el.remove();
         });
-    }
-}
-
-export async function exportMasterGeoJSON() {
-    const geojson = generateMasterGeoJSONData();
-
-    if (!geojson) {
-        showToast("Aucune donnée à exporter.", "error");
-        return;
-    }
-
-    // Modale HW (hwPrompt) au lieu du prompt() natif « Windows » (migration
-    // 21/05/2026). Retourne null si l'admin annule → early-return conservé.
-    const filename = await hwPrompt({
-        title: 'Exporter Master GeoJSON',
-        body: 'Nom du fichier à exporter :',
-        defaultValue: `djerba-master-${Date.now()}.geojson`,
-        confirmLabel: 'Exporter',
-    });
-    if (!filename) return;
-
-    try {
-        const jsonStr = JSON.stringify(geojson, null, 2);
-        const finalName = filename.endsWith('.geojson') ? filename : `${filename}.geojson`;
-
-        downloadFile(finalName, jsonStr, 'application/geo+json');
-        showToast("Export réussi !", "success");
-    } catch (e) {
-        console.error(e);
-        showToast("Erreur lors de l'export.", "error");
     }
 }
 

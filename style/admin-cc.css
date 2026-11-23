@@ -752,6 +752,14 @@ html[data-theme="nuit"] .cc-hero {
 }
 .cc-card-meta { flex-shrink: 0; display: flex; align-items: center; gap: 6px; }
 
+/* « N lieux à vérifier » (tableau de bord, 23/11/2026, écrans 61-62) : ambre,
+   comme ce qui reste à faire. */
+.cc-card--todo { background: var(--warn-soft); border-color: var(--warn-soft); margin-top: var(--space-md); }
+.cc-card--todo[role="button"]:hover { border-color: var(--warn-fg); }
+.cc-card--todo .cc-card-ico { background: var(--surface); color: var(--warn-fg); }
+.cc-card--todo .cc-card-sub { white-space: normal; }
+.cc-card--todo .cc-card-meta { color: var(--warn-fg); font-size: 12.5px; font-weight: 600; }
+
 /* — Variante "trash" : titre en line-through pour signaler l'état "supprimé".
    Plus discrète qu'un fond grisé qui rouvrirait la fragmentation visuelle. */
 .cc-card-title--struck {

@@ -9,16 +9,13 @@ import { showToast } from './toast.js';
 import { renderMaintenanceTab } from './admin-maintenance.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
 import { GITHUB_OWNER, GITHUB_REPO, GITHUB_PATHS } from './config.js';
-import { escapeXml } from './utils.js';
+import { escapeXml, isCandidate, getPoiId } from './utils.js';
 import L from 'leaflet';
 import { isMobileView } from './mobile-state.js';
 import { mergeTexts } from './text-merge.js';
 import { renderSentences, syncSentenceBoxes, applySentenceBox } from './sentence-picker.js';
 import { syncAllNotes, notesInConflict } from './note-sync.js';
 import { listPhotosToMove, movePhotosToRepo } from './photos-move.js';
-// NB : exportMasterGeoJSON (admin.js) est importé dynamiquement dans son
-// handler de bouton (cf. carte OUTILS plus bas) pour casser le cycle
-// admin-control-center → admin-control-ui → admin → admin-control-center.
 
 // Ce fichier gère l'affichage (HTML, CSS, Interactions UI) du panneau d'administration
 
@@ -93,6 +90,7 @@ let _ccEscHandler = null;
 const TAB_LABELS = {
     dashboard:   { title: 'Tableau de bord', sub: "vue d'ensemble" },
     changes:     { title: 'Modifications',   sub: '' },
+    tools:       { title: 'Outils',          sub: '' },
     maintenance: { title: 'Nettoyage',       sub: 'archive et serveur' },
     settings:    { title: 'Configuration',   sub: '' },
 };
@@ -220,6 +218,10 @@ export function openControlCenterModal(diffData, callbacks) {
                     <button class="cc-nav-item" type="button" role="tab" data-tab="changes">
                         <i data-lucide="list-checks"></i> Modifications
                         ${changesCountHtml}
+                    </button>
+                    <!-- Outils (23/11/2026, maquette écran 63) : sortis du tableau de bord. -->
+                    <button class="cc-nav-item" type="button" role="tab" data-tab="tools">
+                        <i data-lucide="wrench"></i> Outils
                     </button>
                     <button class="cc-nav-item" type="button" role="tab" data-tab="maintenance">
                         <i data-lucide="server"></i> Nettoyage
@@ -615,7 +617,9 @@ export function renderTab(tab, diffData, callbacks) {
     // footer n'est construit qu'une fois à l'ouverture, avec diffData vide).
     syncFooterAndNavCount(diffData);
 
-    if (tab === 'dashboard') {
+    // Tableau de bord et Outils partagent le calcul et les branchements (les
+    // éléments absents de l'onglet affiché sont ignorés par bindCardAction).
+    if (tab === 'dashboard' || tab === 'tools') {
         // PR 4 — Refonte Dashboard : hero (pending/synced/no-token) + 4 stats
         // cliquables + outils. La hiérarchie répond d'abord à "qu'est-ce qui
         // m'attend ?" (hero) avant "que puis-je faire ?" (outils).
@@ -768,15 +772,17 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>` : '';
 
+        // Onglet Outils (23/11/2026, maquette écran 63 validée par Stefan) : rangés
+        // par groupe. « Exporter Master GeoJSON » et « Importer une carte (GeoJSON) »
+        // retirés (plus d'utilité ; l'import datait d'avant les destinations).
+        // Corbeille des rejets : provisoirement dans Lieux (→ Nettoyage, écran 64).
         const toolsHtml = `
-            <h4 class="cc-section-title">Outils</h4>
-            ${makePublicCardHtml}
-            ${movePhotosCardHtml}
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
-                <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
+            <h4 class="cc-section-title">Lieux</h4>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-mode-donnees" aria-label="Mode Données — éditer les lieux sur la vraie carte">
+                <div class="cc-card-ico"><i data-lucide="sliders-horizontal"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">Publier un circuit</div>
-                    <div class="cc-card-sub">Depuis un fichier GPX</div>
+                    <div class="cc-card-title">Mode Données</div>
+                    <div class="cc-card-sub">Éditer les lieux sur la vraie carte (liste + carte)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
@@ -788,6 +794,32 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-osm-pass" aria-label="Passe drapeaux OSM — revue des POI off-route">
+                <div class="cc-card-ico"><i data-lucide="flag"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Passe drapeaux OSM</div>
+                    <div class="cc-card-sub">Revue des POI off-route + pré-pose Overpass</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-rejected-trash" aria-label="Corbeille des rejets de curation Scout de cette destination">
+                <div class="cc-card-ico"><i data-lucide="trash-2"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Corbeille des rejets</div>
+                    <div class="cc-card-sub">Restaurer un candidat rejeté, ou tout vider (re-proposés au scan)</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+            <h4 class="cc-section-title">Circuits</h4>
+            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-upload-circuit-card" aria-label="Publier un circuit depuis un fichier GPX">
+                <div class="cc-card-ico"><i data-lucide="upload-cloud"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">Publier un circuit</div>
+                    <div class="cc-card-sub">Depuis un fichier GPX</div>
+                </div>
+                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
+            </div>
+            <h4 class="cc-section-title">Destination</h4>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-recalc-zones" aria-label="Compléter les quartiers (zones) de cette destination">
                 <div class="cc-card-ico"><i data-lucide="layers"></i></div>
                 <div class="cc-card-text">
@@ -804,51 +836,30 @@ export function renderTab(tab, diffData, callbacks) {
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-rejected-trash" aria-label="Corbeille des rejets de curation Scout de cette destination">
-                <div class="cc-card-ico"><i data-lucide="trash-2"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Corbeille des rejets</div>
-                    <div class="cc-card-sub">Restaurer un candidat rejeté, ou tout vider (re-proposés au scan)</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-export-master" aria-label="Télécharger le Master GeoJSON">
-                <div class="cc-card-ico"><i data-lucide="download"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Exporter Master GeoJSON</div>
-                    <div class="cc-card-sub">Sauvegarde complète du jeu de données</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-import-geojson" aria-label="Importer une carte GeoJSON locale">
-                <div class="cc-card-ico"><i data-lucide="folder-open"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Importer une carte (GeoJSON)</div>
-                    <div class="cc-card-sub">Charger une carte locale (.geojson / .json)</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-osm-pass" aria-label="Passe drapeaux OSM — revue des POI off-route">
-                <div class="cc-card-ico"><i data-lucide="flag"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Passe drapeaux OSM</div>
-                    <div class="cc-card-sub">Revue des POI off-route + pré-pose Overpass</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-mode-donnees" aria-label="Mode Données — éditer les lieux sur la vraie carte">
-                <div class="cc-card-ico"><i data-lucide="sliders-horizontal"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Mode Données</div>
-                    <div class="cc-card-sub">Éditer les lieux sur la vraie carte (liste + carte)</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
+            ${makePublicCardHtml}
+            ${movePhotosCardHtml}
             ${deleteDraftGhCardHtml}
         `;
 
+        // « N lieux à vérifier » (23/11/2026, écrans 61-62) : captures Scout pas
+        // encore validées. Pas une modification à publier (une capture ne part
+        // jamais tant qu'elle n'est pas validée) → ne touche ni le message ni
+        // « Tout publier ». Même compte que « Rendre publique » (sans les supprimés).
+        const toVerify = (state.loadedFeatures || []).filter(
+            (f) => isCandidate(f) && !(state.hiddenPoiIds || []).includes(getPoiId(f))
+        ).length;
+        const verifyHtml = toVerify === 0 ? '' : `
+            <div class="cc-card cc-card--row cc-card--todo" role="button" tabindex="0" id="btn-cc-to-verify" aria-label="Voir sur la carte les lieux à vérifier">
+                <div class="cc-card-ico"><i data-lucide="scan-eye"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">${toVerify} lieu${toVerify > 1 ? 'x' : ''} à vérifier sur ${mapLabel}</div>
+                    <div class="cc-card-sub">Capturés par le Scout · ils ne seront pas publiés tant que vous ne les avez pas validés</div>
+                </div>
+                <div class="cc-card-meta">Voir sur la carte <i data-lucide="chevron-right"></i></div>
+            </div>`;
+
         // Stats omises en empty state (totalCount=0) : 4 compteurs à 0 sont
-        // redondants avec le hero « tout synchronisé ». OUTILS toujours rendus.
+        // redondants avec le hero « tout synchronisé ». Les outils ont leur onglet.
         // Notes privées en conflit (18/11/2026) : elles se règlent dans la fiche,
         // on les signale ici pour ne pas passer à côté.
         const noteConflicts = notesInConflict();
@@ -857,7 +868,9 @@ export function renderTab(tab, diffData, callbacks) {
                 <i data-lucide="alert-triangle"></i>
                 <span><strong>${noteConflicts.length} note${noteConflicts.length > 1 ? 's' : ''} en conflit</strong> : ${noteConflicts.map(n => escapeXml(n.name)).join(', ')}. Ouvre la fiche pour la résoudre.</span>
             </div>`;
-        container.innerHTML = notesHtml + heroHtml + (totalCount > 0 ? statsHtml : '') + toolsHtml;
+        container.innerHTML = tab === 'tools'
+            ? toolsHtml
+            : notesHtml + heroHtml + (totalCount > 0 ? statsHtml : '') + verifyHtml;
 
         setTimeout(() => {
             // Hero CTA — uniquement no-token (variant pending n'a plus de bouton
@@ -895,6 +908,13 @@ export function renderTab(tab, diffData, callbacks) {
                     }
                 });
             };
+
+            // « N lieux à vérifier » → la carte n'affiche que ces lieux.
+            bindCardAction('btn-cc-to-verify', async () => {
+                closeCCModal();
+                const { showOnlyCandidates } = await import('./filter-panel.js');
+                showOnlyCandidates();
+            });
 
             // Outils — Scout (réunif Lot B) : mode plein-écran in-app (boîte bbox
             // sur la vraie carte + moisson Overpass). Remplace l'ancien onglet
@@ -1233,23 +1253,6 @@ export function renderTab(tab, diffData, callbacks) {
                             + `<p>Rien (ou peu) n'a été supprimé — tu peux réessayer.</p>`,
                     });
                 }
-            });
-
-            // Outils — Exporter Master GeoJSON : action directe (téléchargement).
-            // Import dynamique de admin.js (au lieu d'un import statique en tête)
-            // pour casser le cycle admin-control-center → admin-control-ui →
-            // admin → admin-control-center. admin.js est déjà chargé à ce stade,
-            // l'import est résolu instantanément (cache module).
-            bindCardAction('btn-cc-tool-export-master', async () => {
-                const { exportMasterGeoJSON } = await import('./admin.js');
-                exportMasterGeoJSON();
-            });
-
-            // Outils — Importer une carte (GeoJSON) : déclenche le file picker
-            // caché qui appelle handleFileLoad (fileManager.js) au change.
-            bindCardAction('btn-cc-tool-import-geojson', () => {
-                const loader = document.getElementById('geojson-loader');
-                if (loader) loader.click();
             });
 
             // Outils — Passe drapeaux OSM (PR 3/5 chantier point d'accès v2)

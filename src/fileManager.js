@@ -1,6 +1,6 @@
 // fileManager.js
-import { state, setCurrentMap, setLoadedFeatures, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
-import { getPoiId, displayGeoJSON } from './data.js';
+import { state, setCurrentMap, getActiveMapId, DEFAULT_MAP_ID} from './state.js';
+import { getPoiId } from './data.js';
 import { DOM } from './ui-dom.js';
 import { closeDetailsPanel } from './ui-details.js';
 import { showToast } from './toast.js';
@@ -11,55 +11,10 @@ import { switchActiveDestination } from './destination-switch.js';
 import { processImportedGpx } from './gpx.js';
 // Import pour contrôler la vue mobile
 import { isMobileView } from './mobile-state.js';
-import { eventBus } from './events.js';
 import { downloadFile } from './utils.js';
 import { getDraftZones, createLocalDraftDestination } from './local-destinations.js';
 
 // --- IMPORTATION GÉNÉRIQUE ---
-
-export function handleFileLoad(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        try {
-            const json = JSON.parse(e.target.result);
-            
-            // Cas 1 : GeoJSON (Carte)
-            if (json.type === 'FeatureCollection') {
-                const mapName = file.name.replace('.geojson', '').replace('.json', '');
-                
-                if (isMobileView()) {
-                    // Mobile: Chargement mémoire uniquement
-                    setLoadedFeatures(json.features || []);
-                    setCurrentMap(mapName);
-                    await saveAppState('lastMapId', mapName);
-                    await saveAppState(`lastGeoJSON_${mapName}`, json);
-                    eventBus.emit('mobile:switch-view', 'circuits');
-                } else {
-                    // Desktop: Rendu Carte
-                    await displayGeoJSON(json, mapName);
-                    // On cadre la vue sur la nouvelle carte
-                    import('./map.js').then(m => m.fitMapToContent())
-                        .catch(e => console.warn('[fileManager] import map.js échoué (déploiement en cours ?) :', e));
-                }
-            } 
-            // Cas 2 : Backup
-            else if (isValidBackup(json) && (json.baseGeoJSON || json.userData || json.kind === 'photos')) {
-                await restoreBackup(json);
-            }
-            else {
-                showToast("Format de fichier non reconnu.", "error");
-            }
-        } catch (error) {
-            console.error("Erreur lecture fichier:", error);
-            showToast("Erreur lors de la lecture du fichier.", "error");
-        }
-    };
-    reader.readAsText(file);
-    event.target.value = ''; 
-}
 
 // --- SAUVEGARDE (EXPORT) - INCHANGÉ ---
 // Option A — si la destination active est un BROUILLON LOCAL (custom), joindre sa
@@ -515,13 +470,8 @@ export function setupFileListeners() {
     // (Listener btnRestoreData retiré 10/05/2026, PR cleanup post-#514 : le
     // bouton Restaurer n'existe plus dans le menu Outils. Restauration via
     // Outils > Sauvegarder (PR3 dissolution Mon Espace, 06/06/2026).)
-    if (DOM.geojsonLoader) {
-        DOM.geojsonLoader.removeEventListener('change', handleFileLoad);
-        DOM.geojsonLoader.addEventListener('change', handleFileLoad);
-    }
-    // Handler `btn-open-geojson` retiré 15/05/2026 — le bouton n'existe plus
-    // dans le menu admin God Mode (déplacé en carte dans CC admin > Outils).
-    // L'input file caché `geojson-loader` reste actif côté change (parsing).
+    // « Importer une carte (GeoJSON) » retiré le 23/11/2026 (input
+    // `geojson-loader` et handleFileLoad) : datait d'avant les destinations.
 
     const btnSaveMobile = document.getElementById('btn-save-mobile');
     if (btnSaveMobile) {
