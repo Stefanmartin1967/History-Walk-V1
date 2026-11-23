@@ -495,9 +495,10 @@ export const GUIDE_CIRCUIT = {
                         d'Heripia.</li>
                     <li><strong>« Vider le brouillon »</strong> : repartir de zéro.</li>
                 </ul>
-                <p class="help-muted">Vos circuits restent <strong>sur cet appareil</strong>. Pour les
-                emporter sur un autre appareil ou ne pas les perdre, <strong>sauvegardez vos
-                données</strong> depuis <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</p>`,
+                <p class="help-muted">Vos circuits sont enregistrés <strong>sur cet appareil</strong>. Pour
+                les retrouver sur vos autres appareils et ne pas les perdre, <strong>reliez Heripia
+                à votre compte Google</strong>, ou sauvegardez-les dans un fichier, depuis
+                <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</p>`,
         },
     ],
     footnote: `Astuce : posez d'abord tous les lieux dans l'ordre, puis <strong>tracez à la
@@ -674,8 +675,9 @@ export const GUIDE_LIEU = {
         },
     ],
     footnote: `Astuce : un clic droit <strong>n'importe où</strong> sur la carte crée un lieu
-        à cet endroit — ajustez-le ensuite par glisser, ou avec « Déplacer ». Vos lieux restent
-        sur cet appareil : pour les sauvegarder, passez par <strong>Outils&nbsp;&gt; Sauvegarder</strong>.`,
+        à cet endroit — ajustez-le ensuite par glisser, ou avec « Déplacer ». Vos lieux sont
+        enregistrés sur cet appareil : pour les garder, reliez Heripia à votre compte Google ou
+        sauvegardez-les, depuis <strong>Outils&nbsp;&gt; Sauvegarder</strong>.`,
 };
 
 // ============================================================================
@@ -908,7 +910,8 @@ export const GUIDE_LIRE_LIEU = {
                         lieux visités ou planifiés.</li>
                     <li><strong>Mes notes</strong> : cliquez pour écrire vos impressions, conseils,
                         photos manquantes… Un lien collé dans le texte devient cliquable.
-                        <strong>Restent sur votre appareil</strong> — pensez à sauvegarder via
+                        <strong>Enregistrées sur votre appareil</strong> — pour les garder, reliez
+                        Heripia à votre compte Google ou sauvegardez-les, via
                         <strong>Outils&nbsp;&gt; Sauvegarder</strong>.</li>
                 </ul>
                 <p class="help-muted">Marquer un lieu Incontournable n'ajoute <strong>pas</strong>

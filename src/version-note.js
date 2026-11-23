@@ -72,6 +72,9 @@ export function showVersionNoteIfNeeded() {
         if (v === 'link') void import('./sync-reminders.js').then(m => m.linkNow());
     });
     const root = document.querySelector('.hw-modal-overlay:last-of-type') || document;
+    // Petit écran (320 px) : les deux boutons l'un sous l'autre (audit du 23/11/2026 :
+    // « Plus tard » sortait de l'écran par la gauche).
+    root.querySelector('.hw-modal-footer')?.classList.add('note-footer');
     root.querySelector('[data-note-later]')?.addEventListener('click', () => closeHwModal());
     root.querySelector('[data-note-ok]')?.addEventListener('click', () => closeHwModal());
     root.querySelector('[data-note-link]')?.addEventListener('click', () => closeHwModal('link'));
