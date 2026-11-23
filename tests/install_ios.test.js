@@ -9,7 +9,7 @@ vi.mock('../src/modal.js', () => ({ openHwModal: vi.fn((o) => { h.opened.push(o)
 vi.mock('../src/ui-utils.js', () => ({ closeAllDropdowns: vi.fn() }));
 window.matchMedia = window.matchMedia || (() => ({ matches: false }));
 
-import { isIOS, iosBannerSentence, iosInstallSteps, openIosInstallHelp, isDesktopFirefox, installEntryVisible, installEntrySub, installHelpContent, startInstallFromMenu } from '../src/install-pwa-banner.js';
+import { isIOS, iosBannerSentence, iosInstallSteps, iosInstallWhy, openIosInstallHelp, isDesktopFirefox, installEntryVisible, installEntrySub, installHelpContent, startInstallFromMenu, checkAlreadyInstalled } from '../src/install-pwa-banner.js';
 
 const nav = (userAgent, platform = '', maxTouchPoints = 0) => ({ userAgent, platform, maxTouchPoints });
 
@@ -37,11 +37,15 @@ describe('la fenêtre « Comment ? » (écran 56)', () => {
         const s = iosInstallSteps(true);
         expect(s).toHaveLength(3);
         expect(s[0]).toContain("en bas de l'écran");
+        expect(s[0]).toContain('≡');
         expect(s[1]).toContain("Sur l'écran d'accueil");
+        expect(s[1]).toContain('« En voir plus »');
         expect(s[2]).toContain('« Ajouter »');
     });
-    it('autre navigateur : pas de « en bas de l’écran »', () => {
+    it('autre navigateur (Chrome sur iPhone) : pas de « en bas de l’écran », pas de « Safari »', () => {
         expect(iosInstallSteps(false)[0]).not.toContain('en bas');
+        expect(iosInstallWhy(false)).not.toContain('Safari');
+        expect(iosInstallWhy(true)).toContain('pendant 7 jours');
     });
     it('raison en tête, bouton « J’ai compris »', () => {
         openIosInstallHelp();
@@ -85,7 +89,7 @@ describe('entrée « Installer Heripia » du menu', () => {
     });
     it('navigateur pas prêt : la bonne fenêtre selon l’appareil', () => {
         withUA(UA.android, startInstallFromMenu);
-        expect(h.opened.at(-1).body).toContain("« Ajouter à l'écran d'accueil »");
+        expect(h.opened.at(-1).body).toContain('commence par « Installer »');
         withUA(UA.chromePC, startInstallFromMenu);
         expect(h.opened.at(-1).body).toContain('cherchez « Installer »');
         withUA(UA.macSafari, startInstallFromMenu);
@@ -93,10 +97,19 @@ describe('entrée « Installer Heripia » du menu', () => {
         withUA(UA.iphone, startInstallFromMenu);
         expect(h.opened.at(-1).title).toBe("Installer Heripia sur l'iPhone");
     });
-    it('Android : 3 gestes, ⋮ en haut ou ≡ en bas', () => {
+    it('Android : 3 gestes, sans place ni libellé exacts (essai S25 : Brave, Samsung Internet)', () => {
         const html = installHelpContent('android');
         expect(html.match(/<li>/g)).toHaveLength(3);
-        expect(html).toContain('⋮');
-        expect(html).toContain('≡');
+        expect(html).toContain("en haut ou en bas de l'écran");
+        expect(html).toContain('commence par « Installer »');
+        expect(html).toContain("« Installer en tant qu'application Web »");
+        expect(html).not.toContain('≡');
+    });
+    it('déjà installée depuis ce navigateur : l’entrée disparaît', async () => {
+        expect(await checkAlreadyInstalled({ getInstalledRelatedApps: async () => [{ platform: 'webapp' }] })).toBe(true);
+        expect(withUA(UA.android, installEntryVisible)).toBe(false);
+        expect(await checkAlreadyInstalled({ getInstalledRelatedApps: async () => [] })).toBe(false);
+        expect(withUA(UA.android, installEntryVisible)).toBe(true);
+        expect(await checkAlreadyInstalled({})).toBe(false);
     });
 });

@@ -81,32 +81,57 @@ const chip = (icon, label) => `<span class="ios-install-chip">${icon ? `<i data-
 
 export function iosInstallSteps(safari = true) {
     const share = chip('share', 'Partager');
+    // Essai sur iPhone du 23/11/2026 : dans Safari récent, Partager est dans le
+    // menu ≡ à gauche de l'adresse ; « Sur l'écran d'accueil » est sous « En voir plus ».
     const step1 = safari
-        ? `Touchez ${share}, en bas de l'écran. S'il n'y est pas, touchez d'abord ${chip('', '···')}.`
+        ? `Touchez ${share}, en bas de l'écran. S'il n'y est pas, touchez d'abord ${chip('', '≡')} ou ${chip('', '···')}, à côté de l'adresse.`
         : `Touchez ${share}, dans la barre d'adresse ou dans le menu ${chip('', '···')}.`;
     return [
         step1,
-        `Choisissez ${chip('square-plus', "Sur l'écran d'accueil")} (faites défiler la liste si besoin).`,
+        `Choisissez ${chip('square-plus', "Sur l'écran d'accueil")} (s'il n'y est pas, touchez d'abord « En voir plus »).`,
         "Touchez « Ajouter ». Ouvrez ensuite Heripia depuis sa nouvelle icône.",
     ];
 }
 
+// Chrome sur iPhone (essai du 23/11/2026) : « Safari efface… après 7 jours » n'y
+// est pas vérifié ; phrase sans cette précision.
+export function iosInstallWhy(safari = true) {
+    return safari
+        ? "Sur iPhone, Safari efface ce qu'un site a enregistré quand vous ne l'ouvrez pas pendant 7 jours. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau."
+        : "Sur iPhone, ce qu'un site enregistre dans le navigateur peut être effacé. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau.";
+}
+
 export function openIosInstallHelp() {
-    const steps = iosInstallSteps(isIOSSafari())
+    const safari = isIOSSafari();
+    const steps = iosInstallSteps(safari)
         .map((s, i) => `<li><span class="ios-install-num">${i + 1}</span><span>${s}</span></li>`).join('');
     return openHwModal({
         size: 'sm',
         icon: 'download',
         title: "Installer Heripia sur l'iPhone",
-        body: `<p class="ios-install-why">Sur iPhone, Safari efface ce qu'un site a enregistré quand vous ne l'ouvrez pas pendant 7 jours. Installée sur l'écran d'accueil, Heripia garde vos visites, vos notes et vos circuits, et s'ouvre même sans réseau.</p>
+        body: `<p class="ios-install-why">${iosInstallWhy(safari)}</p>
             <ol class="ios-install-steps">${steps}</ol>`,
         footer: `<button class="btn btn-primary ios-install-ok" data-hw-modal-action="close">J'ai compris</button>`,
     });
 }
 
 // ─── Entrée « Installer Heripia » des menus ─────────────────────────────────
+// Heripia installée depuis ce navigateur, mais ouverte dans un onglet : le
+// navigateur ne propose plus l'installation ; on le lui demande
+// (getInstalledRelatedApps, manifest « related_applications »). Un autre
+// navigateur ne le sait pas (installée par Chrome, vue dans Brave).
+let installedHere = false;
+export async function checkAlreadyInstalled(nav = window.navigator) {
+    try {
+        if (typeof nav.getInstalledRelatedApps !== 'function') return false;
+        const apps = await nav.getInstalledRelatedApps();
+        installedHere = Array.isArray(apps) && apps.length > 0;
+    } catch { installedHere = false; }
+    return installedHere;
+}
+
 export function installEntryVisible() {
-    if (isStandalone()) return false;
+    if (isStandalone() || installedHere) return false;
     if (deferredPrompt || isIOS()) return true;
     return !isDesktopFirefox();
 }
@@ -121,9 +146,12 @@ const MONITOR_DL = '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" 
 // Où chercher quand le navigateur n'ouvre pas sa fenêtre (écrans 58 et 60).
 export function installHelpContent(kind) {
     if (kind === 'android') {
+        // Ni place ni libellé exacts : ils changent d'un navigateur à l'autre
+        // (essai sur S25 du 23/11/2026 : Brave et Samsung Internet ont ⋮ en bas,
+        // Chrome en haut ; « Installer et créer un raccourci » chez Brave).
         const steps = [
-            `Ouvrez le menu du navigateur : ${chip('', '⋮')} en haut à droite, ou ${chip('', '≡')} en bas.`,
-            "Touchez « Installer l'application » ou « Ajouter à l'écran d'accueil ».",
+            `Ouvrez le menu du navigateur ${chip('', '⋮')}, en haut ou en bas de l'écran.`,
+            "Touchez l'option qui commence par « Installer ». Dans Samsung Internet : « Ajouter la page à », puis « Installer en tant qu'application Web ».",
             'Confirmez. Ouvrez ensuite Heripia depuis sa nouvelle icône.',
         ].map((s, i) => `<li><span class="ios-install-num">${i + 1}</span><span>${s}</span></li>`).join('');
         return `<p class="ios-install-why">Installée, Heripia s'ouvre depuis son icône, en plein écran, et marche même sans réseau.</p>
@@ -198,7 +226,7 @@ let iosMode = false;
 
 function showBanner() {
     if (!bannerEl) return;
-    if (isStandalone()) return;
+    if (isStandalone() || installedHere) return;
     if (isDismissedRecently()) return;
     if (!deferredPrompt && !iosMode) return;
     bannerEl.classList.remove('is-hidden');
@@ -241,6 +269,11 @@ export function initInstallBanner() {
         entry.addEventListener('click', () => { closeAllDropdowns(); startInstallFromMenu(); });
         refreshInstallEntry();
     }
+    checkAlreadyInstalled().then((yes) => {
+        if (!yes) return;
+        hideBanner();
+        refreshInstallEntry();
+    });
 
     bannerEl = document.getElementById('install-banner');
     if (!bannerEl) return;

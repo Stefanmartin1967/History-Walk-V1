@@ -17,6 +17,9 @@
   "background_color": "#F0F4F8",
   "theme_color": "#0D3B66",
   "orientation": "any",
+  "related_applications": [
+    { "platform": "webapp", "url": "https://heripia.com/manifest.json" }
+  ],
   "icons": [
     {
       "src": "icons/icon-192.png",
