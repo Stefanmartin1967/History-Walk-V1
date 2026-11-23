@@ -63,33 +63,21 @@ export function calculateStats() {
     // téléphone à 453, l'écart = 30 captures Djerba gardées sur le PC).
     const shownFeatures = state.loadedFeatures.filter((f) => isShownToUser(f) && !isCandidate(f));
     const totalPois = shownFeatures.length;
-    let visitedPois = 0;
 
-    // Récupération de tous les IDs de POIs appartenant à des circuits terminés.
-    // Refonte Mon Espace V2 (14/05/2026) : on filtre via la blacklist
-    // `hiddenCircuitIds` — un circuit caché n'entre PAS dans le calcul du Carnet
-    // (ni dans le total des km objectifs, ni dans les POIs marqués via "Fait").
-    // Corrige le bug existant où la sélection Mon Espace était ignorée.
-    const completedCircuitPoiIds = new Set();
+    // Visité = coché « vu », rien d'autre (même chiffre que le menu du téléphone).
+    // Cocher « fait » sur un circuit coche déjà « vu » sur ses lieux du moment
+    // (visitedByCircuits, 09/2026). Jusqu'au 23/11/2026, le carnet comptait EN
+    // PLUS tous les lieux ACTUELS des circuits faits : un lieu ajouté au circuit
+    // après coup passait pour visité (carnet 86, menu 78 chez Stefan).
+    const visitedPois = shownFeatures
+        .filter((f) => state.userData[getPoiId(f)]?.vu)
+        .length;
+
+    // Refonte Mon Espace V2 (14/05/2026) : un circuit caché (`hiddenCircuitIds`)
+    // n'entre pas dans le total des km objectifs.
     const hiddenIds = state.hiddenCircuitIds || [];
     const officialCircuits = (state.officialCircuits || [])
         .filter(c => !hiddenIds.includes(String(c.id)));
-
-    officialCircuits.forEach(c => {
-        if (state.officialCircuitsStatus[String(c.id)]) {
-            (c.poiIds || []).forEach(poiId => completedCircuitPoiIds.add(poiId));
-        }
-    });
-
-    shownFeatures.forEach(feature => {
-        const id = getPoiId(feature);
-        const isVisitedDirectly = state.userData[id] && state.userData[id].vu;
-        const isVisitedViaCircuit = completedCircuitPoiIds.has(id);
-
-        if (isVisitedDirectly || isVisitedViaCircuit) {
-            visitedPois++;
-        }
-    });
     const poiPercent = totalPois > 0 ? Math.round((visitedPois / totalPois) * 100) : 0;
 
     // 2. Calculs Officiels (Distance)

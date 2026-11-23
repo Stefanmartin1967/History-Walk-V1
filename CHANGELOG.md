@@ -6,6 +6,7 @@
 
 ---
 
+- CARNET : VISITÉ = COCHÉ « VU » (v3.7.579). Constat de Stefan le 23/11/2026 : carnet 86 lieux visités, menu du téléphone 78. Le carnet comptait en plus tous les lieux actuels des circuits faits, y compris ceux ajoutés au circuit après l'avoir marqué fait (ex. Ziatine → Fadhloun). Depuis 09/2026, « fait » coche déjà « vu » sur les lieux du moment : le carnet ne compte plus que « vu », comme le menu.
 - CARNET SANS LES CAPTURES SCOUT (v3.7.578). Constat du 23/11/2026 : le PC admin comptait 483 lieux à Djerba, le téléphone 453 ; l'écart = 30 captures Scout à curer, gardées sur le PC. Le carnet ne les compte plus (ni dans le total, ni dans les visités) : ce ne sont pas encore des lieux d'Heripia. Un visiteur n'a jamais de captures, rien ne change pour lui.
 - CARNET DE VOYAGE SUR TÉLÉPHONE (v3.7.577). Signalé par Stefan le 23/11/2026 (S25) : la carte (340 px fixes) débordait de la fenêtre, coupée à droite (« 160. », « 86 », « 367 lieux à déco »), avec une barre de défilement. Sous 480 px, la carte prend la largeur disponible (max 340 px). Impression inchangée.
 - IPHONE : BARRE D'ÉTAT OPAQUE (v3.7.576). Essai sur iPhone du 23/11/2026 (app installée depuis Safari) : le titre du haut passait sous l'heure et une bande vide restait sous le dock. `apple-mobile-web-app-status-bar-style` passe de `black-translucent` à `default` : l'iPhone garde sa bande pour l'heure, l'app commence en dessous et descend jusqu'en bas. Choix validé par Stefan (« dommage de perdre cette place en bas »). Pas vérifié sur iPhone.
