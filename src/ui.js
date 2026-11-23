@@ -41,7 +41,7 @@ let currentEditor = { fieldId: null, poiId: null, callback: null };
 
 export function initializeDomReferences() {
     const ids = [
-        'geojson-loader', 'search-input', 'search-results', 'right-sidebar', 'sidebar-tabs',
+        'search-input', 'search-results', 'right-sidebar', 'sidebar-tabs',
         'details-panel', 'circuit-panel', 'circuit-steps-list', 'circuit-title-text', 'circuit-title-input', 
         'circuit-description', 'circuit-poi-count', 'circuit-distance',
         'gpx-importer',
