@@ -6,6 +6,10 @@
 
 ---
 
+- AUDIT AVANT PUBLICATION, 1RE PASSE (v3.7.572). Trous trouvés le 23/11/2026, corrections validées par Stefan.
+  - Règles de confidentialité : il manquait overpass-api.de (OpenStreetMap), qui reçoit la zone du tracé quand un user trace un circuit (types de voie). Ajouté, date mise à jour (23 novembre 2026).
+  - Aide : trois passages disaient « restent sur cet appareil, sauvegardez via Outils > Sauvegarder » sans parler du compte Google ; ils citent maintenant les deux.
+  - « Avant de continuer » à 320 px : « Plus tard » sortait de l'écran par la gauche ; sur petit écran, les deux boutons sont l'un sous l'autre, pleine largeur.
 - ACCUEIL ET RAPPELS DE LA SYNCHRO (v3.7.571). PR 9, dernière du chantier « synchro users » : écrans 11-16 (validés le 19/11) et 52-54 (validés le 23/11/2026).
   - « Avant de continuer » (NOTE_VERSION 2) : paragraphe « Vos données restent sur cet appareil » avant « Pour commencer », boutons « Plus tard » / « Relier à mon compte Google ». « sauvegarde complète » devient « Sauvegarder mes photos » (Données / Photos depuis la PR 3). En admin : inchangé (« J'ai compris »).
   - « Que voulez-vous faire ? » : 5e carte « Sauvegarder et synchroniser » → écran Sauvegarder.
