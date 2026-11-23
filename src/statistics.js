@@ -1,5 +1,5 @@
 import { state } from './state.js';
-import { getRealDistance, getOrthodromicDistance } from './utils.js';
+import { getRealDistance, getOrthodromicDistance, isCandidate } from './utils.js';
 import { getPoiId } from './data.js';
 import { isShownToUser } from './poi-visibility.js';
 import { openHwModal } from './modal.js';
@@ -58,7 +58,10 @@ export function calculateStats() {
     // « Existence à confirmer » masqués — avant le 18/10/2026, un visiteur avait
     // 16 lieux invisibles dans son total et ne pouvait jamais atteindre 100 %.
     // Les visités sont pris dans le même ensemble (jamais plus que le total).
-    const shownFeatures = state.loadedFeatures.filter(isShownToUser);
+    // Les captures Scout à curer (candidats) n'y entrent pas non plus : ce ne
+    // sont pas encore des lieux d'Heripia (23/11/2026 : PC admin à 483 lieux,
+    // téléphone à 453, l'écart = 30 captures Djerba gardées sur le PC).
+    const shownFeatures = state.loadedFeatures.filter((f) => isShownToUser(f) && !isCandidate(f));
     const totalPois = shownFeatures.length;
     let visitedPois = 0;
 
