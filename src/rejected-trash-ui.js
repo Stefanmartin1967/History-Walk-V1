@@ -1,9 +1,11 @@
-// rejected-trash-ui.js — Corbeille des rejets de curation Scout.
-// PR-2 du chantier rejets : liste les objets OSM REJETÉS (tombstones, rejected.js)
-// de la destination active, avec RESTAURATION par item (re-crée le candidat depuis
-// l'instantané, sans re-scanner) + « Tout vider » (bulk). Ouverte depuis une carte
-// du Centre de Contrôle (Outils). Calquée sur circuit-trash-ui.js (même shell V2
-// openHwModal + confirm inline, mêmes classes me-*).
+// rejected-trash-ui.js — Lieux rejetés au tri (corbeille des rejets de curation Scout).
+// Liste les objets OSM REJETÉS (tombstones, rejected.js) de la destination active,
+// avec RESTAURATION par item (re-crée le candidat depuis l'instantané, sans
+// re-scanner) + « Tout vider » (bulk).
+//
+// Depuis le 24/11/2026 (maquette écran 64 validée par Stefan) : 3e sous-onglet
+// « Lieux rejetés » de Nettoyage dans le Centre de Contrôle (admin-maintenance.js),
+// à côté de la corbeille des circuits. Avant : une modale ouverte depuis Outils.
 //
 // Cycle : un candidat supprimé (data.js deletePoi) est tombstoné (osm_ref) → ici on
 // le restaure (removeRejected + addPoiFeature candidate:true) ou on vide tout.
@@ -12,106 +14,87 @@ import { rejectedData, clearRejected, removeRejected, rejectedCount } from './re
 import { savePendingRejected, pushRejected } from './rejected-store.js';
 import { addPoiFeature } from './data.js';
 import { showToast } from './toast.js';
-import { openHwModal } from './modal.js';
-import { createIcons, appIcons } from './lucide-icons.js';
+import { showConfirm } from './modal.js';
 import { getStoredToken } from './github-sync.js';
 import { escapeHtml } from './utils.js';
 
-/** Ouvre la modale Corbeille des rejets. Idempotent (openHwModal interdit le stacking). */
-export function openRejectedTrash() {
-    openHwModal({
-        size: 'md',
-        icon: 'trash-2',
-        title: 'Corbeille des rejets',
-        body: renderBody(),
-        footer: false,
-        closeOnBackdrop: true,
-        closeOnEscape: true,
-    });
-    // Listeners après le paint du body (openHwModal injecte le HTML synchroniquement).
-    queueMicrotask(attachListeners);
+export { rejectedCount };
+
+function formatDate(ts) {
+    if (!ts) return '';
+    const d = new Date(Number(ts));
+    if (Number.isNaN(d.getTime())) return '';
+    const p = (n) => String(n).padStart(2, '0');
+    return `${p(d.getDate())}/${p(d.getMonth() + 1)}/${d.getFullYear()}`;
 }
 
-function renderBody() {
+/** HTML de la sous-vue « Lieux rejetés » (classes cc-* du Centre de Contrôle). */
+export function renderRejectedView() {
     const refs = Object.keys(rejectedData);
     if (refs.length === 0) {
         return `
-<div class="me-empty">
-  <div class="me-empty-mark"><i data-lucide="package-check"></i></div>
-  <p class="me-empty-title">Aucun objet rejeté</p>
-  <p class="me-empty-sub">
-    Quand tu supprimes un candidat pendant la curation, il atterrit ici et n'est plus
-    re-proposé au scan. Tu pourras le restaurer à tout moment.
-  </p>
-</div>`;
+            <div class="cc-empty">
+                <div class="cc-empty-mark"><i data-lucide="package-check"></i></div>
+                <h3 class="cc-empty-title">Aucun lieu rejeté.</h3>
+                <p class="cc-empty-sub">Quand vous supprimez une capture du Scout, elle arrive ici et n'est plus proposée. Vous pourrez la restaurer à tout moment.</p>
+            </div>
+        `;
     }
+
+    const itemsHtml = refs.map(ref => {
+        const r = rejectedData[ref] || {};
+        const name = escapeHtml(r.name || 'Sans nom');
+        const date = formatDate(r.rejectedAt);
+        const meta = escapeHtml(r.category || 'Catégorie ?') + (date ? ` · rejeté le ${date}` : '');
+        return `
+            <div class="cc-card cc-card--row">
+                <div class="cc-card-ico"><i data-lucide="map-pin-off"></i></div>
+                <div class="cc-card-text">
+                    <div class="cc-card-title">${name}</div>
+                    <div class="cc-card-sub">${meta}</div>
+                </div>
+                <div class="cc-card-meta">
+                    <button class="cc-diff-btn" data-action="restore-rejected" data-ref="${escapeHtml(ref)}" type="button" title="Restaurer ce lieu" aria-label="Restaurer ${name}">
+                        <i data-lucide="rotate-ccw"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+
     return `
-<div class="me-stack">
-  <section class="me-block" aria-labelledby="lbl-rejtrash">
-    <div class="me-block-head">
-      <h3 class="me-block-title" id="lbl-rejtrash">Objets rejetés (${refs.length})</h3>
-      <button class="me-btn ghost" data-action="clear-all" type="button">
-        <i data-lucide="trash-2"></i> Tout vider
-      </button>
-    </div>
-    <div class="me-hint">
-      <i data-lucide="info"></i>
-      <span>Restaure un objet pour le récupérer comme candidat à curer ; il ne sera plus ignoré au scan.</span>
-    </div>
-    <div class="me-trash">
-      ${refs.map(ref => {
-          const r = rejectedData[ref] || {};
-          const safeName = escapeHtml(r.name || 'Sans nom');
-          const meta = escapeHtml(r.category || 'Catégorie ?');
-          return `
-        <div class="me-trash-item" id="rj-trash-${escapeHtml(ref)}">
-          <div class="me-trash-ico"><i data-lucide="map-pin-off"></i></div>
-          <div class="me-trash-text">
-            <p class="me-trash-title">${safeName}</p>
-            <p class="me-trash-meta">${meta} · ${escapeHtml(ref)}</p>
-          </div>
-          <div class="me-trash-actions">
-            <button class="me-btn secondary" data-action="restore" data-ref="${escapeHtml(ref)}" type="button">
-              <i data-lucide="rotate-ccw"></i> Restaurer
+        <div class="cc-section-title--row">
+            <h4 class="cc-section-title">Lieux rejetés au tri · ${refs.length}</h4>
+            <button class="cc-diff-btn cc-diff-btn--danger cc-rejected-clear" data-action="clear-rejected" type="button">
+                <i data-lucide="trash-2"></i> Tout vider
             </button>
-          </div>
-        </div>`;
-      }).join('')}
-    </div>
-  </section>
-</div>`;
+        </div>
+        <p class="cc-rejected-hint">Restaurer remet le lieu dans les lieux à vérifier. Vider : ils seront proposés de nouveau au prochain passage du Scout.</p>
+        ${itemsHtml}
+    `;
 }
 
-function getOverlayRoot() {
-    return document.querySelector('.hw-modal-overlay.is-active') || document.querySelector('.hw-modal-overlay');
-}
-
-function rerender() {
-    const root = getOverlayRoot();
-    if (!root) return;
-    const bodyEl = root.querySelector('.hw-modal-body');
-    if (!bodyEl) return;
-    bodyEl.innerHTML = renderBody();
-    createIcons({ icons: appIcons, root: bodyEl });
-    attachListeners();
-}
-
-function attachListeners() {
-    const root = getOverlayRoot();
-    if (!root) return;
-
-    root.querySelectorAll('[data-action="restore"]').forEach(btn => {
+/** Branche les boutons de la sous-vue. `refresh` redessine l'onglet (compteurs compris). */
+export function bindRejectedView(container, refresh) {
+    container.querySelectorAll('[data-action="restore-rejected"]').forEach(btn => {
         btn.addEventListener('click', async () => {
             btn.disabled = true;
-            btn.innerHTML = '<i data-lucide="check"></i> Restauré';
-            createIcons({ icons: appIcons, root: btn });
             await restoreRejected(btn.dataset.ref);
-            setTimeout(rerender, 250);
+            refresh();
         });
     });
-
-    const clearBtn = root.querySelector('[data-action="clear-all"]');
-    if (clearBtn) clearBtn.addEventListener('click', openClearConfirm);
+    container.querySelector('[data-action="clear-rejected"]')?.addEventListener('click', async () => {
+        const n = rejectedCount();
+        const ok = await showConfirm(
+            'Tout vider',
+            `Les ${n} lieu${n > 1 ? 'x' : ''} rejeté${n > 1 ? 's' : ''} ${n > 1 ? 'seront proposés' : 'sera proposé'} de nouveau au prochain passage du Scout.`,
+            'Tout vider', 'Annuler', true
+        );
+        if (!ok) return;
+        clearRejected();
+        await saveAndPushRejected();
+        refresh();
+    });
 }
 
 // Enregistre l'état sur l'appareil puis pousse le fichier rejets entier tout de suite
@@ -126,6 +109,7 @@ async function saveAndPushRejected() {
 
 // Restaure UN rejet : re-crée le candidat depuis l'instantané (pas de re-scan) puis
 // retire le tombstone et pousse. Si la re-création échoue, on NE retire PAS le rejet.
+// Pas de toast de succès : le lieu quitte la liste et le compteur baisse.
 async function restoreRejected(osmRef) {
     const rec = rejectedData[osmRef];
     if (!rec) return;
@@ -147,49 +131,5 @@ async function restoreRejected(osmRef) {
         return;
     }
     removeRejected(osmRef);
-    showToast(`« ${rec.name || 'Sans nom'} » restauré comme candidat à curer.`, 'success', 3200);
     await saveAndPushRejected();
-}
-
-// ─── Confirm « Tout vider » (surcouche dans la modale — stacking openHwModal interdit) ──
-function openClearConfirm() {
-    const root = getOverlayRoot();
-    if (!root) return;
-    const modal = root.querySelector('.hw-modal');
-    if (!modal || modal.querySelector('.rj-confirm-overlay')) return;
-
-    const n = rejectedCount();
-    const overlay = document.createElement('div');
-    overlay.className = 'me-confirm-overlay rj-confirm-overlay is-active';
-    overlay.setAttribute('aria-hidden', 'false');
-    overlay.innerHTML = `
-        <div class="me-confirm" role="alertdialog" aria-labelledby="rj-confirm-title" aria-describedby="rj-confirm-body">
-            <div class="me-confirm-head">
-                <div class="me-confirm-ico"><i data-lucide="alert-triangle"></i></div>
-                <div class="me-confirm-title" id="rj-confirm-title">Tout vider&nbsp;?</div>
-            </div>
-            <p class="me-confirm-body" id="rj-confirm-body">
-                Les <strong>${n}</strong> objet(s) rejeté(s) seront de nouveau proposés au prochain scan de la zone.
-            </p>
-            <div class="me-confirm-actions">
-                <button class="me-btn ghost" data-confirm="cancel" type="button">Annuler</button>
-                <button class="me-btn danger-solid" data-confirm="ok" type="button">
-                    <i data-lucide="trash-2"></i> Tout vider
-                </button>
-            </div>
-        </div>
-    `;
-    modal.appendChild(overlay);
-    createIcons({ icons: appIcons, root: overlay });
-
-    const close = () => overlay.remove();
-    overlay.addEventListener('click', (e) => { if (e.target === overlay) close(); });
-    overlay.querySelector('[data-confirm="cancel"]')?.addEventListener('click', close);
-    overlay.querySelector('[data-confirm="ok"]')?.addEventListener('click', () => {
-        close();
-        clearRejected();
-        showToast('Rejets vidés.', 'info', 2800);
-        saveAndPushRejected();
-        rerender();
-    });
 }

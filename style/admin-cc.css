@@ -565,6 +565,9 @@
 }
 .cc-section-title--row > .cc-section-title { margin: 0; }
 .cc-section-title--row:first-child { margin-top: 0; }
+/* Nettoyage > Lieux rejetés (24/11/2026) : la phrase sous le titre. */
+.cc-rejected-hint { margin: 0 0 10px; font-size: 12px; color: var(--ink-soft); }
+.cc-diff-btn.cc-rejected-clear { color: var(--danger-fg); border-color: color-mix(in oklab, var(--danger-fg) 35%, transparent); }
 
 /* ================================================
    DASHBOARD (PR 4) — hero + stats + outils
