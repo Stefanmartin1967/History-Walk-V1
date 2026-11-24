@@ -978,7 +978,11 @@ export async function loadCircuitById(id) {
             }
         } catch (e) {
             console.error(`[Circuit] Erreur chargement trace :`, e);
-            showToast("Erreur de chargement du tracé GPX (hors-ligne ?).", "error");
+            // Une demande qui échoue sans réponse = pas de réseau (un fichier
+            // absent répond, lui : cas « introuvable » au-dessus). Pas une panne :
+            // le tracé revient seul au retour du réseau (reloadMissingTraceOnReconnect).
+            // Texte validé par Stefan le 24/11/2026 (test hors-ligne, S25).
+            showToast("Pas de réseau : le tracé de ce circuit n'est pas encore sur ce téléphone. Les étapes sont reliées en ligne droite ; le vrai tracé s'affichera au retour du réseau.", "info", 7000);
         }
     }
     // Copie de travail pour l'affichage (tracé compris) ; la source reste l'objet

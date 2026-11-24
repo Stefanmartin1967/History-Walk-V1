@@ -868,6 +868,21 @@ describe('loadCircuitById — lazy-load du tracé officiel', () => {
 
         expect(state.officialCircuits[0].description).toBe('Texte déjà publié');
     });
+
+    // 24/11/2026, test hors-ligne de Stefan (S25) : « Erreur de chargement du
+    // tracé GPX (hors-ligne ?) » en rouge, alors que ce n'est pas une panne.
+    it("sans réseau : message clair, en information, et le circuit s'ouvre quand même", async () => {
+        fetchWithTimeout.mockRejectedValue(new TypeError('Failed to fetch'));
+        state.officialCircuits = [{ id: 'HW-off', name: 'O', poiIds: [], file: 'djerba/O.gpx', isOfficial: true }];
+
+        await loadCircuitById('HW-off');
+
+        expect(showToast).toHaveBeenCalledWith(
+            expect.stringMatching(/^Pas de réseau : le tracé de ce circuit n'est pas encore sur ce téléphone\./),
+            'info', 7000);
+        expect(showToast.mock.calls.flat().join(' ')).not.toMatch(/GPX/);
+        expect(state.currentCircuit).toBeTruthy();
+    });
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
