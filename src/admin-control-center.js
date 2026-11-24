@@ -836,7 +836,7 @@ async function publishChanges() {
     // Rejets de candidats en attente (02/11/2026) : ils partent avec cette publication.
     const rejectedToSend = pendingRejectedCount();
     const rejectedNote = rejectedToSend > 0
-        ? `${rejectedToSend} rejet${rejectedToSend > 1 ? 's' : ''} de candidats ${rejectedToSend > 1 ? 'seront aussi publiés' : 'sera aussi publié'} (corbeille des rejets).\n\n`
+        ? `${rejectedToSend} rejet${rejectedToSend > 1 ? 's' : ''} de candidats ${rejectedToSend > 1 ? 'seront aussi publiés' : 'sera aussi publié'} (Nettoyage → Lieux rejetés).\n\n`
         : '';
 
     // Garde-fou perte de contenu : le diff affiche fidèlement les champs modifiés,

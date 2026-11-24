@@ -775,7 +775,7 @@ export function renderTab(tab, diffData, callbacks) {
         // Onglet Outils (23/11/2026, maquette écran 63 validée par Stefan) : rangés
         // par groupe. « Exporter Master GeoJSON » et « Importer une carte (GeoJSON) »
         // retirés (plus d'utilité ; l'import datait d'avant les destinations).
-        // Corbeille des rejets : provisoirement dans Lieux (→ Nettoyage, écran 64).
+        // Corbeille des rejets : sous-onglet « Lieux rejetés » de Nettoyage (écran 64).
         const toolsHtml = `
             <h4 class="cc-section-title">Lieux</h4>
             <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-mode-donnees" aria-label="Mode Données — éditer les lieux sur la vraie carte">
@@ -799,14 +799,6 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-card-text">
                     <div class="cc-card-title">Passe drapeaux OSM</div>
                     <div class="cc-card-sub">Revue des POI off-route + pré-pose Overpass</div>
-                </div>
-                <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
-            </div>
-            <div class="cc-card cc-card--row" role="button" tabindex="0" id="btn-cc-tool-rejected-trash" aria-label="Corbeille des rejets de curation Scout de cette destination">
-                <div class="cc-card-ico"><i data-lucide="trash-2"></i></div>
-                <div class="cc-card-text">
-                    <div class="cc-card-title">Corbeille des rejets</div>
-                    <div class="cc-card-sub">Restaurer un candidat rejeté, ou tout vider (re-proposés au scan)</div>
                 </div>
                 <div class="cc-card-meta"><i data-lucide="chevron-right"></i></div>
             </div>
@@ -1087,21 +1079,6 @@ export function renderTab(tab, diffData, callbacks) {
                 }
             });
 
-            // Outils — « Corbeille des rejets » (chantier rejets, PR-2) : ouvre la modale
-            // qui liste les tombstones de curation Scout ({dest}-rejected.json), avec
-            // RESTAURATION par item (re-crée le candidat depuis l'instantané, sans
-            // re-scan) + « Tout vider » (bulk, ex-soupape PR-1, désormais dans la modale).
-            bindCardAction('btn-cc-tool-rejected-trash', async () => {
-                const dest = state.destinations?.maps?.[state.currentMapId];
-                if (!dest) {
-                    showToast('Aucune destination active.', 'warning', 3500);
-                    return;
-                }
-                closeCCModal();
-                const { openRejectedTrash } = await import('./rejected-trash-ui.js');
-                openRejectedTrash();
-            });
-
             // Outils — « Rendre publique » (MODÈLE C) : bascule status:draft → published
             // (setDestinationPublished, un micro-push de destinations.json). Visible sur
             // toute destination non publiée. La curation a déjà été poussée par « Tout
@@ -1308,7 +1285,7 @@ export function renderTab(tab, diffData, callbacks) {
                 <div class="cc-empty">
                     <div class="cc-empty-mark"><i data-lucide="trash-2"></i></div>
                     <h3 class="cc-empty-title">${rejectedLabel} en attente.</h3>
-                    <p class="cc-empty-sub">${rejectedPending > 1 ? 'Ils partiront' : 'Il partira'} avec « Tout publier », en une fois. La liste est dans Outils → Corbeille des rejets.</p>
+                    <p class="cc-empty-sub">${rejectedPending > 1 ? 'Ils partiront' : 'Il partira'} avec « Tout publier », en une fois. La liste est dans Nettoyage → Lieux rejetés.</p>
                 </div>
             `;
             createIcons({ icons: appIcons, root: container });

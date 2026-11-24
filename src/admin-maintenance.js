@@ -10,16 +10,19 @@ import { showToast } from './toast.js';
 import { createIcons, appIcons } from './lucide-icons.js';
 import { showConfirm } from './modal.js';
 import { setTopbarSubtabs } from './admin-cc-topbar.js';
+import { renderRejectedView, bindRejectedView, rejectedCount } from './rejected-trash-ui.js';
 
 // PR 6 — Refonte de l'onglet Nettoyage : sub-router 2 onglets (Corbeille locale
 // / Circuits publiés) intégré au topbar du shell, items en `.cc-card.cc-card--row`
 // (pattern partagé avec les autres onglets, fini la fragmentation visuelle de
 // `.maint-section`).
+// 24/11/2026 (maquette écran 64) : 3e sous-onglet « Lieux rejetés » (ex-modale
+// « Corbeille des rejets » ouverte depuis Outils), cf. rejected-trash-ui.js.
 
 // --- STATE ---
 let serverCircuits = [];
 let deletedCircuits = [];
-let _maintSubView = 'trash';     // 'trash' (corbeille locale) | 'server'
+let _maintSubView = 'trash';     // 'trash' (corbeille locale) | 'server' | 'rejected'
 
 /**
  * Récupère l'index officiel depuis le serveur (bypass cache)
@@ -65,14 +68,15 @@ function renderResults(container) {
     const hasToken = !!getStoredToken();
 
     // — Sub-tabs dans le topbar (Corbeille locale / Fichiers serveur) —
-    const subtabsHtml = renderMaintSubtabs(_maintSubView, deletedCircuits.length, serverCircuits.length);
+    const subtabsHtml = renderMaintSubtabs(_maintSubView, deletedCircuits.length, serverCircuits.length, rejectedCount());
     setTopbarSubtabs(subtabsHtml, (view) => {
         _maintSubView = view;
         renderResults(container);
     });
 
     // — Bandeau si pas de token (lecture seule) —
-    const tokenBanner = !hasToken ? `
+    // (Lieux rejetés : sans token, on enregistre sur l'appareil, rien n'est bloqué.)
+    const tokenBanner = !hasToken && _maintSubView !== 'rejected' ? `
         <div class="cc-banner cc-banner--warn">
             <i data-lucide="alert-triangle"></i>
             <div>
@@ -85,6 +89,8 @@ function renderResults(container) {
     let bodyHtml = '';
     if (_maintSubView === 'trash') {
         bodyHtml = renderTrashView(deletedCircuits);
+    } else if (_maintSubView === 'rejected') {
+        bodyHtml = renderRejectedView();
     } else {
         bodyHtml = renderServerView(serverCircuits, hasToken);
     }
@@ -93,9 +99,10 @@ function renderResults(container) {
     createIcons({ icons: appIcons, root: container });
 
     bindEvents(container);
+    if (_maintSubView === 'rejected') bindRejectedView(container, () => renderResults(container));
 }
 
-function renderMaintSubtabs(activeView, trashCount, serverCount) {
+function renderMaintSubtabs(activeView, trashCount, serverCount, rejectedTotal) {
     const tab = (view, label, count) => `
         <button class="cc-subtab${activeView === view ? ' is-active' : ''}"
                 type="button" role="tab"
@@ -105,7 +112,8 @@ function renderMaintSubtabs(activeView, trashCount, serverCount) {
         </button>
     `;
     return tab('trash',  'Corbeille locale', trashCount)
-         + tab('server', 'Circuits publiés', serverCount);
+         + tab('server', 'Circuits publiés', serverCount)
+         + tab('rejected', 'Lieux rejetés', rejectedTotal);
 }
 
 /**
