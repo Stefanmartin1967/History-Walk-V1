@@ -28,7 +28,11 @@ async function boot({ online }) {
     ({ fetchWithTimeout } = await import('../src/net.js'));
     fetchWithTimeout.mockReset();
     fetchWithTimeout.mockRejectedValue(new TypeError('Failed to fetch'));
+    // En ligne, l'essai du démarrage (24/11/2026) réussit, puis on repart d'un
+    // compteur d'appels vide : les tests ci-dessous parlent de la suite.
+    if (online) fetchWithTimeout.mockResolvedValueOnce({ ok: true, status: 200 });
     mod.initNetworkStatus();
+    if (online) { await flush(); fetchWithTimeout.mockClear(); }
 }
 const reachable = () => fetchWithTimeout.mockResolvedValue({ ok: true, status: 200 });
 const bannerShown = () => document.getElementById('offline-banner').classList.contains('visible');
@@ -59,12 +63,50 @@ afterEach(() => {
 });
 
 describe('network-status.js — passage hors-ligne', () => {
-    it('démarrage en ligne : pas de bandeau, aucune vérification', async () => {
-        await boot({ online: true });
+    it('démarrage en ligne : un seul essai au démarrage, réussi → pas de bandeau', async () => {
+        onLine = true;
+        vi.resetModules();
+        mod = await import('../src/network-status.js');
+        ({ fetchWithTimeout } = await import('../src/net.js'));
+        fetchWithTimeout.mockReset();
+        reachable();
+        mod.initNetworkStatus();
+        await flush();
 
         expect(mod.isOffline()).toBe(false);
         expect(bannerShown()).toBe(false);
-        expect(fetchWithTimeout).not.toHaveBeenCalled();
+        expect(fetchWithTimeout).toHaveBeenCalledTimes(1);
+        expect(fetchWithTimeout.mock.calls[0][0]).toMatch(/robots\.txt\?verif=\d+$/);
+        vi.advanceTimersByTime(60000);
+        expect(fetchWithTimeout).toHaveBeenCalledTimes(1); // pas de vérification en boucle en ligne
+    });
+
+    it("navigator.onLine vrai à tort (mode avion, S25) : l'essai échoue → bandeau", async () => {
+        onLine = true;
+        vi.resetModules();
+        mod = await import('../src/network-status.js');
+        ({ fetchWithTimeout } = await import('../src/net.js'));
+        fetchWithTimeout.mockReset();
+        fetchWithTimeout.mockRejectedValue(new TypeError('Failed to fetch'));
+        mod.initNetworkStatus();
+        await flush();
+
+        expect(mod.isOffline()).toBe(true);
+        expect(bannerShown()).toBe(true);
+    });
+
+    it("en ligne, réponse d'erreur du serveur = en ligne quand même", async () => {
+        onLine = true;
+        vi.resetModules();
+        mod = await import('../src/network-status.js');
+        ({ fetchWithTimeout } = await import('../src/net.js'));
+        fetchWithTimeout.mockReset();
+        fetchWithTimeout.mockResolvedValue({ ok: false, status: 503 });
+        mod.initNetworkStatus();
+        await flush();
+
+        expect(mod.isOffline()).toBe(false);
+        expect(bannerShown()).toBe(false);
     });
 
     it('démarrage sans réseau : bandeau, et une vérification tout de suite', async () => {

@@ -86,5 +86,16 @@ export function initNetworkStatus() {
     if (navigator.onLine === false) {
         goOffline();
         checkNetwork(); // un navigator.onLine faux à tort se corrige tout de suite
+    } else {
+        // navigator.onLine VRAI à tort : sur le S25 de Stefan, en mode avion
+        // (Chrome le 20/10/2026, Brave le 24/11/2026), le téléphone se dit en
+        // ligne → pas de bandeau, et le visiteur voyait photos manquantes et
+        // tracé indisponible sans savoir pourquoi. On essaie donc pour de vrai,
+        // une fois au démarrage : une demande qui ÉCHOUE (pas de réponse du
+        // tout) = hors-ligne. Toute réponse du serveur, même une erreur, = en ligne.
+        const base = import.meta.env?.BASE_URL || '/';
+        fetchWithTimeout(`${base}${CHECK_PATH}?verif=${Date.now()}`,
+            { method: 'HEAD', cache: 'no-store' }, CHECK_TIMEOUT_MS)
+            .catch(() => goOffline());
     }
 }
