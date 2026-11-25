@@ -29,6 +29,8 @@ const h = vi.hoisted(() => {
         pushMobileLevel: vi.fn(),
         listeners: {},
         shown: vi.fn(() => true),
+        openGeoHelp: vi.fn(),
+        onGranted: null,
     };
 });
 
@@ -105,6 +107,14 @@ vi.mock('../src/mobile-new-place.js', () => ({
     createPlaceAt: h.createPlaceAt,
 }));
 
+// Position refusée (24/11/2026) : l'aide et l'abonnement « autorisée » sont
+// remplacés (les textes de l'encadré sont dans mobile-follow.js).
+vi.mock('../src/geo-permission.js', () => ({
+    isGeoDenied: (err) => err?.code === 1,
+    openGeoPermissionHelp: h.openGeoHelp,
+    onGeoPermissionGranted: (fn) => { h.onGranted = fn; return () => { h.onGranted = null; }; },
+}));
+
 import {
     startAroundMe, stopFollow, isFollowActive, getResumeFollow, followBack,
 } from '../src/mobile-follow.js';
@@ -118,13 +128,15 @@ const poi = (id, lat, lng, extra = {}) => ({
 const liveMarkers = () => h.markers.filter((m) => !m.removed);
 
 let watchSuccess = null;
+let watchError = null;
+let watchCount = 0;
 
 beforeAll(() => {
     globalThis.requestAnimationFrame = (fn) => { h.rafs.push(fn); return 0; };
     Object.defineProperty(navigator, 'geolocation', {
         configurable: true,
         value: {
-            watchPosition: (ok) => { watchSuccess = ok; return 1; },
+            watchPosition: (ok, err) => { watchSuccess = ok; watchError = err; watchCount++; return 1; },
             clearWatch: vi.fn(),
         },
     });
@@ -231,5 +243,44 @@ describe('Autour de moi — aperçu et fiche', () => {
         await flush();
         expect(h.openDetailsPanel).toHaveBeenCalledWith(7);
         expect(getResumeFollow()).toEqual({ mode: 'around', circuitId: null });
+    });
+});
+
+describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/2026)', () => {
+    const invite = () => document.querySelector('#follow-invite');
+    const text = (id) => document.querySelector(id).textContent;
+
+    it("refusée : « Position refusée », réglages du navigateur, « Comment faire ? » ouvre l'aide", () => {
+        watchError({ code: 1, message: 'User denied Geolocation' });
+        expect(invite().hidden).toBe(false);
+        expect(text('#follow-invite-t')).toBe('Position refusée');
+        expect(text('#follow-invite-s')).toBe('Les lieux restent affichés. Pour vous voir avancer, autorisez la position dans les réglages du navigateur.');
+        expect(invite().textContent).not.toMatch(/Autorise |te voir|User denied/);
+        const before = watchCount;
+        document.querySelector('#follow-invite-btn').click();
+        expect(text('#follow-invite-btn')).toBe('Comment faire ?');
+        expect(h.openGeoHelp).toHaveBeenCalledTimes(1);
+        expect(watchCount).toBe(before); // pas de relance inutile
+    });
+
+    it('introuvable : « Réessayer » relance la recherche', () => {
+        watchError({ code: 2, message: 'Position unavailable' });
+        expect(text('#follow-invite-t')).toBe('Position introuvable');
+        expect(text('#follow-invite-s')).toContain('Vérifiez que la localisation du téléphone est activée.');
+        const before = watchCount;
+        document.querySelector('#follow-invite-btn').click();
+        expect(watchCount).toBe(before + 1);
+    });
+
+    it('position autorisée dans les réglages : la recherche repart toute seule', () => {
+        watchError({ code: 1 });
+        const before = watchCount;
+        h.onGranted();
+        expect(watchCount).toBe(before + 1);
+    });
+
+    it("à la fermeture, plus d'abonnement", () => {
+        stopFollow();
+        expect(h.onGranted).toBeNull();
     });
 });

@@ -25,6 +25,7 @@ import { showConfirm } from './modal.js';
 import { setAccessPointAt } from './access-point.js';
 import { setHeroPhoto } from './hero-photo.js';
 import { getPhotoFocus } from './photo-focus.js';
+import { geoErrorSentence } from './geo-permission.js';
 
 export function initMobilePoiListeners() {
     eventBus.on('mobile:update-poi-position', (poiId) => updatePoiPosition(poiId));
@@ -473,7 +474,7 @@ export function updatePoiPosition(poiId) {
                 }
             );
         },
-        (err) => showToast("Erreur GPS : " + err.message, "error"),
+        (err) => showToast(geoErrorSentence(err), "error", 5000),
         { enableHighAccuracy: true, timeout: 10000 }
     );
 }
@@ -500,7 +501,7 @@ export function setAccessPointToCurrentPosition(poiId) {
             // setAccessPointAt écrit accessPoint + statut 'moved' (+ toast « Enregistré »).
             await setAccessPointAt(poiId, longitude, latitude);
         },
-        (err) => showToast("Erreur GPS : " + err.message, "error"),
+        (err) => showToast(geoErrorSentence(err), "error", 5000),
         { enableHighAccuracy: true, timeout: 10000 }
     );
 }
