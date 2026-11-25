@@ -110,7 +110,9 @@ vi.mock('../src/mobile-new-place.js', () => ({
 // Position refusée (24/11/2026) : l'aide et l'abonnement « autorisée » sont
 // remplacés (les textes de l'encadré sont dans mobile-follow.js).
 vi.mock('../src/geo-permission.js', () => ({
-    isGeoDenied: (err) => err?.code === 1,
+    // Asynchrone depuis le test E (25/11/2026) : code 1 + site encore
+    // autorisé = localisation du téléphone coupée, pas un refus.
+    isGeoDenied: async (err) => err?.code === 1 && h.permState !== 'granted',
     openGeoPermissionHelp: h.openGeoHelp,
     onGeoPermissionGranted: (fn) => { h.onGranted = fn; return () => { h.onGranted = null; }; },
 }));
@@ -250,8 +252,10 @@ describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/20
     const invite = () => document.querySelector('#follow-invite');
     const text = (id) => document.querySelector(id).textContent;
 
-    it("refusée : « Position refusée », réglages du navigateur, « Comment faire ? » ouvre l'aide", () => {
+    it("refusée : « Position refusée », réglages du navigateur, « Comment faire ? » ouvre l'aide", async () => {
+        h.permState = 'denied';
         watchError({ code: 1, message: 'User denied Geolocation' });
+        await flush();
         expect(invite().hidden).toBe(false);
         expect(text('#follow-invite-t')).toBe('Position refusée');
         expect(text('#follow-invite-s')).toBe('Les lieux restent affichés. Pour vous voir avancer, autorisez la position dans les réglages du navigateur.');
@@ -263,8 +267,9 @@ describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/20
         expect(watchCount).toBe(before); // pas de relance inutile
     });
 
-    it('introuvable : « Réessayer » relance la recherche', () => {
+    it('introuvable : « Réessayer » relance la recherche', async () => {
         watchError({ code: 2, message: 'Position unavailable' });
+        await flush();
         expect(text('#follow-invite-t')).toBe('Position introuvable');
         expect(text('#follow-invite-s')).toContain('Vérifiez que la localisation du téléphone est activée.');
         const before = watchCount;
@@ -272,8 +277,31 @@ describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/20
         expect(watchCount).toBe(before + 1);
     });
 
-    it('position autorisée dans les réglages : la recherche repart toute seule', () => {
+    it('test E : localisation du téléphone coupée (code 1, site autorisé) → « Position introuvable »', async () => {
+        h.permState = 'granted';
+        watchError({ code: 1, message: 'User denied Geolocation' });
+        await flush();
+        expect(text('#follow-invite-t')).toBe('Position introuvable');
+        expect(text('#follow-invite-btn')).toBe('Réessayer');
+        const before = watchCount;
+        document.querySelector('#follow-invite-btn').click();
+        expect(h.openGeoHelp).toHaveBeenCalledTimes(1); // pas de nouvelle aide
+        expect(watchCount).toBe(before + 1);
+        h.permState = 'denied';
+    });
+
+    it("une position reçue pendant la vérification l'emporte sur l'erreur", async () => {
+        h.permState = 'denied';
         watchError({ code: 1 });
+        watchSuccess({ coords: { latitude: 50.5, longitude: 4.48, accuracy: 10 } });
+        await flush();
+        expect(invite().hidden).toBe(true); // position en direct, pas d'encadré
+    });
+
+    it('position autorisée dans les réglages : la recherche repart toute seule', async () => {
+        h.permState = 'denied';
+        watchError({ code: 1 });
+        await flush();
         const before = watchCount;
         h.onGranted();
         expect(watchCount).toBe(before + 1);

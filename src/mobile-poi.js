@@ -474,7 +474,7 @@ export function updatePoiPosition(poiId) {
                 }
             );
         },
-        (err) => showToast(geoErrorSentence(err), "error", 5000),
+        async (err) => showToast(await geoErrorSentence(err), "error", 5000),
         { enableHighAccuracy: true, timeout: 10000 }
     );
 }
@@ -501,7 +501,7 @@ export function setAccessPointToCurrentPosition(poiId) {
             // setAccessPointAt écrit accessPoint + statut 'moved' (+ toast « Enregistré »).
             await setAccessPointAt(poiId, longitude, latitude);
         },
-        (err) => showToast(geoErrorSentence(err), "error", 5000),
+        async (err) => showToast(await geoErrorSentence(err), "error", 5000),
         { enableHighAccuracy: true, timeout: 10000 }
     );
 }

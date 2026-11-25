@@ -66,6 +66,7 @@ let _wakeLock = null;    // sentinelle Screen Wake Lock
 let _gpsMarker = null;   // marqueur Leaflet « point bleu »
 let _lastLatLng = null;  // [lat, lng] de la dernière position connue
 let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
+let _gpsErrSeq = 0;     // seule la dernière vérification de permission (code 1) compte
 let _gpsErrStreak = 0;   // échecs GPS consécutifs après le 1er fix (audit R4)
 let _gpsState = null;    // 'acquiring' | 'live' | 'denied' (refusée) | 'unavailable' (introuvable)
 let _unsubGeoPerm = null; // abonnement « la position redevient autorisée »
@@ -649,6 +650,7 @@ function fillInvite(denied) {
 function restartWatch() {
     _hadFix = false;
     _gpsErrStreak = 0;
+    _gpsErrSeq++; // une vérification de permission en cours ne compte plus
     startWatch();
 }
 
@@ -715,6 +717,7 @@ function updateWalkBoard(ll) {
 function onPosition(pos) {
     _hadFix = true;
     _gpsErrStreak = 0;
+    _gpsErrSeq++; // une position reçue l'emporte sur une erreur en vérification
     const ll = [pos.coords.latitude, pos.coords.longitude];
     _lastLatLng = ll;
     setGpsState('live');
@@ -757,17 +760,22 @@ function showAroundZone(ll) {
 const GPS_LOSS_STREAK = 3;
 
 function onGpsError(err) {
-    if (!_hadFix) {
-        console.warn('[follow] GPS indisponible :', err?.code, err?.message);
-        // Refusée ≠ introuvable (écran 65) : la recherche continue dans le
-        // second cas, et le prochain fix rebascule en live.
-        setGpsState(isGeoDenied(err) ? 'denied' : 'unavailable');
+    if (err?.code === 1) {
+        // Code 1 = refusée OU localisation du téléphone coupée (test E, S25) :
+        // seul l'état de la permission du site les distingue.
+        const seq = ++_gpsErrSeq;
+        isGeoDenied(err).then((denied) => {
+            if (!_active || seq !== _gpsErrSeq) return;
+            console.warn('[follow] GPS :', denied ? 'refusé' : 'localisation coupée');
+            setGpsState(denied ? 'denied' : 'unavailable');
+        });
         return;
     }
-    // Permission révoquée EN COURS de suivi : plus aucun fix ne reviendra →
-    // l'encadré « Position refusée » est le seul état honnête.
-    if (isGeoDenied(err)) {
-        setGpsState('denied');
+    if (!_hadFix) {
+        console.warn('[follow] GPS indisponible :', err?.code, err?.message);
+        // Introuvable (écran 65) : la recherche continue, et le prochain fix
+        // rebascule en live.
+        setGpsState('unavailable');
         return;
     }
     // Erreur transitoire après un 1er fix (perte momentanée) : on garde le
@@ -921,10 +929,9 @@ function openMap(mode, circuit, opts) {
     _visHandler = () => {
         if (document.visibilityState !== 'visible' || !_active) return;
         requestWakeLock();
-        // Retour des réglages du navigateur sans événement « change » (selon
-        // les navigateurs) : un nouvel essai ; s'il est encore refusé,
-        // l'encadré reste tel quel.
-        if (_gpsState === 'denied') restartWatch();
+        // Retour des réglages (navigateur ou téléphone) sans événement
+        // « change » : un nouvel essai ; si rien n'a changé, l'encadré reste.
+        if (_gpsState === 'denied' || _gpsState === 'unavailable') restartWatch();
     };
     document.addEventListener('visibilitychange', _visHandler);
 }
