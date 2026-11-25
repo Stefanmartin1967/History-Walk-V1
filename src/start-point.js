@@ -15,6 +15,7 @@ import { openHwModal, closeHwModal } from './modal.js';
 import { getPoiName, getPoiId, getPatrimonialName } from './data.js';
 import { getSearchResults } from './search.js';
 import { showToast } from './toast.js';
+import { isGeoDenied } from './geo-permission.js';
 
 const HOME_KEY = 'homeLocation';
 const MAX_RESULTS = 30;
@@ -97,10 +98,11 @@ function captureGps(btn) {
         (err) => {
             btn.disabled = false;
             if (textEl) textEl.textContent = prevText;
-            const msg = err.code === err.PERMISSION_DENIED
-                ? 'Autorise la localisation pour utiliser ta position.'
-                : 'Position indisponible, réessaie ou choisis un lieu.';
-            showToast(msg, 'error', 4500);
+            // Vouvoiement + refusée ≠ introuvable (audit, test S25 du 24/11/2026).
+            const msg = isGeoDenied(err)
+                ? 'Position refusée : autorisez-la dans les réglages du navigateur, ou choisissez un lieu.'
+                : 'Position introuvable : réessayez, ou choisissez un lieu.';
+            showToast(msg, 'error', 5000);
         },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
@@ -119,7 +121,7 @@ function buildBody() {
         <button type="button" class="sp-gps btn btn-primary">
             <i data-lucide="locate-fixed"></i><span class="sp-gps-text">Utiliser ma position</span>
         </button>
-        <div class="sp-or"><span>ou choisis un lieu</span></div>
+        <div class="sp-or"><span>ou choisissez un lieu</span></div>
         <label class="sp-search">
             <i data-lucide="search"></i>
             <input type="search" class="sp-search-input" placeholder="Rechercher un lieu…" autocomplete="off">

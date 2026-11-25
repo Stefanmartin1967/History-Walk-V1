@@ -245,7 +245,7 @@
     border: 1px solid var(--line); border-radius: 16px;
     box-shadow: 0 10px 30px rgba(2, 12, 27, .18);
     padding: 14px;
-    display: flex; align-items: center; gap: 12px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 12px;
 }
 .gps-invite-ico {
     flex-shrink: 0; width: 38px; height: 38px; border-radius: 11px;
@@ -257,10 +257,12 @@
 .gps-invite-t { font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.25; }
 .gps-invite-s { font-size: 11.5px; color: var(--ink-soft); line-height: 1.35; margin-top: 1px; }
 .gps-invite-btn {
-    flex-shrink: 0; align-self: stretch;
+    /* Sur sa propre ligne (écran 65, 24/11/2026) : « Comment faire ? » est plus
+       long que l'ancien « Autoriser ». */
+    flex: 1 0 100%; min-height: 44px;
     border: 0; border-radius: 10px; padding: 0 14px;
     background: var(--brand); color: #fff;
-    font-family: inherit; font-size: 12.5px; font-weight: 700;
+    font-family: inherit; font-size: 14px; font-weight: 700;
     cursor: pointer; white-space: nowrap;
 }
 .gps-invite-btn:active { filter: brightness(0.95); }

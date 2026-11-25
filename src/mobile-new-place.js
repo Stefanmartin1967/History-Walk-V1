@@ -11,6 +11,7 @@ import { createIcons, appIcons } from './lucide-icons.js';
 import { getZoneFromCoords } from './utils.js';
 import { showToast } from './toast.js';
 import { openHwModal, closeModal } from './modal.js';
+import { geoErrorTexts } from './geo-permission.js';
 
 // ─── Ajout d'un POI par GPS (refonte PR 6 chantier design) ──────────────────
 // Modale « Nouveau lieu » avec preview GPS visible (pulse animé + coords en
@@ -117,8 +118,10 @@ export function showNewPlaceModal() {
                 if (resolved) return;
                 const label = document.getElementById('modal-gps-label');
                 const coords = document.getElementById('modal-gps-coords');
-                if (label) label.textContent = 'Erreur GPS';
-                if (coords) coords.textContent = err.message || 'Position non disponible';
+                // Plus de message brut du navigateur (« User denied Geolocation »).
+                const { title, text } = geoErrorTexts(err);
+                if (label) label.textContent = title;
+                if (coords) coords.textContent = text;
             },
             { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );

@@ -54,6 +54,7 @@ import { arrowPositions, metersPerPixel } from './follow-arrows.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
 import { askNearbyBeforeCreate } from './place-twins-ui.js';
 import { createWalkTracker, formatDistance as formatWalkDistance } from './walk-progress.js';
+import { isGeoDenied, openGeoPermissionHelp, onGeoPermissionGranted } from './geo-permission.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -66,6 +67,8 @@ let _gpsMarker = null;   // marqueur Leaflet « point bleu »
 let _lastLatLng = null;  // [lat, lng] de la dernière position connue
 let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
 let _gpsErrStreak = 0;   // échecs GPS consécutifs après le 1er fix (audit R4)
+let _gpsState = null;    // 'acquiring' | 'live' | 'denied' (refusée) | 'unavailable' (introuvable)
+let _unsubGeoPerm = null; // abonnement « la position redevient autorisée »
 let _didInitialRecenter = false; // recentrage auto une seule fois (1er fix)
 let _visHandler = null;  // handler visibilitychange (ré-acquisition Wake Lock)
 let _followMode = true;  // mode-follow : la carte garde le point bleu en vue (désengagé au pan manuel, ré-engagé par « Recentrer »)
@@ -205,10 +208,10 @@ function buildOverlay(circuit) {
         <div class="gps-invite" id="follow-invite" hidden>
             <div class="gps-invite-ico"><i data-lucide="map-pin-off"></i></div>
             <div class="gps-invite-body">
-                <div class="gps-invite-t">Localisation désactivée</div>
-                <div class="gps-invite-s">${around ? 'Les lieux restent affichés.' : 'Le tracé reste affiché.'} Autorise la position pour te voir avancer.</div>
+                <div class="gps-invite-t" id="follow-invite-t">Position refusée</div>
+                <div class="gps-invite-s" id="follow-invite-s" data-lead="${around ? 'Les lieux restent affichés.' : 'Le tracé reste affiché.'}"></div>
             </div>
-            <button type="button" class="gps-invite-btn" id="follow-invite-btn">Autoriser</button>
+            <button type="button" class="gps-invite-btn" id="follow-invite-btn">Comment faire ?</button>
         </div>
 
         <div class="follow-ctl follow-ctl-zoom">
@@ -238,12 +241,12 @@ function buildOverlay(circuit) {
     overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut(1));
     overlay.querySelector('#follow-locate').addEventListener('click', recenterOnGps);
     overlay.querySelector('#follow-add-place').addEventListener('click', addPlaceDuringFollow);
-    // « Autoriser » : on relance une acquisition (re-prompt si l'utilisateur
-    // avait seulement écarté la demande ; ré-échec immédiat si blocage dur).
+    // Position refusée : le navigateur ne redemande plus (test S25, 24/11/2026)
+    // → « Comment faire ? » ouvre la marche à suivre (écran 66). Introuvable
+    // (localisation coupée, pas de signal) → « Réessayer » relance la recherche.
     overlay.querySelector('#follow-invite-btn').addEventListener('click', () => {
-        _hadFix = false;
-        _gpsErrStreak = 0;
-        startWatch();
+        if (_gpsState === 'denied') { openGeoPermissionHelp(); return; }
+        restartWatch();
     });
 
     return overlay;
@@ -606,24 +609,47 @@ function recenterOnGps() {
 // ─── ÉTATS GPS (acquisition / live / refusé) ──────────────────────────────────
 
 function setGpsState(stateName) {
+    _gpsState = stateName;
     if (!_overlay) return;
+    const noPosition = stateName === 'denied' || stateName === 'unavailable';
     const acq = _overlay.querySelector('#follow-acq');
     const invite = _overlay.querySelector('#follow-invite');
     if (acq) acq.hidden = stateName !== 'acquiring';
-    if (invite) invite.hidden = stateName !== 'denied';
+    if (invite) invite.hidden = !noPosition;
+    if (noPosition) fillInvite(stateName === 'denied');
     // L'invite GPS (refusé) occupe le coin bas → masque les rafts de contrôles
     // pour éviter qu'ils chevauchent le bouton « Autoriser ». De toute façon,
     // sans position il n'y a pas de point bleu à recentrer ni d'intérêt au zoom
     // dans ce cas transitoire. (Même logique que `.has-sheet`.)
-    _overlay.classList.toggle('has-invite', stateName === 'denied');
+    _overlay.classList.toggle('has-invite', noPosition);
     // Le point bleu n'a de sens qu'en 'live' (on a une position).
     if (stateName !== 'live') removePuck();
     // Sans position, le tableau de marche n'a plus rien à dire de vrai.
-    if (stateName === 'denied') {
+    if (noPosition) {
         const board = _overlay.querySelector('#follow-walk');
         if (board) board.hidden = true;
         clearOffLine();
     }
+}
+
+// Encadré sans position (écran 65) : refusée → réglages du navigateur ;
+// introuvable → localisation du téléphone, et on peut réessayer.
+function fillInvite(denied) {
+    const t = _overlay.querySelector('#follow-invite-t');
+    const sub = _overlay.querySelector('#follow-invite-s');
+    const btn = _overlay.querySelector('#follow-invite-btn');
+    const lead = sub?.dataset.lead || '';
+    if (t) t.textContent = denied ? 'Position refusée' : 'Position introuvable';
+    if (sub) sub.textContent = denied
+        ? `${lead} Pour vous voir avancer, autorisez la position dans les réglages du navigateur.`
+        : `${lead} Vérifiez que la localisation du téléphone est activée.`;
+    if (btn) btn.textContent = denied ? 'Comment faire ?' : 'Réessayer';
+}
+
+function restartWatch() {
+    _hadFix = false;
+    _gpsErrStreak = 0;
+    startWatch();
 }
 
 // ─── TABLEAU DE MARCHE (17/11/2026) ───────────────────────────────────────────
@@ -733,12 +759,14 @@ const GPS_LOSS_STREAK = 3;
 function onGpsError(err) {
     if (!_hadFix) {
         console.warn('[follow] GPS indisponible :', err?.code, err?.message);
-        setGpsState('denied');
+        // Refusée ≠ introuvable (écran 65) : la recherche continue dans le
+        // second cas, et le prochain fix rebascule en live.
+        setGpsState(isGeoDenied(err) ? 'denied' : 'unavailable');
         return;
     }
     // Permission révoquée EN COURS de suivi : plus aucun fix ne reviendra →
-    // l'invite « Autoriser » est le seul état honnête (et son bouton relance).
-    if (err?.code === 1) {
+    // l'encadré « Position refusée » est le seul état honnête.
+    if (isGeoDenied(err)) {
         setGpsState('denied');
         return;
     }
@@ -752,7 +780,7 @@ function onGpsError(err) {
 }
 
 function startWatch() {
-    if (!navigator.geolocation) { setGpsState('denied'); return; }
+    if (!navigator.geolocation) { setGpsState('unavailable'); return; }
     setGpsState('acquiring');
     // On nettoie un éventuel watch précédent (cas « Autoriser » re-cliqué).
     if (_watchId !== null) { navigator.geolocation.clearWatch(_watchId); _watchId = null; }
@@ -884,9 +912,19 @@ function openMap(mode, circuit, opts) {
     _dragHandler = () => { _followMode = false; };
     map.on('dragstart', _dragHandler);
     startWatch();
+    // Position autorisée dans les réglages pendant le suivi → on relance seul
+    // (écran 66 : « votre position apparaîtra toute seule »).
+    _unsubGeoPerm = onGeoPermissionGranted(() => {
+        if (_active && _gpsState === 'denied') restartWatch();
+    });
     requestWakeLock();
     _visHandler = () => {
-        if (document.visibilityState === 'visible' && _active) requestWakeLock();
+        if (document.visibilityState !== 'visible' || !_active) return;
+        requestWakeLock();
+        // Retour des réglages du navigateur sans événement « change » (selon
+        // les navigateurs) : un nouvel essai ; s'il est encore refusé,
+        // l'encadré reste tel quel.
+        if (_gpsState === 'denied') restartWatch();
     };
     document.addEventListener('visibilitychange', _visHandler);
 }
@@ -913,6 +951,8 @@ export function stopFollow() {
 
     // GPS + Wake Lock teardown (PR2)
     stopWatch();
+    if (_unsubGeoPerm) { _unsubGeoPerm(); _unsubGeoPerm = null; }
+    _gpsState = null;
     releaseWakeLock();
     removePuck();
     if (_visHandler) { document.removeEventListener('visibilitychange', _visHandler); _visHandler = null; }
