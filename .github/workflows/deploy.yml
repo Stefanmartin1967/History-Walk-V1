@@ -4,9 +4,7 @@ on:
   push:
     branches: ["main"]
   # Relance MANUELLE (Actions → Deploy to GitHub Pages → « Run workflow ») : crée
-  # un run NEUF. Ne jamais « Re-run » un déploiement échoué : l'unique job
-  # ré-uploade l'artefact dans le même run et deploy-pages refuse les doublons
-  # (« Multiple artifacts named github-pages », constaté le 14/09/2026).
+  # un run NEUF, qui reconstruit tout.
   workflow_dispatch:
 
 permissions:
@@ -18,11 +16,18 @@ concurrency:
   group: "pages"
   cancel-in-progress: true
 
+# Deux jobs, comme le modèle officiel de GitHub Pages (25/11/2026).
+# Avec un seul job, deploy-pages cherchait l'archive 0,4 s après son envoi et
+# ne la trouvait pas encore (« No artifacts named github-pages », 4 échecs sur
+# 6 les 24-25/11, archive pourtant « successfully uploaded »). Séparés :
+#  - le job « deploy » démarre sur une machine neuve, plusieurs secondes après
+#    l'envoi : GitHub a le temps d'enregistrer l'archive ;
+#  - s'il échoue quand même, « Re-run failed jobs » ne relance QUE lui et
+#    réutilise l'archive déjà envoyée (plus de doublon « Multiple artifacts
+#    named github-pages » comme le 14/09/2026). Ne pas utiliser « Re-run all
+#    jobs », qui renverrait une seconde archive.
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Récupération du code
@@ -53,6 +58,14 @@ jobs:
         uses: actions/upload-pages-artifact@v5
         with:
           path: './dist'
+
+  deploy:
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Déploiement
         id: deployment
         uses: actions/deploy-pages@v5
