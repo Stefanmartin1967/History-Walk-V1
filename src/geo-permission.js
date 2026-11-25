@@ -6,27 +6,44 @@
 // rien. On distingue donc deux cas :
 //  - refusée (code 1) : seuls les réglages du navigateur y changent quelque
 //    chose → « Comment faire ? » ouvre la marche à suivre ;
-//  - introuvable (codes 2 et 3 : localisation du téléphone coupée, pas de
-//    signal, délai dépassé) → « Réessayer » a un sens.
+//  - introuvable (codes 2 et 3 : pas de signal, délai dépassé ; ou code 1
+//    alors que le site est autorisé = localisation du téléphone coupée)
+//    → « Réessayer » a un sens.
 // Le message du navigateur (anglais, « User denied Geolocation ») n'est plus
 // jamais montré.
 import { openHwModal } from './modal.js';
 import { isIOS } from './install-pwa-banner.js';
 
-export function isGeoDenied(err) {
-    return err?.code === 1;
+// Test E sur S25 (25/11/2026, Brave) : localisation du TÉLÉPHONE coupée,
+// permission du site accordée → le navigateur renvoie AUSSI le code 1. Le code
+// seul ne suffit donc pas : on demande l'état de la permission du site. Encore
+// « granted » → ce n'est pas un refus, c'est la localisation coupée
+// (« introuvable »). Sans Permissions API (vieux Safari) : on garde le code.
+async function sitePermissionState() {
+    try {
+        const st = await navigator.permissions?.query({ name: 'geolocation' });
+        return st?.state ?? null;
+    } catch {
+        return null;
+    }
+}
+
+/** true seulement si la position est vraiment refusée pour le site. */
+export async function isGeoDenied(err) {
+    if (err?.code !== 1) return false;
+    return (await sitePermissionState()) !== 'granted';
 }
 
 /** { title, text } pour une erreur de position (fenêtres et encadrés courts). */
-export function geoErrorTexts(err) {
-    return isGeoDenied(err)
+export async function geoErrorTexts(err) {
+    return (await isGeoDenied(err))
         ? { title: 'Position refusée', text: 'Autorisez-la dans les réglages du navigateur.' }
         : { title: 'Position introuvable', text: 'Vérifiez que la localisation du téléphone est activée.' };
 }
 
 /** Une phrase pour un toast (« Position refusée : autorisez-la… »). */
-export function geoErrorSentence(err, suffix = '') {
-    const sentence = isGeoDenied(err)
+export async function geoErrorSentence(err, suffix = '') {
+    const sentence = (await isGeoDenied(err))
         ? 'Position refusée : autorisez-la dans les réglages du navigateur'
         : 'Position introuvable : vérifiez que la localisation du téléphone est activée';
     return `${sentence}${suffix}.`;

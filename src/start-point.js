@@ -95,11 +95,11 @@ function captureGps(btn) {
             const { latitude, longitude } = pos.coords;
             closeHwModal({ home: { lat: latitude, lng: longitude, label: 'Ma position', savedAt: Date.now() } });
         },
-        (err) => {
+        async (err) => {
             btn.disabled = false;
             if (textEl) textEl.textContent = prevText;
-            // Vouvoiement + refusée ≠ introuvable (audit, test S25 du 24/11/2026).
-            const msg = isGeoDenied(err)
+            // Vouvoiement + refusée ≠ introuvable (audit, tests S25 des 24-25/11/2026).
+            const msg = (await isGeoDenied(err))
                 ? 'Position refusée : autorisez-la dans les réglages du navigateur, ou choisissez un lieu.'
                 : 'Position introuvable : réessayez, ou choisissez un lieu.';
             showToast(msg, 'error', 5000);
