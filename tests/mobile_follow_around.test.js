@@ -110,9 +110,9 @@ vi.mock('../src/mobile-new-place.js', () => ({
 // Position refusée (24/11/2026) : l'aide et l'abonnement « autorisée » sont
 // remplacés (les textes de l'encadré sont dans mobile-follow.js).
 vi.mock('../src/geo-permission.js', () => ({
-    // Asynchrone depuis le test E (25/11/2026) : code 1 + site encore
-    // autorisé = localisation du téléphone coupée, pas un refus.
-    isGeoDenied: async (err) => err?.code === 1 && h.permState !== 'granted',
+    // Asynchrone depuis le test E (25/11/2026) : code 1 sans état « denied »
+    // = localisation du téléphone coupée, pas un refus.
+    isGeoDenied: async (err) => err?.code === 1 && h.permState === 'denied',
     openGeoPermissionHelp: h.openGeoHelp,
     onGeoPermissionGranted: (fn) => { h.onGranted = fn; return () => { h.onGranted = null; }; },
 }));
@@ -277,8 +277,8 @@ describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/20
         expect(watchCount).toBe(before + 1);
     });
 
-    it('test E : localisation du téléphone coupée (code 1, site autorisé) → « Position introuvable »', async () => {
-        h.permState = 'granted';
+    it('test E : localisation du téléphone coupée (code 1, état « prompt ») → « Position introuvable »', async () => {
+        h.permState = 'prompt';
         watchError({ code: 1, message: 'User denied Geolocation' });
         await flush();
         expect(text('#follow-invite-t')).toBe('Position introuvable');
@@ -305,6 +305,16 @@ describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/20
         const before = watchCount;
         h.onGranted();
         expect(watchCount).toBe(before + 1);
+    });
+
+    it('localisation rallumée (état « granted ») : la recherche repart toute seule', async () => {
+        h.permState = 'prompt';
+        watchError({ code: 1 });
+        await flush();
+        const before = watchCount;
+        h.onGranted();
+        expect(watchCount).toBe(before + 1);
+        h.permState = 'denied';
     });
 
     it("à la fermeture, plus d'abonnement", () => {
