@@ -12,7 +12,7 @@ import { escapeHtml, getZoneFromCoords, getOrthodromicDistance, getRealDistance,
 import { openDetailsPanel } from './ui-details.js';
 import { generateCircuitQR } from './ui-circuit-editor.js';
 import { clearCircuit, isCircuitCompleted, isCircuitTested, loadCircuitById, openCircuitGallery } from './circuit.js';
-import { handleCircuitVisitedToggle, setCircuitHidden } from './circuit-actions.js';
+import { handleCircuitVisitedToggle, setCircuitHidden, performCircuitDeletion, isOfficialCircuitId } from './circuit-actions.js';
 import { startFollow, circuitHasTrace } from './mobile-follow.js';
 import { showToast } from './toast.js';
 import { animateContainer, getCurrentView, getAllCircuitsOrdered, setMobileHeaderSlot, setMobileViewFooter } from './mobile-state.js';
@@ -284,6 +284,10 @@ function renderCircuitView(container, fallbackList) {
         : `<button class="cc-act" disabled aria-label="GPX non disponible" title="GPX non disponible pour les circuits perso"><i data-lucide="download"></i></button>`;
 
     const isHidden = (state.hiddenCircuitIds || []).includes(String(circuit.id));
+    // Supprimer : seulement ses propres circuits (écran 71, audit du 26/11/2026 :
+    // le téléphone n'avait aucun moyen d'en retirer un). Un officiel garde ses
+    // quatre icônes (écran 73).
+    const canDelete = !isOfficialCircuitId(circuit.id);
 
     // Steps timeline
     let stepsHtml = '';
@@ -349,6 +353,9 @@ function renderCircuitView(container, fallbackList) {
             <button class="cc-act ${isHidden ? 'is-hidden-circuit' : ''}" id="cc-act-hide" aria-label="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}" title="${isHidden ? 'Réafficher ce circuit' : 'Cacher ce circuit'}">
                 <i data-lucide="${isHidden ? 'eye' : 'eye-off'}"></i>
             </button>
+            ${canDelete ? `<button class="cc-act is-delete" id="cc-act-delete" aria-label="Supprimer ce circuit" title="Supprimer ce circuit">
+                <i data-lucide="trash-2"></i>
+            </button>` : ''}
         </div>
         <div class="cc-timeline-wrap">
             ${stepsHtml}
@@ -406,6 +413,26 @@ function renderCircuitView(container, fallbackList) {
             });
         }
         renderMobilePoiList();
+    });
+
+    // Écran 72 : confirmation, puis la liste. Le circuit va dans la Corbeille
+    // (même mécanique que le PC) mais le téléphone n'en a pas : on ne promet
+    // pas de restauration. Pas de message : la liste suffit.
+    document.getElementById('cc-act-delete')?.addEventListener('click', async () => {
+        const ok = await showConfirm(
+            'Supprimer le circuit',
+            escapeHtml(`« ${fullName} » disparaîtra de vos circuits.`),
+            'Supprimer', 'Annuler', true
+        );
+        if (!ok) return;
+        const result = await performCircuitDeletion(circuit.id);
+        if (!result.success) {
+            showToast(result.message, 'error');
+            return;
+        }
+        await clearCircuit(false);
+        eventBus.emit('circuit:list-updated');
+        switchMobileView('circuits');
     });
 
     container.querySelectorAll('.cartel-step').forEach(step => {

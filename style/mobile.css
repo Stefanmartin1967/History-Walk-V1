@@ -653,6 +653,8 @@
 }
 .cc-act.is-done { color: var(--ok); }
 .cc-act.is-hidden-circuit { color: var(--brand); }
+/* Supprimer un circuit perso (écran 71, 26/11/2026) : fond rosé, en dernier */
+.cc-act.is-delete { color: var(--danger); background: var(--danger-soft); }
 .cc-act:disabled { opacity: 0.35; cursor: not-allowed; }
 .cc-act svg { width: 20px; height: 20px; }
 

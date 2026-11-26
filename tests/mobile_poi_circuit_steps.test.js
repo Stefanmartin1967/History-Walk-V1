@@ -22,6 +22,7 @@ const h = vi.hoisted(() => ({
     },
     view: 'circuit-details',
     circuit: null,
+    performCircuitDeletion: vi.fn(async () => ({ success: true, message: 'Circuit placé dans la Corbeille.' })),
 }));
 
 const poi = (id, name, lng = 4.44, lat = 50.41) => ({
@@ -56,7 +57,12 @@ vi.mock('../src/circuit.js', () => ({
     loadCircuitById: vi.fn(),
     openCircuitGallery: vi.fn(),
 }));
-vi.mock('../src/circuit-actions.js', () => ({ handleCircuitVisitedToggle: vi.fn(), setCircuitHidden: vi.fn() }));
+vi.mock('../src/circuit-actions.js', () => ({
+    handleCircuitVisitedToggle: vi.fn(),
+    setCircuitHidden: vi.fn(),
+    performCircuitDeletion: h.performCircuitDeletion,
+    isOfficialCircuitId: (id) => h.state.officialCircuits.some((c) => c.id === id),
+}));
 vi.mock('../src/mobile-follow.js', () => ({ startFollow: vi.fn(), circuitHasTrace: () => true }));
 vi.mock('../src/toast.js', () => ({ showToast: vi.fn() }));
 vi.mock('../src/mobile-state.js', () => ({
@@ -75,6 +81,9 @@ vi.mock('../src/modal.js', () => ({ showConfirm: vi.fn() }));
 vi.mock('../src/access-point.js', () => ({ setAccessPointAt: vi.fn() }));
 
 import { renderMobilePoiList, refreshMobileCircuitDetails } from '../src/mobile-poi.js';
+import { showConfirm } from '../src/modal.js';
+import { switchMobileView } from '../src/mobile-nav.js';
+import { clearCircuit } from '../src/circuit.js';
 
 // 3 étapes à Montignies-sur-Sambre, et une « destination » de 5 lieux qui
 // commence ailleurs (Marcinelle), comme la liste filtrée de Charleroi.
@@ -138,5 +147,58 @@ describe('refreshMobileCircuitDetails — ne repeint que le détail du circuit a
         container().innerHTML = '<div id="ecran">écran courant</div>';
         refreshMobileCircuitDetails();
         expect(container().querySelector('#ecran')).not.toBeNull();
+    });
+});
+
+// Audit avant publication (26/11/2026, écrans 71-73) : sur téléphone, on ne
+// pouvait pas supprimer un circuit perso.
+describe('supprimer un circuit perso sur téléphone', () => {
+    const del = () => container().querySelector('#cc-act-delete');
+    const flush = () => new Promise((r) => setTimeout(r, 0));
+
+    beforeEach(() => {
+        h.circuit = { id: 'mine-1', name: 'Mon circuit', isOfficial: false, realTrack: null };
+        h.state.activeCircuitId = 'mine-1';
+        h.state.officialCircuits = [{ id: 'off-1' }];
+        h.performCircuitDeletion.mockClear();
+        vi.mocked(showConfirm).mockReset();
+        vi.mocked(switchMobileView).mockClear();
+    });
+
+    it('circuit perso : 5e icône « Supprimer ce circuit »', () => {
+        renderMobilePoiList();
+        expect(del()).not.toBeNull();
+        expect(del().getAttribute('aria-label')).toBe('Supprimer ce circuit');
+        expect(container().querySelector('.cc-actions').lastElementChild).toBe(del());
+    });
+
+    it('circuit officiel : pas de corbeille', () => {
+        h.circuit = { id: 'off-1', name: 'Officiel', isOfficial: true, realTrack: [[0, 0]] };
+        h.state.activeCircuitId = 'off-1';
+        renderMobilePoiList();
+        expect(del()).toBeNull();
+    });
+
+    it('confirmé : supprime, puis la liste ; le texte ne promet pas de restauration', async () => {
+        vi.mocked(showConfirm).mockResolvedValue(true);
+        renderMobilePoiList();
+        del().click();
+        await flush();
+        const [title, message, ok, cancel, danger] = vi.mocked(showConfirm).mock.calls[0];
+        expect([title, ok, cancel, danger]).toEqual(['Supprimer le circuit', 'Supprimer', 'Annuler', true]);
+        expect(message).toBe('« Mon circuit » disparaîtra de vos circuits.');
+        expect(message).not.toMatch(/restaur|Corbeille/);
+        expect(h.performCircuitDeletion).toHaveBeenCalledWith('mine-1');
+        expect(clearCircuit).toHaveBeenCalled();
+        expect(switchMobileView).toHaveBeenCalledWith('circuits');
+    });
+
+    it('annulé : rien ne bouge', async () => {
+        vi.mocked(showConfirm).mockResolvedValue(false);
+        renderMobilePoiList();
+        del().click();
+        await flush();
+        expect(h.performCircuitDeletion).not.toHaveBeenCalled();
+        expect(switchMobileView).not.toHaveBeenCalled();
     });
 });
