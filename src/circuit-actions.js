@@ -90,7 +90,7 @@ export async function checkCircuitDuplicate(poiIds, excludeId = null) {
 
 // Comparaison normalisée : les ids officiels sont stringifiés au chargement
 // (app-startup.js), l'appelant peut passer un number.
-function isOfficialCircuitId(id) {
+export function isOfficialCircuitId(id) {
     return !!state.officialCircuits && state.officialCircuits.some(c => String(c.id) === String(id));
 }
 
