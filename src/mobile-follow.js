@@ -923,7 +923,9 @@ function openMap(mode, circuit, opts) {
     // Position autorisée dans les réglages pendant le suivi → on relance seul
     // (écran 66 : « votre position apparaîtra toute seule »).
     _unsubGeoPerm = onGeoPermissionGranted(() => {
-        if (_active && _gpsState === 'denied') restartWatch();
+        // Aussi en « introuvable » : rallumer la localisation du téléphone fait
+        // passer l'état de « prompt » à « granted » (test E, S25, 25/11/2026).
+        if (_active && (_gpsState === 'denied' || _gpsState === 'unavailable')) restartWatch();
     });
     requestWakeLock();
     _visHandler = () => {

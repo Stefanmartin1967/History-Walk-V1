@@ -15,10 +15,15 @@ import { openHwModal } from './modal.js';
 import { isIOS } from './install-pwa-banner.js';
 
 // Test E sur S25 (25/11/2026, Brave) : localisation du TÉLÉPHONE coupée,
-// permission du site accordée → le navigateur renvoie AUSSI le code 1. Le code
-// seul ne suffit donc pas : on demande l'état de la permission du site. Encore
-// « granted » → ce n'est pas un refus, c'est la localisation coupée
-// (« introuvable »). Sans Permissions API (vieux Safari) : on garde le code.
+// heripia.com « Autorisé » dans les réglages de Brave → le navigateur renvoie
+// AUSSI le code 1. Le code seul ne suffit donc pas : on demande l'état de la
+// permission du site. Seul « denied » est un vrai refus. 1er essai (#1163) :
+// on attendait « granted », mais Brave/Chromium ne le dit plus quand la
+// localisation du téléphone est coupée (il répond « prompt », pour pouvoir
+// redemander) → l'app affichait encore « Position refusée ». « prompt » +
+// code 1 = localisation coupée, ou demande fermée sans répondre : dans les
+// deux cas « Réessayer » a un sens. Sans Permissions API (vieux Safari) : on
+// garde le code.
 async function sitePermissionState() {
     try {
         const st = await navigator.permissions?.query({ name: 'geolocation' });
@@ -31,7 +36,8 @@ async function sitePermissionState() {
 /** true seulement si la position est vraiment refusée pour le site. */
 export async function isGeoDenied(err) {
     if (err?.code !== 1) return false;
-    return (await sitePermissionState()) !== 'granted';
+    const st = await sitePermissionState();
+    return st === null ? true : st === 'denied';
 }
 
 /** { title, text } pour une erreur de position (fenêtres et encadrés courts). */

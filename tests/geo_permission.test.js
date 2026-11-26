@@ -33,6 +33,12 @@ describe('geo-permission', () => {
         expect((await geoErrorTexts({ code: 1 })).title).toBe('Position introuvable');
     });
 
+    it('test E bis (S25, 25/11) : code 1 et état « prompt » = introuvable, pas refusée', async () => {
+        setPerm('prompt');
+        expect(await isGeoDenied({ code: 1 })).toBe(false);
+        expect((await geoErrorTexts({ code: 1 })).title).toBe('Position introuvable');
+    });
+
     it('sans Permissions API : on se fie au code', async () => {
         setPerm(undefined);
         expect(await isGeoDenied({ code: 1 })).toBe(true);
@@ -43,7 +49,7 @@ describe('geo-permission', () => {
     });
 
     it('phrase de toast, sans message du navigateur', async () => {
-        setPerm('prompt');
+        setPerm('denied');
         expect(await geoErrorSentence({ code: 1, message: 'User denied Geolocation' }))
             .toBe('Position refusée : autorisez-la dans les réglages du navigateur.');
         expect(await geoErrorSentence({ code: 3 }, ', ou choisissez un lieu'))
