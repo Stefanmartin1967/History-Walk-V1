@@ -36,6 +36,17 @@ import { eventBus } from './events.js';
 
 export function initMobileCircuitsListeners() {
     eventBus.on('mobile:render-circuits-list', () => renderMobileCircuitsList());
+    // Circuit scanné ou reçu par lien (circuit.js, loadCircuitFromIds) : sa
+    // fiche s'ouvre, comme un toucher sur sa carte (test 5, S25, 26/11/2026 :
+    // « déjà dans Heripia », mais on restait sur la liste).
+    eventBus.on('mobile:open-circuit', (id) => openMobileCircuit(id));
+}
+
+// Fiche d'un circuit (niveau 2 au-dessus de la liste, Back → la liste).
+async function openMobileCircuit(id) {
+    pushMobileLevel('c'); // Proactif C7 : pousser entrée avant descente
+    setCurrentView('circuit-details'); // Autorise renderMobilePoiList
+    await loadCircuitById(id);
 }
 
 // ─── État local filtres (réplique PC) ────────────────────────────────────────
@@ -338,10 +349,7 @@ export function renderMobileCircuitsList() {
                 return;
             }
             if (e.target.closest('a')) return;
-            const id = card.dataset.id;
-            pushMobileLevel('c'); // Proactif C7 : pousser entrée avant descente
-            setCurrentView('circuit-details'); // Autorise renderMobilePoiList
-            await loadCircuitById(id);
+            await openMobileCircuit(card.dataset.id);
         });
         // La carte porte role="button" mais n'avait pas de handler clavier
         // (audit AC8 — patron à moitié câblé) : Enter/Espace = clic.

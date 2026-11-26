@@ -1115,8 +1115,13 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
     const existing = (state.officialCircuits || []).find(sameSteps)
         || (state.myCircuits || []).find(sameSteps);
     if (existing) {
-        await loadCircuitById(existing.id);
-        if (isMobileView()) eventBus.emit('mobile:switch-view', 'circuits');
+        if (isMobileView()) {
+            // La liste (racine), puis la fiche du circuit par-dessus.
+            eventBus.emit('mobile:switch-view', 'circuits');
+            eventBus.emit('mobile:open-circuit', existing.id);
+        } else {
+            await loadCircuitById(existing.id);
+        }
         showToast('Ce circuit est déjà dans Heripia : il est ouvert.', 'info');
         return;
     }
@@ -1151,8 +1156,10 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
 
     // 5. Mise à jour de l'affichage
     if (isMobileView()) {
-        eventBus.emit('mobile:render-poi-list', state.currentCircuit);
+        // La liste (racine), puis la fiche du nouveau circuit par-dessus (test
+        // 5, S25, 26/11/2026 : on restait sur la liste).
         eventBus.emit('mobile:switch-view', 'circuits');
+        eventBus.emit('mobile:open-circuit', newCircuitId);
     } else {
         // Refactor PR2 (15/05/2026) : loadCircuitFromIds (import QR) charge un
         // circuit en CONSULTATION. On appelle directement les helpers UI au
