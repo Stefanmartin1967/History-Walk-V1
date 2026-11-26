@@ -768,6 +768,39 @@ describe('loadCircuitFromIds', () => {
         expect(saveCircuit).not.toHaveBeenCalled();
     });
 
+    // Test 5 sur S25 (26/11/2026) : scanner un circuit déjà présent l'ouvre.
+    it("mêmes étapes qu'un officiel : ouvre l'officiel, pas de copie", async () => {
+        state.loadedFeatures = [poi('p1'), poi('p2')];
+        state.officialCircuits = [{ id: 'off-1', name: 'Fatou', poiIds: ['p1', 'p2'], realTrack: [[0, 0], [1, 1]] }];
+        isMobileView.mockReturnValue(true);
+
+        await loadCircuitFromIds('?import=p1,p2&name=Fatou');
+
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(state.activeCircuitId).toBe('off-1');
+        expect(eventBus.emit).toHaveBeenCalledWith('mobile:switch-view', 'circuits');
+        expect(showToast).toHaveBeenCalledWith('Ce circuit est déjà dans Heripia : il est ouvert.', 'info');
+        isMobileView.mockReset();
+    });
+
+    it("mêmes étapes qu'un circuit perso : l'ouvre ; en corbeille ou autre ordre : copie", async () => {
+        state.loadedFeatures = [poi('p1'), poi('p2')];
+        state.myCircuits = [{ id: 'mine-1', name: 'Le mien', poiIds: ['p1', 'p2'], realTrack: null }];
+        isMobileView.mockReturnValue(true);
+
+        await loadCircuitFromIds('p1,p2');
+        expect(saveCircuit).not.toHaveBeenCalled();
+        expect(state.activeCircuitId).toBe('mine-1');
+
+        await loadCircuitFromIds('p2,p1'); // autre ordre = autre circuit
+        expect(saveCircuit).toHaveBeenCalledTimes(1);
+
+        state.myCircuits = [{ id: 'mine-2', poiIds: ['p1', 'p2'], isDeleted: true }];
+        await loadCircuitFromIds('p1,p2'); // celui de la corbeille ne compte pas
+        expect(saveCircuit).toHaveBeenCalledTimes(2);
+        isMobileView.mockReset();
+    });
+
     it('addMyCircuit + emit circuit:list-updated après sauvegarde réussie', async () => {
         state.loadedFeatures = [poi('p1')];
         isMobileView.mockReturnValueOnce(true);
