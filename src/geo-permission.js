@@ -1,91 +1,87 @@
-// geo-permission.js — position refusée ou introuvable : textes communs + aide.
+// geo-permission.js — position indisponible ou introuvable : textes communs + aide.
 //
-// Audit avant publication, test 4 sur S25 (24/11/2026, maquette écrans 65-67
-// validée par Stefan) : une fois la position REFUSÉE, le navigateur ne la
-// redemande plus ; un bouton « Autoriser » qui relance la recherche ne fait
-// rien. On distingue donc deux cas :
-//  - refusée (code 1) : seuls les réglages du navigateur y changent quelque
-//    chose → « Comment faire ? » ouvre la marche à suivre ;
-//  - introuvable (codes 2 et 3 : pas de signal, délai dépassé ; ou code 1
-//    alors que le site est autorisé = localisation du téléphone coupée)
-//    → « Réessayer » a un sens.
-// Le message du navigateur (anglais, « User denied Geolocation ») n'est plus
-// jamais montré.
+// Audit avant publication, tests sur S25 (Brave) :
+//  - 24/11/2026 : une fois la position refusée, le navigateur ne la redemande
+//    plus ; un bouton « Autoriser » qui relance la recherche ne faisait rien.
+//  - 25-26/11/2026 (test E) : localisation du TÉLÉPHONE coupée → le navigateur
+//    renvoie le même code 1 qu'un refus, et l'état de la permission du site
+//    passe lui aussi à « bloqué » (vérifié par élimination, #1163 puis #1164).
+//    L'app ne peut donc pas savoir lequel des deux réglages bloque.
+// D'où deux cas seulement (maquette écrans 68-70, validée le 26/11/2026) :
+//  - bloquée (code 1) : « Position indisponible », on nomme les DEUX réglages
+//    (localisation du téléphone, autorisation du navigateur) ;
+//  - introuvable (codes 2 et 3 : pas de signal, délai dépassé) → « Réessayer ».
+// Le message du navigateur (anglais, « User denied Geolocation ») n'est jamais
+// montré.
 import { openHwModal } from './modal.js';
 import { isIOS } from './install-pwa-banner.js';
 
-// Test E sur S25 (25/11/2026, Brave) : localisation du TÉLÉPHONE coupée,
-// heripia.com « Autorisé » dans les réglages de Brave → le navigateur renvoie
-// AUSSI le code 1. Le code seul ne suffit donc pas : on demande l'état de la
-// permission du site. Seul « denied » est un vrai refus. 1er essai (#1163) :
-// on attendait « granted », mais Brave/Chromium ne le dit plus quand la
-// localisation du téléphone est coupée (il répond « prompt », pour pouvoir
-// redemander) → l'app affichait encore « Position refusée ». « prompt » +
-// code 1 = localisation coupée, ou demande fermée sans répondre : dans les
-// deux cas « Réessayer » a un sens. Sans Permissions API (vieux Safari) : on
-// garde le code.
-async function sitePermissionState() {
-    try {
-        const st = await navigator.permissions?.query({ name: 'geolocation' });
-        return st?.state ?? null;
-    } catch {
-        return null;
-    }
+/** Position bloquée : refusée pour le site OU localisation du téléphone coupée. */
+export function isGeoBlocked(err) {
+    return err?.code === 1;
 }
 
-/** true seulement si la position est vraiment refusée pour le site. */
-export async function isGeoDenied(err) {
-    if (err?.code !== 1) return false;
-    const st = await sitePermissionState();
-    return st === null ? true : st === 'denied';
-}
+const BLOCKED_HINT = "vérifiez la localisation du téléphone et l'autorisation du navigateur";
 
 /** { title, text } pour une erreur de position (fenêtres et encadrés courts). */
-export async function geoErrorTexts(err) {
-    return (await isGeoDenied(err))
-        ? { title: 'Position refusée', text: 'Autorisez-la dans les réglages du navigateur.' }
+export function geoErrorTexts(err) {
+    return isGeoBlocked(err)
+        ? { title: 'Position indisponible', text: "Vérifiez la localisation du téléphone et l'autorisation du navigateur." }
         : { title: 'Position introuvable', text: 'Vérifiez que la localisation du téléphone est activée.' };
 }
 
-/** Une phrase pour un toast (« Position refusée : autorisez-la… »). */
-export async function geoErrorSentence(err, suffix = '') {
-    const sentence = (await isGeoDenied(err))
-        ? 'Position refusée : autorisez-la dans les réglages du navigateur'
+/** Une phrase pour un toast (« Position indisponible : vérifiez… »). */
+export function geoErrorSentence(err, suffix = '') {
+    const sentence = isGeoBlocked(err)
+        ? `Position indisponible : ${BLOCKED_HINT}`
         : 'Position introuvable : vérifiez que la localisation du téléphone est activée';
     return `${sentence}${suffix}.`;
 }
 
 const chip = (label) => `<span class="ios-install-chip">${label}</span>`;
 
-export function geoPermissionSteps(ios = isIOS()) {
+/** Écran 69 : les deux volets, { phone, browser }, numérotés à la suite. */
+export function geoHelpSteps(ios = isIOS()) {
     if (ios) {
-        // Non vérifié sur un iPhone (24/11/2026) : chemin des Réglages d'iOS.
-        return [
-            "Ouvrez les Réglages de l'iPhone.",
-            'Touchez « Confidentialité et sécurité », puis « Service de localisation ».',
-            'Activez le service, puis touchez « Sites web Safari » et choisissez « Lorsque l\'app est active ».',
-            'Revenez dans Heripia : votre position apparaîtra.',
-        ];
+        // Non vérifié sur un iPhone : chemin des Réglages d'iOS.
+        return {
+            phone: [
+                "Ouvrez les Réglages de l'iPhone.",
+                'Touchez « Confidentialité et sécurité », puis activez « Service de localisation ».',
+            ],
+            browser: [
+                "Dans « Service de localisation », touchez « Sites web Safari » et choisissez « Lorsque l'app est active ».",
+            ],
+        };
     }
-    // Chemin suivi par Stefan dans Brave (S25, 24/11/2026).
-    return [
-        "Ouvrez le navigateur avec lequel vous avez installé Heripia (Chrome, Brave, Samsung Internet…).",
-        `Menu ${chip('⋮')} → Paramètres → Paramètres des sites → Position.`,
-        'Touchez heripia.com et choisissez « Autoriser ».',
-        'Revenez dans Heripia : votre position apparaîtra toute seule.',
-    ];
+    // Volet navigateur : chemin suivi par Stefan dans Brave (S25, 24/11/2026).
+    return {
+        phone: [
+            "Tirez le volet du haut de l'écran.",
+            "Touchez « Localisation » pour l'activer.",
+        ],
+        browser: [
+            'Ouvrez le navigateur avec lequel vous avez installé Heripia (Chrome, Brave, Samsung Internet…).',
+            `Menu ${chip('⋮')} → Paramètres → Paramètres des sites → Position.`,
+            'Touchez heripia.com et choisissez « Autoriser ».',
+        ],
+    };
 }
 
-/** Écran 66 : la marche à suivre quand la position a été refusée. */
+/** Écran 69 : « Retrouver votre position », en deux volets. */
 export function openGeoPermissionHelp() {
-    const steps = geoPermissionSteps()
-        .map((s, i) => `<li><span class="ios-install-num">${i + 1}</span><span>${s}</span></li>`).join('');
+    const { phone, browser } = geoHelpSteps();
+    let n = 0;
+    const list = (steps) => `<ol class="ios-install-steps">${steps
+        .map((s) => `<li><span class="ios-install-num">${++n}</span><span>${s}</span></li>`).join('')}</ol>`;
     return openHwModal({
         size: 'sm',
         icon: 'map-pin',
-        title: 'Autoriser la position',
-        body: `<p class="ios-install-why">Vous avez refusé la position une fois : le navigateur ne la redemande plus. Il faut la rétablir dans ses réglages.</p>
-            <ol class="ios-install-steps">${steps}</ol>`,
+        title: 'Retrouver votre position',
+        body: `<p class="ios-install-why">Deux réglages peuvent bloquer la position. Vérifiez-les dans cet ordre.</p>
+            <div class="geo-help-sec">1 · La localisation du téléphone</div>${list(phone)}
+            <div class="geo-help-sec">2 · L'autorisation du navigateur</div>${list(browser)}
+            <div class="geo-help-end">Revenez ensuite dans Heripia : votre position apparaîtra toute seule.</div>`,
         footer: `<button class="btn btn-primary ios-install-ok" data-hw-modal-action="close">J'ai compris</button>`,
     });
 }

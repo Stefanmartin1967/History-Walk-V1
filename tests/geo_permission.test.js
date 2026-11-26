@@ -2,67 +2,57 @@
 
 import { describe, it, expect, vi } from 'vitest';
 
-// Position refusée ou introuvable (audit avant publication, test S25 du
-// 24/11/2026, écrans 65-67) : textes communs, vouvoiement, jamais le message
-// brut du navigateur.
+// Position indisponible ou introuvable (audit avant publication, tests S25 des
+// 24-26/11/2026, écrans 68-70) : textes communs, vouvoiement, jamais le message
+// brut du navigateur. Code 1 = refus OU localisation du téléphone coupée,
+// indiscernables : on nomme les deux réglages.
 
-vi.mock('../src/modal.js', () => ({ openHwModal: vi.fn() }));
+const h = vi.hoisted(() => ({ openHwModal: vi.fn() }));
+vi.mock('../src/modal.js', () => ({ openHwModal: h.openHwModal }));
 vi.mock('../src/install-pwa-banner.js', () => ({ isIOS: () => false }));
 
-import { geoErrorTexts, geoErrorSentence, geoPermissionSteps, isGeoDenied } from '../src/geo-permission.js';
+import {
+    geoErrorTexts, geoErrorSentence, geoHelpSteps, isGeoBlocked, openGeoPermissionHelp,
+} from '../src/geo-permission.js';
 
 describe('geo-permission', () => {
-    const setPerm = (state) => Object.defineProperty(navigator, 'permissions', {
-        configurable: true,
-        value: state === undefined ? undefined : { query: async () => ({ state }) },
-    });
-
-    it('refusée (code 1) ≠ introuvable (codes 2, 3)', async () => {
-        setPerm('denied');
-        expect(await isGeoDenied({ code: 1 })).toBe(true);
-        expect(await isGeoDenied({ code: 3 })).toBe(false);
-        expect(await geoErrorTexts({ code: 1, message: 'User denied Geolocation' }))
-            .toEqual({ title: 'Position refusée', text: 'Autorisez-la dans les réglages du navigateur.' });
-        expect((await geoErrorTexts({ code: 2 })).title).toBe('Position introuvable');
-        expect((await geoErrorTexts(null)).title).toBe('Position introuvable');
-    });
-
-    it('test E (S25, 25/11) : code 1 mais site autorisé = localisation du téléphone coupée', async () => {
-        setPerm('granted');
-        expect(await isGeoDenied({ code: 1 })).toBe(false);
-        expect((await geoErrorTexts({ code: 1 })).title).toBe('Position introuvable');
-    });
-
-    it('test E bis (S25, 25/11) : code 1 et état « prompt » = introuvable, pas refusée', async () => {
-        setPerm('prompt');
-        expect(await isGeoDenied({ code: 1 })).toBe(false);
-        expect((await geoErrorTexts({ code: 1 })).title).toBe('Position introuvable');
-    });
-
-    it('sans Permissions API : on se fie au code', async () => {
-        setPerm(undefined);
-        expect(await isGeoDenied({ code: 1 })).toBe(true);
-        Object.defineProperty(navigator, 'permissions', {
-            configurable: true, value: { query: () => Promise.reject(new Error('x')) },
+    it('bloquée (code 1) ≠ introuvable (codes 2, 3)', () => {
+        expect(isGeoBlocked({ code: 1 })).toBe(true);
+        expect(isGeoBlocked({ code: 3 })).toBe(false);
+        expect(geoErrorTexts({ code: 1, message: 'User denied Geolocation' })).toEqual({
+            title: 'Position indisponible',
+            text: "Vérifiez la localisation du téléphone et l'autorisation du navigateur.",
         });
-        expect(await isGeoDenied({ code: 1 })).toBe(true);
+        expect(geoErrorTexts({ code: 2 }).title).toBe('Position introuvable');
+        expect(geoErrorTexts(null).title).toBe('Position introuvable');
     });
 
-    it('phrase de toast, sans message du navigateur', async () => {
-        setPerm('denied');
-        expect(await geoErrorSentence({ code: 1, message: 'User denied Geolocation' }))
-            .toBe('Position refusée : autorisez-la dans les réglages du navigateur.');
-        expect(await geoErrorSentence({ code: 3 }, ', ou choisissez un lieu'))
+    it('phrase de toast, sans message du navigateur', () => {
+        expect(geoErrorSentence({ code: 1, message: 'User denied Geolocation' }))
+            .toBe("Position indisponible : vérifiez la localisation du téléphone et l'autorisation du navigateur.");
+        expect(geoErrorSentence({ code: 3 }, ', ou choisissez un lieu'))
             .toBe('Position introuvable : vérifiez que la localisation du téléphone est activée, ou choisissez un lieu.');
     });
 
-    it('marche à suivre Android (chemin Brave) et iPhone, au vouvoiement', () => {
-        const android = geoPermissionSteps(false).join(' ');
-        expect(android).toContain('Paramètres des sites → Position');
-        expect(android).toContain('heripia.com');
-        expect(geoPermissionSteps(true).join(' ')).toContain('Service de localisation');
-        for (const s of [...geoPermissionSteps(false), ...geoPermissionSteps(true)]) {
+    it('aide en deux volets (Android : volet du haut, puis chemin Brave), au vouvoiement', () => {
+        const a = geoHelpSteps(false);
+        expect(a.phone.join(' ')).toContain('Localisation');
+        expect(a.browser.join(' ')).toContain('Paramètres des sites → Position');
+        expect(a.browser.join(' ')).toContain('heripia.com');
+        const i = geoHelpSteps(true);
+        expect([...i.phone, ...i.browser].join(' ')).toContain('Service de localisation');
+        for (const s of [...a.phone, ...a.browser, ...i.phone, ...i.browser]) {
             expect(s).not.toMatch(/\b(tu|ta|te|ton|tes)\b/);
         }
+    });
+
+    it('la fenêtre « Retrouver votre position » numérote les deux volets à la suite', () => {
+        openGeoPermissionHelp();
+        const { title, body } = h.openHwModal.mock.calls.at(-1)[0];
+        expect(title).toBe('Retrouver votre position');
+        expect(body).toContain('1 · La localisation du téléphone');
+        expect(body).toContain("2 · L'autorisation du navigateur");
+        const nums = [...body.matchAll(/ios-install-num">(\d+)</g)].map((m) => Number(m[1]));
+        expect(nums).toEqual([1, 2, 3, 4, 5]);
     });
 });

@@ -114,11 +114,10 @@ export function showNewPlaceModal() {
                 const btn = document.getElementById('btn-capture-position');
                 if (btn) btn.disabled = false;
             },
-            async (err) => {
+            (err) => {
                 if (resolved) return;
                 // Plus de message brut du navigateur (« User denied Geolocation »).
-                const { title, text } = await geoErrorTexts(err);
-                if (resolved) return;
+                const { title, text } = geoErrorTexts(err);
                 const label = document.getElementById('modal-gps-label');
                 const coords = document.getElementById('modal-gps-coords');
                 if (label) label.textContent = title;

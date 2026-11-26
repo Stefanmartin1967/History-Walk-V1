@@ -107,12 +107,10 @@ vi.mock('../src/mobile-new-place.js', () => ({
     createPlaceAt: h.createPlaceAt,
 }));
 
-// Position refusée (24/11/2026) : l'aide et l'abonnement « autorisée » sont
-// remplacés (les textes de l'encadré sont dans mobile-follow.js).
+// Position indisponible (24-26/11/2026) : l'aide et l'abonnement « autorisée »
+// sont remplacés (les textes de l'encadré sont dans mobile-follow.js).
 vi.mock('../src/geo-permission.js', () => ({
-    // Asynchrone depuis le test E (25/11/2026) : code 1 sans état « denied »
-    // = localisation du téléphone coupée, pas un refus.
-    isGeoDenied: async (err) => err?.code === 1 && h.permState === 'denied',
+    isGeoBlocked: (err) => err?.code === 1,
     openGeoPermissionHelp: h.openGeoHelp,
     onGeoPermissionGranted: (fn) => { h.onGranted = fn; return () => { h.onGranted = null; }; },
 }));
@@ -248,73 +246,57 @@ describe('Autour de moi — aperçu et fiche', () => {
     });
 });
 
-describe('Autour de moi — position refusée ou introuvable (test S25, 24/11/2026)', () => {
+describe('Autour de moi — position indisponible ou introuvable (tests S25, 24-26/11/2026)', () => {
     const invite = () => document.querySelector('#follow-invite');
     const text = (id) => document.querySelector(id).textContent;
+    const retry = () => document.querySelector('#follow-invite-retry');
 
-    it("refusée : « Position refusée », réglages du navigateur, « Comment faire ? » ouvre l'aide", async () => {
-        h.permState = 'denied';
+    it("bloquée : « Position indisponible », les deux réglages, « Comment faire ? » ouvre l'aide", () => {
         watchError({ code: 1, message: 'User denied Geolocation' });
-        await flush();
         expect(invite().hidden).toBe(false);
-        expect(text('#follow-invite-t')).toBe('Position refusée');
-        expect(text('#follow-invite-s')).toBe('Les lieux restent affichés. Pour vous voir avancer, autorisez la position dans les réglages du navigateur.');
-        expect(invite().textContent).not.toMatch(/Autorise |te voir|User denied/);
+        expect(text('#follow-invite-t')).toBe('Position indisponible');
+        expect(text('#follow-invite-s')).toBe('Les lieux restent affichés. Pour vous voir avancer, vérifiez que la localisation du téléphone est activée et que la position est autorisée pour Heripia.');
+        expect(invite().textContent).not.toMatch(/Autorise |te voir|User denied|refusée/);
         const before = watchCount;
         document.querySelector('#follow-invite-btn').click();
         expect(text('#follow-invite-btn')).toBe('Comment faire ?');
         expect(h.openGeoHelp).toHaveBeenCalledTimes(1);
-        expect(watchCount).toBe(before); // pas de relance inutile
+        expect(watchCount).toBe(before); // l'aide ne relance pas
     });
 
-    it('introuvable : « Réessayer » relance la recherche', async () => {
+    it('bloquée : « Réessayer » (2e bouton) relance la recherche', () => {
+        watchError({ code: 1 });
+        expect(retry().hidden).toBe(false);
+        const before = watchCount;
+        retry().click();
+        expect(watchCount).toBe(before + 1);
+        expect(h.openGeoHelp).toHaveBeenCalledTimes(1); // pas d'aide en plus
+    });
+
+    it('introuvable (pas de signal) : un seul bouton, « Réessayer »', () => {
         watchError({ code: 2, message: 'Position unavailable' });
-        await flush();
         expect(text('#follow-invite-t')).toBe('Position introuvable');
         expect(text('#follow-invite-s')).toContain('Vérifiez que la localisation du téléphone est activée.');
-        const before = watchCount;
-        document.querySelector('#follow-invite-btn').click();
-        expect(watchCount).toBe(before + 1);
-    });
-
-    it('test E : localisation du téléphone coupée (code 1, état « prompt ») → « Position introuvable »', async () => {
-        h.permState = 'prompt';
-        watchError({ code: 1, message: 'User denied Geolocation' });
-        await flush();
-        expect(text('#follow-invite-t')).toBe('Position introuvable');
         expect(text('#follow-invite-btn')).toBe('Réessayer');
+        expect(retry().hidden).toBe(true);
         const before = watchCount;
         document.querySelector('#follow-invite-btn').click();
-        expect(h.openGeoHelp).toHaveBeenCalledTimes(1); // pas de nouvelle aide
         expect(watchCount).toBe(before + 1);
-        h.permState = 'denied';
     });
 
-    it("une position reçue pendant la vérification l'emporte sur l'erreur", async () => {
-        h.permState = 'denied';
-        watchError({ code: 1 });
+    it('bloquée en cours de suivi (après une position) : encadré aussi', () => {
         watchSuccess({ coords: { latitude: 50.5, longitude: 4.48, accuracy: 10 } });
-        await flush();
-        expect(invite().hidden).toBe(true); // position en direct, pas d'encadré
+        expect(invite().hidden).toBe(true);
+        watchError({ code: 1 });
+        expect(invite().hidden).toBe(false);
+        expect(text('#follow-invite-t')).toBe('Position indisponible');
     });
 
-    it('position autorisée dans les réglages : la recherche repart toute seule', async () => {
-        h.permState = 'denied';
+    it('position de nouveau autorisée : la recherche repart toute seule', () => {
         watchError({ code: 1 });
-        await flush();
         const before = watchCount;
         h.onGranted();
         expect(watchCount).toBe(before + 1);
-    });
-
-    it('localisation rallumée (état « granted ») : la recherche repart toute seule', async () => {
-        h.permState = 'prompt';
-        watchError({ code: 1 });
-        await flush();
-        const before = watchCount;
-        h.onGranted();
-        expect(watchCount).toBe(before + 1);
-        h.permState = 'denied';
     });
 
     it("à la fermeture, plus d'abonnement", () => {
