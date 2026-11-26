@@ -1104,6 +1104,23 @@ export async function loadCircuitFromIds(inputString, importedName = null) {
         return;
     }
 
+    // 2 bis. Déjà présent ? (audit avant publication, test 5 sur S25, 26/11/2026)
+    // Le QR ne porte que la liste des étapes : scanner un circuit OFFICIEL
+    // créait une copie perso du même nom, sans le vrai tracé (lignes droites,
+    // suivi indisponible), et chaque nouveau scan en ajoutait une. Mêmes étapes
+    // dans le même ordre qu'un circuit déjà là (officiel d'abord, puis perso
+    // hors corbeille) → on ouvre celui-là au lieu de copier.
+    const stepsKey = resolvedFeatures.map(getPoiId).join(',');
+    const sameSteps = (c) => !c.isDeleted && (c.poiIds || []).map(String).join(',') === stepsKey;
+    const existing = (state.officialCircuits || []).find(sameSteps)
+        || (state.myCircuits || []).find(sameSteps);
+    if (existing) {
+        await loadCircuitById(existing.id);
+        if (isMobileView()) eventBus.emit('mobile:switch-view', 'circuits');
+        showToast('Ce circuit est déjà dans Heripia : il est ouvert.', 'info');
+        return;
+    }
+
     // 3. SAUVEGARDE EN BASE (Persistence)
     // On crée un vrai objet Circuit pour qu'il apparaisse dans la liste
     const newCircuitId = `circuit-${Date.now()}`;
