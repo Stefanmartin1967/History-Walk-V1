@@ -788,7 +788,7 @@ describe('Admin Diff Engine', () => {
             expect(r.pois.length).toBe(1);
             const cur = r.pois[0].changes.find(c => c.key === 'Curation');
             expect(cur).toBeDefined();
-            expect(cur.old).toBe('Candidat à curer');
+            expect(cur.old).toBe('À valider');
             expect(cur.new).toBe('Validé');
         });
 

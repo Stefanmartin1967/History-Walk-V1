@@ -770,7 +770,7 @@ async function capture() {
     clearCandidates();
     _scannedBounds = null;
     refreshRecap();
-    showToast(`${n} lieu${n > 1 ? 'x' : ''} capturé${n > 1 ? 's' : ''} en candidat${n > 1 ? 's' : ''} — à curer (tri à venir).`, 'success', 3800);
+    showToast(`${n} lieu${n > 1 ? 'x' : ''} capturé${n > 1 ? 's' : ''} — à valider.`, 'success', 3800);
 }
 
 // Scout v2 (flux inversé) : crée une DESTINATION BROUILLON locale VIDE — aucun

@@ -48,14 +48,14 @@ beforeEach(async () => {
 afterEach(async () => { closeCCModal(); await tick(400); });
 
 describe('tableau de bord', () => {
-    it('« Tout est synchronisé » + « 2 lieux à vérifier », sans les outils', async () => {
+    it('« Tout est synchronisé » + « 2 lieux à valider », sans les outils', async () => {
         renderTab('dashboard', diff(), {});
         await tick();
         expect(content().textContent).toContain('Tout est synchronisé.');
-        expect(content().querySelector('#btn-cc-to-verify').textContent).toContain('2 lieux à vérifier sur Djerba');
+        expect(content().querySelector('#btn-cc-to-verify').textContent).toContain('2 lieux à valider sur Djerba');
         expect(content().querySelector('#btn-cc-tool-scout')).toBeNull();
     });
-    it('clic → la carte n’affiche que les lieux à vérifier', async () => {
+    it('clic → la carte n’affiche que les lieux à valider', async () => {
         renderTab('dashboard', diff(), {});
         await tick();
         content().querySelector('#btn-cc-to-verify').click();

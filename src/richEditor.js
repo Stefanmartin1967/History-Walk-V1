@@ -143,7 +143,7 @@ const RICH_POI_BODY_HTML = `
              « Valider & enregistrer » (1 geste = enrichir + rendre publiable). La ligne
              reste un indicateur de statut (cohérent avec le toggle « Vérifié »). -->
         <div class="fiche-row" id="rich-poi-candidate-row" hidden>
-            <span class="lbl"><span class="t">Candidat à curer</span><span class="h">Trouvé par Scout — « Valider &amp; enregistrer » pour le rendre publiable</span></span>
+            <span class="lbl"><span class="t">Lieu à valider</span><span class="h">Trouvé par Scout — « Valider &amp; enregistrer » pour le rendre publiable</span></span>
             <span class="ctl">
                 <button class="btn btn-ghost btn-sm" id="btn-rich-duplicate" type="button"
                         title="Ce candidat double un lieu déjà présent">
@@ -1043,7 +1043,7 @@ function updateCandidateFooter(isCand) {
         validateBtn.hidden = false;
         saveBtn.classList.remove('btn-primary');
         saveBtn.classList.add('btn-secondary');
-        if (saveLabel) saveLabel.textContent = 'Enregistrer (garder à curer)';
+        if (saveLabel) saveLabel.textContent = 'Enregistrer (garder à valider)';
     } else {
         validateBtn.hidden = true;
         saveBtn.classList.remove('btn-secondary');
@@ -1733,7 +1733,7 @@ async function executeEdit(data, validated = false) {
         // (richEditor ← admin-control-center ← richEditor).
         eventBus.emit('admin:poi-edited', { id: poiId, type: 'update' });
         showToast(validated
-            ? "Lieu validé et enregistré — sort de la file « à curer », devient publiable."
+            ? "Lieu validé et enregistré — sort de la liste « à valider », devient publiable."
             : "Modification enregistrée localement.", "success", validated ? 3500 : undefined);
     }
 

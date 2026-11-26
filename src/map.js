@@ -386,7 +386,7 @@ export function createHistoryWalkIcon(featureOrCategory) {
         // isCandidate (overlay) → le badge disparaît après curation, même pour un
         // candidat porté par une feature de base (userData.candidate=false).
         if (isCandidate(f)) {
-            flagDotHtml += '<span class="hw-poi-canddot" title="Candidat à curer (Scout)"></span>';
+            flagDotHtml += '<span class="hw-poi-canddot" title="Lieu à valider (Scout)"></span>';
         }
     }
 
