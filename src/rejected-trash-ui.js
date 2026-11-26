@@ -69,7 +69,7 @@ export function renderRejectedView() {
                 <i data-lucide="trash-2"></i> Tout vider
             </button>
         </div>
-        <p class="cc-rejected-hint">Restaurer remet le lieu dans les lieux à vérifier. Vider : ils seront proposés de nouveau au prochain passage du Scout.</p>
+        <p class="cc-rejected-hint">Restaurer remet le lieu dans les lieux à valider. Vider : ils seront proposés de nouveau au prochain passage du Scout.</p>
         ${itemsHtml}
     `;
 }

@@ -518,7 +518,7 @@ export async function prepareDiffData(adminDraft) {
             // publier ») mais on l'affiche en clair plutôt qu'en `candidate: true → false`.
             if (key === 'candidate') {
                 if (oldVal && !newVal) {
-                    changes.push({ key: 'Curation', old: 'Candidat à curer', new: 'Validé' });
+                    changes.push({ key: 'Curation', old: 'À valider', new: 'Validé' });
                 }
                 return;
             }

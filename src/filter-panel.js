@@ -399,7 +399,7 @@ const FICHE_FILTERS = [
     // 15/08/2026) : « Existence à confirmer » = file de revue admin (lieux
     // dont l'existence n'est pas certaine). Masqué par défaut pour un
     // non-admin (state.js) — pas de raison de lui montrer ce filtre non plus.
-    { key: 'candidate',        label: 'Lieux à curer',          adminOnly: true },
+    { key: 'candidate',        label: 'Lieux à valider',        adminOnly: true },
     { key: 'introuvableCarte', label: 'Existence à confirmer',  adminOnly: true },
     // Checklist de vérification (15/08/2026) : file de travail admin,
     // même logique que les deux au-dessus.

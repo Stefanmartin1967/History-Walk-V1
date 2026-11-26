@@ -72,7 +72,7 @@ describe('Nettoyage > Lieux rejetés', () => {
         await openRejected();
         expect(box.textContent).toContain('Lieux rejetés au tri · 2');
         expect(box.textContent).toContain('Puits · rejeté le 02/11/2026');
-        expect(box.textContent).toContain('Restaurer remet le lieu dans les lieux à vérifier');
+        expect(box.textContent).toContain('Restaurer remet le lieu dans les lieux à valider');
         expect(box.querySelectorAll('[data-action="restore-rejected"]').length).toBe(2);
         expect(box.textContent).not.toContain('Mode lecture seule');
     });

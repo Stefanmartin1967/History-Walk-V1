@@ -841,10 +841,10 @@ export function renderTab(tab, diffData, callbacks) {
             (f) => isCandidate(f) && !(state.hiddenPoiIds || []).includes(getPoiId(f))
         ).length;
         const verifyHtml = toVerify === 0 ? '' : `
-            <div class="cc-card cc-card--row cc-card--todo" role="button" tabindex="0" id="btn-cc-to-verify" aria-label="Voir sur la carte les lieux à vérifier">
+            <div class="cc-card cc-card--row cc-card--todo" role="button" tabindex="0" id="btn-cc-to-verify" aria-label="Voir sur la carte les lieux à valider">
                 <div class="cc-card-ico"><i data-lucide="scan-eye"></i></div>
                 <div class="cc-card-text">
-                    <div class="cc-card-title">${toVerify} lieu${toVerify > 1 ? 'x' : ''} à vérifier sur ${mapLabel}</div>
+                    <div class="cc-card-title">${toVerify} lieu${toVerify > 1 ? 'x' : ''} à valider sur ${mapLabel}</div>
                     <div class="cc-card-sub">Capturés par le Scout · ils ne seront pas publiés tant que vous ne les avez pas validés</div>
                 </div>
                 <div class="cc-card-meta">Voir sur la carte <i data-lucide="chevron-right"></i></div>
@@ -1108,7 +1108,7 @@ export function renderTab(tab, diffData, callbacks) {
                 const { hwConfirm, hwAlert } = await import('./modal.js');
                 closeCCModal(); // fermer le CC avant les modales (évite l'empilement)
                 const candNote = candCount > 0
-                    ? `<p><strong>${candCount} lieu(x) encore à curer</strong> resteront privés (gardés en local pour les curer plus tard).</p>`
+                    ? `<p><strong>${candCount} lieu(x) encore à valider</strong> resteront privés (gardés en local pour les valider plus tard).</p>`
                     : '';
                 const ok = await hwConfirm({
                     title: 'Rendre publique',
@@ -1124,7 +1124,7 @@ export function renderTab(tab, diffData, callbacks) {
                     const { setDestinationPublished } = await import('./publish-destination.js');
                     const res = await setDestinationPublished(mapId, (msg) => showToast(msg, 'info', 2500));
                     const keptNote = res.candidatesKept > 0
-                        ? `<p>${res.candidatesKept} lieu(x) à curer gardé(s) en local (non publics).</p>`
+                        ? `<p>${res.candidatesKept} lieu(x) à valider gardé(s) en local (non publics).</p>`
                         : '';
                     await hwAlert({
                         title: 'Destination publiée ✓',

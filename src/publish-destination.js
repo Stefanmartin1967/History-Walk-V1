@@ -222,7 +222,7 @@ export async function setDestinationPublished(id, onProgress = () => {}) {
         (f) => isCandidate(f) && !(state.hiddenPoiIds || []).includes(getPoiId(f))
     );
     if (candidates.length > 0) {
-        onProgress('Mise de côté des lieux encore à curer…');
+        onProgress('Mise de côté des lieux encore à valider…');
         const byId = new Map((state.customFeatures || []).map((f) => [getPoiId(f), f]));
         candidates.forEach((f) => byId.set(getPoiId(f), f));
         const mergedCustom = [...byId.values()];
