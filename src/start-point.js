@@ -15,7 +15,7 @@ import { openHwModal, closeHwModal } from './modal.js';
 import { getPoiName, getPoiId, getPatrimonialName } from './data.js';
 import { getSearchResults } from './search.js';
 import { showToast } from './toast.js';
-import { isGeoDenied } from './geo-permission.js';
+import { isGeoBlocked } from './geo-permission.js';
 
 const HOME_KEY = 'homeLocation';
 const MAX_RESULTS = 30;
@@ -95,12 +95,12 @@ function captureGps(btn) {
             const { latitude, longitude } = pos.coords;
             closeHwModal({ home: { lat: latitude, lng: longitude, label: 'Ma position', savedAt: Date.now() } });
         },
-        async (err) => {
+        (err) => {
             btn.disabled = false;
             if (textEl) textEl.textContent = prevText;
-            // Vouvoiement + refusée ≠ introuvable (audit, tests S25 des 24-25/11/2026).
-            const msg = (await isGeoDenied(err))
-                ? 'Position refusée : autorisez-la dans les réglages du navigateur, ou choisissez un lieu.'
+            // Bloquée ≠ introuvable (écran 70, tests S25 des 24-26/11/2026).
+            const msg = isGeoBlocked(err)
+                ? "Position indisponible : vérifiez la localisation du téléphone et l'autorisation du navigateur, ou choisissez un lieu."
                 : 'Position introuvable : réessayez, ou choisissez un lieu.';
             showToast(msg, 'error', 5000);
         },

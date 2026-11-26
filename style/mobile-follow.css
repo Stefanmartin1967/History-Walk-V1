@@ -266,6 +266,12 @@
     cursor: pointer; white-space: nowrap;
 }
 .gps-invite-btn:active { filter: brightness(0.95); }
+/* « Réessayer » sous « Comment faire ? » (écran 68, 26/11/2026) */
+.gps-invite-btn.is-secondary {
+    min-height: 40px; background: transparent; color: var(--ink);
+    border: 1px solid var(--line); font-weight: 600;
+}
+.gps-invite-btn[hidden] { display: none; }
 
 /* ============================================================
    8. MARQUEUR POI VISITÉ (PR3) — atténué + pastille verte de coche

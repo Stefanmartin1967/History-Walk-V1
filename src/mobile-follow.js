@@ -54,7 +54,7 @@ import { arrowPositions, metersPerPixel } from './follow-arrows.js';
 import { showNewPlaceModal, createPlaceAt } from './mobile-new-place.js';
 import { askNearbyBeforeCreate } from './place-twins-ui.js';
 import { createWalkTracker, formatDistance as formatWalkDistance } from './walk-progress.js';
-import { isGeoDenied, openGeoPermissionHelp, onGeoPermissionGranted } from './geo-permission.js';
+import { isGeoBlocked, openGeoPermissionHelp, onGeoPermissionGranted } from './geo-permission.js';
 
 let _overlay = null;     // header + contrôles, montés dans le conteneur Leaflet
 let _active = false;
@@ -66,9 +66,8 @@ let _wakeLock = null;    // sentinelle Screen Wake Lock
 let _gpsMarker = null;   // marqueur Leaflet « point bleu »
 let _lastLatLng = null;  // [lat, lng] de la dernière position connue
 let _hadFix = false;     // a-t-on déjà reçu au moins une position ?
-let _gpsErrSeq = 0;     // seule la dernière vérification de permission (code 1) compte
 let _gpsErrStreak = 0;   // échecs GPS consécutifs après le 1er fix (audit R4)
-let _gpsState = null;    // 'acquiring' | 'live' | 'denied' (refusée) | 'unavailable' (introuvable)
+let _gpsState = null;    // 'acquiring' | 'live' | 'blocked' (indisponible) | 'unavailable' (introuvable)
 let _unsubGeoPerm = null; // abonnement « la position redevient autorisée »
 let _didInitialRecenter = false; // recentrage auto une seule fois (1er fix)
 let _visHandler = null;  // handler visibilitychange (ré-acquisition Wake Lock)
@@ -209,10 +208,11 @@ function buildOverlay(circuit) {
         <div class="gps-invite" id="follow-invite" hidden>
             <div class="gps-invite-ico"><i data-lucide="map-pin-off"></i></div>
             <div class="gps-invite-body">
-                <div class="gps-invite-t" id="follow-invite-t">Position refusée</div>
+                <div class="gps-invite-t" id="follow-invite-t">Position indisponible</div>
                 <div class="gps-invite-s" id="follow-invite-s" data-lead="${around ? 'Les lieux restent affichés.' : 'Le tracé reste affiché.'}"></div>
             </div>
             <button type="button" class="gps-invite-btn" id="follow-invite-btn">Comment faire ?</button>
+            <button type="button" class="gps-invite-btn is-secondary" id="follow-invite-retry">Réessayer</button>
         </div>
 
         <div class="follow-ctl follow-ctl-zoom">
@@ -242,13 +242,15 @@ function buildOverlay(circuit) {
     overlay.querySelector('#follow-zoom-out').addEventListener('click', () => map.zoomOut(1));
     overlay.querySelector('#follow-locate').addEventListener('click', recenterOnGps);
     overlay.querySelector('#follow-add-place').addEventListener('click', addPlaceDuringFollow);
-    // Position refusée : le navigateur ne redemande plus (test S25, 24/11/2026)
-    // → « Comment faire ? » ouvre la marche à suivre (écran 66). Introuvable
-    // (localisation coupée, pas de signal) → « Réessayer » relance la recherche.
+    // Position bloquée (écran 68) : « Comment faire ? » ouvre l'aide en deux
+    // volets (écran 69), « Réessayer » relance la recherche (si la localisation
+    // du téléphone est coupée, Android propose alors de l'activer).
+    // Introuvable (pas de signal) : un seul bouton, « Réessayer ».
     overlay.querySelector('#follow-invite-btn').addEventListener('click', () => {
-        if (_gpsState === 'denied') { openGeoPermissionHelp(); return; }
+        if (_gpsState === 'blocked') { openGeoPermissionHelp(); return; }
         restartWatch();
     });
+    overlay.querySelector('#follow-invite-retry').addEventListener('click', restartWatch);
 
     return overlay;
 }
@@ -612,12 +614,12 @@ function recenterOnGps() {
 function setGpsState(stateName) {
     _gpsState = stateName;
     if (!_overlay) return;
-    const noPosition = stateName === 'denied' || stateName === 'unavailable';
+    const noPosition = stateName === 'blocked' || stateName === 'unavailable';
     const acq = _overlay.querySelector('#follow-acq');
     const invite = _overlay.querySelector('#follow-invite');
     if (acq) acq.hidden = stateName !== 'acquiring';
     if (invite) invite.hidden = !noPosition;
-    if (noPosition) fillInvite(stateName === 'denied');
+    if (noPosition) fillInvite(stateName === 'blocked');
     // L'invite GPS (refusé) occupe le coin bas → masque les rafts de contrôles
     // pour éviter qu'ils chevauchent le bouton « Autoriser ». De toute façon,
     // sans position il n'y a pas de point bleu à recentrer ni d'intérêt au zoom
@@ -633,24 +635,25 @@ function setGpsState(stateName) {
     }
 }
 
-// Encadré sans position (écran 65) : refusée → réglages du navigateur ;
-// introuvable → localisation du téléphone, et on peut réessayer.
-function fillInvite(denied) {
+// Encadré sans position : bloquée (écran 68) → les deux réglages, « Comment
+// faire ? » + « Réessayer » ; introuvable (pas de signal) → « Réessayer » seul.
+function fillInvite(blocked) {
     const t = _overlay.querySelector('#follow-invite-t');
     const sub = _overlay.querySelector('#follow-invite-s');
     const btn = _overlay.querySelector('#follow-invite-btn');
+    const retry = _overlay.querySelector('#follow-invite-retry');
     const lead = sub?.dataset.lead || '';
-    if (t) t.textContent = denied ? 'Position refusée' : 'Position introuvable';
-    if (sub) sub.textContent = denied
-        ? `${lead} Pour vous voir avancer, autorisez la position dans les réglages du navigateur.`
+    if (t) t.textContent = blocked ? 'Position indisponible' : 'Position introuvable';
+    if (sub) sub.textContent = blocked
+        ? `${lead} Pour vous voir avancer, vérifiez que la localisation du téléphone est activée et que la position est autorisée pour Heripia.`
         : `${lead} Vérifiez que la localisation du téléphone est activée.`;
-    if (btn) btn.textContent = denied ? 'Comment faire ?' : 'Réessayer';
+    if (btn) btn.textContent = blocked ? 'Comment faire ?' : 'Réessayer';
+    if (retry) retry.hidden = !blocked;
 }
 
 function restartWatch() {
     _hadFix = false;
     _gpsErrStreak = 0;
-    _gpsErrSeq++; // une vérification de permission en cours ne compte plus
     startWatch();
 }
 
@@ -717,7 +720,6 @@ function updateWalkBoard(ll) {
 function onPosition(pos) {
     _hadFix = true;
     _gpsErrStreak = 0;
-    _gpsErrSeq++; // une position reçue l'emporte sur une erreur en vérification
     const ll = [pos.coords.latitude, pos.coords.longitude];
     _lastLatLng = ll;
     setGpsState('live');
@@ -760,21 +762,19 @@ function showAroundZone(ll) {
 const GPS_LOSS_STREAK = 3;
 
 function onGpsError(err) {
-    if (err?.code === 1) {
-        // Code 1 = refusée OU localisation du téléphone coupée (test E, S25) :
-        // seul l'état de la permission du site les distingue.
-        const seq = ++_gpsErrSeq;
-        isGeoDenied(err).then((denied) => {
-            if (!_active || seq !== _gpsErrSeq) return;
-            console.warn('[follow] GPS :', denied ? 'refusé' : 'localisation coupée');
-            setGpsState(denied ? 'denied' : 'unavailable');
-        });
+    // Bloquée (code 1) : refusée pour le site OU localisation du téléphone
+    // coupée, indiscernables (test E, S25, 26/11/2026). Aucune position ne
+    // reviendra seule → encadré « Position indisponible », même en cours de
+    // suivi.
+    if (isGeoBlocked(err)) {
+        console.warn('[follow] position bloquée (refus ou localisation coupée)');
+        setGpsState('blocked');
         return;
     }
     if (!_hadFix) {
         console.warn('[follow] GPS indisponible :', err?.code, err?.message);
-        // Introuvable (écran 65) : la recherche continue, et le prochain fix
-        // rebascule en live.
+        // Introuvable : la recherche continue, et le prochain fix rebascule en
+        // live.
         setGpsState('unavailable');
         return;
     }
@@ -923,9 +923,7 @@ function openMap(mode, circuit, opts) {
     // Position autorisée dans les réglages pendant le suivi → on relance seul
     // (écran 66 : « votre position apparaîtra toute seule »).
     _unsubGeoPerm = onGeoPermissionGranted(() => {
-        // Aussi en « introuvable » : rallumer la localisation du téléphone fait
-        // passer l'état de « prompt » à « granted » (test E, S25, 25/11/2026).
-        if (_active && (_gpsState === 'denied' || _gpsState === 'unavailable')) restartWatch();
+        if (_active && (_gpsState === 'blocked' || _gpsState === 'unavailable')) restartWatch();
     });
     requestWakeLock();
     _visHandler = () => {
@@ -933,7 +931,7 @@ function openMap(mode, circuit, opts) {
         requestWakeLock();
         // Retour des réglages (navigateur ou téléphone) sans événement
         // « change » : un nouvel essai ; si rien n'a changé, l'encadré reste.
-        if (_gpsState === 'denied' || _gpsState === 'unavailable') restartWatch();
+        if (_gpsState === 'blocked' || _gpsState === 'unavailable') restartWatch();
     };
     document.addEventListener('visibilitychange', _visHandler);
 }

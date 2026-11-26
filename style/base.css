@@ -3333,3 +3333,6 @@ input[type=range] {
 }
 .ios-install-chip svg { width: 15px; height: 15px; }
 .hw-modal-footer .ios-install-ok { width: 100%; min-height: 46px; }
+/* Retrouver votre position (écran 69, 26/11/2026) : deux volets numérotés */
+.geo-help-sec { margin: 16px 0 10px; font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--brand); }
+.geo-help-end { margin: 16px 0 0; line-height: 1.55; color: var(--ink-soft); }
