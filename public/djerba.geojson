@@ -3902,7 +3902,7 @@
         "Nom du site arabe": "جامع سيدي البشير",
         "Catégorie": "Mosquée",
         "Zone": "El Groa",
-        "Source": "Répertoire J. Fathallah, n° 92 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf",
+        "Source": "Répertoire J. Fathallah, n° 92 | http://palaisbenayed.com/wp-content/uploads/2021/03/r%C3%A9pertoire-des-mosqu%C3%A9es-de-Djerba.pdf\nPlaque de la mosquée, photographie de Rais67, 14 août 2026 (Wikimedia Commons, CC BY 4.0) | https://commons.wikimedia.org/wiki/File:Sidi_B%C3%A9chir_Ghandour_Mosque_05.jpg",
         "HW_ID": "HW-01KJABRN0FEQVR2EN2M5SDKSYG",
         "accessPoint": [
           10.8304784,
@@ -3912,7 +3912,7 @@
         "État": "En activité",
         "Accès": "Extérieur seulement",
         "info_gpx": "",
-        "description": "Mosquée du village de Magmag, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 92 sous le nom de Sidi Béchir Ghandour, qu'il situe à Houmt Larbah, à près de 2 kilomètres de là : mosquée ibadite wahbite, datée du 11ᵉ siècle de l'hégire, soit le 17ᵉ siècle.",
+        "description": "Mosquée du village de Magmag, à El Groa.\nLe répertoire des mosquées de Djerba de Jalel Fathallah l'inscrit au n° 92 sous le nom de Sidi Béchir Ghandour, qu'il situe à Houmt Larbah, à près de 2 kilomètres de là : mosquée ibadite wahbite, datée du 11ᵉ siècle de l'hégire, soit le 17ᵉ siècle.\nLa plaque de la mosquée, d'après une photographie publiée sur Commons, indique « جامع سيدي البشير » (Jamaa Sidi El Béchir). OpenStreetMap la nomme Sidi Béchir Ghandour (سيدي بشير غندور).",
         "Temps_minutes": 0,
         "Prix_TND": 0,
         "osm_ref": "way/1556754715",
