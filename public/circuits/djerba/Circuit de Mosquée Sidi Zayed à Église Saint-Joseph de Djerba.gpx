@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia 3.7.537" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="Heripia 3.7.591" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
     <metadata>
         <name>Circuit de Mosquée Sidi Zayed à Église Saint-Joseph de Djerba</name>
         <desc>Circuit généré par Heripia — heripia.com</desc>
@@ -15,7 +15,7 @@
       <desc></desc>
     </wpt>
     <wpt lat="33.876574" lon="10.860875">
-      <name>Mosquée Elghorabaa</name>
+      <name>Mosquée El Ghorba</name>
       <desc>Mosquée ibadite devenue malékite construite en 967 de l&apos;hégire, soit en 1560 de notre ère</desc>
     </wpt>
     <wpt lat="33.877293" lon="10.859958">
